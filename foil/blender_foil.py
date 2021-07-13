@@ -26,7 +26,7 @@ import math
 
 def vmf_export_foil(self, context):
 
-    if '.vmf' in bpy.path.abspath(bpy.context.scene.foil)
+    if '.vmf' in bpy.context.scene.foil:
         # =================================================
         #
         # Step 1: Delete all liz3 elements from old file
@@ -47,7 +47,7 @@ def vmf_export_foil(self, context):
 
 
 
-        file = open("E:\\!!Blend_Projects\\scripts\\export_props\\example_vmf\\prop_export_eample_vmf.vmf")
+        file = open(bpy.path.abspath(bpy.context.scene.foil))
 
         # create an array of lines out of the input vmf file
         linez = file.readlines()
@@ -74,14 +74,14 @@ def vmf_export_foil(self, context):
 
         file.close()
         # now remove the old file 
-        os.remove("E:\\!!Blend_Projects\\scripts\\export_props\\example_vmf\\prop_export_eample_vmf.vmf")
+        os.remove(bpy.path.abspath(bpy.context.scene.foil))
 
         for obj in list_of_objects:
             if obj[1] == 0:
                 print(str(obj[0]) + " " + str(obj[1]) + " " + str(obj[2]) )
                 print(linez[obj[0]])
                 
-                with open("E:\\!!Blend_Projects\\scripts\\export_props\\example_vmf\\prop_export_eample_vmf.vmf", "a") as txt_file:
+                with open(bpy.path.abspath(bpy.context.scene.foil), "a") as txt_file:
                     for i in range(obj[0], obj[2] + 1): 
                         txt_file.write(linez[i])
                         print(linez[i])
@@ -133,7 +133,7 @@ def vmf_export_foil(self, context):
         hammer_ents_constructed = []
 
         # return a list of all the instances marked for export
-        hammer_marked_list = [obj for obj in bpy.data.objects if "fuckshit" in obj]
+        hammer_marked_list = [obj for obj in bpy.data.objects if "foil_modelname" in obj]
 
 
         # construct an array containing all the constructed ents
@@ -149,11 +149,11 @@ def vmf_export_foil(self, context):
             locz = str(round(obj.matrix_world[2][3], 4))
 
             print('\n'+obj.name+'\n')
-            print(obj['fuckshit']['model_path'])
+            print(obj['foil_modelname'])
             hammer_ents_constructed.append(
             hardcoded_prop_static_preset
             .replace('ent_tplate_pos', locx + ' ' + locy + ' ' + locz)
-            .replace('ent_tplate_model', obj['fuckshit']['model_path'])
+            .replace('ent_tplate_model', obj['foil_modelname'])
             .replace('ent_tplate_angles', rotx + ' ' + rotz + ' ' + roty)
             )
 
@@ -165,7 +165,7 @@ def vmf_export_foil(self, context):
 
 
         # open the file
-        file = open("E:\\!!Blend_Projects\\scripts\\export_props\\example_vmf\\prop_export_eample_vmf.vmf")
+        file = open(bpy.path.abspath(bpy.context.scene.foil))
 
         # create an array of lines out of the input vmf file
         linez = file.readlines()
@@ -185,7 +185,7 @@ def vmf_export_foil(self, context):
 
         def insert_dilator(howdeep):
             linez.insert(howdeep, ''.join(hammer_ents_constructed))
-            with open("E:\\!!Blend_Projects\\scripts\\export_props\\example_vmf\\prop_export_eample_vmf.vmf", "w") as txt_file:
+            with open(bpy.path.abspath(bpy.context.scene.foil), "w") as txt_file:
                 for line in linez:
                     txt_file.write("".join(line))
             file.close()
@@ -215,7 +215,11 @@ def vmf_export_foil(self, context):
 def unmark_asset(self, context):
     print('fuck')
     for obj in bpy.context.selected_objects:
-        del obj['fuckshit']
+        print(obj.get('foil_modelname'))
+        if str(obj.get('foil_modelname')) != 'None':
+            del obj['foil_modelname']
+        else:
+            print('object is not an asset alr')
 
 
 class OBJECT_OT_unmark_asset(Operator, AddObjectHelper):
