@@ -141,7 +141,7 @@ def vmf_export_foil(self, context):
             # extract rotations
             rotx = str(round(math.degrees(obj.matrix_world.to_euler()[0]), 4))
             roty = str(round(math.degrees(obj.matrix_world.to_euler()[1]), 4))
-            rotz = str(round(math.degrees(obj.matrix_world.to_euler()[2]), 4) - 90)
+            rotz = str(round(math.degrees(obj.matrix_world.to_euler()[2]), 4))
             
             # extract locations
             locx = str(round(obj.matrix_world[0][3], 4))
@@ -154,7 +154,7 @@ def vmf_export_foil(self, context):
             hardcoded_prop_static_preset
             .replace('ent_tplate_pos', locx + ' ' + locy + ' ' + locz)
             .replace('ent_tplate_model', obj['foil_modelname'])
-            .replace('ent_tplate_angles', rotx + ' ' + rotz + ' ' + roty)
+            .replace('ent_tplate_angles', roty + ' ' + rotz + ' ' + rotx)
             )
 
         print('Constructed result is: ')
@@ -193,8 +193,8 @@ def vmf_export_foil(self, context):
 
         # find cameras
         def find_cams():
-                
-            cam_offset = linez.index("cameras\n")
+            # cam_offset = linez.index("cameras\n")
+            cam_offset = list_of_objects[-1][2] + 1
             print('cam offset is:')
             print(cam_offset)
             insert_dilator(cam_offset)
