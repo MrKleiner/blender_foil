@@ -273,7 +273,7 @@ class VIEW3D_PT_blender_foil(bpy.types.Panel):
 class VIEW3D_PT_blender_foil(bpy.types.Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
-    bl_category = "foil"
+    bl_category = "Foil"
     bl_label = "Aluminium"
 
     def draw(self, context):
