@@ -404,9 +404,10 @@ def rewrite_rad_list():
     full_rad_lis = []
 
     for rentry in rad_entries:
-        # global test_rad_list
+        global test_rad_list
         get_name = rentry.split(':')[0]
         test_rad_list.append((rentry, get_name, 'rad entry'))
+rewrite_rad_list()
     
     
 def setrad_col(self, context):
@@ -417,7 +418,7 @@ def setrad_col(self, context):
     mk_b = float(make_rgb[2]) / 255
 
     bpy.context.scene.rad_color = (mk_r, mk_g, mk_b)
-    # rewrite_rad_list()
+    rewrite_rad_list()
 
 
 class OBJECT_OT_unmark_asset(Operator, AddObjectHelper):
@@ -553,7 +554,7 @@ def register():
     # bpy.types.Scene.my_tool = PointerProperty(type=MySettings)
     
     bpy.types.Object.foil_conf = PointerProperty(type=foil_obj_settings)
-    bpy.types.Scene.lightsrad = EnumProperty(items=rewrite_rad_list, name="Rads", default='nil', update=setrad_col)
+    bpy.types.Scene.lightsrad = EnumProperty(items=test_rad_list, name="Rads", default='nil', update=setrad_col)
     
     bpy.types.Scene.rad_color = bpy.props.FloatVectorProperty(subtype='COLOR')
 
