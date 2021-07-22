@@ -350,11 +350,9 @@ entity
     else:
         self.report({"WARNING"}, "This is not a .vmf, stop lying to me, bitch")
 
-
 test_rad_list = [
     ('nil', 'nil', 'nil')
 ]
-
 
 
 def unmark_asset(self, context):
@@ -402,11 +400,15 @@ def rewrite_rad_list():
     print(rad_entries)
 
     full_rad_lis = []
-
+    global test_rad_list
+    test_rad_list = [
+        ('nil', 'nil', 'nil')
+    ]
     for rentry in rad_entries:
-        global test_rad_list
         get_name = rentry.split(':')[0]
         test_rad_list.append((rentry, get_name, 'rad entry'))
+    # bpy.types.Scene.lightsrad = EnumProperty(items=full_rad_lis, name="Rads", default='nil', update=setrad_col)
+    bpy.types.Scene.lightsrad = EnumProperty(items=test_rad_list, name="Rads", default='nil', update=setrad_col)
 rewrite_rad_list()
     
     
