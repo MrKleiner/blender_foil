@@ -494,14 +494,18 @@ def copy_arlight_config(self, context):
 
 def upd_area(self, context):
     # print('heavy update')
-    rgb = bpy.context.scene.lightsrad.split(':')[1].split(' ')
-    intens = bpy.context.active_object.foil_conf.arlight_strength
-    ar = int(rgb[0]) / 255
-    ag = int(rgb[1]) / 255
-    ab = int(rgb[2]) / 255
-    # for pootis in bpy.context.selected_objects:
-    bpy.context.active_object.data.color = (ar, ag, ab)
-    bpy.context.active_object.data.energy = int(rgb[3]) * 262144 * intens
+    if str(bpy.context.active_object.foil_conf.arlight_config) == '' or str(bpy.context.active_object.foil_conf.arlight_config) == 'nil':
+        print('Not a valid config. Dont change intensity')
+    else:
+        if ':' in str(bpy.context.active_object.foil_conf.arlight_config):
+            rgb = bpy.context.scene.lightsrad.split(':')[1].split(' ')
+            rgb = bpy.context.active_object.foil_conf.arlight_config.split(':')[1].split(' ')
+            ar = int(rgb[0]) / 255
+            ag = int(rgb[1]) / 255
+            ab = int(rgb[2]) / 255
+            # for pootis in bpy.context.selected_objects:
+            bpy.context.active_object.data.color = (ar, ag, ab)
+            bpy.context.active_object.data.energy = int(rgb[3]) * 262144 * intens
 
 def foil_export_area_lights(self, context):
 
