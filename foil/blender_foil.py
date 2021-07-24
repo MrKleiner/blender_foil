@@ -38,7 +38,7 @@ import hashlib
 import random
 import bmesh
 import mathutils
-
+import os.path
 
 def getfilemd5(filepath):
 
@@ -405,8 +405,16 @@ def setrad_col(self, context):
         print('invalid rad entry color syntax: No ":" presented')
 
 def rewrite_rad_list():
+
+    # if os.path.isfile(str(bpy.context.scene.blfoil.scene_radlights_path)):
+        # pass
+    # else:
+        # return
     
     rad_path = 'E:\\Gamess\\steamapps\\common\\Half-Life 2\\hl2\\lights.rad'
+    # rad_path = str(bpy.context.scene.blfoil.scene_radlights_path)
+
+
 
     checksum = getfilemd5(str(rad_path))
 
@@ -787,6 +795,12 @@ class blender_foil(PropertyGroup):
         description="A bool property",
         default = False
         )
+    scene_radlights_path : StringProperty(
+        name="Path to .rad",
+        description="I like bread",
+        default = "nil",
+        subtype="FILE_PATH"
+        )
         
 
 
@@ -882,6 +896,7 @@ class VIEW3D_PT_blender_foil(bpy.types.Panel):
         layout = self.layout
         col = layout.column(align=True)
         col.prop(context.scene.blfoil, 'scene_vmf_path')
+        col.prop(context.scene.blfoil, 'scene_radlights_path')
         
         col = layout.column(align=True)
         # print(context.object.type)
@@ -911,23 +926,41 @@ class VIEW3D_PT_blender_foil(bpy.types.Panel):
         # print('triggered')
         if context.object:
             if context.object.type == 'LIGHT' and context.object.data.type == 'AREA':
-                col.prop(context.scene, 'lightsrad')
-                col.prop(context.scene, 'rad_color', text='Rad Color')
-                self.layout.operator('mesh.set_arlight_op',
+                teacup = layout.box()
+                teabag = teacup.row()
+                sugar = teacup.row()
+                spoon = teacup.row()
+                
+                wheel = teacup.row()
+                urethral_dilator = teacup.row()
+                fleshlight = teacup.row()
+                handbrake = teacup.row()
+                bumper_cars = teacup.row()
+                
+                teabag.label(text='Area Light Config')
+
+                sugar.prop(context.scene, 'lightsrad')
+                spoon.prop(context.scene, 'rad_color', text='')
+                # sugar.prop(context.scene, 'rad_color', text='Rad Color')
+                
+                wheel.prop(context.object.foil_conf, 'arlight_strength', slider=True, text='Strength')
+                
+                urethral_dilator.operator('mesh.set_arlight_op',
                     text='Set Area Light config'
                 )
                 
-                self.layout.operator('mesh.unset_arlight_conf',
+                fleshlight.operator('mesh.unset_arlight_conf',
                     text='Unset Area Light config'
                 )
                 
-                self.layout.operator('mesh.copy_arlight_config',
+                handbrake.operator('mesh.copy_arlight_config',
                     text='Copy Area Light config to selected'
                 )
                 
-                col.prop(context.object.foil_conf, 'arlight_strength', slider=True)
+                
 
-                col.label(text=str(context.object.foil_conf.arlight_config.split(':')[0]))
+                bumper_cars.label(text=str(context.object.foil_conf.arlight_config.split(':')[0]))
+                
             else:
                 col.label(text='nein')
         else:
@@ -942,9 +975,6 @@ def unmark_asset_button(self, context):
         OBJECT_OT_unmark_asset.bl_idname,
         text="Add Object",
         icon='PLUGIN')
-
-
-
 
 
 
