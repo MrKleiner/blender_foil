@@ -375,6 +375,11 @@ test_rad_list = [
     ('nil', 'nil', 'nil')
 ]
 
+scene_vmf_vgroups = [
+    ('nil_ar', 'nil_ar', '1'),
+    ('nil1_ar', 'nil2_ar', '0')
+]
+
 
 def unmark_asset(self, context):
     # print('fuck')
@@ -460,8 +465,55 @@ def rewrite_rad_list():
     # bpy.types.Scene.lightsrad = EnumProperty(items=full_rad_lis, name="Rads", default='nil', update=setrad_col)
     bpy.types.Scene.lightsrad = EnumProperty(items=test_rad_list, name="Rads", default='nil', update=setrad_col)
     # bpy.context.scene.blfoil.lightsradcsum = str(getfilemd5(str(rad_path)))
-    
+
 rewrite_rad_list()
+
+def append_vmf_vgroups(self, context):
+    # print('shit')
+    
+    # grab vmf path
+    file_is = 0
+    
+    sce_vmf_path = str(bpy.path.abspath(bpy.context.scene.blfoil.scene_vmf_path))
+    
+    if os.path.isfile(sce_vmf_path):
+        file_is = 1
+    else:
+        file_is = 0
+        print('vmf path does not exist!')
+    
+
+    if '.vmf' in sce_vmf_path and file_is == 1:
+        print('append vgroups')
+        
+        file = open(sce_vmf_path)
+
+        # create an array of lines out of the input vmf file
+        linez = file.readlines()
+        global scene_vmf_vgroups
+        scene_vmf_vgroups = []
+        for lineid, lineval in enumerate(linez):
+            if '"visgroupid" ' in lineval:
+                get_id = linez[lineid].split('" "')[1].replace('"', '').replace('\n', '')
+                get_name = linez[lineid - 1].split('name" "')[1].replace('"', '').replace('\n', '')
+                get_color = linez[lineid + 1].split('color" "')[1].replace('"', '').replace('\n', '')
+                
+                # id : color, hammer name, show unassign button (do not use)
+                # todo: make 2 panels: 1 - availabe groups, 2 - assigned to
+                scene_vmf_vgroups.append((get_id + ':' + get_color, get_name, 0))
+        
+        print(scene_vmf_vgroups)
+        
+        
+        
+        
+        
+        
+    else:
+        print('aint no valid vmf, fuckoff')
+
+# append_vmf_vgroups()
+
 
 
 def set_arlight_op(self, context):
@@ -495,11 +547,12 @@ def copy_arlight_config(self, context):
 def upd_area(self, context):
     # print('heavy update')
     if str(bpy.context.active_object.foil_conf.arlight_config) == '' or str(bpy.context.active_object.foil_conf.arlight_config) == 'nil':
-        print('Not a valid config. Dont change intensity')
+        # print('Not a valid config. Dont change intensity')
+        pass
     else:
         if ':' in str(bpy.context.active_object.foil_conf.arlight_config):
             rgb = bpy.context.scene.lightsrad.split(':')[1].split(' ')
-            rgb = bpy.context.active_object.foil_conf.arlight_config.split(':')[1].split(' ')
+            intens = bpy.context.active_object.foil_conf.arlight_strength
             ar = int(rgb[0]) / 255
             ag = int(rgb[1]) / 255
             ab = int(rgb[2]) / 255
@@ -732,12 +785,68 @@ def foil_export_area_lights(self, context):
 
 
 
+def assign_to_vgroup(self, context):
+    
+    # print('fuck')
+    print(self.gr_id)
+    """
+    for obj in bpy.context.selected_objects:
+        # print(obj.foil_conf.model_name)
+        if len(str(obj.foil_conf.model_name)) > 1:
+            # del obj.foil_conf
+            print('pootis shit')
+            obj.foil_conf.model_name = ''
+        else:
+            print('object is not an asset alr')
+    """
+    for obj in bpy.context.selected_objects:
+        check_shit = obj.foil_conf.object_assigned_vgroups.split(':')
+        
+        if self.gr_id in check_shit:
+            print(str(self.gr_id) + ' is assigned alr')
+            
+            pootis = obj.foil_conf.object_assigned_vgroups.split(':')
+            pootis.remove(self.gr_id)
+            # del bpy.types.Scene.pipe
+            obj.foil_conf.object_assigned_vgroups = ':'.join(pootis)
+        else:
+            pootis = obj.foil_conf.object_assigned_vgroups.split(':')
+            pootis.append(self.gr_id)
+            # del bpy.types.Scene.pipe
+            obj.foil_conf.object_assigned_vgroups = ':'.join(pootis)
+
+
+
+
+
 
 # =========================================================
 #----------------------------------------------------------
 #                   Classes
 #----------------------------------------------------------
 # =========================================================
+
+
+class OBJECT_OT_add_to_vgroup(Operator, AddObjectHelper):
+    """Create a new Mesh Object"""
+    bl_idname = "mesh.add_to_vgroup"
+    bl_label = "Add Mesh Object"
+    # bl_options = {'REGISTER'}
+    
+    # gr_id = StringProperty(default='nil')
+    gr_id: bpy.props.StringProperty(
+        name = 'gr_id',
+        default = 'asd'
+    )
+
+    # @classmethod
+    
+    def execute(self, context):
+        # print(self.gr_id)
+        assign_to_vgroup(self, context)
+
+        return {'FINISHED'}
+
 
 
 class OBJECT_OT_unmark_asset(Operator, AddObjectHelper):
@@ -779,7 +888,8 @@ class blender_foil(PropertyGroup):
         name="Path to vmf",
         description="lizards are sexy",
         default = "nil",
-        subtype="FILE_PATH"
+        subtype="FILE_PATH",
+        update=append_vmf_vgroups
         )
         
     lightsradcsum : StringProperty(
@@ -799,6 +909,9 @@ class blender_foil(PropertyGroup):
         description="A bool property",
         default = False
         )
+        
+        # EnumProperty(items=test_rad_list, name="Rads", default='nil', update=setrad_col)
+        
     scene_radlights_path : StringProperty(
         name="Path to .rad",
         description="I like bread",
@@ -806,6 +919,13 @@ class blender_foil(PropertyGroup):
         subtype="FILE_PATH"
         )
         
+    scene_vmf_visgroups : EnumProperty(
+        items=scene_vmf_vgroups,
+        name="all visgroups",
+        description="I like bread"
+        # default = "nil"
+        )
+
 
 
 # shared object config 
@@ -837,6 +957,11 @@ class foil_obj_settings(PropertyGroup):
         precision=3,
         update=upd_area
         )
+    object_assigned_vgroups : StringProperty(
+        default='',
+        name='assigned_visgroups',
+        )
+        
 
 class OBJECT_OT_set_arlight(Operator, AddObjectHelper):
     """Set area light"""
@@ -933,9 +1058,11 @@ class VIEW3D_PT_blender_foil(bpy.types.Panel):
                 teacup = layout.box()
                 teabag = teacup.row()
                 sugar = teacup.row()
-                spoon = teacup.row()
+                # spoon = teacup.row()
                 
-                wheel = teacup.row()
+                melt_dead_space = teacup.column(align=True)
+                
+                # wheel = teacup.row()
                 urethral_dilator = teacup.row()
                 fleshlight = teacup.row()
                 handbrake = teacup.row()
@@ -944,10 +1071,10 @@ class VIEW3D_PT_blender_foil(bpy.types.Panel):
                 teabag.label(text='Area Light Config')
 
                 sugar.prop(context.scene, 'lightsrad')
-                spoon.prop(context.scene, 'rad_color', text='')
+                melt_dead_space.prop(context.scene, 'rad_color', text='')
                 # sugar.prop(context.scene, 'rad_color', text='Rad Color')
                 
-                wheel.prop(context.object.foil_conf, 'arlight_strength', slider=True, text='Strength')
+                melt_dead_space.prop(context.object.foil_conf, 'arlight_strength', slider=True, text='Strength')
                 
                 urethral_dilator.operator('mesh.set_arlight_op',
                     text='Set Area Light config'
@@ -969,7 +1096,46 @@ class VIEW3D_PT_blender_foil(bpy.types.Panel):
                 col.label(text='nein')
         else:
             col.label(text='nein')
-            
+
+
+class VIEW3D_PT_blender_foil_visgroups(bpy.types.Panel):
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'UI'
+    bl_category = "foil"
+    bl_label = "Visgroups"
+    
+    def draw(self, context):
+        layout = self.layout
+        col = layout.column(align=False)
+        
+        col.label(text='nein')
+        
+        
+        if '.vmf' in str(bpy.path.abspath(bpy.context.scene.blfoil.scene_vmf_path)):
+            for item in scene_vmf_vgroups:
+                if item[0].split(':')[0] in bpy.context.active_object.foil_conf.object_assigned_vgroups.split(':'):
+                    fuck = col.row()
+                    ded_l = fuck.column()
+                    ded_l.operator('mesh.add_to_vgroup',
+                        text=item[1],
+                        # active=True
+                    ).gr_id = item[0].split(':')[0]
+                    
+                    ded_r = fuck.column()
+                    ded_r.scale_x = 0.5
+                    
+                    ded_r.operator('mesh.add_to_vgroup',
+                        text='Unset',
+                        # active=True
+                    ).gr_id = item[0].split(':')[0]
+                else:
+                    col.operator('mesh.add_to_vgroup',
+                        text=item[1],
+                        # active=True
+                    ).gr_id = item[0].split(':')[0]
+        else:
+            info = layout.column(align=False)
+            info.label(text='no vmf')
 
 
 # Registration
@@ -985,11 +1151,14 @@ def unmark_asset_button(self, context):
 
 def register():
     
+    # bpy.types.WindowManager.my_operator_toggle = bpy.props.BoolProperty()
+    
     bpy.utils.register_class(blender_foil)
     bpy.types.Scene.blfoil = PointerProperty(type=blender_foil)
     
     
     bpy.utils.register_class(OBJECT_OT_unmark_asset)
+    bpy.utils.register_class(OBJECT_OT_add_to_vgroup)
     bpy.utils.register_class(OBJECT_OT_set_arlight)
     bpy.utils.register_class(OBJECT_OT_unset_arlight)
     bpy.utils.register_class(OBJECT_OT_copy_arlight_conf)
@@ -997,6 +1166,7 @@ def register():
     bpy.utils.register_class(foil_obj_settings)
     bpy.utils.register_class(OBJECT_OT_vmf_export_foil)
     bpy.utils.register_class(VIEW3D_PT_blender_foil)
+    bpy.utils.register_class(VIEW3D_PT_blender_foil_visgroups)
     bpy.utils.register_class(OBJECT_OT_export_arlights_vmf)
     # bpy.utils.register_manual_map(unmark_asset_manual_map)
     bpy.types.VIEW3D_MT_mesh_add.append(unmark_asset_button)
@@ -1011,14 +1181,15 @@ def register():
 def unregister():
     # del bpy.types.Scene.mass_import_path
     bpy.utils.unregister_class(OBJECT_OT_unmark_asset)
+    bpy.utils.unregister_class(OBJECT_OT_add_to_vgroup)
     bpy.utils.unregister_class(blender_foil)
     bpy.utils.unregister_class(foil_obj_settings)
     bpy.utils.unregister_class(OBJECT_OT_vmf_export_foil)
     bpy.utils.unregister_class(VIEW3D_PT_blender_foil)
+    bpy.utils.unregister_class(VIEW3D_PT_blender_foil_visgroups)
     bpy.utils.unregister_class(OBJECT_OT_unset_arlight)
     bpy.utils.unregister_class(OBJECT_OT_set_arlight)
     bpy.utils.unregister_class(OBJECT_OT_export_arlights_vmf)
     bpy.utils.unregister_class(OBJECT_OT_copy_arlight_conf)
     # bpy.utils.unregister_manual_map(unmark_asset_manual_map)
     bpy.types.VIEW3D_MT_mesh_add.remove(unmark_asset_button)
-
