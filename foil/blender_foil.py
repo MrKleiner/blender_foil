@@ -42,6 +42,9 @@ import os.path
 from pathlib import Path
 import sys
 import shutil
+import subprocess
+
+
 
 def getfilemd5(filepath):
 
@@ -935,35 +938,39 @@ def foil_compile_skybox(self, context):
     
     # Run cleanup just in case :
     # maybe make this a function?
-    
-    # delete all images
-    for img in bpy.data.images:
-        if 'liz3bkproc_delme' in img.name:
-            bpy.data.images.remove(bpy.data.images[img.name])
-    # delete all mats
-    for mat in bpy.data.materials:
-        if 'liz3bkproc_delme' in mat.name or 'skybakem_' in mat.name:
-            bpy.data.materials.remove(bpy.data.materials[mat.name])
-    # delete all objects
-    for objc in bpy.data.objects:
-        if 'liz3bkproc_delme' in objc.name:
-            bpy.data.objects.remove(bpy.data.objects[objc.name])
-    # delete all worlds
-    for wrld in bpy.data.worlds:
-        if 'liz3bkproc_delme' in wrld.name:
-            bpy.data.worlds.remove(wrld)
-    # delete local temp_dir
+    def docleanup():
+        # delete all images
+        for img in bpy.data.images:
+            if 'liz3bkproc_delme' in img.name:
+                bpy.data.images.remove(bpy.data.images[img.name])
+        # delete all mats
+        for mat in bpy.data.materials:
+            if 'liz3bkproc_delme' in mat.name or 'skybakem_' in mat.name:
+                bpy.data.materials.remove(bpy.data.materials[mat.name])
+        # delete all objects
+        for objc in bpy.data.objects:
+            if 'liz3bkproc_delme' in objc.name:
+                bpy.data.objects.remove(bpy.data.objects[objc.name])
+        # delete all worlds
+        for wrld in bpy.data.worlds:
+            if 'liz3bkproc_delme' in wrld.name:
+                bpy.data.worlds.remove(wrld)
+        # delete local temp_dir
+        try:
+            shutil.rmtree(os.path.join(this_blend_file, 'tmp_folder_liz3bkproc_delme'))
+        except:
+            print('nothing to delete')
+        # todo: also delete object data n shit
+        
+
+
+    docleanup()
+    # delete src dir if any
     try:
         shutil.rmtree(destination_folder_qcheck)
     except:
         print('tmp folder does not exist alr')
         
-    # delete src dir if any
-    try:
-        shutil.rmtree(os.path.join(this_blend_file, 'tmp_folder_liz3bkproc_delme'))
-    except:
-        print('nothing to delete')
-    # todo: also delete object data n shit
     
     
 
@@ -979,6 +986,11 @@ def foil_compile_skybox(self, context):
     # Else - jump straight to projection.
     if bpy.context.scene.blfoil.blfoil_sky_projectonly == False:
         
+        if bpy.context.scene.world.name != None:
+            tiny_little_robot = bpy.context.scene.world
+        else:
+            tiny_little_robot = 'nil'
+            
         bpy.context.scene['liz3bkproc_delme_save_r_prefs'] = {
             # Dimensions
             'res_x': bpy.context.scene.render.resolution_x,
@@ -1006,8 +1018,8 @@ def foil_compile_skybox(self, context):
             'use_sequencer': bpy.context.scene.render.use_sequencer,
             'dither_intensity': bpy.context.scene.render.dither_intensity,
             
-            # get currently active world !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            # 'machinarium': bpy.context.scene.world.name
+
+            'machinarium': tiny_little_robot
             
             # 'img_compression': bpy.context.scene.render.image_settings.compression,
             # 'img_quality': bpy.context.scene.render.image_settings.quality,
@@ -1132,9 +1144,11 @@ def foil_compile_skybox(self, context):
         use_recursive=True,
         instance_object_data=False
         )
+    # selector shortcut for the sphere target bake
+    tgarget_sphere_kvas = bpy.data.objects['liz3_target_env_bake_liz3bkproc_delme']
     
     
-    for qmat in bpy.data.objects['liz3_target_env_bake_liz3bkproc_delme'].material_slots:
+    for qmat in tgarget_sphere_kvas.material_slots:
         # delete all nodes from the material
         for qmnodes in qmat.material.node_tree.nodes:
             qmat.material.node_tree.nodes.remove( qmnodes )
@@ -1166,8 +1180,8 @@ def foil_compile_skybox(self, context):
     for selected_obj in bpy.context.selected_objects:
         selected_obj.select_set(False)
     # select bake target and make active
-    bpy.context.view_layer.objects.active = bpy.data.objects['liz3_target_env_bake_liz3bkproc_delme']
-    bpy.data.objects['liz3_target_env_bake_liz3bkproc_delme'].select_set(True)
+    bpy.context.view_layer.objects.active = tgarget_sphere_kvas
+    tgarget_sphere_kvas.select_set(True)
     
     
     # set bake type to environment
@@ -1189,6 +1203,88 @@ def foil_compile_skybox(self, context):
     for unsaved_img in bpy.data.images:
         if sky_foil_boxname in unsaved_img.name:
             unsaved_img.save()
+    
+    
+    
+    # txt file content
+    
+    text_file_content = """pfm 1
+pfmscale 1
+nonice 1
+nocompress 1
+nolod 1
+nomip 1"""
+
+    # Convert all resulting .exr to pfm with magick.exe and create .txt files for vtex and write vmts
+    for qzmat in tgarget_sphere_kvas.material_slots:
+        czmatside = qzmat.name.split('_')[-1]
+        
+        # construct pfm output 
+        pfmoutpath = os.path.join(sky_foil_gpath, 'materialsrc', 'skybox', sky_foil_boxname, sky_foil_boxname + '_generated_pfm', sky_foil_boxname + '_hdr' + czmatside + '.pfm')
+    
+        # construct exr inp path
+        exrinpath = os.path.join(sky_foil_gpath, 'materialsrc', 'skybox', sky_foil_boxname, sky_foil_boxname + '_exr_src', sky_foil_boxname + czmatside + '.exr')
+    
+        # img magick path
+        hl2deathmatch = 'E:\\!!Blend_Projects\\env_baker\\util\\pfm2exr\\magick.exe'
+    
+    
+        # convert with image magick 
+        magic_args = [hl2deathmatch, exrinpath, '-endian', 'LSB', pfmoutpath]
+        subprocess.call(magic_args)
+        
+        
+        # write text file 
+        
+        # construct text file path
+        txtfile_path = os.path.join(sky_foil_gpath, 'materialsrc', 'skybox', sky_foil_boxname, sky_foil_boxname + '_generated_pfm', sky_foil_boxname + '_hdr' + czmatside + '.txt')
+        assrod = open(txtfile_path,'w')
+        assrod.write(text_file_content)
+        assrod.close()
+        
+
+    # execute vtex.exe
+    # maybe combine all the stuff in 1 for loop ?
+    vtex_exe = os.path.join(Path(sky_foil_gpath).parents[0], 'bin', 'vtex.exe')
+    vtex_outdir = os.path.join(sky_foil_gpath, 'materials', 'skybox', sky_foil_boxname)
+    
+    # delete target vtf path
+    try:
+        shutil.rmtree(vtex_outdir)
+    except:
+        print('no vtf path alr')
+        
+    for zmat in tgarget_sphere_kvas.material_slots:
+        zmatside = zmat.name.split('_')[-1]
+        txtfile_path = os.path.join(sky_foil_gpath, 'materialsrc', 'skybox', sky_foil_boxname, sky_foil_boxname + '_generated_pfm', sky_foil_boxname + '_hdr' + zmatside + '.txt')
+
+        vtex_args = [vtex_exe, '-nopause', '-outdir', vtex_outdir, txtfile_path]
+        subprocess.call(vtex_args)
+    
+        vmt_content = """"sky"
+{
+    "$hdrbasetexture" "heavytf2"
+    "$basetexture"  "heavytf2"
+}"""
+    for vmat in tgarget_sphere_kvas.material_slots:
+        vmatside = vmat.name.split('_')[-1]
+        vmtfile_path = os.path.join(sky_foil_gpath, 'materials', 'skybox', sky_foil_boxname, sky_foil_boxname + '_hdr' + vmatside + '.vmt')
+        hdrbasepath = os.path.join('skybox', sky_foil_boxname, sky_foil_boxname + '_hdr' + vmatside)
+
+        # vmt_alter = vmt_content.replace('heavytf2', hdrbasepath)
+        
+        # write vmt file 
+        urethral_dilator = open(vmtfile_path,'w')
+        urethral_dilator.write(vmt_content.replace('heavytf2', hdrbasepath))
+        urethral_dilator.close()
+        # print(vmt_content.replace('heavytf2', hdrbasepath))
+    
+    
+    # bring back world 
+    if bpy.context.scene['liz3bkproc_delme_save_r_prefs']['machinarium'] != 'nil':
+        bpy.context.scene.world = bpy.context.scene['liz3bkproc_delme_save_r_prefs']['machinarium']
+    
+    docleanup()
     
     
     
