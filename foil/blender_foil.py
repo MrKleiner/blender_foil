@@ -1064,6 +1064,9 @@ def foil_compile_skybox(self, context):
         pano_camera_object.rotation_euler[0] = math.radians(90)
         pano_camera_object.rotation_euler[2] = math.radians(180)
         
+        # make this camera active 
+        bpy.context.scene.camera = pano_camera_object
+        
         
         # Set render size to calculated shit
         bpy.context.scene.render.resolution_x = tmp_panorama_cx
