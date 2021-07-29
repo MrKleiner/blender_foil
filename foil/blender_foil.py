@@ -39,6 +39,9 @@ import random
 import bmesh
 import mathutils
 import os.path
+from pathlib import Path
+import sys
+import shutil
 
 def getfilemd5(filepath):
 
@@ -227,7 +230,6 @@ entity
     editor
     {
         "color" "220 30 220"
-        "visgroupid" "10"
         "visgroupautoshown" "1"
         "logicalpos" "[0 0]"
     }
@@ -240,7 +242,7 @@ entity
         hammer_ents_constructed = []
 
         # return a list of all the instances marked for export of models
-        hammer_marked_list = [obj for obj in bpy.data.objects if "foil_conf" in obj]
+        hammer_marked_list = [obj for obj in bpy.data.objects if "foil_conf" in obj and len(obj.foil_conf.model_name) > 3]
 
         # return a list of all the spotlights
         foil_spotlight_list = [obj for obj in bpy.data.objects if obj.type == 'LIGHT' and obj.data.type == 'SPOT']
@@ -269,12 +271,24 @@ entity
             
             if len(str(obj.foil_conf.model_name)) > 1:
             
+                # write visgroups
+                apgroups = hardcoded_prop_static_preset.splitlines(True)
+                # 22
+                
+                if len(obj.foil_conf.object_assigned_vgroups.split(':')) > 0:
+                    for vgroup in obj.foil_conf.object_assigned_vgroups.split(':'):
+                        if vgroup != '':
+                            apgroups.insert(23, '    "visgroupid" "' + vgroup + '"\n')
+            
+                adde_vgroups = ''.join(apgroups)
+            
                 hammer_ents_constructed.append(
-                hardcoded_prop_static_preset
+                adde_vgroups
                 .replace('ent_tplate_pos', locx + ' ' + locy + ' ' + locz)
-                .replace('ent_tplate_model', str(obj.foil_conf.model_name))
+                .replace('ent_tplate_model', obj.foil_conf.model_name)
                 .replace('ent_tplate_angles', roty + ' ' + rotz + ' ' + rotx)
                 )
+                
                 print('appended')
             else:
                 print('has config, but model name is nil')
@@ -354,8 +368,8 @@ entity
             with open(sce_vmf_path, "w") as txt_file:
                 for line in linez:
                     txt_file.write("".join(line))
-            file.close()
-                    
+            # file.close()
+
 
         # find cameras
         def find_cams():
@@ -364,10 +378,11 @@ entity
             print('cam offset is:')
             print(cam_offset)
             insert_dilator(cam_offset)
-
+        
 
         # exec find cams
         find_cams()
+        file.close()
     else:
         self.report({"WARNING"}, "This is not a .vmf, stop lying to me, bitch")
 
@@ -636,12 +651,13 @@ def foil_export_area_lights(self, context):
 
     all_elights = []
 
-    def write_elight_brushes(what, lightsource, light_intensity):
+    def write_elight_brushes(what, lightsource, light_intensity, vgroups):
         
         obj = what
         mtr = obj.matrix_world
+        visgrouplist = vgroups.split(':')
         print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
-        print(lightsource)
+        print(visgrouplist)
 
         solid = 'solid \n{'
 
@@ -688,23 +704,50 @@ def foil_export_area_lights(self, context):
                 plane = str(plane) + 
             """
             
+            
+            
             # construct face
             # todo: embed mark code into the texture translation number
             if f_indx == 4:
                 makeface = 'side\n{' + '\n    ' + str(plane) + '\n    ' + str(hpp_vertz) + '\n    ' + '"material" "' + str(lightsource) + '"\n    "uaxis" "[' + str(light_intensity) + ' ' + str(light_intensity) + ' ' + str(light_intensity) + ' 0] 0.25"\n    "vaxis" "[' + str(light_intensity) + ' ' + str(light_intensity) + ' ' + str(light_intensity) + ' 0] 0.25"\n    "rotation" "0"\n    "lightmapscale" "16"\n    "smoothing_groups" "-570425344"\n}'
             else:
                 makeface = 'side\n{' + '\n    ' + str(plane) + '\n    ' + str(hpp_vertz) + '\n    ' + '"material" "TOOLS/TOOLSNODRAW"\n    "uaxis" "[0 0 1 0] 0.25"\n    "vaxis" "[0 1 1 0] 0.25"\n    "rotation" "0"\n    "lightmapscale" "16"\n    "smoothing_groups" "0"\n}'
+            
             solid = str(solid) + '\n' + str(makeface)
             # print(str(makeface))
+            
+            
+        # make visgroups
+        my_hat = """
+        editor
+        {
+            "color" "0 181 254"
+        """
+        
+        my_jeans = """
+            "visgroupshown" "1"
+            "visgroupautoshown" "1"
+        }
+        """
+        if len(visgrouplist) > 0:
+            for vgroup in visgrouplist:
+                if vgroup != '':
+                    my_hat = my_hat + '    "visgroupid" "' + vgroup + '"\n'
+        
+        my_jeans = my_hat + my_jeans
 
-        solid = str(solid) + '\n}'
+        solid = str(solid) + '\n' + my_jeans + '\n}'
         all_elights.append('\n' + str(solid))
 
 
 
 
     areal_list = [obj for obj in bpy.data.objects if obj.type == 'LIGHT' and obj.data.type == 'AREA' and len(obj.foil_conf.arlight_config) > 2 and obj.foil_conf.arlight_config != 'nil']
-
+    
+    if len(areal_list) < 1:
+        print('No lights to export!')
+        return
+    
     for obje in areal_list:
         
         print('area x: ' + str(obje.matrix_world[0][3]) + ' y: ' + str(obje.matrix_world[1][3]) + ' z: ' + str(obje.matrix_world[2][3]))
@@ -760,7 +803,7 @@ def foil_export_area_lights(self, context):
             print('nen')
         else:
             print(aeobj.matrix_world)
-            write_elight_brushes(aeobj, str(obje.foil_conf.arlight_config.split(':')[0]).upper(), obje.foil_conf.arlight_strength)
+            write_elight_brushes(aeobj, str(obje.foil_conf.arlight_config.split(':')[0]).upper(), obje.foil_conf.arlight_strength, obje.foil_conf.object_assigned_vgroups)
 
             print(str(obje.foil_conf.arlight_config.split(':')[0]).upper())
     for aelightb in export_are_light_brushes:
@@ -816,8 +859,90 @@ def assign_to_vgroup(self, context):
             obj.foil_conf.object_assigned_vgroups = ':'.join(pootis)
 
 
+def foil_compile_skybox(self, context):
+    print('fuck you')
+    # Check if X or Y is higher than 4096 in either dimension. 
+    # If so - Stop script execution and throw a warning 
+    # Else - proceed with script execution
+    
+    if bpy.context.scene.blfoil.blfoil_sky_size_x > 4096 or bpy.context.scene.blfoil.blfoil_sky_size_y > 4096:
+        self.report({'WARNING'}, 'requested texture is bigger than 4096 in either dimension. For now - stop script')
+        raise Exception('THIS IS AN ARTIFICIALLY TRIGGERED ERROR. IGNORE THIS!!!!!!!!!!! CHECK THE INFO PANEL!!!!')
+    
+    # Check the destination folder condition
+    
+    sky_foil_gpath = bpy.path.abspath(bpy.context.scene.blfoil.blfoil_sky_game_path)
+    
+    sky_foil_boxname = bpy.context.scene.blfoil.blfoil_sky_boxname
+    
+    this_blend_file = bpy.path.abspath('//')
+    
+    
+    destination_folder_qcheck = os.path.join(sky_foil_gpath, 'materialsrc', 'skybox', sky_foil_boxname)
+    print(destination_folder_qcheck)
+    
+    if os.path.isdir(destination_folder_qcheck) and bpy.context.scene.blfoil.blfoil_sky_overwrite_shit == False:
+        print('shite exists')
+        self.report({'WARNING'}, 'The specified path exists, but overwrite checkbox is tunred off')
+        raise Exception('THIS IS AN ARTIFICIALLY TRIGGERED ERROR. IGNORE THIS!!!!!!!!!!! CHECK THE INFO PANEL!!!!')
+    else:
+        try:
+            shutil.rmtree(destination_folder_qcheck)
+        except OSError as e:
+            print("Error: %s : %s" % (destination_folder_qcheck, e.strerror))
 
+    # Check render capabilities
+    if bpy.context.preferences.addons['cycles'].preferences.compute_device_type == 'OPTIX':
+        self.report({'WARNING'}, 'Baking with optix is not supported - switch to CUDA or OPENCL')
+        raise Exception('THIS IS AN ARTIFICIALLY TRIGGERED ERROR. IGNORE THIS!!!!!!!!!!! CHECK THE INFO PANEL!!!!')
+    
 
+    # Create destination folders
+    create_destination_folders = destination_folder_qcheck
+    os.makedirs(os.path.join(create_destination_folders, sky_foil_boxname + '_exr_src'))
+    os.makedirs(os.path.join(create_destination_folders, sky_foil_boxname + '_generated_pfm'))
+    
+    
+    
+    # Run cleanup just in case:
+    
+    # delete all images
+    for img in bpy.data.images:
+        if 'liz3bkproc_delme' in img.name:
+            bpy.data.images.remove(bpy.data.images[img.name])
+    # delete all mats
+    for mat in bpy.data.materials:
+        if 'liz3bkproc_delme' in mat.name or 'skybakem_' in mat.name:
+            bpy.data.images.remove(bpy.data.images[mat.name])
+    # delete all objects
+    for objc in bpy.data.objects:
+        if 'liz3bkproc_delme' in objc.name:
+            bpy.data.images.remove(bpy.data.images[objc.name])
+    
+    # delete temp dir 
+    shutil.rmtree(os.path.join(this_blend_file, 'liz3bake_deleteme'))
+    
+    
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
 
 # =========================================================
@@ -925,7 +1050,97 @@ class blender_foil(PropertyGroup):
         description="I like bread"
         # default = "nil"
         )
+        
+        # --------
+        # Skyboxer
+        # --------
+    blfoil_sky_game_path : StringProperty(
+        name='Path to the game dir. half-life 2/ep2',
+        description='Has to point to a valid source engine game setup. half-life 2/ep2, where half-life 2/bin contains stuff like vtex.exe',
+        default = 'blfoil_game_path - nil',
+        subtype='DIR_PATH'
+        )
+        
+    blfoil_sky_boxname : StringProperty(
+        name='The name of the baked skybox',
+        description='doctor sex',
+        default = 'blfoil_sky_boxname - nil'
+        )
+        
+    blfoil_sky_size_x : IntProperty(
+        name='Skybox X size',
+        description='Size of each skybox square on X axis',
+        default=1024,
+        min=16,
+        max=8192,
+        soft_max=4096,
+        soft_min=128,
+        subtype='UNSIGNED'
+        )
+        
+    blfoil_sky_size_y : IntProperty(
+        name='Skybox X size',
+        description='Size of each skybox square on X axis',
+        default=1024,
+        min=16,
+        max=8192,
+        soft_max=4096,
+        soft_min=128,
+        subtype='UNSIGNED'
+        )
 
+    blfoil_sky_keep_src_f_exr : BoolProperty(
+        name='Whether to keep the src exr files or not',
+        description='Disabling this will result into .exr files being deleted',
+        default = True
+        )
+        
+    blfoil_sky_keep_src_f_pfm : BoolProperty(
+        name='Whether to keep the src .pfm files or not',
+        description='Disabling this will result into .pfm files being deleted',
+        default = True
+        )
+        
+    blfoil_sky_moveto_afterb_path : StringProperty(
+        name='Copy compiled stuff here',
+        description='Should point to the "materials" folder. Will write to materials/skybox if present and overwrite any existing stuff. This description is redundant',
+        default = 'nil',
+        subtype='FILE_PATH'
+        )
+        
+    blfoil_sky_moveto_afterb_movecopy : BoolProperty(
+        name='asddw',
+        description='Move. Otherwise - copy',
+        default = False
+        )
+        
+    blfoil_sky_hdrldr : EnumProperty(
+        items=[
+        ('HDR', 'HDR', 'ded2'),
+        ('LDR', 'LDR', 'ded2')
+        ],
+        name='ldr/hdr',
+        description='I want to kiss a lizard'
+        # default = "nil"
+        )
+        
+    blfoil_sky_hdr_compressed : BoolProperty(
+        name='Compress into 8 bit + alpha',
+        description='Compress the shit like juicy tits',
+        default = False
+        )
+        
+    blfoil_sky_projectonly : BoolProperty(
+        name='Simple projection',
+        description='If set - seimply project whatever is plugged into the world on a cube, avoiding any renders',
+        default = False
+        )
+        
+    blfoil_sky_overwrite_shit : BoolProperty(
+        name='Overwrite',
+        description='oral',
+        default = False 
+        )
 
 
 # shared object config 
@@ -1008,7 +1223,15 @@ class OBJECT_OT_export_arlights_vmf(Operator, AddObjectHelper):
         foil_export_area_lights(self, context)
         return {'FINISHED'}
 
+class OBJECT_OT_blfoil_bake_skybox_opr(Operator, AddObjectHelper):
+    bl_idname = 'mesh.blfoil_bake_skybox_opr'
+    bl_label = 'Compile skybox'
+    bl_options = {'REGISTER'}
 
+    def execute(self, context):
+
+        foil_compile_skybox(self, context)
+        return {'FINISHED'}
 
 
 #
@@ -1110,34 +1333,89 @@ class VIEW3D_PT_blender_foil_visgroups(bpy.types.Panel):
         
         col.label(text='nein')
         
+        if not bpy.context.active_object == None:
+            if '.vmf' in str(bpy.path.abspath(bpy.context.scene.blfoil.scene_vmf_path)):
+                for item in scene_vmf_vgroups:
+                    if item[0].split(':')[0] in bpy.context.active_object.foil_conf.object_assigned_vgroups.split(':'):
+                        fuck = col.row()
+                        ded_l = fuck.column()
+                        ded_l.operator('mesh.add_to_vgroup',
+                            text=item[1],
+                            # active=True
+                        ).gr_id = item[0].split(':')[0]
+                        
+                        ded_r = fuck.column()
+                        ded_r.scale_x = 0.5
+                        
+                        ded_r.operator('mesh.add_to_vgroup',
+                            text='Unset',
+                            # active=True
+                        ).gr_id = item[0].split(':')[0]
+                    else:
+                        col.operator('mesh.add_to_vgroup',
+                            text=item[1],
+                            # active=True
+                        ).gr_id = item[0].split(':')[0]
+            else:
+                info = layout.column(align=False)
+                info.label(text='no vmf')
+
+
+class VIEW3D_PT_blender_foil_skyboxer(bpy.types.Panel):
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'UI'
+    bl_category = "foil"
+    bl_label = 'Sugarplum Gaben'
+    # https://youtu.be/sT3joXENOb0
+    
+    def draw(self, context):
+        layout = self.layout
         
-        if '.vmf' in str(bpy.path.abspath(bpy.context.scene.blfoil.scene_vmf_path)):
-            for item in scene_vmf_vgroups:
-                if item[0].split(':')[0] in bpy.context.active_object.foil_conf.object_assigned_vgroups.split(':'):
-                    fuck = col.row()
-                    ded_l = fuck.column()
-                    ded_l.operator('mesh.add_to_vgroup',
-                        text=item[1],
-                        # active=True
-                    ).gr_id = item[0].split(':')[0]
-                    
-                    ded_r = fuck.column()
-                    ded_r.scale_x = 0.5
-                    
-                    ded_r.operator('mesh.add_to_vgroup',
-                        text='Unset',
-                        # active=True
-                    ).gr_id = item[0].split(':')[0]
-                else:
-                    col.operator('mesh.add_to_vgroup',
-                        text=item[1],
-                        # active=True
-                    ).gr_id = item[0].split(':')[0]
+        
+        general_col = layout.column(align=False)
+        general_col.label(text='Skybox exporter')
+        general_col.prop(context.scene.blfoil, 'blfoil_sky_game_path', text='Game path')
+        general_col.prop(context.scene.blfoil, 'blfoil_sky_boxname', text='Skybox name')
+        
+        
+        dimensions_col = layout.column(align=True)
+        dimensions_col.use_property_split = True
+        dimensions_col.use_property_decorate = False
+        
+        dimensions_col.prop(context.scene.blfoil, 'blfoil_sky_size_x')
+        dimensions_col.prop(context.scene.blfoil, 'blfoil_sky_size_y', text='Skybox Y size')
+        
+        
+        leave_src_files = layout.column(align=False)
+        leave_src_files.prop(context.scene.blfoil, 'blfoil_sky_keep_src_f_exr', text='Keep .exr src files')
+        leave_src_files.prop(context.scene.blfoil, 'blfoil_sky_keep_src_f_pfm', text='Keep .pfm src files')
+        
+        move_vtf_here = layout.column(align=False)
+        leave_src_files.prop(context.scene.blfoil, 'blfoil_sky_moveto_afterb_path', text='Move/Copy')
+        leave_src_files.prop(context.scene.blfoil, 'blfoil_sky_moveto_afterb_movecopy', text='Move')
+        
+        hdrldr = layout.column(align=False)
+        hdrldr_switch = hdrldr.row()
+        hdrldr_switch.prop(context.scene.blfoil, 'blfoil_sky_hdrldr', expand=True)
+        
+        compr_sw = hdrldr.row()
+        compr_sw.prop(context.scene.blfoil, 'blfoil_sky_hdr_compressed', text='Compressed 8 bit HDR')
+        
+        # maybe make it appear and disappear ??
+        if bpy.context.scene.blfoil.blfoil_sky_hdrldr == 'LDR':
+            compr_sw.enabled = False
         else:
-            info = layout.column(align=False)
-            info.label(text='no vmf')
+            compr_sw.enabled = True
+        
+        
+        overwrite_sh = layout.column(align=False)
+        overwrite_sh.prop(context.scene.blfoil, 'blfoil_sky_projectonly', text='Project only')
+        overwrite_sh.prop(context.scene.blfoil, 'blfoil_sky_overwrite_shit', text='Overwrite')
 
-
+        mabaker_op = layout.column(align=False)
+        self.layout.operator('mesh.blfoil_bake_skybox_opr',
+            text='Compile skybox'
+        )
 # Registration
 
 def unmark_asset_button(self, context):
@@ -1167,7 +1445,9 @@ def register():
     bpy.utils.register_class(OBJECT_OT_vmf_export_foil)
     bpy.utils.register_class(VIEW3D_PT_blender_foil)
     bpy.utils.register_class(VIEW3D_PT_blender_foil_visgroups)
+    bpy.utils.register_class(VIEW3D_PT_blender_foil_skyboxer)
     bpy.utils.register_class(OBJECT_OT_export_arlights_vmf)
+    bpy.utils.register_class(OBJECT_OT_blfoil_bake_skybox_opr)
     # bpy.utils.register_manual_map(unmark_asset_manual_map)
     bpy.types.VIEW3D_MT_mesh_add.append(unmark_asset_button)
     # bpy.types.Scene.my_tool = PointerProperty(type=MySettings)
@@ -1187,9 +1467,11 @@ def unregister():
     bpy.utils.unregister_class(OBJECT_OT_vmf_export_foil)
     bpy.utils.unregister_class(VIEW3D_PT_blender_foil)
     bpy.utils.unregister_class(VIEW3D_PT_blender_foil_visgroups)
+    bpy.utils.unregister_class(VIEW3D_PT_blender_foil_skyboxer)
     bpy.utils.unregister_class(OBJECT_OT_unset_arlight)
     bpy.utils.unregister_class(OBJECT_OT_set_arlight)
     bpy.utils.unregister_class(OBJECT_OT_export_arlights_vmf)
+    bpy.utils.unregister_class(OBJECT_OT_blfoil_bake_skybox_opr)
     bpy.utils.unregister_class(OBJECT_OT_copy_arlight_conf)
     # bpy.utils.unregister_manual_map(unmark_asset_manual_map)
     bpy.types.VIEW3D_MT_mesh_add.remove(unmark_asset_button)
