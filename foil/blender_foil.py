@@ -870,13 +870,25 @@ def foil_compile_skybox(self, context):
     
     
     # Check if game path exists. If not - stop script execution and throw a warning
-    if os.path.isfile(os.path.join(Path(bpy.path.abspath(bpy.context.scene.blfoil.blfoil_sky_game_path)).parents[0], 'bin', 'vtex.exe')):
+    # but first - check if we use SourceOps Game path and if SourceOps is available at all
+    # check if we use source ops
+    if bpy.context.scene.blfoil.blfoil_sky_use_sourceops_gpath == True:
+        try:
+            sky_foil_gpath = bpy.context.scene.sourceops.game_items[bpy.context.scene.sourceops.game_index]['game']
+        except:
+            self.report({'WARNING'}, 'Unable to locate any SourceOps games. Go drink some tea')
+            # excep_raiser()
+            sky_foil_gpath = 'nil'
+    else:
+        sky_foil_gpath = bpy.path.abspath(bpy.context.scene.blfoil.blfoil_sky_game_path)
+    
+    
+    
+    if os.path.isfile(os.path.join(Path(bpy.path.abspath(sky_foil_gpath)).parents[0], 'bin', 'vtex.exe')):
         print('found vtex.exe and game')
     else:
         self.report({'WARNING'}, 'Game path invalid, go kys, fucker. Unable to locate vtex.exe')
         excep_raiser()
-    
-    
     
 
     # Check if X or Y is higher than 4096 in either dimension. 
@@ -894,11 +906,17 @@ def foil_compile_skybox(self, context):
     if foil_sky_dimx < 8 or foil_sky_dimy < 8:
         self.report({'WARNING'}, 'Requested texture is smaller than 8 on any axis. Stop execution and fuck you')
         excep_raiser()
+        
+    # check if not power of two
+    if math.log(foil_sky_dimx, 2).is_integer() and math.log(foil_sky_dimy, 2).is_integer():
+        print('Is power of 2. Noice COFFEE TABLE')
+    else:
+        self.report({'WARNING'}, 'Current implementation does not allow values of non-power of two')
+        excep_raiser()
     
     
     
     # Check the destination folder condition: If exists, but overwrite is False - stop and throw error
-    sky_foil_gpath = bpy.path.abspath(bpy.context.scene.blfoil.blfoil_sky_game_path)
     
     sky_foil_boxname = bpy.context.scene.blfoil.blfoil_sky_boxname
     
@@ -1336,6 +1354,8 @@ class blender_foil(PropertyGroup):
         # default = "nil"
         )
         
+        
+        
         # --------
         # Skyboxer
         # --------
@@ -1344,6 +1364,12 @@ class blender_foil(PropertyGroup):
         description='Has to point to a valid source engine game setup. half-life 2/ep2, where half-life 2/bin contains stuff like vtex.exe',
         default = 'blfoil_game_path - nil',
         subtype='DIR_PATH'
+        )
+        
+    blfoil_sky_use_sourceops_gpath: BoolProperty(
+        name='Use SourceOps game path',
+        description='My dick so big so really big, black holes move towards my huge dick',
+        default = False 
         )
         
     blfoil_sky_boxname : StringProperty(
@@ -1672,6 +1698,14 @@ class VIEW3D_PT_blender_foil_skyboxer(bpy.types.Panel):
         
         general_col = layout.column(align=False)
         general_col.label(text='Skybox exporter')
+        
+        usesrcops = general_col.row()
+        # todo: maybe make it disappear if not sourceops? make it disabled if no items in source ops?
+        usesrcops.prop(context.scene.blfoil, 'blfoil_sky_use_sourceops_gpath', text='Use SourceOps game path')
+        if hasattr(context.scene, 'sourceops'):
+            usesrcops.enabled = True
+        else:
+            usesrcops.enabled = False
         general_col.prop(context.scene.blfoil, 'blfoil_sky_game_path', text='Game path')
         general_col.prop(context.scene.blfoil, 'blfoil_sky_boxname', text='Skybox name')
         
@@ -1688,8 +1722,16 @@ class VIEW3D_PT_blender_foil_skyboxer(bpy.types.Panel):
         
         
         leave_src_files = layout.column(align=False)
-        leave_src_files.prop(context.scene.blfoil, 'blfoil_sky_keep_src_f_exr', text='Keep .exr src files')
-        leave_src_files.prop(context.scene.blfoil, 'blfoil_sky_keep_src_f_pfm', text='Keep .pfm src files')
+        if bpy.context.scene.blfoil.blfoil_sky_hdrldr == 'HDR': 
+            leave_src_files.prop(context.scene.blfoil, 'blfoil_sky_keep_src_f_exr', text='Keep .exr src files')
+            leave_src_files.prop(context.scene.blfoil, 'blfoil_sky_keep_src_f_pfm', text='Keep .pfm src files')
+        else:
+            leave_src_files.prop(context.scene.blfoil, 'blfoil_sky_keep_src_f_exr', text='Keep .tga src files')
+            dim_exrsrc = leave_src_files.row()
+            dim_exrsrc.enabled = False
+            dim_exrsrc.prop(context.scene.blfoil, 'blfoil_sky_keep_src_f_pfm', text='Keep .pfm src files')
+            
+            
         
         move_vtf_here = layout.column(align=False)
         leave_src_files.prop(context.scene.blfoil, 'blfoil_sky_moveto_afterb_path', text='Move/Copy')
