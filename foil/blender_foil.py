@@ -878,9 +878,7 @@ def foil_compile_skybox(self, context):
     
     
     
-    
-    
-    
+
     # Check if X or Y is higher than 4096 in either dimension. 
     # If so - Stop script execution and throw a warning 
     # Else - proceed with script execution
@@ -899,7 +897,7 @@ def foil_compile_skybox(self, context):
     
     
     
-    # Check the destination folder condition
+    # Check the destination folder condition: If exists, but overwrite is False - stop and throw error
     sky_foil_gpath = bpy.path.abspath(bpy.context.scene.blfoil.blfoil_sky_game_path)
     
     sky_foil_boxname = bpy.context.scene.blfoil.blfoil_sky_boxname
@@ -919,25 +917,9 @@ def foil_compile_skybox(self, context):
             shutil.rmtree(destination_folder_qcheck)
         except OSError as e:
             print("Error: %s : %s" % (destination_folder_qcheck, e.strerror))
-
-    # Check render capabilities
-    
-    # Check if render engine is set to Cycles. 
-    # If not - stop script execution and throw a warning
-    if bpy.context.scene.render.engine != 'CYCLES':
-        self.report({'WARNING'}, 'Baking is only possible with Cycles. Switch to Cycles and make sure that the render accelerator is set to CUDA')
-        excep_raiser()
-    
-
-    # Check if CUDA is not set. If set - stop script and throw an error
-    if bpy.context.preferences.addons['cycles'].preferences.compute_device_type == 'OPTIX':
-        self.report({'WARNING'}, 'Baking with optix is not supported - switch to CUDA or OPENCL')
-        excep_raiser()
-    
     
     
     # Run cleanup just in case :
-    # maybe make this a function?
     def docleanup():
         # delete all images
         for img in bpy.data.images:
@@ -959,7 +941,7 @@ def foil_compile_skybox(self, context):
         try:
             shutil.rmtree(os.path.join(this_blend_file, 'tmp_folder_liz3bkproc_delme'))
         except:
-            print('nothing to delete')
+            print('Local tmp folder does not exists. Dont delete')
         # todo: also delete object data n shit
         
 
@@ -969,11 +951,11 @@ def foil_compile_skybox(self, context):
     try:
         shutil.rmtree(destination_folder_qcheck)
     except:
-        print('tmp folder does not exist alr')
+        print('materialsrc folder does not exist alr')
         
     
     
-
+    
     # Create destination folders
     create_destination_folders = destination_folder_qcheck
     os.makedirs(os.path.join(create_destination_folders, sky_foil_boxname + '_exr_src'))
@@ -982,118 +964,106 @@ def foil_compile_skybox(self, context):
     
     
     # Since we're gonna mess around with the render settings - save them and bring them back later.
-    # I totally understand that nobody ever would need this, but leaving too much trash after baking is not elegant.
-    # Else - jump straight to projection.
-    if bpy.context.scene.blfoil.blfoil_sky_projectonly == False:
+    bpy.context.scene['liz3bkproc_delme_save_r_prefs'] = {
+        # Dimensions
+        'res_x': bpy.context.scene.render.resolution_x,
+        'res_y': bpy.context.scene.render.resolution_y,
+        'res_perc': bpy.context.scene.render.resolution_percentage,
         
-        if bpy.context.scene.world.name != None:
-            tiny_little_robot = bpy.context.scene.world
-        else:
-            tiny_little_robot = 'nil'
-            
-        bpy.context.scene['liz3bkproc_delme_save_r_prefs'] = {
-            # Dimensions
-            'res_x': bpy.context.scene.render.resolution_x,
-            'res_y': bpy.context.scene.render.resolution_y,
-            'res_perc': bpy.context.scene.render.resolution_percentage,
-            
-            'aspectx': bpy.context.scene.render.pixel_aspect_x,
-            'aspecty': bpy.context.scene.render.pixel_aspect_y,
-            
-            'render_region': bpy.context.scene.render.use_border,
-            
-            # Output mode
-            'render_filepath': bpy.context.scene.render.filepath,
-            'use_file_extension': bpy.context.scene.render.use_file_extension,
-            'use_render_cache': bpy.context.scene.render.use_render_cache,
-            'file_format': bpy.context.scene.render.image_settings.file_format,
-            'color_mode': bpy.context.scene.render.image_settings.color_mode,
-            'use_overwrite': bpy.context.scene.render.use_overwrite,
-            'use_placeholder': bpy.context.scene.render.use_placeholder,
-            'img_color_depth': bpy.context.scene.render.image_settings.color_depth,
-            'exr_codec': bpy.context.scene.render.image_settings.exr_codec,
-            'use_zbuffer': bpy.context.scene.render.image_settings.use_zbuffer,
-            'use_preview': bpy.context.scene.render.image_settings.use_preview,
-            'use_compositing': bpy.context.scene.render.use_compositing,
-            'use_sequencer': bpy.context.scene.render.use_sequencer,
-            'dither_intensity': bpy.context.scene.render.dither_intensity,
-            
-
-            'machinarium': tiny_little_robot
-            
-            # 'img_compression': bpy.context.scene.render.image_settings.compression,
-            # 'img_quality': bpy.context.scene.render.image_settings.quality,
-            # 'jpeg2k_codec': bpy.context.scene.render.image_settings.jpeg2k_codec,
-            # 'use_jpeg2k_cinema_preset': bpy.context.scene.render.image_settings.use_jpeg2k_cinema_preset,
-            # 'use_jpeg2k_cinema_48': bpy.context.scene.render.image_settings.use_jpeg2k_cinema_48,
-            # 'use_jpeg2k_ycc': bpy.context.scene.render.image_settings.use_jpeg2k_ycc,
-            # 'use_cineon_log': bpy.context.scene.render.image_settings.use_cineon_log,
-            
-        }
+        'aspectx': bpy.context.scene.render.pixel_aspect_x,
+        'aspecty': bpy.context.scene.render.pixel_aspect_y,
         
+        'render_region': bpy.context.scene.render.use_border,
         
-        # calc optimal 360 panorama size
-        # Check if any axis is of uneven size, e.g. 1023 and throw a warning if it is. Dont stop execution
-        if math.log(foil_sky_dimx, 2).is_integer() and math.log(foil_sky_dimy, 2).is_integer():
-            print('Is power of 2. Noice COFFEE TABLE')
-        else:
-            self.report({'WARNING'}, 'Current implementation does not allow values of non-power of two')
-            raise Exception('THIS IS AN ARTIFICIALLY TRIGGERED ERROR. IGNORE THIS!!!!!!!!!!! CHECK THE INFO PANEL!!!!')
+        # Output mode
+        'render_filepath': bpy.context.scene.render.filepath,
+        'use_file_extension': bpy.context.scene.render.use_file_extension,
+        'use_render_cache': bpy.context.scene.render.use_render_cache,
+        'file_format': bpy.context.scene.render.image_settings.file_format,
+        'color_mode': bpy.context.scene.render.image_settings.color_mode,
+        'use_overwrite': bpy.context.scene.render.use_overwrite,
+        'use_placeholder': bpy.context.scene.render.use_placeholder,
+        'img_color_depth': bpy.context.scene.render.image_settings.color_depth,
+        'exr_codec': bpy.context.scene.render.image_settings.exr_codec,
+        'use_zbuffer': bpy.context.scene.render.image_settings.use_zbuffer,
+        'use_preview': bpy.context.scene.render.image_settings.use_preview,
+        'use_compositing': bpy.context.scene.render.use_compositing,
+        'use_sequencer': bpy.context.scene.render.use_sequencer,
+        'dither_intensity': bpy.context.scene.render.dither_intensity
         
-        # calc panorama X
-        if foil_sky_dimx * 4 > 4096:
-            tmp_panorama_cx = 4096
-        else:
-            tmp_panorama_cx = foil_sky_dimx * 4
+    }
     
-        # calc panorama Y
-        tmp_panorama_cy = tmp_panorama_cx / 2
-        
-        
-        
-        # Create panoramic camera
-        pano_camera_data = bpy.data.cameras.new(name='panocam_liz3bkproc_delme')
-        
-        pano_camera_data.type = 'PANO'
-        pano_camera_data.clip_end = 100000.0 
-        pano_camera_data.cycles.panorama_type = 'EQUIRECTANGULAR'
-        
-        pano_camera_object = bpy.data.objects.new('panocam_liz3bkproc_delme', pano_camera_data)
-        bpy.context.scene.collection.objects.link(pano_camera_object)
+    
+    
+    # Render the shit
+    
+    sidez = ['bk:90:0:-90', 'dn:0:0:-180', 'ft:90:0:90', 'lf:90:0:0', 'rt:90:0:-180', 'up:180:0:180']
+    
+    # create camera
+    sky_camera_data = bpy.data.cameras.new(name='obj_data_skycam_liz3bkproc_delme')
+    
+    sky_camera_data.type = 'PERSP'
+    sky_camera_data.clip_end = 100000.0 
+    sky_camera_data.lens = 64
+    sky_camera_data.sensor_width = 128
+    
+    sky_camera_object = bpy.data.objects.new('skycam_liz3bkproc_delme', sky_camera_data)
+    bpy.context.scene.collection.objects.link(sky_camera_object)
 
-        pano_camera_object.rotation_euler[0] = math.radians(90)
-        pano_camera_object.rotation_euler[2] = math.radians(180)
+    # make this camer active
+    bpy.context.scene.camera = sky_camera_object
+
+
+    
+    for side in sidez:
+        theside = side.split(':')[0]
+    
+        csidex = int(side.split(':')[1])
+        csidey = int(side.split(':')[2])
+        csidez = int(side.split(':')[3])
+    
+        sky_camera_object.rotation_euler[0] = math.radians(csidex)
+        sky_camera_object.rotation_euler[1] = math.radians(csidey)
+        sky_camera_object.rotation_euler[2] = math.radians(csidez)
         
-        # make this camera active 
-        bpy.context.scene.camera = pano_camera_object
+        # Setup render settings
+        
+
+        # Set render size
+        if bpy.context.scene.blfoil.blfoil_sky_maxsize == True:
+            # if theside == 
+            print('asdasd')
+        else:
+            bpy.context.scene.render.resolution_x = foil_sky_dimx
+            bpy.context.scene.render.resolution_y = foil_sky_dimy
+        
+        # set output dir per side
+        if bpy.context.scene.blfoil.blfoil_sky_hdrldr == 'HDR':
+            filepathed = os.path.join(sky_foil_gpath, 'materialsrc', 'skybox', sky_foil_boxname, sky_foil_boxname + '_exr_src', sky_foil_boxname + theside + '.exr')
+        else:
+            filepathed = os.path.join(sky_foil_gpath, 'materialsrc', 'skybox', sky_foil_boxname, sky_foil_boxname + '_generated_pfm', sky_foil_boxname + theside)
         
         
-        # Set render size to calculated shit
-        bpy.context.scene.render.resolution_x = tmp_panorama_cx
-        bpy.context.scene.render.resolution_y = tmp_panorama_cy
-        
-        
-        
-        # Set output method to required and create temp dir
-        
-        # create tmp dir
-        os.makedirs(os.path.join(this_blend_file, 'tmp_folder_liz3bkproc_delme'))
-        
-        # set output dir
-        bpy.context.scene.render.filepath = os.path.join(this_blend_file, 'tmp_folder_liz3bkproc_delme', 'temp_panorama_liz3bkproc_delme')
+        bpy.context.scene.render.filepath = filepathed
         
         # set output prefs
+        if bpy.context.scene.blfoil.blfoil_sky_hdrldr == 'HDR':
+            bpy.context.scene.render.image_settings.file_format = 'OPEN_EXR'
+            bpy.context.scene.render.image_settings.color_mode = 'RGB'
+            bpy.context.scene.render.image_settings.color_depth = '32'
+            bpy.context.scene.render.image_settings.exr_codec = 'ZIP'
+            bpy.context.scene.render.image_settings.use_zbuffer = False
+            bpy.context.scene.render.image_settings.use_preview = False
+        else:
+            bpy.context.scene.render.image_settings.file_format = 'TARGA_RAW'
+            bpy.context.scene.render.image_settings.color_mode = 'RGB'
+            
         bpy.context.scene.render.use_file_extension = True
         bpy.context.scene.render.use_render_cache = False
-        bpy.context.scene.render.image_settings.file_format = 'OPEN_EXR'
-        bpy.context.scene.render.image_settings.color_mode = 'RGB'
-        bpy.context.scene.render.image_settings.color_depth = '32'
-        bpy.context.scene.render.image_settings.exr_codec = 'NONE'
-        bpy.context.scene.render.image_settings.use_zbuffer = False
-        bpy.context.scene.render.image_settings.use_preview = False
         bpy.context.scene.render.use_overwrite = True
         bpy.context.scene.render.use_placeholder = False
-        
+            
+            
         # set sequencer to false and dither to 1
         bpy.context.scene.render.use_sequencer = False
         bpy.context.scene.render.use_compositing = True
@@ -1102,207 +1072,136 @@ def foil_compile_skybox(self, context):
         
         # Render
         bpy.ops.render.render(write_still = 1)
-        
-        # Delete panoramic camera
-        bpy.data.objects.remove(pano_camera_object)
-        
-        
-        
-        # Setup skybox world
-        # maybe make this a function ?
-        
-        biomech_world = bpy.data.worlds.new(name=('machinarium_liz3bkproc_delme'))
-        biomech_world.use_nodes = True
-        biomech_world.use_fake_user = False
-        
-        biomech_nodes = biomech_world.node_tree.nodes
-        biomech_links = biomech_world.node_tree.links
-        biomech_background = biomech_nodes.get('Background')
-        # todo: make this more reliable: Create world, delete all nodes, create world output, background shader...
-        
-        biomech_envtex_node = biomech_nodes.new('ShaderNodeTexEnvironment')
-        biomech_envtex_node.location = (-300, 300)
-        
-        biomech_envtex_node.image = bpy.data.images.load(os.path.join(this_blend_file, 'tmp_folder_liz3bkproc_delme', 'temp_panorama_liz3bkproc_delme.exr'))
-        # metaln_texnode.image.colorspace_settings.name = 'Linear'
-        biomech_links.new(biomech_background.inputs['Color'], biomech_envtex_node.outputs['Color'])
-        
-        # set world as active
-        bpy.context.scene.world = biomech_world
-        
-    
-    # Setup projection target sphere
-    
-    # append the cuboid
-    panocube = 'E:\\!!Blend_Projects\\scripts\\panorama_cube\\panorama_cube.blend'
-    obj_name = 'liz3_target_env_bake_liz3bkproc_delme'
-    obj_path = 'Object'
-
-    bpy.ops.wm.append(
-        filepath=os.path.join(panocube, obj_path, obj_name),
-        directory=os.path.join(panocube, obj_path),
-        filename=obj_name,
-        link=False,
-        instance_collections=False,
-        use_recursive=True,
-        instance_object_data=False
-        )
-    # selector shortcut for the sphere target bake
-    tgarget_sphere_kvas = bpy.data.objects['liz3_target_env_bake_liz3bkproc_delme']
     
     
-    for qmat in tgarget_sphere_kvas.material_slots:
-        # delete all nodes from the material
-        for qmnodes in qmat.material.node_tree.nodes:
-            qmat.material.node_tree.nodes.remove( qmnodes )
-            
-        
-        # get current side
-        cmatside = qmat.name.split('_')[-1]
-        
-        # create a texture image to bake to
-        qimage = bpy.data.images.new('liz3bkproc_delme_' + sky_foil_boxname + cmatside, alpha=False, width=foil_sky_dimx, height=foil_sky_dimy, float_buffer=True)
-        qimage.colorspace_settings.name = 'Linear'
-        filepathed = os.path.join(sky_foil_gpath, 'materialsrc', 'skybox', sky_foil_boxname, sky_foil_boxname + '_exr_src', sky_foil_boxname + cmatside + '.exr')
-
-        qimage.filepath = bpy.path.abspath(filepathed)
-        qimage.save()
-        qimage.file_format = 'OPEN_EXR'
-        qimage.use_half_precision = False
-        qimage.save()
-            
-        
-        # create a texture to bake to
-        qimgnode = qmat.material.node_tree.nodes.new("ShaderNodeTexImage")
-        qimgnode.image = qimage
-        qimgnode.image.colorspace_settings.name = 'Linear'
-        qmat.material.node_tree.nodes.active = qimgnode
-    
-    
-    # deselect all objects
-    for selected_obj in bpy.context.selected_objects:
-        selected_obj.select_set(False)
-    # select bake target and make active
-    bpy.context.view_layer.objects.active = tgarget_sphere_kvas
-    tgarget_sphere_kvas.select_set(True)
-    
-    
-    # set bake type to environment
-    # todo: it seems like it's not necessary to predefine the bake type
-    bpy.context.scene.cycles.bake_type = 'ENVIRONMENT'
-    
-    # set some checkboxes:
-    # todo: write their state down and bring it back later
-    bpy.context.scene.render.use_bake_multires = False
-    bpy.context.scene.render.bake.use_selected_to_active = False
-    bpy.context.scene.render.bake.target = 'IMAGE_TEXTURES'
-    bpy.context.scene.render.bake.margin = 0
-    bpy.context.scene.render.bake.use_clear = False
-    
-    # Bake
-    bpy.ops.object.bake(type='ENVIRONMENT', save_mode='EXTERNAL')
-    
-    # Save all images we baked to
-    for unsaved_img in bpy.data.images:
-        if sky_foil_boxname in unsaved_img.name:
-            unsaved_img.save()
+    # Remove camera once done rendering
+    bpy.data.objects.remove(sky_camera_object)
     
     
     
-    # txt file content
     
-    text_file_content = """pfm 1
+    
+    # Make some paths for later use
+    vtex_exe = os.path.join(Path(sky_foil_gpath).parents[0], 'bin', 'vtex.exe')
+    vtex_outdir = os.path.join(sky_foil_gpath, 'materials', 'skybox', sky_foil_boxname)
+    
+    
+    
+    
+    # create pfms and text files for vtex.exe
+    
+    
+    if bpy.context.scene.blfoil.blfoil_sky_hdrldr == 'HDR':
+        text_file_content = """pfm 1
 pfmscale 1
 nonice 1
 nocompress 1
 nolod 1
 nomip 1"""
 
-    # Convert all resulting .exr to pfm with magick.exe and create .txt files for vtex and write vmts
-    for qzmat in tgarget_sphere_kvas.material_slots:
-        czmatside = qzmat.name.split('_')[-1]
-        
-        # construct pfm output 
-        pfmoutpath = os.path.join(sky_foil_gpath, 'materialsrc', 'skybox', sky_foil_boxname, sky_foil_boxname + '_generated_pfm', sky_foil_boxname + '_hdr' + czmatside + '.pfm')
-    
-        # construct exr inp path
-        exrinpath = os.path.join(sky_foil_gpath, 'materialsrc', 'skybox', sky_foil_boxname, sky_foil_boxname + '_exr_src', sky_foil_boxname + czmatside + '.exr')
-    
-        # img magick path
-        hl2deathmatch = 'E:\\!!Blend_Projects\\env_baker\\util\\pfm2exr\\magick.exe'
-    
-    
-        # convert with image magick 
-        magic_args = [hl2deathmatch, exrinpath, '-endian', 'LSB', pfmoutpath]
-        subprocess.call(magic_args)
-        
-        
-        # write text file 
-        
-        # construct text file path
-        txtfile_path = os.path.join(sky_foil_gpath, 'materialsrc', 'skybox', sky_foil_boxname, sky_foil_boxname + '_generated_pfm', sky_foil_boxname + '_hdr' + czmatside + '.txt')
-        assrod = open(txtfile_path,'w')
-        assrod.write(text_file_content)
-        assrod.close()
-        
-
-    # execute vtex.exe
-    # maybe combine all the stuff in 1 for loop ?
-    vtex_exe = os.path.join(Path(sky_foil_gpath).parents[0], 'bin', 'vtex.exe')
-    vtex_outdir = os.path.join(sky_foil_gpath, 'materials', 'skybox', sky_foil_boxname)
-    
-    # delete target vtf path
-    try:
-        shutil.rmtree(vtex_outdir)
-    except:
-        print('no vtf path alr')
-        
-    for zmat in tgarget_sphere_kvas.material_slots:
-        zmatside = zmat.name.split('_')[-1]
-        txtfile_path = os.path.join(sky_foil_gpath, 'materialsrc', 'skybox', sky_foil_boxname, sky_foil_boxname + '_generated_pfm', sky_foil_boxname + '_hdr' + zmatside + '.txt')
-
-        vtex_args = [vtex_exe, '-nopause', '-outdir', vtex_outdir, txtfile_path]
-        subprocess.call(vtex_args)
-    
         vmt_content = """"sky"
 {
     "$hdrbasetexture" "heavytf2"
     "$basetexture"  "heavytf2"
 }"""
-    for vmat in tgarget_sphere_kvas.material_slots:
-        vmatside = vmat.name.split('_')[-1]
-        vmtfile_path = os.path.join(sky_foil_gpath, 'materials', 'skybox', sky_foil_boxname, sky_foil_boxname + '_hdr' + vmatside + '.vmt')
-        hdrbasepath = os.path.join('skybox', sky_foil_boxname, sky_foil_boxname + '_hdr' + vmatside)
+        if bpy.context.scene.blfoil.blfoil_sky_hdr_compressed == True:
+            text_file_content = """pfm 1
+pfmscale 1
+nonice 1
+nolod 1
+nomip 1"""
 
-        # vmt_alter = vmt_content.replace('heavytf2', hdrbasepath)
+            vmt_content = """"sky"
+{
+    "$hdrcompressedtexture" "heavytf2"
+    "$basetexture"  "heavytf2"
+}"""
+
+    else:
+        text_file_content = """nonice 1
+nocompress 1
+nolod 1
+nomip 1"""
+        vmt_content = """"sky"
+{
+    "$basetexture"  "heavytf2"
+}"""
+
+    
+    
+    
+    
+    
+    
+    try:
+        shutil.rmtree(vtex_outdir)
+    except:
+        print('no vtf path alr')
+    
+    
+    for tside in sidez:
+        # print('wtf')
+        current_side = tside.split(':')[0]
+        
+        # construct pfm output 
+        pfmoutpath = os.path.join(sky_foil_gpath, 'materialsrc', 'skybox', sky_foil_boxname, sky_foil_boxname + '_generated_pfm', sky_foil_boxname + '_hdr' + current_side + '.pfm')
+    
+        # construct exr inp path
+        exrinpath = os.path.join(sky_foil_gpath, 'materialsrc', 'skybox', sky_foil_boxname, sky_foil_boxname + '_exr_src', sky_foil_boxname + current_side + '.exr')
+    
+        # img magick path
+        hl2deathmatch = 'E:\\!!Blend_Projects\\env_baker\\util\\pfm2exr\\magick.exe'
+    
+        if bpy.context.scene.blfoil.blfoil_sky_hdrldr == 'HDR':
+            # convert with image magick 
+            magic_args = [hl2deathmatch, exrinpath, '-endian', 'LSB', pfmoutpath]
+            subprocess.call(magic_args)
+        
+        
+        # write text file 
+        
+        # construct text file path
+        if bpy.context.scene.blfoil.blfoil_sky_hdrldr == 'HDR':
+            txtfile_path = os.path.join(sky_foil_gpath, 'materialsrc', 'skybox', sky_foil_boxname, sky_foil_boxname + '_generated_pfm', sky_foil_boxname + '_hdr' + current_side + '.txt')
+        else:
+            txtfile_path = os.path.join(sky_foil_gpath, 'materialsrc', 'skybox', sky_foil_boxname, sky_foil_boxname + '_generated_pfm', sky_foil_boxname + current_side + '.txt')
+            
+        assrod = open(txtfile_path,'w')
+        assrod.write(text_file_content)
+        assrod.close()
+        
+        
+        
+        # convert to vtf
+        # maybe separate this into a separate for loop?
+        vtex_args = [vtex_exe, '-nopause', '-outdir', vtex_outdir, txtfile_path]
+        subprocess.call(vtex_args)
+        
+        
+        # write vmt
+        if bpy.context.scene.blfoil.blfoil_sky_hdrldr == 'HDR':
+            vmtfile_path = os.path.join(sky_foil_gpath, 'materials', 'skybox', sky_foil_boxname, sky_foil_boxname + '_hdr' + current_side + '.vmt')
+            hdrbasepath = os.path.join('skybox', sky_foil_boxname, sky_foil_boxname + '_hdr' + current_side)
+        else:
+            vmtfile_path = os.path.join(sky_foil_gpath, 'materials', 'skybox', sky_foil_boxname, sky_foil_boxname + current_side + '.vmt')
+            hdrbasepath = os.path.join('skybox', sky_foil_boxname, sky_foil_boxname + current_side)
         
         # write vmt file 
         urethral_dilator = open(vmtfile_path,'w')
         urethral_dilator.write(vmt_content.replace('heavytf2', hdrbasepath))
         urethral_dilator.close()
-        # print(vmt_content.replace('heavytf2', hdrbasepath))
-    
-    
-    # bring back world 
-    if bpy.context.scene['liz3bkproc_delme_save_r_prefs']['machinarium'] != 'nil':
-        bpy.context.scene.world = bpy.context.scene['liz3bkproc_delme_save_r_prefs']['machinarium']
-    
-    docleanup()
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
     
 
 
@@ -1500,6 +1399,12 @@ class blender_foil(PropertyGroup):
     blfoil_sky_overwrite_shit : BoolProperty(
         name='Overwrite',
         description='oral',
+        default = False 
+        )
+        
+    blfoil_sky_maxsize : BoolProperty(
+        name='Molest source engine',
+        description='Insert a 1 cm silicone rod into his urethra',
         default = False 
         )
 
@@ -1747,6 +1652,9 @@ class VIEW3D_PT_blender_foil_skyboxer(bpy.types.Panel):
         dimensions_col.prop(context.scene.blfoil, 'blfoil_sky_size_y', text='Skybox Y size')
         
         
+        dimensions_col.prop(context.scene.blfoil, 'blfoil_sky_maxsize', text='Maximum size')
+        
+        
         leave_src_files = layout.column(align=False)
         leave_src_files.prop(context.scene.blfoil, 'blfoil_sky_keep_src_f_exr', text='Keep .exr src files')
         leave_src_files.prop(context.scene.blfoil, 'blfoil_sky_keep_src_f_pfm', text='Keep .pfm src files')
@@ -1770,7 +1678,7 @@ class VIEW3D_PT_blender_foil_skyboxer(bpy.types.Panel):
         
         
         overwrite_sh = layout.column(align=False)
-        overwrite_sh.prop(context.scene.blfoil, 'blfoil_sky_projectonly', text='Project only')
+        # overwrite_sh.prop(context.scene.blfoil, 'blfoil_sky_projectonly', text='Project only')
         overwrite_sh.prop(context.scene.blfoil, 'blfoil_sky_overwrite_shit', text='Overwrite')
 
         mabaker_op = layout.column(align=False)
