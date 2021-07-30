@@ -676,6 +676,7 @@ def foil_export_area_lights(self, context):
             
             smoothgroup = ''
             
+            cuvc = []
             
             # write all verts
             for idx in f.vertices:
@@ -684,6 +685,7 @@ def foil_export_area_lights(self, context):
                 print('obj pos: ' + str(tvert) + ' world z pos: ' + str(fixpos[2]))
                 
                 vertz.append(str(round(fixpos[0], 4)) + ' ' + str(round(fixpos[1], 4)) + ' ' + str(round(fixpos[2], 4)))
+                cuvc.append((round(fixpos[0], 4), round(fixpos[1], 4), round(fixpos[2], 4)))
                 
             vertz.reverse()
             plane = str(plane) + str(vertz[0]) + ') (' + str(vertz[1]) + ') (' + str(vertz[2]) + ')"'
@@ -708,13 +710,48 @@ def foil_export_area_lights(self, context):
             """
             
             
+            #
+            # Calculate texture alignment
+            #
+            
+            # calc U
+            uwidth_a = cuvc[2][0] - cuvc[1][0]
+            uwidth_b = cuvc[2][1] - cuvc[1][1]
+            uwidth_c = cuvc[2][2] - cuvc[1][2]
+            
+            calc_uwidth = math.sqrt(uwidth_a * uwidth_a + uwidth_b * uwidth_b + uwidth_c * uwidth_c)
+            
+            calc_ux = uwidth_a / calc_uwidth
+            calc_uy = uwidth_b / calc_uwidth
+            calc_uz = uwidth_c / calc_uwidth
+            
+            
+            # calc V
+            vwidth_a = cuvc[0][0] - cuvc[1][0]
+            vwidth_b = cuvc[0][1] - cuvc[1][1]
+            vwidth_c = cuvc[0][2] - cuvc[1][2]
+            
+            calc_vwidth = math.sqrt(vwidth_a * vwidth_a + vwidth_b * vwidth_b + vwidth_c * vwidth_c)
+            
+            calc_vx = vwidth_a / calc_vwidth
+            calc_vy = vwidth_b / calc_vwidth
+            calc_vz = vwidth_c / calc_vwidth
+            
+            print('ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ')
+            print(str(calc_vx) + ' ' + str(calc_vy) + ' ' + str(calc_vz))
+            print(str(calc_ux) + ' ' + str(calc_uy) + ' ' + str(calc_uz))
+            
+            construct_u = str(round(calc_ux, 3)) + ' ' + str(round(calc_uy, 3)) + ' ' + str(round(calc_uz, 3))
+            construct_v = str(round(calc_vx, 3)) + ' ' + str(round(calc_vy, 3)) + ' ' + str(round(calc_vz, 3))
+            
+            
             
             # construct face
-            # todo: embed mark code into the texture translation number
+            
             if f_indx == 4:
                 makeface = 'side\n{' + '\n    ' + str(plane) + '\n    ' + str(hpp_vertz) + '\n    ' + '"material" "' + str(lightsource) + '"\n    "uaxis" "[' + str(light_intensity) + ' ' + str(light_intensity) + ' ' + str(light_intensity) + ' 0] 0.25"\n    "vaxis" "[' + str(light_intensity) + ' ' + str(light_intensity) + ' ' + str(light_intensity) + ' 0] 0.25"\n    "rotation" "0"\n    "lightmapscale" "16"\n    "smoothing_groups" "-570425344"\n}'
             else:
-                makeface = 'side\n{' + '\n    ' + str(plane) + '\n    ' + str(hpp_vertz) + '\n    ' + '"material" "TOOLS/TOOLSNODRAW"\n    "uaxis" "[0 0 1 0] 0.25"\n    "vaxis" "[0 1 1 0] 0.25"\n    "rotation" "0"\n    "lightmapscale" "16"\n    "smoothing_groups" "0"\n}'
+                makeface = 'side\n{' + '\n    ' + str(plane) + '\n    ' + str(hpp_vertz) + '\n    ' + '"material" "TOOLS/TOOLSNODRAW"\n    "uaxis" "[' + construct_u + ' 0] 0.25"\n    "vaxis" "[' + construct_v + ' 0] 0.25"\n    "rotation" "0"\n    "lightmapscale" "16"\n    "smoothing_groups" "0"\n}'
             
             solid = str(solid) + '\n' + str(makeface)
             # print(str(makeface))
@@ -1504,6 +1541,18 @@ class blender_foil(PropertyGroup):
         description='Destroy his ass',
         default = False 
         )
+        
+    blfoil_sky_mkenvmap : BoolProperty(
+        name='Make envmap',
+        description='Pootis',
+        default = False 
+        )
+        
+    blfoil_sky_mkenvmap_only : BoolProperty(
+        name='Only envmap',
+        description='Pootis',
+        default = False 
+        )
 
 
 # shared object config 
@@ -1775,6 +1824,17 @@ class VIEW3D_PT_blender_foil_skyboxer(bpy.types.Panel):
         move_vtf_here = layout.column(align=False)
         leave_src_files.prop(context.scene.blfoil, 'blfoil_sky_moveto_afterb_path', text='Move/Copy')
         leave_src_files.prop(context.scene.blfoil, 'blfoil_sky_moveto_afterb_movecopy', text='Move')
+        
+        mkenvmap_r = layout.column(align=False)
+        mkenvmap_r.prop(context.scene.blfoil, 'blfoil_sky_mkenvmap', text='Make envmap')
+        
+        envmaponlyrow = mkenvmap_r.row()
+        if context.scene.blfoil.blfoil_sky_mkenvmap == True:
+            envmaponlyrow.enabled = True
+        else:
+            envmaponlyrow.enabled = False
+        envmaponlyrow.prop(context.scene.blfoil, 'blfoil_sky_mkenvmap_only', text='Envmap only')
+        
         
         hdrldr = layout.column(align=False)
         hdrldr_switch = hdrldr.row()
