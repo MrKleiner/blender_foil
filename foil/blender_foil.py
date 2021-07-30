@@ -1,13 +1,13 @@
 bl_info = {
-    "name": "Blender Foil",
-    "author": "MrKleiner",
-    "version": (1, 0),
-    "blender": (2, 93, 1),
-    "location": "N menu",
-    "description": "",
-    "warning": "",
-    "doc_url": "",
-    "category": "Add Mesh",
+    'name': 'Blender Foil',
+    'author': 'MrKleiner',
+    'version': (1, 0),
+    'blender': (2, 93, 1),
+    'location': 'N menu',
+    'description': '',
+    'warning': '',
+    'doc_url': '',
+    'category': 'Add Mesh',
 }
 
 import bpy
@@ -990,6 +990,7 @@ def foil_compile_skybox(self, context):
         'use_compositing': bpy.context.scene.render.use_compositing,
         'use_sequencer': bpy.context.scene.render.use_sequencer,
         'dither_intensity': bpy.context.scene.render.dither_intensity
+        # TODO: MAKE OLD CAMERA ACTIE AGAIN
         
     }
     
@@ -1025,17 +1026,51 @@ def foil_compile_skybox(self, context):
         sky_camera_object.rotation_euler[0] = math.radians(csidex)
         sky_camera_object.rotation_euler[1] = math.radians(csidey)
         sky_camera_object.rotation_euler[2] = math.radians(csidez)
-        
+    
         # Setup render settings
         
 
         # Set render size
-        if bpy.context.scene.blfoil.blfoil_sky_maxsize == True:
-            # if theside == 
-            print('asdasd')
+        if bpy.context.scene.blfoil.blfoil_sky_nobottom == True:
+            if theside == 'dn':
+                bpy.context.scene.render.resolution_x = 8
+                bpy.context.scene.render.resolution_y = 8
+            else:
+                bpy.context.scene.render.resolution_x = foil_sky_dimx
+                bpy.context.scene.render.resolution_y = foil_sky_dimy
         else:
             bpy.context.scene.render.resolution_x = foil_sky_dimx
             bpy.context.scene.render.resolution_y = foil_sky_dimy
+        
+        
+        
+        
+        # adjust camera if half the size
+        if foil_sky_dimy == foil_sky_dimx / 2:
+            print('dimy = dimx/2')
+            if theside == 'dn' or theside == 'up':
+                
+                sky_camera_data.shift_y = 0
+                sky_camera_data.shift_x = 0
+                bpy.context.scene.render.resolution_x = foil_sky_dimx
+                bpy.context.scene.render.resolution_y = foil_sky_dimx
+                print('triggered dn or up side = ' + theside + ' set to ' + str(bpy.context.scene.render.resolution_y) + ' ' + str(bpy.context.scene.render.resolution_x))
+            else:
+                sky_camera_data.shift_y = 0.25
+                sky_camera_data.shift_x = 0
+                bpy.context.scene.render.resolution_x = foil_sky_dimx
+                bpy.context.scene.render.resolution_y = foil_sky_dimy
+                print('triggered else side = ' + theside + ' set to ' + str(bpy.context.scene.render.resolution_y) + ' ' + str(bpy.context.scene.render.resolution_x))
+
+            if theside == 'dn':
+                bpy.context.scene.render.resolution_x = 8
+                bpy.context.scene.render.resolution_y = 8
+                print('triggered dn side = ' + theside + ' set to ' + str(bpy.context.scene.render.resolution_y) + ' ' + str(bpy.context.scene.render.resolution_x))
+ 
+        
+        print('final side = ' + theside + ' set to ' + str(bpy.context.scene.render.resolution_y) + ' ' + str(bpy.context.scene.render.resolution_x))
+
+        
         
         # set output dir per side
         if bpy.context.scene.blfoil.blfoil_sky_hdrldr == 'HDR':
@@ -1090,49 +1125,6 @@ def foil_compile_skybox(self, context):
     
     # create pfms and text files for vtex.exe
     
-    
-    if bpy.context.scene.blfoil.blfoil_sky_hdrldr == 'HDR':
-        text_file_content = """pfm 1
-pfmscale 1
-nonice 1
-nocompress 1
-nolod 1
-nomip 1"""
-
-        vmt_content = """"sky"
-{
-    "$hdrbasetexture" "heavytf2"
-    "$basetexture"  "heavytf2"
-}"""
-        if bpy.context.scene.blfoil.blfoil_sky_hdr_compressed == True:
-            text_file_content = """pfm 1
-pfmscale 1
-nonice 1
-nolod 1
-nomip 1"""
-
-            vmt_content = """"sky"
-{
-    "$hdrcompressedtexture" "heavytf2"
-    "$basetexture"  "heavytf2"
-}"""
-
-    else:
-        text_file_content = """nonice 1
-nocompress 1
-nolod 1
-nomip 1"""
-        vmt_content = """"sky"
-{
-    "$basetexture"  "heavytf2"
-}"""
-
-    
-    
-    
-    
-    
-    
     try:
         shutil.rmtree(vtex_outdir)
     except:
@@ -1140,7 +1132,7 @@ nomip 1"""
     
     
     for tside in sidez:
-        # print('wtf')
+
         current_side = tside.split(':')[0]
         
         # construct pfm output 
@@ -1158,16 +1150,37 @@ nomip 1"""
             subprocess.call(magic_args)
         
         
+        
         # write text file 
         
-        # construct text file path
+        text_file_content = """nolod 1
+nomip 1
+nonice 1"""
+        
+        vmt_content = """"sky"
+{
+
+}"""
+        write_text_file_content = text_file_content.splitlines()
+        write_vmt_content = vmt_content.splitlines()
+
+        # construct text file path and text file
         if bpy.context.scene.blfoil.blfoil_sky_hdrldr == 'HDR':
             txtfile_path = os.path.join(sky_foil_gpath, 'materialsrc', 'skybox', sky_foil_boxname, sky_foil_boxname + '_generated_pfm', sky_foil_boxname + '_hdr' + current_side + '.txt')
+            write_text_file_content.insert(0, 'pfm 1')
+            write_text_file_content.insert(-1, 'pfmscale 1')
+            if bpy.context.scene.blfoil.blfoil_sky_hdr_compressed == False:
+                write_text_file_content.insert(-1, 'nocompress 1')        
         else:
             txtfile_path = os.path.join(sky_foil_gpath, 'materialsrc', 'skybox', sky_foil_boxname, sky_foil_boxname + '_generated_pfm', sky_foil_boxname + current_side + '.txt')
-            
+            write_text_file_content.insert(-1, 'nocompress 1')
+
+        if foil_sky_dimy == foil_sky_dimx / 2 and current_side != 'up' and current_side != 'dn':
+            write_text_file_content.insert(-1, 'clamps 1')
+            write_text_file_content.insert(-1, 'clampt 1')
+
         assrod = open(txtfile_path,'w')
-        assrod.write(text_file_content)
+        assrod.write('\n'.join(write_text_file_content))
         assrod.close()
         
         
@@ -1182,13 +1195,25 @@ nomip 1"""
         if bpy.context.scene.blfoil.blfoil_sky_hdrldr == 'HDR':
             vmtfile_path = os.path.join(sky_foil_gpath, 'materials', 'skybox', sky_foil_boxname, sky_foil_boxname + '_hdr' + current_side + '.vmt')
             hdrbasepath = os.path.join('skybox', sky_foil_boxname, sky_foil_boxname + '_hdr' + current_side)
+            
+            if bpy.context.scene.blfoil.blfoil_sky_hdr_compressed == False:
+                write_vmt_content.insert(-1,'    "$hdrbasetexture" "' + hdrbasepath + '"')
+            else:
+                write_vmt_content.insert(-1,'    "$hdrcompressedtexture" "' + hdrbasepath + '"')
+                
+            write_vmt_content.insert(-1,'    "$basetexture" "' + hdrbasepath + '"')
+      
         else:
             vmtfile_path = os.path.join(sky_foil_gpath, 'materials', 'skybox', sky_foil_boxname, sky_foil_boxname + current_side + '.vmt')
             hdrbasepath = os.path.join('skybox', sky_foil_boxname, sky_foil_boxname + current_side)
+            write_vmt_content.insert(-1,'    "$basetexture" "' + hdrbasepath + '"')
+        
+        if foil_sky_dimy == foil_sky_dimx / 2 and current_side != 'up' and current_side != 'dn':
+            write_vmt_content.insert(-1,'	"$basetexturetransform" "center 0 0 scale 1 2 rotate 0 translate 0 0"')
         
         # write vmt file 
         urethral_dilator = open(vmtfile_path,'w')
-        urethral_dilator.write(vmt_content.replace('heavytf2', hdrbasepath))
+        urethral_dilator.write('\n'.join(write_vmt_content))
         urethral_dilator.close()
         
         
@@ -1386,7 +1411,8 @@ class blender_foil(PropertyGroup):
         
     blfoil_sky_hdr_compressed : BoolProperty(
         name='Compress into 8 bit + alpha',
-        description='Compress the shit like juicy tits',
+        # description='Compress the shit like juicy tits',
+        description='Lmfao are you serious? Your shit will look rubbish af',
         default = False
         )
         
@@ -1402,9 +1428,15 @@ class blender_foil(PropertyGroup):
         default = False 
         )
         
-    blfoil_sky_maxsize : BoolProperty(
-        name='Molest source engine',
-        description='Insert a 1 cm silicone rod into his urethra',
+    # blfoil_sky_maxsize : BoolProperty(
+        # name='Molest source engine',
+        # description='Insert a 1 cm silicone rod into his urethra',
+        # default = False 
+        # )
+        
+    blfoil_sky_nobottom : BoolProperty(
+        name='No bottom',
+        description='Destroy his ass',
         default = False 
         )
 
@@ -1652,7 +1684,7 @@ class VIEW3D_PT_blender_foil_skyboxer(bpy.types.Panel):
         dimensions_col.prop(context.scene.blfoil, 'blfoil_sky_size_y', text='Skybox Y size')
         
         
-        dimensions_col.prop(context.scene.blfoil, 'blfoil_sky_maxsize', text='Maximum size')
+        dimensions_col.prop(context.scene.blfoil, 'blfoil_sky_nobottom', text='No bottom')
         
         
         leave_src_files = layout.column(align=False)
@@ -1668,7 +1700,7 @@ class VIEW3D_PT_blender_foil_skyboxer(bpy.types.Panel):
         hdrldr_switch.prop(context.scene.blfoil, 'blfoil_sky_hdrldr', expand=True)
         
         compr_sw = hdrldr.row()
-        compr_sw.prop(context.scene.blfoil, 'blfoil_sky_hdr_compressed', text='Compressed 8 bit HDR')
+        compr_sw.prop(context.scene.blfoil, 'blfoil_sky_hdr_compressed', text='Compressed 8 bit HDR (make it look rubbish)')
         
         # maybe make it appear and disappear ??
         if bpy.context.scene.blfoil.blfoil_sky_hdrldr == 'LDR':
