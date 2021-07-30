@@ -978,6 +978,7 @@ def foil_compile_skybox(self, context):
     create_destination_folders = destination_folder_qcheck
     os.makedirs(os.path.join(create_destination_folders, sky_foil_boxname + '_exr_src'))
     os.makedirs(os.path.join(create_destination_folders, sky_foil_boxname + '_generated_pfm'))
+    os.makedirs(os.path.join(create_destination_folders, sky_foil_boxname + '_tga_src'))
     
     
     
@@ -1022,14 +1023,18 @@ def foil_compile_skybox(self, context):
     sky_camera_data = bpy.data.cameras.new(name='obj_data_skycam_liz3bkproc_delme')
     
     sky_camera_data.type = 'PERSP'
-    sky_camera_data.clip_end = 100000.0 
+    sky_camera_data.clip_end = 100000.0
+    # sky_camera_data.lens_unit = 'FOV'
+    # sky_camera_data.angle = 1.5707963705062866
     sky_camera_data.lens = 64
-    sky_camera_data.sensor_width = 128
+    sky_camera_data.sensor_width = 128.5
+    
+    
     
     sky_camera_object = bpy.data.objects.new('skycam_liz3bkproc_delme', sky_camera_data)
     bpy.context.scene.collection.objects.link(sky_camera_object)
 
-    # make this camer active
+    # make this camera active
     bpy.context.scene.camera = sky_camera_object
 
 
@@ -1125,14 +1130,39 @@ def foil_compile_skybox(self, context):
         
         # Render
         bpy.ops.render.render(write_still = 1)
+        
+        
+        # if HDR then we need stupid LDR fallbacks
+        # fuck them really - downscale them fuckers by a factor of fucking 2
+        # todo: finally predefine scene resolution x. or nah ?
+        if bpy.context.scene.blfoil.blfoil_sky_hdrldr == 'HDR':
+            bpy.context.scene.render.image_settings.file_format = 'TARGA_RAW'
+            bpy.context.scene.render.image_settings.color_mode = 'RGB'
+            bpy.context.scene.render.filepath = os.path.join(sky_foil_gpath, 'materialsrc', 'skybox', sky_foil_boxname, sky_foil_boxname + '_tga_src', sky_foil_boxname + theside)
+            bpy.context.scene.render.resolution_x = bpy.context.scene.render.resolution_x / 2
+            bpy.context.scene.render.resolution_y = bpy.context.scene.render.resolution_y / 2
+            bpy.ops.render.render(write_still = 1)
+        
+        
+        
+        
+        
+        
+        
+        
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     # Remove camera once done rendering
     bpy.data.objects.remove(sky_camera_object)
-    
-    
-    
-    
+
     
     # Make some paths for later use
     vtex_exe = os.path.join(Path(sky_foil_gpath).parents[0], 'bin', 'vtex.exe')
@@ -1174,11 +1204,17 @@ def foil_compile_skybox(self, context):
         text_file_content = """nolod 1
 nomip 1
 nonice 1"""
-        
+
         vmt_content = """"sky"
 {
 
 }"""
+
+        ldr_tga_txt = """nolod 1
+nomip 1
+nonice 1
+nocompress 1"""
+
         write_text_file_content = text_file_content.splitlines()
         write_vmt_content = vmt_content.splitlines()
 
@@ -1188,7 +1224,7 @@ nonice 1"""
             write_text_file_content.insert(0, 'pfm 1')
             write_text_file_content.insert(-1, 'pfmscale 1')
             if bpy.context.scene.blfoil.blfoil_sky_hdr_compressed == False:
-                write_text_file_content.insert(-1, 'nocompress 1')        
+                write_text_file_content.insert(-1, 'nocompress 1')
         else:
             txtfile_path = os.path.join(sky_foil_gpath, 'materialsrc', 'skybox', sky_foil_boxname, sky_foil_boxname + '_generated_pfm', sky_foil_boxname + current_side + '.txt')
             write_text_file_content.insert(-1, 'nocompress 1')
@@ -1201,7 +1237,10 @@ nonice 1"""
         assrod.write('\n'.join(write_text_file_content))
         assrod.close()
         
-        
+        # write ldr fallbacks
+        assrod_tga = open(txtfile_path.replace('_generated_pfm', '_tga_src').replace('_hdr', ''),'w')
+        assrod_tga.write(ldr_tga_txt)
+        assrod_tga.close()
         
         # convert to vtf
         # maybe separate this into a separate for loop?
@@ -1209,7 +1248,12 @@ nonice 1"""
         subprocess.call(vtex_args)
         
         
+        # convert ldr vtf
+        vtex_args = [vtex_exe, '-nopause', '-outdir', vtex_outdir, txtfile_path.replace('_generated_pfm', '_tga_src').replace('_hdr', '')]
+        subprocess.call(vtex_args)
+        
         # write vmt
+        ldrbasepath = os.path.join('skybox', sky_foil_boxname, sky_foil_boxname + current_side)
         if bpy.context.scene.blfoil.blfoil_sky_hdrldr == 'HDR':
             vmtfile_path = os.path.join(sky_foil_gpath, 'materials', 'skybox', sky_foil_boxname, sky_foil_boxname + '_hdr' + current_side + '.vmt')
             hdrbasepath = os.path.join('skybox', sky_foil_boxname, sky_foil_boxname + '_hdr' + current_side)
@@ -1219,12 +1263,11 @@ nonice 1"""
             else:
                 write_vmt_content.insert(-1,'    "$hdrcompressedtexture" "' + hdrbasepath + '"')
                 
-            write_vmt_content.insert(-1,'    "$basetexture" "' + hdrbasepath + '"')
+            write_vmt_content.insert(-1,'    "$basetexture" "' + ldrbasepath + '"')
       
         else:
             vmtfile_path = os.path.join(sky_foil_gpath, 'materials', 'skybox', sky_foil_boxname, sky_foil_boxname + current_side + '.vmt')
-            hdrbasepath = os.path.join('skybox', sky_foil_boxname, sky_foil_boxname + current_side)
-            write_vmt_content.insert(-1,'    "$basetexture" "' + hdrbasepath + '"')
+            write_vmt_content.insert(-1,'    "$basetexture" "' + ldrbasepath + '"')
         
         if foil_sky_dimy == foil_sky_dimx / 2 and current_side != 'up' and current_side != 'dn':
             write_vmt_content.insert(-1,'	"$basetexturetransform" "center 0 0 scale 1 2 rotate 0 translate 0 0"')
@@ -1235,11 +1278,7 @@ nonice 1"""
         urethral_dilator.close()
         
         
-        
-        
-        
-        
-        
+
         
         
         
