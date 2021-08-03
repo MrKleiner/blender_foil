@@ -7,6 +7,10 @@ Strings, floats, ints, boolean_enums
 Enums:
 	Enum_json_name:-:DEFAULT_BY_GUI_NAME
 		"option_hammer_real_val": 
+Enum write:
+	grab current state
+
+
 
 
 Spawnflags:

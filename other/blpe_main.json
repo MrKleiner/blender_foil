@@ -4,13 +4,15 @@
 			"World Model": "model:-: :-:Path to .mdl",
 			"Name": "targetname:-: :-:The name that other entities refer to this entity by.",
 			"Parent": "parentname:-: :-:The name of this entity's parent in the movement hierarchy. Entities with parents move with their parent.",
+			"Default Animation": "DefaultAnim:-: :-:The name of the idle animation that this prop will revert to whenever it finishes a random or forced animation.",
 			"Global Entity Name": "globalname:-: :-:Name by which this entity is linked to another entity in a different map. When the player transitions to a new map, entities in the new map with globalnames matching entities in the previous map will have the previous map's state copied over their state.",
 			"Damage Filter": "damagefilter:-: :-:Name of the filter entity that controls which entities can damage us."
 
 		},
 		{
-			"Skin": "skin:-:23:-:Some models have multiple versions of their textures, called skins. Set this to a number other than 0 to use that skin instead of the default.",
-			"Explosion Radius": "ExplodeRadius:-:99:-:If non-zero, when this entity breaks it will create an explosion with a radius of the specified amount. See also 'Explosion Damage'."
+			"Skin": "skin:-:0:-:Some models have multiple versions of their textures, called skins. Set this to a number other than 0 to use that skin instead of the default.",
+			"Explosion Damage": "ExplodeDamage:-:0:-:If non-zero, when this entity breaks it will create an explosion that causes the specified amount of damage. See also 'Explosion Radius'.",
+			"Explosion Radius": "ExplodeRadius:-:0:-:If non-zero, when this entity breaks it will create an explosion with a radius of the specified amount. See also 'Explosion Damage'."
 		},
 		{
 			"Scale": "modelscale:-:1.0:-:A multiplier for the size of the model."
@@ -61,6 +63,14 @@
 						"World Space Glow": "rendermode:-:9",
 						"Dont Render": "rendermode:-:10"
 					}
+			],
+			"Performance Mode:-:Full Gibs on All Platforms:-:DESCRIPTION": [
+					{
+						"Full Gibs on All Platforms": "PerformanceMode:-:2",
+						"Normal": "PerformanceMode:-:0",
+						"No Gibs": "PerformanceMode:-:1",
+						"Reduced gibs": "PerformanceMode:-:3"
+					}
 			]
 			
 		},
@@ -78,77 +88,45 @@
 			"32": "0:-:Break on Pressure"
 		}
 	],
+	
+	
 	"prop_static": [
 		{
 			"World Model": "model:-: :-:Path to .mdl",
-			"Name": "targetname:-: :-:The name that other entities refer to this entity by.",
-			"Parent": "parentname:-: :-:The name of this entity's parent in the movement hierarchy. Entities with parents move with their parent.",
-			"Global Entity Name": "globalname:-: :-:Name by which this entity is linked to another entity in a different map. When the player transitions to a new map, entities in the new map with globalnames matching entities in the previous map will have the previous map's state copied over their state.",
-			"Damage Filter": "damagefilter:-: :-:Name of the filter entity that controls which entities can damage us."
+			"Lighting Origin": "lightingorigin:-: :-:Select an info_lighting to specify a location to sample lighting from, instead of using this entity's origin."
 
 		},
 		{
-			"Skin": "skin:-:23:-:Some models have multiple versions of their textures, called skins. Set this to a number other than 0 to use that skin instead of the default.",
-			"Explosion Radius": "ExplodeRadius:-:99:-:If non-zero, when this entity breaks it will create an explosion with a radius of the specified amount. See also 'Explosion Damage'."
+			"Skin": "skin:-:0:-:Some models have multiple versions of their textures, called skins. Set this to a number other than 0 to use that skin instead of the default.",
+			"Start Fade Dist/Pixels": "fademindist:-:-1:-:Distance at which the prop starts to fade (<0 = use fademaxdist). If 'Screen Space Fade' is selected, this represents the number of pixels wide covered by the prop when it starts to fade.",
+			"End Fade Dist/Pixels": "fademaxdist:-:0:-:Maximum distance at which the prop is visible (0 = don't fade out). If 'Screen Space Fade' is selected, this represents the *minimum* number of pixels wide covered by the prop when it fades.",
+			"Fade Scale": "fadescale:-:1:-:If you specify a fade in the worldspawn, or if the engine is running under dx7 [hl2/ep1/portal] or dx8 [ep2/tf], then the engine will forcibly fade out props even if fademindist/fademaxdist isn't specified. This scale factor gives you some control over the fade. Using 0 here turns off the forcible fades. Numbers smaller than 1 cause the prop to fade out at further distances, and greater than 1 cause it to fade out at closer distances."
 		},
 		{
-			"Scale": "modelscale:-:1.0:-:A multiplier for the size of the model."
+
 		},
 		{
-			"Colors": "modelscale:-:1.0:-:A multiplier for the size of the model."
+
 		},
 		{
-			"NotCollisions:-:6:-:Description": [
+			"Collisions:-:Use Vphysics:-:Description": [
 					{
-						"Use Vphysics2": "solid:-:6",
-						"Use Boundiasdasng Box2": "solid:-:2",
-						"Use Vphysicsasd2": "solid:-:0"
-					}
-			],
-			"Render FX:-:6:-:Description": [
-					{
-						"Normal": "renderfx:-:0",
-						"Slow Pulse": "renderfx:-:1",
-						"Fast Pulse": "renderfx:-:2",
-						"Slow Wide Pulse": "renderfx:-:3",
-						"Fast Wide Pulse": "renderfx:-:4",
-						"Slow Strobe": "renderfx:-:9",
-						"Fast Strobe": "renderfx:-:10",
-						"Faster Strobe": "renderfx:-:11",
-						"Slow Flicker": "renderfx:-:12",
-						"Fast Flicker": "renderfx:-:13",
-						"Slow Fade Away": "renderfx:-:5",
-						"Fast Fade Away": "renderfx:-:6",
-						"Slow Become Solid": "renderfx:-:7",
-						"Fast Become Solid": "renderfx:-:8",
-						"Constant Glow": "renderfx:-:14",
-						"Distort": "renderfx:-:15",
-						"Hologram (Distort + fade)": "renderfx:-:16",
-						"Cull By Distance (TEST)": "renderfx:-:23",
-						"Spotlight FX": "renderfx:-:24",
-						"Fade Near":"renderfx:-:26"
-					}
-			],
-			"Render Mode:-:6:-:Description": [
-					{
-						"Normal": "rendermode:-:0",
-						"Color": "rendermode:-:1",
-						"Glow": "rendermode:-:3",
-						"Solid": "rendermode:-:4",
-						"Additive": "rendermode:-:5",
-						"Additive Fractional Frame": "rendermode:-:7",
-						"World Space Glow": "rendermode:-:9",
-						"Dont Render": "rendermode:-:10"
+						"Use Vphysics": "solid:-:6",
+						"Use Bounding Box": "solid:-:2",
+						"Not Solid": "solid:-:0"
 					}
 			]
 			
 		},
 		{
-			"Disable Shadows": "disableshadows:-:1.0:-: ",
-			"booleans": "modelscale:-:1.0:-:A multiplier for the size of the model."
+			"Disable Shadows": "disableshadows:-:0:-: ",
+			"Screen Space Fade": "disableshadows:-:0:-: ",
+			"Disable Vertex lighting": "disablevertexlighting:-:0:-: ",
+			"Disable Self-Shadowing with vertex lighting": "disableselfshadowing:-:0:-: ",
+			"Ignore surface normal for computing vertex lighting": "ignorenormals:-:0:-: "
 		},
 		{
-			"flags": "modelscale:-:1.0:-:A multiplier for the size of the model."
+
 		}
 	]
 }

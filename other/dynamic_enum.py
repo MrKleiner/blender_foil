@@ -650,15 +650,57 @@ def enum_returner_16(self, context):
 
 
 
+#
+# Targets
+#
 
+def enum_tgt_1(self, context):
+    bpy.context.active_object.ent_conf['ob_enum_tgt_1'] = bpy.context.active_object.ent_conf.pr_enum_1
 
+def enum_tgt_2(self, context):
+    bpy.context.active_object.ent_conf['ob_enum_tgt_2'] = bpy.context.active_object.ent_conf.pr_enum_2
 
+def enum_tgt_3(self, context):
+    bpy.context.active_object.ent_conf['ob_enum_tgt_3'] = bpy.context.active_object.ent_conf.pr_enum_3
 
+def enum_tgt_4(self, context):
+    bpy.context.active_object.ent_conf['ob_enum_tgt_4'] = bpy.context.active_object.ent_conf.pr_enum_4
 
+def enum_tgt_5(self, context):
+    bpy.context.active_object.ent_conf['ob_enum_tgt_5'] = bpy.context.active_object.ent_conf.pr_enum_5
 
+def enum_tgt_6(self, context):
+    bpy.context.active_object.ent_conf['ob_enum_tgt_6'] = bpy.context.active_object.ent_conf.pr_enum_6
 
+def enum_tgt_7(self, context):
+    bpy.context.active_object.ent_conf['ob_enum_tgt_7'] = bpy.context.active_object.ent_conf.pr_enum_7
 
+def enum_tgt_8(self, context):
+    bpy.context.active_object.ent_conf['ob_enum_tgt_8'] = bpy.context.active_object.ent_conf.pr_enum_8
 
+def enum_tgt_9(self, context):
+    bpy.context.active_object.ent_conf['ob_enum_tgt_9'] = bpy.context.active_object.ent_conf.pr_enum_9
+
+def enum_tgt_10(self, context):
+    bpy.context.active_object.ent_conf['ob_enum_tgt_10'] = bpy.context.active_object.ent_conf.pr_enum_10
+
+def enum_tgt_11(self, context):
+    bpy.context.active_object.ent_conf['ob_enum_tgt_11'] = bpy.context.active_object.ent_conf.pr_enum_11
+
+def enum_tgt_12(self, context):
+    bpy.context.active_object.ent_conf['ob_enum_tgt_12'] = bpy.context.active_object.ent_conf.pr_enum_12
+
+def enum_tgt_13(self, context):
+    bpy.context.active_object.ent_conf['ob_enum_tgt_13'] = bpy.context.active_object.ent_conf.pr_enum_13
+
+def enum_tgt_14(self, context):
+    bpy.context.active_object.ent_conf['ob_enum_tgt_14'] = bpy.context.active_object.ent_conf.pr_enum_14
+
+def enum_tgt_15(self, context):
+    bpy.context.active_object.ent_conf['ob_enum_tgt_15'] = bpy.context.active_object.ent_conf.pr_enum_15
+
+def enum_tgt_16(self, context):
+    bpy.context.active_object.ent_conf['ob_enum_tgt_16'] = bpy.context.active_object.ent_conf.pr_enum_16
 
 
 
@@ -850,9 +892,12 @@ def set_obj_ent(self, context):
 
         # set enums to default.
         for enum_j_idx, enum_pr in enumerate(prop_ents[cent_type][4]):
-            obj.ent_conf['pr_enum_' + str(enum_j_idx + 1)] = enum_pr.split(':-:')[1]
-            
-            
+            # obj.ent_conf['pr_enum_' + str(enum_j_idx + 1)] = enum_pr.split(':-:')[1]
+            obj.ent_conf['ob_enum_tgt_' + str(enum_j_idx + 1)] = prop_ents[cent_type][4][enum_pr][0][enum_pr.split(':-:')[1]]
+            obj.ent_conf['pr_enum_' + str(enum_j_idx + 1)] = prop_ents[cent_type][4][enum_pr][0][enum_pr.split(':-:')[1]]
+            # print('set def idx ' + str(enum_j_idx) + ' enum to: ' + '"' + str(prop_ents[cent_type][4][enum_pr][0][enum_pr.split(':-:')[1]]) + '"')
+        
+
         # set enum bools to default.
         for enum_bool_j_idx, enum_bool_pr in enumerate(prop_ents[cent_type][5]):
             obj.ent_conf['pr_enum_bool_' + str(enum_bool_j_idx + 1)] = eval_state(prop_ents[cent_type][5][enum_bool_pr].split(':-:')[1])
@@ -908,8 +953,182 @@ def eval_spawnflags(self, context):
         
         obj.ent_conf['l3_ent_sflags'] = calculated_bytes
         print('calculated flags are: ' + str(calculated_bytes))
+    
+        
+
+
+
+def test_export_v1(self, context):
+    print('exec')
+    
+    def return_1_0(state):
+        if state == True:
+            return 1
+        if state == False:
+            return 0
+        if state != False and state != True:
+            return 0
+    
+    
+    radpath = pathlib.Path(bpy.context.scene.blents.dn_str)
+    entfile = open(radpath)
+    entjson = entfile.read()
+    
+    # all possible ents
+    prop_ents = json.loads(entjson)
+    
+    
+    cbt_victim = [obj for obj in bpy.data.objects if len(obj.ent_conf.obj_ent_type) > 3 and obj.ent_conf.obj_ent_type != 'nil']
+
+    print(cbt_victim)
+
+    
+    constructed_ents = []
+    
+    for cbt in cbt_victim:
+        mk_ent = []
+        
+        print('processing object: ' + str(cbt))
+        
+        cent_type = cbt.ent_conf.obj_ent_type
+        
+        # write shared
+        mk_ent.append('entity\n{\n')
+        mk_ent.append('\t' + '"classname" "' + cent_type + '"\n')
+        mk_ent.append('\t' + '"liz3" "1"\n')
+        
+        locx = str(round(cbt.matrix_world[0][3], 4))
+        locy = str(round(cbt.matrix_world[1][3], 4))
+        locz = str(round(cbt.matrix_world[2][3], 4))
+        cbtloc = locx + ' ' + locy + ' ' + locz
+        mk_ent.append('\t' + '"origin" "' + cbtloc + '"\n')
         
         
+        # write strings
+        for str_j_idx, str_pr in enumerate(prop_ents[cent_type][0]):
+            # strings are never empty, unless you take them off
+            if cbt.ent_conf['pr_str_' + str(str_j_idx + 1)] != ' ':
+                mk_ent.append('\t' + '"' + prop_ents[cent_type][0][str_pr].split(':-:')[0] + '" "' + cbt.ent_conf['pr_str_' + str(str_j_idx + 1)] + '"\n')
+
+
+        # write ints
+        for int_j_idx, int_pr in enumerate(prop_ents[cent_type][1]):
+            mk_ent.append('\t' + '"' + prop_ents[cent_type][1][int_pr].split(':-:')[0] + '" "' + str(cbt.ent_conf['pr_int_' + str(int_j_idx + 1)]) + '"\n')
+        
+        
+        # write floats
+        for float_j_idx, float_pr in enumerate(prop_ents[cent_type][2]):
+            mk_ent.append('\t' + '"' + prop_ents[cent_type][2][float_pr].split(':-:')[0] + '" "' + str(round(cbt.ent_conf['pr_float_' + str(float_j_idx + 1)], 4)) + '"\n')
+
+
+        # write colors
+        for color_j_idx, color_pr in enumerate(prop_ents[cent_type][3]):
+            rgb = str(int(cbt.ent_conf['pr_color_' + str(color_j_idx + 1)][0] * 255)) + ' ' + str(int(cbt.ent_conf['pr_color_' + str(color_j_idx + 1)][1] * 255)) + ' ' + str(int(cbt.ent_conf['pr_color_' + str(color_j_idx + 1)][2] * 255))
+            mk_ent.append('\t' + '"' + prop_ents[cent_type][3][color_pr].split(':-:')[0] + '" "' + rgb + '"\n')
+
+
+        # write enums
+        for enum_j_idx, enum_pr in enumerate(prop_ents[cent_type][4]):
+            mk_ent.append('\t' + '"' + cbt.ent_conf['ob_enum_tgt_' + str(enum_j_idx + 1)].split(':-:')[0] + '" "' + cbt.ent_conf['ob_enum_tgt_' + str(enum_j_idx + 1)].split(':-:')[1] + '"\n')
+            # print(cbt.ent_conf['pr_enum_1'])
+
+            
+            
+        """
+        j_enum_amount = len(prop_ents[cent_type][4])
+        
+        if 1 <= j_enum_amount:
+            en1v = cbt.ent_conf.pr_enum_1.split(':-:')
+            mk_ent.append('\t' + '"' + en1v[0] + '" "' + en1v[1] + '"\n')
+
+        if 2 <= j_enum_amount:
+            print('pootis: ' + str(cbt.ent_conf.pr_enum_2))
+            en2v = cbt.ent_conf.pr_enum_2.split(':-:')
+            print('ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ')
+            print(en2v)
+            mk_ent.append('\t' + '"' + en2v[0] + '" "' + en2v[1] + '"\n')
+
+        if 3 <= j_enum_amount:
+            en3v = cbt.ent_conf.pr_enum_3.split(':-:')
+            mk_ent.append('\t' + '"' + en3v[0] + '" "' + en3v[1] + '"\n')
+
+        if 4 <= j_enum_amount:
+            en4v = cbt.ent_conf.pr_enum_4.split(':-:')
+            mk_ent.append('\t' + '"' + en4v[0] + '" "' + en4v[1] + '"\n')
+
+        if 5 <= j_enum_amount:
+            en5v = cbt.ent_conf.pr_enum_5.split(':-:')
+            mk_ent.append('\t' + '"' + en5v[0] + '" "' + en5v[1] + '"\n')
+
+        if 6 <= j_enum_amount:
+            en6v = cbt.ent_conf.pr_enum_6.split(':-:')
+            mk_ent.append('\t' + '"' + en6v[0] + '" "' + en6v[1] + '"\n')
+
+        if 7 <= j_enum_amount:
+            en7v = cbt.ent_conf.pr_enum_7.split(':-:')
+            mk_ent.append('\t' + '"' + en7v[0] + '" "' + en7v[1] + '"\n')
+
+        if 8 <= j_enum_amount:
+            en8v = cbt.ent_conf.pr_enum_8.split(':-:')
+            mk_ent.append('\t' + '"' + en8v[0] + '" "' + en8v[1] + '"\n')
+
+        if 9 <= j_enum_amount:
+            en9v = cbt.ent_conf.pr_enum_9.split(':-:')
+            mk_ent.append('\t' + '"' + en9v[0] + '" "' + en9v[1] + '"\n')
+
+        if 10 <= j_enum_amount:
+            en10v = cbt.ent_conf.pr_enum_10.split(':-:')
+            mk_ent.append('\t' + '"' + en10v[0] + '" "' + en10v[1] + '"\n')
+
+        if 11 <= j_enum_amount:
+            en11v = cbt.ent_conf.pr_enum_11.split(':-:')
+            mk_ent.append('\t' + '"' + en11v[0] + '" "' + en11v[1] + '"\n')
+
+        if 12 <= j_enum_amount:
+            en12v = cbt.ent_conf.pr_enum_12.split(':-:')
+            mk_ent.append('\t' + '"' + en12v[0] + '" "' + en12v[1] + '"\n')
+
+        if 13 <= j_enum_amount:
+            en13v = cbt.ent_conf.pr_enum_13.split(':-:')
+            mk_ent.append('\t' + '"' + en13v[0] + '" "' + en13v[1] + '"\n')
+
+        if 14 <= j_enum_amount:
+            en14v = cbt.ent_conf.pr_enum_14.split(':-:')
+            mk_ent.append('\t' + '"' + en14v[0] + '" "' + en14v[1] + '"\n')
+
+        if 15 <= j_enum_amount:
+            en15v = cbt.ent_conf.pr_enum_15.split(':-:')
+            mk_ent.append('\t' + '"' + en15v[0] + '" "' + en15v[1] + '"\n')
+
+        if 16 <= j_enum_amount:
+            en16v = cbt.ent_conf.pr_enum_16.split(':-:')
+            mk_ent.append('\t' + '"' + en16v[0] + '" "' + en16v[1] + '"\n')
+        """
+
+        # write enum booleans
+        for bool_enum_j_idx, bool_enum_pr in enumerate(prop_ents[cent_type][5]):
+            mk_ent.append('\t' + '"' + prop_ents[cent_type][5][bool_enum_pr].split(':-:')[0] + '" "' + str(int(cbt.ent_conf['pr_enum_bool_' + str(bool_enum_j_idx + 1)])) + '"\n')
+
+        # write sflags
+        mk_ent.append('\t' + '"spawnflags" "' + str(cbt.ent_conf['l3_ent_sflags']) + '"\n')
+
+        
+        # write closing        
+        mk_ent.append('}\n')
+
+        # write constructed ent
+        constructed_ents.append(''.join(mk_ent))
+    
+    print(constructed_ents)
+
+    fed = open('E:\\!!Blend_Projects\\scripts\\entity_exporter\\fuck.txt', 'w')
+    fed.write(''.join(constructed_ents))
+    fed.close()
+
+
+
+
+
 
 
 
@@ -934,7 +1153,14 @@ class OBJECT_OT_vmf_export_foil(Operator, AddObjectHelper):
 
 
 
+class OBJECT_OT_foil_test_export(Operator, AddObjectHelper):
+    bl_idname = 'mesh.foil_ent_export'
+    bl_label = 'Test export entities'
+    bl_options = {'REGISTER'}
 
+    def execute(self, context):
+        test_export_v1(self, context)
+        return {'FINISHED'}
 
 
 
@@ -1413,96 +1639,112 @@ class blender_ents_obj(PropertyGroup):
         items=enum_returner_1,
         name='Entity',
         description='I like bread',
+        update=enum_tgt_1
         )
         
     pr_enum_2 : EnumProperty(
         items=enum_returner_2,
         name='Entity',
-        description='I like bread'
+        description='I like bread',
+        update=enum_tgt_2
         )
         
     pr_enum_3 : EnumProperty(
         items=enum_returner_3,
         name='Entity',
         description='I like bread',
+        update=enum_tgt_3
         )
         
     pr_enum_4 : EnumProperty(
         items=enum_returner_4,
         name='Entity',
-        description='I like bread'
+        description='I like bread',
+        update=enum_tgt_4
         )
         
     pr_enum_5 : EnumProperty(
         items=enum_returner_5,
         name='Entity',
         description='I like bread',
+        update=enum_tgt_5
         )
         
     pr_enum_6 : EnumProperty(
         items=enum_returner_6,
         name='Entity',
-        description='I like bread'
+        description='I like bread',
+        update=enum_tgt_6
         )
         
     pr_enum_7 : EnumProperty(
         items=enum_returner_7,
         name='Entity',
         description='I like bread',
+        update=enum_tgt_7
         )
         
     pr_enum_8 : EnumProperty(
         items=enum_returner_8,
         name='Entity',
-        description='I like bread'
+        description='I like bread',
+        update=enum_tgt_8
         )
         
     pr_enum_9 : EnumProperty(
         items=enum_returner_9,
         name='Entity',
         description='I like bread',
+        update=enum_tgt_9
         )
         
     pr_enum_10 : EnumProperty(
         items=enum_returner_10,
         name='Entity',
-        description='I like bread'
+        description='I like bread',
+        update=enum_tgt_10
         )
         
     pr_enum_11 : EnumProperty(
         items=enum_returner_11,
         name='Entity',
         description='I like bread',
+        update=enum_tgt_11
         )
         
     pr_enum_12 : EnumProperty(
         items=enum_returner_12,
         name='Entity',
-        description='I like bread'
+        description='I like bread',
+        update=enum_tgt_12
         )
         
     pr_enum_13 : EnumProperty(
         items=enum_returner_13,
         name='Entity',
         description='I like bread',
+        update=enum_tgt_13
         )
         
     pr_enum_14 : EnumProperty(
         items=enum_returner_14,
         name='Entity',
-        description='I like bread'
+        description='I like bread',
+        update=enum_tgt_14
         )
         
     pr_enum_15 : EnumProperty(
         items=enum_returner_15,
         name='Entity',
         description='I like bread',
+        update=enum_tgt_15
         )
         
     pr_enum_16 : EnumProperty(
         items=enum_returner_16,
         name='Entity',
-        description='I like bread'
+        description='I like bread',
+        update=enum_tgt_16
         )
     
     
@@ -1897,6 +2139,10 @@ class VIEW3D_PT_blender_foil_dn_enum(bpy.types.Panel):
             text='Mark entity'
         )
         
+        dumpster.operator('mesh.foil_ent_export',
+            text='Test export'
+        )
+        
         
         # raw json test
         # if context.object != None:
@@ -2002,6 +2248,7 @@ def register():
     bpy.types.Scene.blents = PointerProperty(type=blender_ents)
     bpy.utils.register_class(VIEW3D_PT_blender_foil_dn_enum)
     bpy.utils.register_class(OBJECT_OT_vmf_export_foil)
+    bpy.utils.register_class(OBJECT_OT_foil_test_export)
     
     bpy.utils.register_class(blender_ents_obj)
     bpy.types.Object.ent_conf = PointerProperty(type=blender_ents_obj)
@@ -2012,6 +2259,7 @@ def unregister():
     bpy.utils.unregister_class(blender_ents_obj)
     bpy.utils.unregister_class(VIEW3D_PT_blender_foil_dn_enum)
     bpy.utils.unregister_class(OBJECT_OT_vmf_export_foil)
+    bpy.utils.unregister_class(OBJECT_OT_foil_test_export)
     del bpy.types.Scene.blents
     del bpy.types.Object.ent_conf
 
