@@ -422,12 +422,12 @@ def rewrite_rad_list():
         # pass
     # else:
         # return
-    
+    return
     # rad_path = 'E:\\Gamess\\steamapps\\common\\Half-Life 2\\hl2\\lights.rad'
-    if bpy.context.scene.blfoil.scene_radlights_path == 'nil' or len(bpy.context.scene.blfoil.scene_radlights_path) < 10:
-        return
-    else:
-        rad_path = str(bpy.context.scene.blfoil.scene_radlights_path)
+    # if bpy.context.scene.blfoil.scene_radlights_path == 'nil' or len(bpy.context.scene.blfoil.scene_radlights_path) < 10:
+        # return
+    # else:
+        # rad_path = str(bpy.context.scene.blfoil.scene_radlights_path)
 
 
 

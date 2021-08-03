@@ -1,0 +1,148 @@
+{
+	"prop_dynamic": [
+		{
+			"World Model": "model:-: :-:Path to .mdl",
+			"Name": "targetname:-: :-:The name that other entities refer to this entity by.",
+			"Parent": "parentname:-: :-:The name of this entity's parent in the movement hierarchy. Entities with parents move with their parent.",
+			"Global Entity Name": "globalname:-: :-:Name by which this entity is linked to another entity in a different map. When the player transitions to a new map, entities in the new map with globalnames matching entities in the previous map will have the previous map's state copied over their state.",
+			"Damage Filter": "damagefilter:-: :-:Name of the filter entity that controls which entities can damage us."
+
+		},
+		{
+			"Skin": "skin:-:23:-:Some models have multiple versions of their textures, called skins. Set this to a number other than 0 to use that skin instead of the default.",
+			"Explosion Radius": "ExplodeRadius:-:99:-:If non-zero, when this entity breaks it will create an explosion with a radius of the specified amount. See also 'Explosion Damage'."
+		},
+		{
+			"Scale": "modelscale:-:1.0:-:A multiplier for the size of the model."
+		},
+		{
+			"Colors": "modelscale:-:1.0:-:A multiplier for the size of the model."
+		},
+		{
+			"Collisions:-:Use Vphysics:-:Description": [
+					{
+						"Use Vphysics": "solid:-:6",
+						"Use Bounding Box": "solid:-:2",
+						"Not Solid": "solid:-:0"
+					}
+			],
+			"Render FX:-:Normal:-:Description": [
+					{
+						"Normal": "renderfx:-:0",
+						"Slow Pulse": "renderfx:-:1",
+						"Fast Pulse": "renderfx:-:2",
+						"Slow Wide Pulse": "renderfx:-:3",
+						"Fast Wide Pulse": "renderfx:-:4",
+						"Slow Strobe": "renderfx:-:9",
+						"Fast Strobe": "renderfx:-:10",
+						"Faster Strobe": "renderfx:-:11",
+						"Slow Flicker": "renderfx:-:12",
+						"Fast Flicker": "renderfx:-:13",
+						"Slow Fade Away": "renderfx:-:5",
+						"Fast Fade Away": "renderfx:-:6",
+						"Slow Become Solid": "renderfx:-:7",
+						"Fast Become Solid": "renderfx:-:8",
+						"Constant Glow": "renderfx:-:14",
+						"Distort": "renderfx:-:15",
+						"Hologram (Distort + fade)": "renderfx:-:16",
+						"Cull By Distance (TEST)": "renderfx:-:23",
+						"Spotlight FX": "renderfx:-:24",
+						"Fade Near":"renderfx:-:26"
+					}
+			],
+			"Render Mode:-:Normal:-:Description": [
+					{
+						"Normal": "rendermode:-:0",
+						"Color": "rendermode:-:1",
+						"Glow": "rendermode:-:3",
+						"Solid": "rendermode:-:4",
+						"Additive": "rendermode:-:5",
+						"Additive Fractional Frame": "rendermode:-:7",
+						"World Space Glow": "rendermode:-:9",
+						"Dont Render": "rendermode:-:10"
+					}
+			]
+			
+		},
+		{
+			"Disable Shadows": "disableshadows:-:1.0:-: ",
+			"booleans": "modelscale:-:1.0:-:A multiplier for the size of the model."
+		},
+		{
+			"flags": "modelscale:-:1.0:-:A multiplier for the size of the model."
+		}
+	],
+	"prop_static": [
+		{
+			"World Model": "model:-: :-:Path to .mdl",
+			"Name": "targetname:-: :-:The name that other entities refer to this entity by.",
+			"Parent": "parentname:-: :-:The name of this entity's parent in the movement hierarchy. Entities with parents move with their parent.",
+			"Global Entity Name": "globalname:-: :-:Name by which this entity is linked to another entity in a different map. When the player transitions to a new map, entities in the new map with globalnames matching entities in the previous map will have the previous map's state copied over their state.",
+			"Damage Filter": "damagefilter:-: :-:Name of the filter entity that controls which entities can damage us."
+
+		},
+		{
+			"Skin": "skin:-:23:-:Some models have multiple versions of their textures, called skins. Set this to a number other than 0 to use that skin instead of the default.",
+			"Explosion Radius": "ExplodeRadius:-:99:-:If non-zero, when this entity breaks it will create an explosion with a radius of the specified amount. See also 'Explosion Damage'."
+		},
+		{
+			"Scale": "modelscale:-:1.0:-:A multiplier for the size of the model."
+		},
+		{
+			"Colors": "modelscale:-:1.0:-:A multiplier for the size of the model."
+		},
+		{
+			"NotCollisions:-:6:-:Description": [
+					{
+						"Use Vphysics2": "solid:-:6",
+						"Use Boundiasdasng Box2": "solid:-:2",
+						"Use Vphysicsasd2": "solid:-:0"
+					}
+			],
+			"Render FX:-:6:-:Description": [
+					{
+						"Normal": "renderfx:-:0",
+						"Slow Pulse": "renderfx:-:1",
+						"Fast Pulse": "renderfx:-:2",
+						"Slow Wide Pulse": "renderfx:-:3",
+						"Fast Wide Pulse": "renderfx:-:4",
+						"Slow Strobe": "renderfx:-:9",
+						"Fast Strobe": "renderfx:-:10",
+						"Faster Strobe": "renderfx:-:11",
+						"Slow Flicker": "renderfx:-:12",
+						"Fast Flicker": "renderfx:-:13",
+						"Slow Fade Away": "renderfx:-:5",
+						"Fast Fade Away": "renderfx:-:6",
+						"Slow Become Solid": "renderfx:-:7",
+						"Fast Become Solid": "renderfx:-:8",
+						"Constant Glow": "renderfx:-:14",
+						"Distort": "renderfx:-:15",
+						"Hologram (Distort + fade)": "renderfx:-:16",
+						"Cull By Distance (TEST)": "renderfx:-:23",
+						"Spotlight FX": "renderfx:-:24",
+						"Fade Near":"renderfx:-:26"
+					}
+			],
+			"Render Mode:-:6:-:Description": [
+					{
+						"Normal": "rendermode:-:0",
+						"Color": "rendermode:-:1",
+						"Glow": "rendermode:-:3",
+						"Solid": "rendermode:-:4",
+						"Additive": "rendermode:-:5",
+						"Additive Fractional Frame": "rendermode:-:7",
+						"World Space Glow": "rendermode:-:9",
+						"Dont Render": "rendermode:-:10"
+					}
+			]
+			
+		},
+		{
+			"Disable Shadows": "disableshadows:-:1.0:-: ",
+			"booleans": "modelscale:-:1.0:-:A multiplier for the size of the model."
+		},
+		{
+			"flags": "modelscale:-:1.0:-:A multiplier for the size of the model."
+		}
+	]
+}

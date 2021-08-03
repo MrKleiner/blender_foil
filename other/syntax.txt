@@ -1,0 +1,24 @@
+Strings, floats, ints, boolean_enums
+"GUI NAME": "REAL_NAME:-:DEFAULT:-:DESCRIPTION"
+
+
+Enums:
+	Enum_json_name:-:DEFAULT_BY_GUI_NAME
+		"option_hammer_real_val": 
+
+
+
+
+NOTICE: EDITING .JSON WILL BREAK LITERALLY EVERYTHING, EVERYONE WILL DIE A VERY MATURE DEATH OF BIG ALIEN FROM SPACE EATING THEM ALIVE AND THE UNIVERSE WILL COLLAPSE!!!!!!!!
+
+
+0: String props 16x
+1: int props 16x
+2: float props 16x
+3: color props 4x
+4: standard list enums 16x
+5: boolean list enums 16x
+6: flags
+7: Outputs
+8: Inputs
+9: blender config
