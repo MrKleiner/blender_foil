@@ -49,6 +49,13 @@ import pathlib
 
 addon_root_dir = Path(__file__).absolute().parent
 
+# vp_radpath = pathlib.Path(bpy.context.scene.blents.dn_str)
+vp_radpath = pathlib.Path('C:\\Users\\DrHax\\AppData\\Roaming\\Blender Foundation\\Blender\\2.93\\scripts\\addons\\blender_foil\\bl_point_ents\\blpe_main.json')
+vp_entfile = open(vp_radpath)
+vp_entjson = vp_entfile.read()
+
+# all possible ents
+vp_prop_ents = json.loads(vp_entjson)
 
 
 # =========================================================
@@ -968,6 +975,69 @@ def test_export_v1(self, context):
             return 0
         if state != False and state != True:
             return 0
+            
+    
+    
+    # ===================================
+    #               Cleanup
+    # ===================================
+    sce_vmf_path = str('E:\\!!Blend_Projects\\scripts\\entity_exporter\\ents.vmf')
+
+    file = open(sce_vmf_path)
+
+    # create an array of lines out of the input vmf file
+    linez = file.readlines()
+    
+    brstart = 0
+    brmark = 0
+    bigcum = 'nil'
+    current_indent = 0
+
+    delete_ents = []
+
+    # find camera
+    for zstrnum, zlinestr in enumerate(linez):
+        if 'cameras\n' in zlinestr:
+            print('found camera: ' + str(zstrnum))
+            bigcum = zstrnum
+
+    
+    # scan all ents
+    for strnum, linestr in enumerate(linez):
+        # if re.search('^[a-zA-Z].*', linestr):
+        if 'entity\n' in linestr:
+            print('found solid: ' + str(strnum))
+            brstart = strnum
+            current_indent = len(linestr) - len(linestr.lstrip())
+            print('ent indent ' + str(current_indent))
+            
+        if '"liz3"' in linestr:
+            brmark = strnum
+            
+        if '}\n' in linestr and brstart != 0 and len(linestr) - len(linestr.lstrip()) == current_indent:
+            print('found ent end: ' + str(strnum))
+            delete_ents.append([brstart,brmark,strnum])
+            print(linez[brstart-1])
+            brstart = 0
+            brmark = 0
+            current_indent = 0
+    
+    # delete ents which have mark on them
+    print(delete_ents)
+    
+    for entnum, del_ent in enumerate(reversed(delete_ents)):
+        if del_ent[1] != 0:
+            del linez[del_ent[0]:del_ent[2] + 1]
+    
+    
+    
+    print(linez)
+    file.close()
+    # TEST WRITE
+
+
+    
+    
     
     
     radpath = pathlib.Path(bpy.context.scene.blents.dn_str)
@@ -1120,12 +1190,16 @@ def test_export_v1(self, context):
         constructed_ents.append(''.join(mk_ent))
     
     print(constructed_ents)
+    
+    linez.insert(int(bigcum), str(''.join(constructed_ents)))
 
-    fed = open('E:\\!!Blend_Projects\\scripts\\entity_exporter\\fuck.txt', 'w')
-    fed.write(''.join(constructed_ents))
-    fed.close()
+    # fed = open('E:\\!!Blend_Projects\\scripts\\entity_exporter\\fuck.txt', 'w')
+    # fed.write(''.join(constructed_ents))
+    # fed.close()
 
-
+    TEST_fed = open('E:\\!!Blend_Projects\\scripts\\entity_exporter\\ents.vmf', 'w')
+    TEST_fed.write(''.join(linez))
+    TEST_fed.close()
 
 
 
@@ -2153,16 +2227,7 @@ class VIEW3D_PT_blender_foil_dn_enum(bpy.types.Panel):
 
         
         if context.object != None and context.object.ent_conf.obj_ent_type != 'nil':
-        
-            radpath = pathlib.Path(bpy.context.scene.blents.dn_str)
-            entfile = open(radpath)
-            entjson = entfile.read()
-            
-            # all possible ents
-            prop_ents = json.loads(entjson)
-            
-            
-            
+             
             cur_object = context.active_object
             cent_type = context.active_object.ent_conf.obj_ent_type
             
@@ -2172,8 +2237,8 @@ class VIEW3D_PT_blender_foil_dn_enum(bpy.types.Panel):
             
             
             # show because why not
-            for str_indx, str_prm in enumerate(prop_ents[cent_type][0]):
-                dumpster.label(text=str(str_indx) + ': ' + str_prm + ' - ' + prop_ents[cent_type][0][str_prm].split(':-:')[-1] )
+            for str_indx, str_prm in enumerate(vp_prop_ents[cent_type][0]):
+                dumpster.label(text=str(str_indx) + ': ' + str_prm + ' - ' + vp_prop_ents[cent_type][0][str_prm].split(':-:')[-1] )
             
             
             #
@@ -2183,36 +2248,36 @@ class VIEW3D_PT_blender_foil_dn_enum(bpy.types.Panel):
             
         
             # show strings
-            # for str_pr in range(len(prop_ents[cent_type][0])):
-                # dumpster.prop(context.object.ent_conf, 'pr_str_' + str(str_pr + 1), text=prop_ents[cent_type][0][])
+            # for str_pr in range(len(vp_prop_ents[cent_type][0])):
+                # dumpster.prop(context.object.ent_conf, 'pr_str_' + str(str_pr + 1), text=vp_prop_ents[cent_type][0][])
             
             # show strings
-            for str_j_idx, str_pr in enumerate(prop_ents[cent_type][0]):
+            for str_j_idx, str_pr in enumerate(vp_prop_ents[cent_type][0]):
                 dumpster.prop(context.object.ent_conf, 'pr_str_' + str(str_j_idx + 1), text=str_pr)
 
             
             # show ints
-            for int_j_idx, int_pr in enumerate(prop_ents[cent_type][1]):
+            for int_j_idx, int_pr in enumerate(vp_prop_ents[cent_type][1]):
                 dumpster.prop(context.object.ent_conf, 'pr_int_' + str(int_j_idx + 1), text=int_pr)
 
 
             # show floats
-            for float_j_idx, float_pr in enumerate(prop_ents[cent_type][2]):
+            for float_j_idx, float_pr in enumerate(vp_prop_ents[cent_type][2]):
                 dumpster.prop(context.object.ent_conf, 'pr_float_' + str(float_j_idx + 1), text=float_pr)
                 
                 
             # show enums
-            for enum_j_idx, enum_pr in enumerate(prop_ents[cent_type][4]):
+            for enum_j_idx, enum_pr in enumerate(vp_prop_ents[cent_type][4]):
                 dumpster.prop(context.object.ent_conf, 'pr_enum_' + str(enum_j_idx + 1), text=enum_pr.split(':-:')[0])
                 
                 
             # show enum booleans
-            for enum_bool_j_idx, enum_bool_pr in enumerate(prop_ents[cent_type][5]):
+            for enum_bool_j_idx, enum_bool_pr in enumerate(vp_prop_ents[cent_type][5]):
                 dumpster.prop(context.object.ent_conf, 'pr_enum_bool_' + str(enum_bool_j_idx + 1), text=enum_bool_pr.split(':-:')[0])
                 
                 
             # show colors
-            for color_j_idx, color_pr in enumerate(prop_ents[cent_type][3]):
+            for color_j_idx, color_pr in enumerate(vp_prop_ents[cent_type][3]):
                 dumpster.prop(context.object.ent_conf, 'pr_color_' + str(color_j_idx + 1), text=color_pr)
                 
                 
@@ -2221,8 +2286,8 @@ class VIEW3D_PT_blender_foil_dn_enum(bpy.types.Panel):
             
             
             # show spawnflags
-            for sfalgs_j_idx, sfalgs_pr in enumerate(prop_ents[cent_type][6]):
-                dumpster.prop(context.object.ent_conf, 'pr_sflags_' + str(sfalgs_j_idx + 1), text=prop_ents[cent_type][6][sfalgs_pr].split(':-:')[1])
+            for sfalgs_j_idx, sfalgs_pr in enumerate(vp_prop_ents[cent_type][6]):
+                dumpster.prop(context.object.ent_conf, 'pr_sflags_' + str(sfalgs_j_idx + 1), text=vp_prop_ents[cent_type][6][sfalgs_pr].split(':-:')[1])
                 
                 
                 
