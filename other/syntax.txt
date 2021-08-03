@@ -1,3 +1,5 @@
+
+It just keeps calling predefined slots til it runs out of predefined slots.
 Strings, floats, ints, boolean_enums
 "GUI NAME": "REAL_NAME:-:DEFAULT:-:DESCRIPTION"
 
@@ -7,18 +9,21 @@ Enums:
 		"option_hammer_real_val": 
 
 
+Spawnflags:
+"FLAG_BYTE_VALUE": "DEFAULT_STATE:-:DESCRIPTION_NAME"
 
 
-NOTICE: EDITING .JSON WILL BREAK LITERALLY EVERYTHING, EVERYONE WILL DIE A VERY MATURE DEATH OF BIG ALIEN FROM SPACE EATING THEM ALIVE AND THE UNIVERSE WILL COLLAPSE!!!!!!!!
+
+NOTICE: EDITING .JSON WILL BREAK LITERALLY EVERYTHING, EVERYONE WILL DIE A VERY MATURE DEATH OF A BIG ALIEN FROM SPACE EATING THEM ALIVE AND THE UNIVERSE WILL COLLAPSE!!!!!!!!
 
 
 0: String props 16x
 1: int props 16x
 2: float props 16x
-3: color props 4x
+3: color props 8x
 4: standard list enums 16x
 5: boolean list enums 16x
-6: flags
+6: flags 32x
 7: Outputs
 8: Inputs
 9: blender config

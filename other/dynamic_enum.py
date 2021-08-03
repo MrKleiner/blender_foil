@@ -796,6 +796,14 @@ def r_enum_list_v1(self, context):
 
 def set_obj_ent(self, context):
 
+    def eval_state(state):
+        if int(state) == 1:
+            return True
+        if int(state) == 0:
+            return False
+        if int(state) != 1 and int(state) != 0:
+            return False
+
     radpath = pathlib.Path(bpy.context.scene.blents.dn_str)
     entfile = open(radpath)
     entjson = entfile.read()
@@ -806,7 +814,7 @@ def set_obj_ent(self, context):
     # current entity type
     cent_type = bpy.context.scene.blents.dnenum
     
-    # TODO: DEFAULT ALL THE PARAMS BEFOREHAND. Not possible for enums. This comment is irrelevant
+    # TODO: DEFAULT ALL THE PARAMS BEFOREHAND. This comment is irrelevant
     
     
     
@@ -822,7 +830,7 @@ def set_obj_ent(self, context):
     for obj in bpy.context.selected_objects:
         print('set entity')
         obj.ent_conf.obj_ent_type = bpy.context.scene.blents.dnenum
-        
+        obj.ent_conf['l3_ent_sflags'] = 0
         
         
         # set strings to default
@@ -843,10 +851,65 @@ def set_obj_ent(self, context):
         # set enums to default.
         for enum_j_idx, enum_pr in enumerate(prop_ents[cent_type][4]):
             obj.ent_conf['pr_enum_' + str(enum_j_idx + 1)] = enum_pr.split(':-:')[1]
+            
+            
+        # set enum bools to default.
+        for enum_bool_j_idx, enum_bool_pr in enumerate(prop_ents[cent_type][5]):
+            obj.ent_conf['pr_enum_bool_' + str(enum_bool_j_idx + 1)] = eval_state(prop_ents[cent_type][5][enum_bool_pr].split(':-:')[1])
+            
+            
+        # set Spawn Flags to default
+        for sflags_j_idx, sflags_pr in enumerate(prop_ents[cent_type][6]):
+            obj.ent_conf['pr_sflags_' + str(sflags_j_idx + 1)] = eval_state(prop_ents[cent_type][6][sflags_pr].split(':-:')[0])
+            
+            
+        # set Colors to default
+        for color_j_idx, color_pr in enumerate(prop_ents[cent_type][3]):
+        
+            jrgb = prop_ents[cent_type][3][color_pr].split(':-:')[1].split(' ')
+        
+            ar = int(jrgb[0]) / 255
+            ag = int(jrgb[1]) / 255
+            ab = int(jrgb[2]) / 255
+
+            obj.ent_conf['pr_color_' + str(color_j_idx + 1)] = (ar, ag, ab)
+            
 
 
 
-
+def eval_spawnflags(self, context):
+    
+    print('eval spawnflags')
+    
+    radpath = pathlib.Path(bpy.context.scene.blents.dn_str)
+    entfile = open(radpath)
+    entjson = entfile.read()
+    
+    # all possible ents
+    prop_ents = json.loads(entjson)
+    
+    # TODO: DEFAULT ALL THE PARAMS BEFOREHAND. This comment is irrelevant
+    
+    
+    
+    
+    # evaluate
+    for obj in bpy.context.selected_objects:
+        print('calc spawnflags')
+        cur_obj_ent_type = obj.ent_conf.obj_ent_type
+        obj.ent_conf['l3_ent_sflags'] = 0
+        
+        calculated_bytes = 0
+        
+        for sflag_index, sflag in enumerate(prop_ents[cur_obj_ent_type][6]):
+            
+            if obj.ent_conf['pr_sflags_' + str(sflag_index + 1)] == True:
+                calculated_bytes += int(sflag)
+        
+        obj.ent_conf['l3_ent_sflags'] = calculated_bytes
+        print('calculated flags are: ' + str(calculated_bytes))
+        
+        
 
 
 
@@ -913,12 +976,6 @@ class blender_ents(PropertyGroup):
         default = 'nil'
         )
 
-
-
-
-    # =================================================
-    #                  Shared Enums
-    # =================================================
     
 
 
@@ -935,8 +992,11 @@ class blender_ents_obj(PropertyGroup):
         default = 'nil'
         )
     
-    
-    
+    obj_ent_sflags : StringProperty(
+        name='Entity Spawn Flags',
+        description='lizards are sexy',
+        default = 'nil'
+        )    
     
     
 
@@ -1444,6 +1504,365 @@ class blender_ents_obj(PropertyGroup):
         name='Entity',
         description='I like bread'
         )
+    
+    
+    
+    
+    
+    # =================================================
+    #                  Enum Booleans
+    # =================================================
+
+    pr_enum_bool_1 : BoolProperty(
+        name='pr_enum_bool_1',
+        description='Pootis',
+        default = False 
+        )
+        
+    pr_enum_bool_2 : BoolProperty(
+        name='pr_enum_bool_2',
+        description='Pootis',
+        default = False 
+        )
+        
+    pr_enum_bool_3 : BoolProperty(
+        name='pr_enum_bool_3',
+        description='Pootis',
+        default = False 
+        )
+        
+    pr_enum_bool_4 : BoolProperty(
+        name='pr_enum_bool_4',
+        description='Pootis',
+        default = False 
+        )
+
+    pr_enum_bool_5 : BoolProperty(
+        name='pr_enum_bool_5',
+        description='Pootis',
+        default = False 
+        )
+        
+    pr_enum_bool_6 : BoolProperty(
+        name='pr_enum_bool_6',
+        description='Pootis',
+        default = False 
+        )
+        
+    pr_enum_bool_7 : BoolProperty(
+        name='pr_enum_bool_7',
+        description='Pootis',
+        default = False 
+        )
+        
+    pr_enum_bool_8 : BoolProperty(
+        name='pr_enum_bool_8',
+        description='Pootis',
+        default = False 
+        )
+        
+    pr_enum_bool_9 : BoolProperty(
+        name='pr_enum_bool_9',
+        description='Pootis',
+        default = False 
+        )
+        
+    pr_enum_bool_10 : BoolProperty(
+        name='pr_enum_bool_10',
+        description='Pootis',
+        default = False 
+        )
+        
+    pr_enum_bool_11 : BoolProperty(
+        name='pr_enum_bool_11',
+        description='Pootis',
+        default = False 
+        )
+        
+    pr_enum_bool_12 : BoolProperty(
+        name='pr_enum_bool_12',
+        description='Pootis',
+        default = False 
+        )
+        
+    pr_enum_bool_13 : BoolProperty(
+        name='pr_enum_bool_13',
+        description='Pootis',
+        default = False 
+        )
+        
+    pr_enum_bool_14 : BoolProperty(
+        name='pr_enum_bool_14',
+        description='Pootis',
+        default = False 
+        )
+        
+    pr_enum_bool_15 : BoolProperty(
+        name='pr_enum_bool_15',
+        description='Pootis',
+        default = False 
+        )
+        
+    pr_enum_bool_16 : BoolProperty(
+        name='pr_enum_bool_16',
+        description='Pootis',
+        default = False 
+        )
+
+
+
+
+    # =================================================
+    #                  SpawnFlags
+    # =================================================
+
+    pr_sflags_1 : BoolProperty(
+        name='pr_sflags_1',
+        description='Pootis',
+        default = False,
+        update=eval_spawnflags
+        )
+        
+    pr_sflags_2 : BoolProperty(
+        name='pr_sflags_2',
+        description='Pootis',
+        default = False,
+        update=eval_spawnflags
+        )
+        
+    pr_sflags_3 : BoolProperty(
+        name='pr_sflags_3',
+        description='Pootis',
+        default = False,
+        update=eval_spawnflags
+        )
+        
+    pr_sflags_4 : BoolProperty(
+        name='pr_sflags_4',
+        description='Pootis',
+        default = False,
+        update=eval_spawnflags
+        )
+
+    pr_sflags_5 : BoolProperty(
+        name='pr_sflags_5',
+        description='Pootis',
+        default = False,
+        update=eval_spawnflags
+        )
+        
+    pr_sflags_6 : BoolProperty(
+        name='pr_sflags_6',
+        description='Pootis',
+        default = False,
+        update=eval_spawnflags
+        )
+        
+    pr_sflags_7 : BoolProperty(
+        name='pr_sflags_7',
+        description='Pootis',
+        default = False,
+        update=eval_spawnflags
+        )
+        
+    pr_sflags_8 : BoolProperty(
+        name='pr_sflags_8',
+        description='Pootis',
+        default = False,
+        update=eval_spawnflags
+        )
+        
+    pr_sflags_9 : BoolProperty(
+        name='pr_sflags_9',
+        description='Pootis',
+        default = False,
+        update=eval_spawnflags
+        )
+        
+    pr_sflags_10 : BoolProperty(
+        name='pr_sflags_10',
+        description='Pootis',
+        default = False,
+        update=eval_spawnflags
+        )
+        
+    pr_sflags_11 : BoolProperty(
+        name='pr_sflags_11',
+        description='Pootis',
+        default = False,
+        update=eval_spawnflags
+        )
+        
+    pr_sflags_12 : BoolProperty(
+        name='pr_sflags_12',
+        description='Pootis',
+        default = False 
+        )
+        
+    pr_sflags_13 : BoolProperty(
+        name='pr_sflags_13',
+        description='Pootis',
+        default = False,
+        update=eval_spawnflags
+        )
+        
+    pr_sflags_14 : BoolProperty(
+        name='pr_sflags_14',
+        description='Pootis',
+        default = False,
+        update=eval_spawnflags
+        )
+        
+    pr_sflags_15 : BoolProperty(
+        name='pr_sflags_15',
+        description='Pootis',
+        default = False,
+        update=eval_spawnflags
+        )
+        
+    pr_sflags_16 : BoolProperty(
+        name='pr_sflags_16',
+        description='Pootis',
+        default = False,
+        update=eval_spawnflags
+        )
+
+    pr_sflags_17 : BoolProperty(
+        name='pr_sflags_17',
+        description='Pootis',
+        default = False,
+        update=eval_spawnflags
+        )
+        
+    pr_sflags_18 : BoolProperty(
+        name='pr_sflags_18',
+        description='Pootis',
+        default = False,
+        update=eval_spawnflags
+        )
+        
+    pr_sflags_19 : BoolProperty(
+        name='pr_sflags_19',
+        description='Pootis',
+        default = False,
+        update=eval_spawnflags
+        )
+        
+    pr_sflags_20 : BoolProperty(
+        name='pr_sflags_20',
+        description='Pootis',
+        default = False,
+        update=eval_spawnflags
+        )
+
+    pr_sflags_21 : BoolProperty(
+        name='pr_sflags_21',
+        description='Pootis',
+        default = False,
+        update=eval_spawnflags
+        )
+        
+    pr_sflags_22 : BoolProperty(
+        name='pr_sflags_22',
+        description='Pootis',
+        default = False,
+        update=eval_spawnflags
+        )
+        
+    pr_sflags_23 : BoolProperty(
+        name='pr_sflags_23',
+        description='Pootis',
+        default = False,
+        update=eval_spawnflags
+        )
+        
+    pr_sflags_24 : BoolProperty(
+        name='pr_sflags_24',
+        description='Pootis',
+        default = False,
+        update=eval_spawnflags
+        )
+        
+    pr_sflags_25 : BoolProperty(
+        name='pr_sflags_25',
+        description='Pootis',
+        default = False,
+        update=eval_spawnflags
+        )
+        
+    pr_sflags_26 : BoolProperty(
+        name='pr_sflags_26',
+        description='Pootis',
+        default = False,
+        update=eval_spawnflags
+        )
+        
+    pr_sflags_27 : BoolProperty(
+        name='pr_sflags_27',
+        description='Pootis',
+        default = False,
+        update=eval_spawnflags
+        )
+        
+    pr_sflags_28 : BoolProperty(
+        name='pr_sflags_28',
+        description='Pootis',
+        default = False,
+        update=eval_spawnflags
+        )
+        
+    pr_sflags_29 : BoolProperty(
+        name='pr_sflags_29',
+        description='Pootis',
+        default = False,
+        update=eval_spawnflags
+        )
+        
+    pr_sflags_30 : BoolProperty(
+        name='pr_sflags_30',
+        description='Pootis',
+        default = False,
+        update=eval_spawnflags
+        )
+        
+    pr_sflags_31 : BoolProperty(
+        name='pr_sflags_31',
+        description='Pootis',
+        default = False,
+        update=eval_spawnflags
+        )
+        
+    pr_sflags_32 : BoolProperty(
+        name='pr_sflags_32',
+        description='Pootis',
+        default = False,
+        update=eval_spawnflags
+        )
+
+
+
+
+
+    # =================================================
+    #                   Color props
+    # =================================================
+
+
+    pr_color_1 : FloatVectorProperty(subtype='COLOR')
+    pr_color_2 : FloatVectorProperty(subtype='COLOR')
+    pr_color_3 : FloatVectorProperty(subtype='COLOR')
+    pr_color_4 : FloatVectorProperty(subtype='COLOR')
+    pr_color_5 : FloatVectorProperty(subtype='COLOR')
+    pr_color_6 : FloatVectorProperty(subtype='COLOR')
+    pr_color_7 : FloatVectorProperty(subtype='COLOR')
+    pr_color_8 : FloatVectorProperty(subtype='COLOR')
+
+
+
+
+
+
+
 
 
 
@@ -1539,6 +1958,26 @@ class VIEW3D_PT_blender_foil_dn_enum(bpy.types.Panel):
             # show enums
             for enum_j_idx, enum_pr in enumerate(prop_ents[cent_type][4]):
                 dumpster.prop(context.object.ent_conf, 'pr_enum_' + str(enum_j_idx + 1), text=enum_pr.split(':-:')[0])
+                
+                
+            # show enum booleans
+            for enum_bool_j_idx, enum_bool_pr in enumerate(prop_ents[cent_type][5]):
+                dumpster.prop(context.object.ent_conf, 'pr_enum_bool_' + str(enum_bool_j_idx + 1), text=enum_bool_pr.split(':-:')[0])
+                
+                
+            # show colors
+            for color_j_idx, color_pr in enumerate(prop_ents[cent_type][3]):
+                dumpster.prop(context.object.ent_conf, 'pr_color_' + str(color_j_idx + 1), text=color_pr)
+                
+                
+            # Flags separator
+            dumpster.label(text='Spawnflags')
+            
+            
+            # show spawnflags
+            for sfalgs_j_idx, sfalgs_pr in enumerate(prop_ents[cent_type][6]):
+                dumpster.prop(context.object.ent_conf, 'pr_sflags_' + str(sfalgs_j_idx + 1), text=prop_ents[cent_type][6][sfalgs_pr].split(':-:')[1])
+                
                 
                 
             """

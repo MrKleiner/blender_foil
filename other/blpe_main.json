@@ -16,7 +16,7 @@
 			"Scale": "modelscale:-:1.0:-:A multiplier for the size of the model."
 		},
 		{
-			"Colors": "modelscale:-:1.0:-:A multiplier for the size of the model."
+			"FX Color": "rendercolor:-:255 255 255:-:The FX color is used by the selected Render Mode."
 		},
 		{
 			"Collisions:-:Use Vphysics:-:Description": [
@@ -65,11 +65,17 @@
 			
 		},
 		{
-			"Disable Shadows": "disableshadows:-:1.0:-: ",
-			"booleans": "modelscale:-:1.0:-:A multiplier for the size of the model."
+			"Disable Shadows": "disableshadows:-:0:-:Description",
+			"Disable Receiving Shadows": "disablereceiveshadows:-:0:-:Description",
+			"Randomly Animate": "RandomAnimation:-:0:-:If set, this prop will randomly choose and play animations, based upon the times specified in 'Min/Max Random Anim Time'. Inbetween the random animations, it will revert to playing the 'Default Animation'.",
+			"Start Disabled": "StartDisabled:-:0:-:Description",
+			"Disable Bone Followers": "DisableBoneFollowers:-:0:-:If set, this prop won't generate bone followers, even if they're listed in the model's .qc"
 		},
 		{
-			"flags": "modelscale:-:1.0:-:A multiplier for the size of the model."
+			"64": "0:-:Use Hitboxes for Renderbox",
+			"256": "0:-:Start with collision disabled",
+			"16": "0:-:Break on Touch",
+			"32": "0:-:Break on Pressure"
 		}
 	],
 	"prop_static": [
