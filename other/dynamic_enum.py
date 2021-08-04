@@ -53,7 +53,7 @@ addon_root_dir = Path(__file__).absolute().parent
 vp_radpath = pathlib.Path('C:\\Users\\DrHax\\AppData\\Roaming\\Blender Foundation\\Blender\\2.93\\scripts\\addons\\blender_foil\\bl_point_ents\\blpe_main.json')
 vp_entfile = open(vp_radpath)
 vp_entjson = vp_entfile.read()
-
+print('rebuild json')
 # all possible ents
 vp_prop_ents = json.loads(vp_entjson)
 
@@ -722,6 +722,52 @@ def enum_tgt_16(self, context):
 # =========================================================
 
 
+# reusable, I guess...
+# It is, indeed, reusable, but why would one need this shit reusable???? It'll only get called like fucking once...
+# usage: call this function with an object
+def get_obj_locrot_v1(eobject, fix90, axis):
+
+    # extract rotations
+    
+    if 'z' in str(axis).lower():
+        fl_axis = 'Z'
+    else: 
+        fl_axis = 'Y'
+        
+    if '-' in str(axis).lower():
+        rfactor = -1
+    else:
+        rfactor = 1
+    
+    # hack pentagon
+    if int(fix90) == 1:
+        eobject.rotation_euler.rotate_axis(fl_axis, math.radians(-90 * rfactor))
+        bpy.context.view_layer.update()
+        
+    rotx = float(round(math.degrees(eobject.matrix_world.to_euler()[0]), 4))
+    roty = float(round(math.degrees(eobject.matrix_world.to_euler()[1]), 4))
+    rotz = float(round(math.degrees(eobject.matrix_world.to_euler()[2]), 4))
+    
+    # print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+    # print(eobject.rotation_euler[2])
+    
+    # hack pentagon
+    if int(fix90) == 1:
+        eobject.rotation_euler.rotate_axis(fl_axis, math.radians(+90 * rfactor))
+        bpy.context.view_layer.update()
+
+    # extract locations
+    locx = float(round(eobject.matrix_world[0][3], 4))
+    locy = float(round(eobject.matrix_world[1][3], 4))
+    locz = float(round(eobject.matrix_world[2][3], 4))
+
+    return {'loc': (locx, locy, locz), 'rot': (rotx, roty, rotz)}
+
+
+
+
+
+
 def r_enum_list(self, context):
     current_time = datetime.datetime.now()
     radpath = pathlib.Path(bpy.context.scene.blents.dn_str)
@@ -1011,7 +1057,7 @@ def test_export_v1(self, context):
             current_indent = len(linestr) - len(linestr.lstrip())
             print('ent indent ' + str(current_indent))
             
-        if '"liz3"' in linestr:
+        if '"liz3"' in linestr and '"1"' in linestr:
             brmark = strnum
             
         if '}\n' in linestr and brstart != 0 and len(linestr) - len(linestr.lstrip()) == current_indent:
@@ -1048,13 +1094,23 @@ def test_export_v1(self, context):
     prop_ents = json.loads(entjson)
     
     
-    cbt_victim = [obj for obj in bpy.data.objects if len(obj.ent_conf.obj_ent_type) > 3 and obj.ent_conf.obj_ent_type != 'nil']
-
+    # we export spotlights separately
+    cbt_victim = [obj for obj in bpy.data.objects if len(obj.ent_conf.obj_ent_type) > 3 and obj.ent_conf.obj_ent_type != 'nil' and obj.ent_conf.obj_ent_type != 'light_spot']
+    
+    
+    
     print(cbt_victim)
-
+    
+    # spotlights
+    monitor_lizard = [obj for obj in bpy.data.objects if len(obj.ent_conf.obj_ent_type) > 3 and obj.ent_conf.obj_ent_type != 'nil' and obj.ent_conf.obj_ent_type == 'light_spot' and obj.type == 'LIGHT' and obj.data.type == 'SPOT']
+    # monitor_lizard = [obj for obj in bpy.data.objects if len(obj.ent_conf.obj_ent_type) > 3 and obj.ent_conf.obj_ent_type != 'nil' and obj.ent_conf.obj_ent_type == 'light_spot']
     
     constructed_ents = []
     
+    
+    # -----------
+    #   Write
+    # -----------
     for cbt in cbt_victim:
         mk_ent = []
         
@@ -1062,16 +1118,26 @@ def test_export_v1(self, context):
         
         cent_type = cbt.ent_conf.obj_ent_type
         
+        # get transforms from blender
+        obj_locrot = get_obj_locrot_v1(cbt, 1, 'z')
+        
+        
+        #
         # write shared
+        #
+        
+        # write opening
         mk_ent.append('entity\n{\n')
         mk_ent.append('\t' + '"classname" "' + cent_type + '"\n')
-        mk_ent.append('\t' + '"liz3" "1"\n')
+        mk_ent.append('\t' + '"liz3" "1"\n')    
         
-        locx = str(round(cbt.matrix_world[0][3], 4))
-        locy = str(round(cbt.matrix_world[1][3], 4))
-        locz = str(round(cbt.matrix_world[2][3], 4))
-        cbtloc = locx + ' ' + locy + ' ' + locz
-        mk_ent.append('\t' + '"origin" "' + cbtloc + '"\n')
+        # any entity should have an origin - write origin (loc)
+        mk_ent.append('\t' + '"origin" "' + str(obj_locrot['loc'][0]) + ' ' + str(obj_locrot['loc'][1]) + ' ' + str(obj_locrot['loc'][2]) + '"\n')
+        
+        # if it's stated in the blender config json block that this entity should have angles - write anlges
+        if len(prop_ents[cent_type][9]['angles_enabled']) == 1:
+            
+            mk_ent.append('\t' + '"angles" "' + str(obj_locrot['rot'][1]) + ' ' + str(obj_locrot['rot'][2]) + ' ' + str(obj_locrot['rot'][0]) + '"\n')
         
         
         # write strings
@@ -1180,7 +1246,9 @@ def test_export_v1(self, context):
             mk_ent.append('\t' + '"' + prop_ents[cent_type][5][bool_enum_pr].split(':-:')[0] + '" "' + str(int(cbt.ent_conf['pr_enum_bool_' + str(bool_enum_j_idx + 1)])) + '"\n')
 
         # write sflags
-        mk_ent.append('\t' + '"spawnflags" "' + str(cbt.ent_conf['l3_ent_sflags']) + '"\n')
+        # If there are no flags - don't write the spawnflags at all
+        if len(prop_ents[cent_type][6]) > 0:
+            mk_ent.append('\t' + '"spawnflags" "' + str(cbt.ent_conf['l3_ent_sflags']) + '"\n')
 
         
         # write closing        
@@ -1188,6 +1256,79 @@ def test_export_v1(self, context):
 
         # write constructed ent
         constructed_ents.append(''.join(mk_ent))
+    
+    
+    
+    
+    
+    
+    
+    constructed_spotlights = []
+    # write spotlights
+    for lizard in monitor_lizard:
+        mkspot = []
+        
+        print('processing object: ' + str(lizard))
+        
+        cent_type = lizard.ent_conf.obj_ent_type
+        
+        # get transforms from blender
+        obj_locrot = get_obj_locrot_v1(lizard, 1, '-y')
+        
+        
+        #
+        # write shared
+        #
+        
+        # write opening
+        mkspot.append('entity\n{\n')
+        mkspot.append('\t' + '"classname" "' + cent_type + '"\n')
+        mkspot.append('\t' + '"liz3" "1"\n')  
+    
+        # any entity should have an origin - write origin (loc)
+        mkspot.append('\t' + '"origin" "' + str(obj_locrot['loc'][0]) + ' ' + str(obj_locrot['loc'][1]) + ' ' + str(obj_locrot['loc'][2]) + '"\n')
+        corrected_y = obj_locrot['rot'][1] * -1
+        # ma
+        # if obj_locrot['rot'][1] > 0:
+            # corrected_y = obj_locrot['rot'][1] - 90
+        # if obj_locrot['rot'][1] < 0:
+            # corrected_y = obj_locrot['rot'][1] + 90
+        # if obj_locrot['rot'][1] == 0:
+            # corrected_y = 0
+
+        mkspot.append('\t' + '"angles" "' + str(corrected_y) + ' ' + str(obj_locrot['rot'][2]) + ' ' + str(obj_locrot['rot'][0]) + '"\n')
+        mkspot.append('\t' + '"pitch" "' + str(corrected_y) + '"\n')
+        print('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA')
+        print(obj_locrot['rot'])
+        
+        
+        for str_j_idx, str_pr in enumerate(prop_ents[cent_type][0]):
+            # strings are never empty, unless you take them off
+            if lizard.ent_conf['pr_str_' + str(str_j_idx + 1)] != ' ':
+                mkspot.append('\t' + '"' + prop_ents[cent_type][0][str_pr].split(':-:')[0] + '" "' + lizard.ent_conf['pr_str_' + str(str_j_idx + 1)] + '"\n')
+        
+        
+        
+        # write sflags
+        # If there are no flags - don't write the spawnflags at all
+        if len(prop_ents[cent_type][6]) > 0:
+            mkspot.append('\t' + '"spawnflags" "' + str(lizard.ent_conf['l3_ent_sflags']) + '"\n')
+
+        
+        # write closing        
+        mkspot.append('}\n')
+
+        # write constructed ent
+        constructed_ents.append(''.join(mkspot))
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     print(constructed_ents)
     

@@ -94,7 +94,7 @@
 			"Inputs": "1"
 		},
 		{
-			"Angles Enabled": "1"
+			"angles_enabled": "1"
 		}
 	],
 	
@@ -138,7 +138,7 @@
 
 		},
 		{
-			"Angles Enabled": "1"
+			"angles_enabled": "1"
 		}
 	],
 
@@ -240,7 +240,7 @@
 		},
 		
 		{
-			"Angles Enabled": "1"
+			"angles_enabled": "1"
 		}
 	],
 	
@@ -364,7 +364,75 @@
 		},
 		
 		{
-			"Angles Enabled": "1"
+			"angles_enabled": "1"
+		}
+		
+	],
+	
+	
+	"light_spot": [
+		{
+			"Name": "targetname:-: :-:The name that other entities refer to this entity by.",
+			"Custom Appearance": "pattern:-: :-:A string of characters, like a sequence of piano keys, that define a pattern of brightness. a is dark and z is full intensity. Applies only to lights with a targetname.",
+			"Entity to point at": "target:-: :-:The name of an entity in the map that the spotlight will point at. This will override the spotlight's angles."
+
+		},
+		{
+			
+
+		},
+		{
+			"BrightnessScaleHDR": "_lightscaleHDR:-:0:-:Some models have multiple versions of their textures, called skins. Set this to a number other than 0 to use that skin instead of the default.",
+			"Constant": "_constant_attn:-:0:-: DESCR",
+			"Linear": "_linear_attn:-:1:-: DESCR",
+			"Quadratic": "_quadratic_attn:-:0:-: DESCR",
+			"50 percent falloff distance": "_fifty_percent_distance:-:0.0:-: Distance at which brightness should fall off to 50%. If set, overrides linear constant and quadratic paramaters.",
+			"0 percent falloff distance": "_zero_percent_distance:-:0.0:-: Distance at which brightness should fall off to negligible (1/256)%. Must set _fifty_percent_distance to use.",
+			"Inner (bright) angle": "_inner_cone:-:30.0:-: The angles of the inner spotlight beam. Value larger than 90 is interpreted as 90.",
+			"Outer (fading) angle": "_cone:-:45.0:-: The angles of the outer spotlight beam. Value larger than 90 is interpreted as 90.",
+			"Focus": "_exponent:-:1.0:-: Changes the distance between the umbra and penumbra cone. Higher values make the edge of the light more blurred. When increasing the Focus value to for example 5 you can use the spotlight as a directional fill light.",
+			"Maximum distance": "_distance:-:0:-: Changes the distance between the umbra and penumbra cone. Higher values make the edge of the light more blurred. When increasing the Focus value to for example 5 you can use the spotlight as a directional fill light."
+		},
+		{
+			"Brightness": "_light:-:255 255 255:-:The FX color is used by the selected Render Mode.",
+			"BrightnessHDR": "_lightHDR:-:-255 -255 -255:-:The FX color is used by the selected Render Mode."
+		},
+		{
+			
+			"Appearance:-:Normal:-:Description": [
+					{
+						"Normal": "style:-:0",
+						"Fluorescent flicker": "style:-:10",
+						"Slow, strong pulse": "style:-:2",
+						"Slow pulse, noblack": "style:-:11",
+						"Gentle pulse": "style:-:5",
+						"Flicker A": "style:-:1",
+						"Flicker B": "style:-:6",
+						"Candle A": "style:-:3",
+						"Candle B": "style:-:7",
+						"Candle C": "style:-:8",
+						"Fast strobe": "style:-:4",
+						"Slow strobe": "style:-:9"
+					}
+			]
+
+			
+		},
+		{
+			"Hard falloff": "_hardfalloff:-:1:-:Causes lights to fall to exactly zero beyond the 0% distance. May cause unrealistic lighting if not used carefully."
+		},
+		{
+			"1": "0:-:Initially dark"
+		},
+		{
+			"Outputs": "1"
+		},
+		{
+			"Inputs": "1"
+		},
+		
+		{
+			"angles_enabled": "96"
 		}
 		
 	]
