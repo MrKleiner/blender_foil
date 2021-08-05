@@ -45,7 +45,8 @@ import shutil
 import subprocess
 import datetime
 import pathlib
-
+from math import radians
+from mathutils import Matrix
 
 addon_root_dir = Path(__file__).absolute().parent
 
@@ -741,20 +742,31 @@ def get_obj_locrot_v1(eobject, fix90, axis):
     
     # hack pentagon
     if int(fix90) == 1:
-        eobject.rotation_euler.rotate_axis(fl_axis, math.radians(-90 * rfactor))
-        bpy.context.view_layer.update()
+        # eobject.rotation_euler.rotate_axis(fl_axis, math.radians(-90 * rfactor))
+        # bpy.context.view_layer.update()
         
-    rotx = float(round(math.degrees(eobject.matrix_world.to_euler()[0]), 4))
-    roty = float(round(math.degrees(eobject.matrix_world.to_euler()[1]), 4))
-    rotz = float(round(math.degrees(eobject.matrix_world.to_euler()[2]), 4))
+        # rotall = ((eobject.rotation_euler.to_matrix() @ Matrix.Rotation(radians(90 * rfactor), 3, 'Y')) @ eobject.matrix_world).to_euler()
+        rot_st = Matrix.Rotation(radians(90), 4, 'Y')
+        
+        rotall = (eobject.matrix_world @ rot_st).to_euler()
+        
+        rotx = float(round(math.degrees(rotall[0]), 4))
+        roty = float(round(math.degrees(rotall[1]), 4))
+        rotz = float(round(math.degrees(rotall[2]), 4))
+    else:
+        rotx = float(round(math.degrees(eobject.matrix_world.to_euler()[0]), 4))
+        roty = float(round(math.degrees(eobject.matrix_world.to_euler()[1]), 4))
+        rotz = float(round(math.degrees(eobject.matrix_world.to_euler()[2]), 4))
+    
+
     
     # print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
     # print(eobject.rotation_euler[2])
     
     # hack pentagon
-    if int(fix90) == 1:
-        eobject.rotation_euler.rotate_axis(fl_axis, math.radians(+90 * rfactor))
-        bpy.context.view_layer.update()
+    # if int(fix90) == 1:
+        # eobject.rotation_euler.rotate_axis(fl_axis, math.radians(+90 * rfactor))
+        # bpy.context.view_layer.update()
 
     # extract locations
     locx = float(round(eobject.matrix_world[0][3], 4))
@@ -1306,6 +1318,14 @@ def test_export_v1(self, context):
             # strings are never empty, unless you take them off
             if lizard.ent_conf['pr_str_' + str(str_j_idx + 1)] != ' ':
                 mkspot.append('\t' + '"' + prop_ents[cent_type][0][str_pr].split(':-:')[0] + '" "' + lizard.ent_conf['pr_str_' + str(str_j_idx + 1)] + '"\n')
+        
+        
+        
+        
+        # write colors
+        for color_j_idx, color_pr in enumerate(prop_ents[cent_type][3]):
+            rgb = str(int(lizard.ent_conf['pr_color_' + str(color_j_idx + 1)][0] * 255)) + ' ' + str(int(lizard.ent_conf['pr_color_' + str(color_j_idx + 1)][1] * 255)) + ' ' + str(int(lizard.ent_conf['pr_color_' + str(color_j_idx + 1)][2] * 255))
+            mkspot.append('\t' + '"' + prop_ents[cent_type][3][color_pr].split(':-:')[0] + '" "' + rgb + '"\n')
         
         
         
