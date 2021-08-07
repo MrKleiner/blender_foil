@@ -91,7 +91,17 @@
 			"Outputs": "1"
 		},
 		{
-			"Inputs": "1"
+			"Wake": "1",
+			"Sleep": "1",
+			"EnableMotion": "1",
+			"DisableMotion": "1",
+			"DisableFloating": "1",
+			"SetBodyGroup": "1",
+			"physdamagescale": "1",
+			"EnableDamageForces": "1",
+			"DisableDamageForces": "1",
+			"EnablePuntSound": "1",
+			"DisablePuntSound": "1"
 		},
 		{
 			"angles_enabled": "1"
@@ -382,7 +392,7 @@
 
 		},
 		{
-			"BrightnessScaleHDR": "_lightscaleHDR:-:0:-:Some models have multiple versions of their textures, called skins. Set this to a number other than 0 to use that skin instead of the default.",
+			"BrightnessScaleHDR": "_lightscaleHDR:-:1.0:-:Some models have multiple versions of their textures, called skins. Set this to a number other than 0 to use that skin instead of the default.",
 			"Constant": "_constant_attn:-:0:-: DESCR",
 			"Linear": "_linear_attn:-:1:-: DESCR",
 			"Quadratic": "_quadratic_attn:-:0:-: DESCR",
@@ -433,6 +443,65 @@
 		
 		{
 			"angles_enabled": "96"
+		}
+		
+	],
+	
+	"logic_auto": [
+		{
+
+		},
+		{
+			
+
+		},
+		{
+			
+		},
+		{
+
+		},
+		{
+			
+			"Global State to Read:-:--- None ---:-:Description": [
+					{
+						"--- None ---": "globalstate:-:" ,
+						"Gordon pre-criminal": "globalstate:-:gordon_precriminal",
+						"Antlions are player allies": "globalstate:-:antlion_allied",
+						"Suit sprint function not yet enabled": "globalstate:-:suit_no_sprint",
+						"Super phys gun is enabled": "globalstate:-:super_phys_gun",
+						"Friendly encounter sequence (lower weapons, etc.)": "globalstate:-:friendly_encounter",
+						"Gordon is invulnerable": "globalstate:-:gordon_invulnerable",
+						"Don't spawn seagulls on the jeep": "globalstate:-:no_seagulls_on_jeep",
+						"Game is running on a console": "globalstate:-:is_console",
+						"Game is running on a PC": "globalstate:-:is_pc"
+					}
+			]
+
+			
+		},
+		{
+			
+		},
+		{
+			"1": "1:-:Remove on fire"
+		},
+		{
+			"OnMapSpawn": "1",
+			"OnNewGame": "1",
+			"OnLoadGame": "1",
+			"OnMapTransition": "1",
+			"OnBackgroundMap": "1",
+			"OnMultiNewMap": "1",
+			"OnMultiNewRound": "1"
+		},
+		{
+			"OnUser1": "1",
+			"OnUser2": "1"
+		},
+		
+		{
+			"angles_enabled": "0"
 		}
 		
 	]

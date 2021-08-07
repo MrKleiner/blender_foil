@@ -1,4 +1,3 @@
-
 It just keeps calling predefined slots til it runs out of predefined slots.
 Strings, floats, ints, boolean_enums
 "GUI NAME": "REAL_NAME:-:DEFAULT:-:DESCRIPTION"
@@ -21,7 +20,7 @@ Spawnflags:
 NOTICE: EDITING .JSON WILL BREAK LITERALLY EVERYTHING, EVERYONE WILL DIE A VERY MATURE DEATH OF A BIG ALIEN FROM SPACE EATING THEM ALIVE AND THE UNIVERSE WILL COLLAPSE!!!!!!!!
 
 
-0: String props 16x
+0: String props 16x. Name is always a string
 1: int props 16x
 2: float props 16x
 3: color props 8x

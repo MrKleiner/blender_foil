@@ -116,7 +116,6 @@ def enum_returner_1(self, context):
         return []
 
 
-
 def enum_returner_2(self, context):
 
     shit_number = 2
@@ -150,7 +149,6 @@ def enum_returner_2(self, context):
         
     else:
         return []
-
 
 
 def enum_returner_3(self, context):
@@ -188,7 +186,6 @@ def enum_returner_3(self, context):
         return []
 
 
-
 def enum_returner_4(self, context):
 
     shit_number = 4
@@ -222,7 +219,6 @@ def enum_returner_4(self, context):
         
     else:
         return []
-
 
 
 def enum_returner_5(self, context):
@@ -260,7 +256,6 @@ def enum_returner_5(self, context):
         return []
 
 
-
 def enum_returner_6(self, context):
 
     shit_number = 6
@@ -294,7 +289,6 @@ def enum_returner_6(self, context):
         
     else:
         return []
-
 
 
 def enum_returner_7(self, context):
@@ -332,7 +326,6 @@ def enum_returner_7(self, context):
         return []
 
 
-
 def enum_returner_8(self, context):
 
     shit_number = 8
@@ -366,7 +359,6 @@ def enum_returner_8(self, context):
         
     else:
         return []
-
 
 
 def enum_returner_9(self, context):
@@ -404,7 +396,6 @@ def enum_returner_9(self, context):
         return []
 
 
-
 def enum_returner_10(self, context):
 
     shit_number = 10
@@ -438,7 +429,6 @@ def enum_returner_10(self, context):
         
     else:
         return []
-
 
 
 def enum_returner_11(self, context):
@@ -476,7 +466,6 @@ def enum_returner_11(self, context):
         return []
 
 
-
 def enum_returner_12(self, context):
 
     shit_number = 12
@@ -510,7 +499,6 @@ def enum_returner_12(self, context):
         
     else:
         return []
-
 
 
 def enum_returner_13(self, context):
@@ -548,7 +536,6 @@ def enum_returner_13(self, context):
         return []
 
 
-
 def enum_returner_14(self, context):
 
     shit_number = 14
@@ -584,7 +571,6 @@ def enum_returner_14(self, context):
         return []
 
 
-
 def enum_returner_15(self, context):
 
     shit_number = 15
@@ -618,7 +604,6 @@ def enum_returner_15(self, context):
         
     else:
         return []
-
 
 
 def enum_returner_16(self, context):
@@ -793,7 +778,7 @@ def r_enum_list(self, context):
     # scene_vmf_vgroups = []
     entfile = open(radpath)
     entjson = entfile.read()
-    prop_ents = json.loads(entjson)
+    prop_ents = vp_prop_ents
     
     # dev print
     # for thl in radlines:
@@ -901,6 +886,40 @@ def r_enum_list_v1(self, context):
         return fixed_enum
     
 
+def eval_spawnflags(self, context):
+    
+    print('eval spawnflags')
+    
+    radpath = pathlib.Path(bpy.context.scene.blents.dn_str)
+    entfile = open(radpath)
+    entjson = entfile.read()
+    
+    # all possible ents
+    prop_ents = json.loads(entjson)
+    
+    # TODO: DEFAULT ALL THE PARAMS BEFOREHAND. This comment is irrelevant
+    
+    
+    
+    
+    # evaluate
+    for obj in bpy.context.selected_objects:
+        print('calc spawnflags')
+        cur_obj_ent_type = obj.ent_conf.obj_ent_type
+        obj.ent_conf['l3_ent_sflags'] = 0
+        
+        calculated_bytes = 0
+        
+        for sflag_index, sflag in enumerate(prop_ents[cur_obj_ent_type][6]):
+            
+            if obj.ent_conf['pr_sflags_' + str(sflag_index + 1)] == True:
+                calculated_bytes += int(sflag)
+        
+        obj.ent_conf['l3_ent_sflags'] = calculated_bytes
+        print('calculated flags are: ' + str(calculated_bytes))
+    
+        
+
 def set_obj_ent(self, context):
 
     def eval_state(state):
@@ -984,42 +1003,8 @@ def set_obj_ent(self, context):
 
             obj.ent_conf['pr_color_' + str(color_j_idx + 1)] = (ar, ag, ab)
             
+    eval_spawnflags(self, context)
 
-
-
-def eval_spawnflags(self, context):
-    
-    print('eval spawnflags')
-    
-    radpath = pathlib.Path(bpy.context.scene.blents.dn_str)
-    entfile = open(radpath)
-    entjson = entfile.read()
-    
-    # all possible ents
-    prop_ents = json.loads(entjson)
-    
-    # TODO: DEFAULT ALL THE PARAMS BEFOREHAND. This comment is irrelevant
-    
-    
-    
-    
-    # evaluate
-    for obj in bpy.context.selected_objects:
-        print('calc spawnflags')
-        cur_obj_ent_type = obj.ent_conf.obj_ent_type
-        obj.ent_conf['l3_ent_sflags'] = 0
-        
-        calculated_bytes = 0
-        
-        for sflag_index, sflag in enumerate(prop_ents[cur_obj_ent_type][6]):
-            
-            if obj.ent_conf['pr_sflags_' + str(sflag_index + 1)] == True:
-                calculated_bytes += int(sflag)
-        
-        obj.ent_conf['l3_ent_sflags'] = calculated_bytes
-        print('calculated flags are: ' + str(calculated_bytes))
-    
-        
 
 
 
@@ -1053,18 +1038,12 @@ def test_export_v1(self, context):
 
     delete_ents = []
 
-    # find camera
-    for zstrnum, zlinestr in enumerate(linez):
-        if 'cameras\n' in zlinestr:
-            print('found camera: ' + str(zstrnum))
-            bigcum = zstrnum
-
-    
+ 
     # scan all ents
     for strnum, linestr in enumerate(linez):
         # if re.search('^[a-zA-Z].*', linestr):
         if 'entity\n' in linestr:
-            print('found solid: ' + str(strnum))
+            print('found ent: ' + str(strnum))
             brstart = strnum
             current_indent = len(linestr) - len(linestr.lstrip())
             print('ent indent ' + str(current_indent))
@@ -1087,7 +1066,11 @@ def test_export_v1(self, context):
         if del_ent[1] != 0:
             del linez[del_ent[0]:del_ent[2] + 1]
     
-    
+    # find camera
+    for zstrnum, zlinestr in enumerate(linez):
+        if 'cameras\n' in zlinestr:
+            print('found camera: ' + str(zstrnum))
+            bigcum = zstrnum
     
     print(linez)
     file.close()
@@ -1147,7 +1130,7 @@ def test_export_v1(self, context):
         mk_ent.append('\t' + '"origin" "' + str(obj_locrot['loc'][0]) + ' ' + str(obj_locrot['loc'][1]) + ' ' + str(obj_locrot['loc'][2]) + '"\n')
         
         # if it's stated in the blender config json block that this entity should have angles - write anlges
-        if len(prop_ents[cent_type][9]['angles_enabled']) == 1:
+        if int(prop_ents[cent_type][9]['angles_enabled']) == 1:
             
             mk_ent.append('\t' + '"angles" "' + str(obj_locrot['rot'][1]) + ' ' + str(obj_locrot['rot'][2]) + ' ' + str(obj_locrot['rot'][0]) + '"\n')
         
@@ -1314,18 +1297,32 @@ def test_export_v1(self, context):
         print(obj_locrot['rot'])
         
         
+        # write strings
         for str_j_idx, str_pr in enumerate(prop_ents[cent_type][0]):
             # strings are never empty, unless you take them off
             if lizard.ent_conf['pr_str_' + str(str_j_idx + 1)] != ' ':
                 mkspot.append('\t' + '"' + prop_ents[cent_type][0][str_pr].split(':-:')[0] + '" "' + lizard.ent_conf['pr_str_' + str(str_j_idx + 1)] + '"\n')
         
+        # write ints
+        for int_j_idx, int_pr in enumerate(prop_ents[cent_type][1]):
+            mkspot.append('\t' + '"' + prop_ents[cent_type][1][int_pr].split(':-:')[0] + '" "' + str(lizard.ent_conf['pr_int_' + str(int_j_idx + 1)]) + '"\n')
         
+        
+        # write floats
+        for float_j_idx, float_pr in enumerate(prop_ents[cent_type][2]):
+            mkspot.append('\t' + '"' + prop_ents[cent_type][2][float_pr].split(':-:')[0] + '" "' + str(round(lizard.ent_conf['pr_float_' + str(float_j_idx + 1)], 4)) + '"\n')
+
         
         
         # write colors
+        # sorry, but your shit cannot have negative values. For now
+        
         for color_j_idx, color_pr in enumerate(prop_ents[cent_type][3]):
             rgb = str(int(lizard.ent_conf['pr_color_' + str(color_j_idx + 1)][0] * 255)) + ' ' + str(int(lizard.ent_conf['pr_color_' + str(color_j_idx + 1)][1] * 255)) + ' ' + str(int(lizard.ent_conf['pr_color_' + str(color_j_idx + 1)][2] * 255))
-            mkspot.append('\t' + '"' + prop_ents[cent_type][3][color_pr].split(':-:')[0] + '" "' + rgb + '"\n')
+            if '-' in str(rgb):
+                mkspot.append('\t' + '"' + prop_ents[cent_type][3][color_pr].split(':-:')[0] + '" "-1 -1 -1 1"\n')
+            else:
+                mkspot.append('\t' + '"' + prop_ents[cent_type][3][color_pr].split(':-:')[0] + '" "' + rgb + '"\n')
         
         
         
@@ -1361,6 +1358,82 @@ def test_export_v1(self, context):
     TEST_fed = open('E:\\!!Blend_Projects\\scripts\\entity_exporter\\ents.vmf', 'w')
     TEST_fed.write(''.join(linez))
     TEST_fed.close()
+
+
+
+#
+# IO
+#
+
+def build_suggest_ent_outp(self, context):
+    # return []
+
+    # vp_prop_ents
+    
+    sg_build = []
+    
+    cent_type = context.active_object.ent_conf.obj_ent_type
+    # print(vp_prop_ents[cent_type][7])
+    for prm_indx, psb_outp in enumerate(vp_prop_ents[cent_type][7]):
+        sg_build.append((psb_outp, psb_outp, 'output'))
+    # print(sg_build)
+    return sg_build
+
+
+def apply_loutp_suggestion(self, context):
+    print('triggered')
+    get_tgt_ind = context.active_object.list_index
+
+    get_suggestion = context.scene.blents.suggest_outp
+
+    context.active_object.my_list[get_tgt_ind].name = get_suggestion
+
+
+# def try_set_suggestion(self, context):
+    # get_tgt_ind = context.active_object.list_index
+
+    # get_current_outp = context.active_object.my_list[get_tgt_ind].name
+
+    # try:
+        # context.scene.blents.suggest_outp = get_current_outp
+    # except:
+        # pass
+
+
+def build_suggest_ent_inpt(self, context):
+    
+    print('build inp suggestions')
+    # make a list of eligible entites for scene
+    tgt_searchlist = [obj for obj in bpy.data.objects if len(obj.ent_conf.obj_ent_type) > 3 and obj.ent_conf.obj_ent_type != 'nil']
+    print(tgt_searchlist)
+    # this will append all the possible results from all the objects with matched name
+    matched_inputs = []
+    
+    # get requested tgt name
+    get_cur_ind = context.active_object.list_index
+    rq_tgt_name = context.active_object.my_list[get_cur_ind].random_prop
+    print('requested tgt name: ' + str(rq_tgt_name))
+    
+    for sc_obj in tgt_searchlist:
+        # get name index and see if an entity has name at all
+        # name is always in string
+        cent_type = sc_obj.ent_conf.obj_ent_type
+        print('scanning ' + str(sc_obj.name) + ' with ent type ' + str(cent_type))
+        for ngui_idx, keyname in enumerate(vp_prop_ents[cent_type][0]):
+            # Todo: make it look for "targetname"
+            if keyname.lower() == 'name':
+                print('Name presented in ' + str(sc_obj.name))
+
+                if sc_obj.ent_conf['pr_str_' + str(ngui_idx + 1)] == rq_tgt_name:
+                    # get matched ent type
+                    print('matched name!!')
+                    matched_ent_type = vp_prop_ents[sc_obj.ent_conf['obj_ent_type']][8]
+                    for found_input in matched_ent_type:
+                        matched_inputs.append((found_input, found_input, 'input'))
+    
+    
+    return list(dict.fromkeys(matched_inputs))
+
 
 
 
@@ -1436,8 +1509,28 @@ class blender_ents(PropertyGroup):
         description='lizards are sexy',
         default = 'nil'
         )
+        
+        
+        
+    # ---------
+    #  IO sys
+    # ---------
+        
+    suggest_outp : EnumProperty(
+        items=build_suggest_ent_outp,
+        name='Output',
+        description='I like bread',
+        update=apply_loutp_suggestion
+        # default = "nil"
+        )
 
-    
+    suggest_inp : EnumProperty(
+        items=build_suggest_ent_inpt,
+        name='tgt input',
+        description='I like bread'
+        # update=apply_loutp_suggestion
+        # default = "nil"
+        )
 
 
 
@@ -2469,23 +2562,43 @@ class VIEW3D_PT_blender_foil_dn_enum(bpy.types.Panel):
 
 
 
+
+
+#
+# RegEdit
+#
+
+
+
+rclasses = (
+    blender_ents,
+    VIEW3D_PT_blender_foil_dn_enum,
+    OBJECT_OT_vmf_export_foil,
+    OBJECT_OT_foil_test_export,
+    blender_ents_obj,
+)
+
+register_, unregister_ = bpy.utils.register_classes_factory(rclasses)
+
+
 def register():
-    bpy.utils.register_class(blender_ents)
+    register_()
+    # bpy.utils.register_class(blender_ents)
     bpy.types.Scene.blents = PointerProperty(type=blender_ents)
-    bpy.utils.register_class(VIEW3D_PT_blender_foil_dn_enum)
-    bpy.utils.register_class(OBJECT_OT_vmf_export_foil)
-    bpy.utils.register_class(OBJECT_OT_foil_test_export)
+    # bpy.utils.register_class(VIEW3D_PT_blender_foil_dn_enum)
+    # bpy.utils.register_class(OBJECT_OT_vmf_export_foil)
+    # bpy.utils.register_class(OBJECT_OT_foil_test_export)
     
-    bpy.utils.register_class(blender_ents_obj)
+    # bpy.utils.register_class(blender_ents_obj)
     bpy.types.Object.ent_conf = PointerProperty(type=blender_ents_obj)
 
 
 def unregister():
-    bpy.utils.unregister_class(blender_ents)
-    bpy.utils.unregister_class(blender_ents_obj)
-    bpy.utils.unregister_class(VIEW3D_PT_blender_foil_dn_enum)
-    bpy.utils.unregister_class(OBJECT_OT_vmf_export_foil)
-    bpy.utils.unregister_class(OBJECT_OT_foil_test_export)
+    unregister_()
+    # bpy.utils.unregister_class(blender_ents)
+    # bpy.utils.unregister_class(blender_ents_obj)
+    # bpy.utils.unregister_class(VIEW3D_PT_blender_foil_dn_enum)
+    # bpy.utils.unregister_class(OBJECT_OT_vmf_export_foil)
+    # bpy.utils.unregister_class(OBJECT_OT_foil_test_export)
     del bpy.types.Scene.blents
     del bpy.types.Object.ent_conf
-
