@@ -27,6 +27,6 @@ NOTICE: EDITING .JSON WILL BREAK LITERALLY EVERYTHING, EVERYONE WILL DIE A VERY 
 4: standard list enums 16x
 5: boolean list enums 16x
 6: flags 32x
-7: Outputs
-8: Inputs
+7: Outputs that can be fired
+8: Inputs that other entites can trigger
 9: blender config
