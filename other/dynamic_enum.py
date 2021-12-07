@@ -58,12 +58,8 @@ print('rebuild json')
 # all possible ents
 vp_prop_ents = json.loads(vp_entjson)
 
+# todo: Separate actions into functions as often as possible
 
-# =========================================================
-#----------------------------------------------------------
-#                   Enum returners SIMPLY KEEP THE DEFAULT AT THE TOP IN JSON LOOOL
-#----------------------------------------------------------
-# =========================================================
 
 
 
@@ -711,9 +707,15 @@ def enum_tgt_16(self, context):
 # reusable, I guess...
 # It is, indeed, reusable, but why would one need this shit reusable???? It'll only get called like fucking once...
 # usage: call this function with an object
-def get_obj_locrot_v1(eobject, fix90, axis):
+def get_obj_locrot_v1(eobject, fix90, axis, self, context):
 
     # extract rotations
+    
+    # get scene scale
+    if context.scene.unit_settings.system != 'NONE':
+        sce_scale = bpy.context.scene.unit_settings.scale_length
+    else:
+        sce_scale = 1
     
     if 'z' in str(axis).lower():
         fl_axis = 'Z'
@@ -754,11 +756,46 @@ def get_obj_locrot_v1(eobject, fix90, axis):
         # bpy.context.view_layer.update()
 
     # extract locations
-    locx = float(round(eobject.matrix_world[0][3], 4))
-    locy = float(round(eobject.matrix_world[1][3], 4))
-    locz = float(round(eobject.matrix_world[2][3], 4))
+    locx = float(round(eobject.matrix_world[0][3], 4) * sce_scale)
+    locy = float(round(eobject.matrix_world[1][3], 4) * sce_scale)
+    locz = float(round(eobject.matrix_world[2][3], 4) * sce_scale)
 
     return {'loc': (locx, locy, locz), 'rot': (rotx, roty, rotz)}
+
+
+# define names of the supported icons
+# gui_name:real_ent_name
+supported_icons = [
+    ('logic_case', 'nein'),
+    ('env_cubemap', 'nicht'),
+    ('logic_relay', 'nicht'),
+    ('filter_activator_name', 'nicht')
+    
+]
+
+
+# link all the curves used to visualize an entity
+# so that there are no excess verts
+def cdata_cleanup(self, context):
+    for existing_icon in supported_icons:
+        all_fuckdata = []
+        
+        for foil_obj in bpy.data.objects:
+            if foil_obj.type == 'CURVE':
+                if existing_icon[0] + '_curve_data' in foil_obj.data.name:
+                    all_fuckdata.append(foil_obj.data)
+
+        if len(all_fuckdata) > 1:
+            for foil_obj in bpy.data.objects:
+                if existing_icon[0] + '_curve_data' in foil_obj.data.name:
+                    foil_obj.data = all_fuckdata[0]
+            
+            for ded_data in bpy.data.curves:
+                if existing_icon[0] + '_curve_data' in ded_data.name:
+                    if ded_data != all_fuckdata[0]:
+                        bpy.data.curves.remove(ded_data)
+
+
 
 
 
@@ -919,7 +956,8 @@ def eval_spawnflags(self, context):
         print('calculated flags are: ' + str(calculated_bytes))
     
         
-
+# mark currently selected object as an entity
+# and clean all the data which was probably left from the previous entity
 def set_obj_ent(self, context):
 
     def eval_state(state):
@@ -940,7 +978,7 @@ def set_obj_ent(self, context):
     # current entity type
     cent_type = bpy.context.scene.blents.dnenum
     
-    # TODO: DEFAULT ALL THE PARAMS BEFOREHAND. This comment is irrelevant
+
     
     
     
@@ -1007,9 +1045,11 @@ def set_obj_ent(self, context):
 
 
 
-
+# Export entities to a given vmf
 def test_export_v1(self, context):
     print('exec')
+    
+    cdata_cleanup(self, context)
     
     def return_1_0(state):
         if state == True:
@@ -1020,7 +1060,7 @@ def test_export_v1(self, context):
             return 0
             
     
-    
+    cdata_cleanup(self, context)
     # ===================================
     #               Cleanup
     # ===================================
@@ -1114,7 +1154,7 @@ def test_export_v1(self, context):
         cent_type = cbt.ent_conf.obj_ent_type
         
         # get transforms from blender
-        obj_locrot = get_obj_locrot_v1(cbt, 1, 'z')
+        obj_locrot = get_obj_locrot_v1(cbt, 1, 'z', self, context)
         
         
         #
@@ -1268,7 +1308,7 @@ def test_export_v1(self, context):
         cent_type = lizard.ent_conf.obj_ent_type
         
         # get transforms from blender
-        obj_locrot = get_obj_locrot_v1(lizard, 1, '-y')
+        obj_locrot = get_obj_locrot_v1(lizard, 1, '-y', self, context)
         
         
         #
@@ -1365,6 +1405,8 @@ def test_export_v1(self, context):
 # IO
 #
 
+
+
 def build_suggest_ent_outp(self, context):
     # return []
 
@@ -1435,10 +1477,50 @@ def build_suggest_ent_inpt(self, context):
     return list(dict.fromkeys(matched_inputs))
 
 
-
-
-
-
+def add_hwm_entity(self, context):
+    #
+    # Todo: make it NOT use bpy.ops !!!!!!!!!!!!!!
+    #
+    
+    file_path = 'E:\\!!Blend_Projects\\hammer_icons\\hammer_icons_01a.blend'
+    inner_path = 'Object'
+    object_name = self.icon_ent_type + '_curve'
+    """
+    bpy.ops.wm.append(
+        filepath=os.path.join(file_path, inner_path, object_name),
+        directory=os.path.join(file_path, inner_path),
+        filename=object_name,
+        autoselect=True,
+        link=False,
+        instance_object_data=False
+        )
+    """
+    lnk_file = Path(file_path).absolute().name
+    
+    with bpy.data.libraries.load(file_path) as (data_from, data_to):
+        data_to.objects = [object_name]
+    
+    obj = data_to.objects[0]
+    bpy.context.collection.objects.link(obj)
+    obj.location = context.scene.cursor.location
+    # for obj in data_to.objects:
+        # if obj.name == object_name:
+            # bpy.context.collection.objects.link(obj)
+    
+    for selected_ob in bpy.data.objects:
+        selected_ob.select_set(False)
+    
+    
+    obj.select_set(True)
+    context.view_layer.objects.active = obj
+    bpy.data.libraries.remove(bpy.data.libraries[lnk_file])
+    
+    
+    # gut for helth
+    # todo: make a separate function ?
+    cdata_cleanup(self, context)
+    # I want 2 die
+    
 
 
 
@@ -1471,13 +1553,47 @@ class OBJECT_OT_foil_test_export(Operator, AddObjectHelper):
         return {'FINISHED'}
 
 
+    
+class OBJECT_OT_foil_add_hwm_ent(Operator, AddObjectHelper):
+
+    bl_idname = 'mesh.foil_add_hwm_ent'
+    bl_label = 'Add object'
+    # bl_options = {'REGISTER'}
+    
+    # gr_id = StringProperty(default='nil')
+    icon_ent_type: bpy.props.StringProperty(
+        name = 'icon_ent_type',
+        default = 'nil'
+    )
+
+    # @classmethod
+    
+    def execute(self, context):
+        # print(self.gr_id)
+        add_hwm_entity(self, context)
+
+        return {'FINISHED'}
 
 
 
 
+# test
+def apply_qffd_n(self, context):
 
+    print('abandoned_fucntion')
+    
+    
+    
+    
+class OBJECT_OT_apply_qffd(Operator, AddObjectHelper):
+    bl_idname = 'mesh.apply_qffd'
+    bl_label = 'Apply qffd'
+    bl_options = {'REGISTER'}
 
-
+    def execute(self, context):
+        apply_qffd_n(self, context)
+        return {'FINISHED'}
+        
 
 
 # =========================================================
@@ -1554,7 +1670,9 @@ class blender_ents_obj(PropertyGroup):
     
     
 
-    
+    # =====================================================================
+    # TODO: EVERYTHING BESIDES ENUMS COULD EASILY BE DONE WITH FOR LOOPS
+    # =====================================================================
     
     
     
@@ -1563,101 +1681,166 @@ class blender_ents_obj(PropertyGroup):
     #                       Strings
     # =================================================
     pr_str_1 : StringProperty(
-        name='str1',
+        name='pr_str_1',
         description='lizards are sexy',
-        default = 'str1'
+        default = 'pr_str_1'
         )
-        
     pr_str_2 : StringProperty(
-        name='str2',
+        name='pr_str_2',
         description='lizards are sexy',
-        default = 'str2'
+        default = 'pr_str_2'
         )
-        
     pr_str_3 : StringProperty(
-        name='str3',
+        name='pr_str_3',
         description='lizards are sexy',
-        default = 'str3'
+        default = 'pr_str_3'
         )
-        
     pr_str_4 : StringProperty(
         name='pr_str_4',
         description='lizards are sexy',
         default = 'pr_str_4'
         )
-        
     pr_str_5 : StringProperty(
         name='pr_str_5',
         description='lizards are sexy',
         default = 'pr_str_5'
         )
-        
     pr_str_6 : StringProperty(
         name='pr_str_6',
         description='lizards are sexy',
         default = 'pr_str_6'
         )
-        
     pr_str_7 : StringProperty(
         name='pr_str_7',
         description='lizards are sexy',
         default = 'pr_str_7'
         )
-        
     pr_str_8 : StringProperty(
         name='pr_str_8',
         description='lizards are sexy',
         default = 'pr_str_8'
         )
-        
     pr_str_9 : StringProperty(
         name='pr_str_9',
         description='lizards are sexy',
         default = 'pr_str_9'
         )
-        
     pr_str_10 : StringProperty(
         name='pr_str_10',
         description='lizards are sexy',
         default = 'pr_str_10'
         )
-        
     pr_str_11 : StringProperty(
         name='pr_str_11',
         description='lizards are sexy',
         default = 'pr_str_11'
         )
-        
     pr_str_12 : StringProperty(
         name='pr_str_12',
         description='lizards are sexy',
         default = 'pr_str_12'
         )
-        
     pr_str_13 : StringProperty(
         name='pr_str_13',
         description='lizards are sexy',
         default = 'pr_str_13'
         )
-        
     pr_str_14 : StringProperty(
         name='pr_str_14',
         description='lizards are sexy',
         default = 'pr_str_14'
         )
-        
     pr_str_15 : StringProperty(
         name='pr_str_15',
         description='lizards are sexy',
         default = 'pr_str_15'
         )
-        
     pr_str_16 : StringProperty(
         name='pr_str_16',
         description='lizards are sexy',
         default = 'pr_str_16'
         )
-
+    pr_str_17 : StringProperty(
+        name='pr_str_17',
+        description='lizards are sexy',
+        default = 'pr_str_17'
+        )
+    pr_str_18 : StringProperty(
+        name='pr_str_18',
+        description='lizards are sexy',
+        default = 'pr_str_18'
+        )
+    pr_str_19 : StringProperty(
+        name='pr_str_19',
+        description='lizards are sexy',
+        default = 'pr_str_19'
+        )
+    pr_str_20 : StringProperty(
+        name='pr_str_20',
+        description='lizards are sexy',
+        default = 'pr_str_20'
+        )
+    pr_str_21 : StringProperty(
+        name='pr_str_21',
+        description='lizards are sexy',
+        default = 'pr_str_21'
+        )
+    pr_str_22 : StringProperty(
+        name='pr_str_22',
+        description='lizards are sexy',
+        default = 'pr_str_22'
+        )
+    pr_str_23 : StringProperty(
+        name='pr_str_23',
+        description='lizards are sexy',
+        default = 'pr_str_23'
+        )
+    pr_str_24 : StringProperty(
+        name='pr_str_24',
+        description='lizards are sexy',
+        default = 'pr_str_24'
+        )
+    pr_str_25 : StringProperty(
+        name='pr_str_25',
+        description='lizards are sexy',
+        default = 'pr_str_25'
+        )
+    pr_str_26 : StringProperty(
+        name='pr_str_26',
+        description='lizards are sexy',
+        default = 'pr_str_26'
+        )
+    pr_str_27 : StringProperty(
+        name='pr_str_27',
+        description='lizards are sexy',
+        default = 'pr_str_27'
+        )
+    pr_str_28 : StringProperty(
+        name='pr_str_28',
+        description='lizards are sexy',
+        default = 'pr_str_28'
+        )
+    pr_str_29 : StringProperty(
+        name='pr_str_29',
+        description='lizards are sexy',
+        default = 'pr_str_29'
+        )
+    pr_str_30 : StringProperty(
+        name='pr_str_30',
+        description='lizards are sexy',
+        default = 'pr_str_30'
+        )
+    pr_str_31 : StringProperty(
+        name='pr_str_31',
+        description='lizards are sexy',
+        default = 'pr_str_31'
+        )
+    pr_str_32 : StringProperty(
+        name='pr_str_32',
+        description='lizards are sexy',
+        default = 'pr_str_32'
+        )
+        
     # =================================================
     #                       Ints
     # =================================================
@@ -1672,7 +1855,6 @@ class blender_ents_obj(PropertyGroup):
         soft_min=0,
         subtype='UNSIGNED'
         )
-        
     pr_int_2 : IntProperty(
         name='pr_int_2',
         default=65565,
@@ -1682,7 +1864,6 @@ class blender_ents_obj(PropertyGroup):
         soft_min=0,
         subtype='UNSIGNED'
         )
-        
     pr_int_3 : IntProperty(
         name='pr_int_3',
         default=65565,
@@ -1692,7 +1873,6 @@ class blender_ents_obj(PropertyGroup):
         soft_min=0,
         subtype='UNSIGNED'
         )
-        
     pr_int_4 : IntProperty(
         name='pr_int_4',
         default=65565,
@@ -1702,7 +1882,6 @@ class blender_ents_obj(PropertyGroup):
         soft_min=0,
         subtype='UNSIGNED'
         )
-        
     pr_int_5 : IntProperty(
         name='pr_int_5',
         default=65565,
@@ -1712,7 +1891,6 @@ class blender_ents_obj(PropertyGroup):
         soft_min=0,
         subtype='UNSIGNED'
         )
-        
     pr_int_6 : IntProperty(
         name='pr_int_6',
         default=65565,
@@ -1722,7 +1900,6 @@ class blender_ents_obj(PropertyGroup):
         soft_min=0,
         subtype='UNSIGNED'
         )
-        
     pr_int_7 : IntProperty(
         name='pr_int_7',
         default=65565,
@@ -1732,7 +1909,6 @@ class blender_ents_obj(PropertyGroup):
         soft_min=0,
         subtype='UNSIGNED'
         )
-        
     pr_int_8 : IntProperty(
         name='pr_int_8',
         default=65565,
@@ -1742,7 +1918,6 @@ class blender_ents_obj(PropertyGroup):
         soft_min=0,
         subtype='UNSIGNED'
         )
-        
     pr_int_9 : IntProperty(
         name='pr_int_9',
         default=65565,
@@ -1752,7 +1927,6 @@ class blender_ents_obj(PropertyGroup):
         soft_min=0,
         subtype='UNSIGNED'
         )
-        
     pr_int_10 : IntProperty(
         name='pr_int_10',
         default=65565,
@@ -1762,7 +1936,6 @@ class blender_ents_obj(PropertyGroup):
         soft_min=0,
         subtype='UNSIGNED'
         )
-        
     pr_int_11 : IntProperty(
         name='pr_int_11',
         default=65565,
@@ -1772,7 +1945,6 @@ class blender_ents_obj(PropertyGroup):
         soft_min=0,
         subtype='UNSIGNED'
         )
-        
     pr_int_12 : IntProperty(
         name='pr_int_12',
         default=65565,
@@ -1782,7 +1954,6 @@ class blender_ents_obj(PropertyGroup):
         soft_min=0,
         subtype='UNSIGNED'
         )
-        
     pr_int_13 : IntProperty(
         name='pr_int_13',
         default=65565,
@@ -1792,7 +1963,6 @@ class blender_ents_obj(PropertyGroup):
         soft_min=0,
         subtype='UNSIGNED'
         )
-        
     pr_int_14 : IntProperty(
         name='pr_int_14',
         default=65565,
@@ -1802,7 +1972,6 @@ class blender_ents_obj(PropertyGroup):
         soft_min=0,
         subtype='UNSIGNED'
         )
-        
     pr_int_15 : IntProperty(
         name='pr_int_15',
         default=65565,
@@ -1812,9 +1981,152 @@ class blender_ents_obj(PropertyGroup):
         soft_min=0,
         subtype='UNSIGNED'
         )
-        
     pr_int_16 : IntProperty(
         name='pr_int_16',
+        default=65565,
+        min=-999999,
+        max=999999,
+        soft_max=4096,
+        soft_min=0,
+        subtype='UNSIGNED'
+        )
+    pr_int_17 : IntProperty(
+        name='pr_int_17',
+        default=65565,
+        min=-999999,
+        max=999999,
+        soft_max=4096,
+        soft_min=0,
+        subtype='UNSIGNED'
+        )
+    pr_int_18 : IntProperty(
+        name='pr_int_18',
+        default=65565,
+        min=-999999,
+        max=999999,
+        soft_max=4096,
+        soft_min=0,
+        subtype='UNSIGNED'
+        )
+    pr_int_19 : IntProperty(
+        name='pr_int_19',
+        default=65565,
+        min=-999999,
+        max=999999,
+        soft_max=4096,
+        soft_min=0,
+        subtype='UNSIGNED'
+        )
+    pr_int_20 : IntProperty(
+        name='pr_int_20',
+        default=65565,
+        min=-999999,
+        max=999999,
+        soft_max=4096,
+        soft_min=0,
+        subtype='UNSIGNED'
+        )
+    pr_int_21 : IntProperty(
+        name='pr_int_21',
+        default=65565,
+        min=-999999,
+        max=999999,
+        soft_max=4096,
+        soft_min=0,
+        subtype='UNSIGNED'
+        )
+    pr_int_22 : IntProperty(
+        name='pr_int_22',
+        default=65565,
+        min=-999999,
+        max=999999,
+        soft_max=4096,
+        soft_min=0,
+        subtype='UNSIGNED'
+        )
+    pr_int_23 : IntProperty(
+        name='pr_int_23',
+        default=65565,
+        min=-999999,
+        max=999999,
+        soft_max=4096,
+        soft_min=0,
+        subtype='UNSIGNED'
+        )
+    pr_int_24 : IntProperty(
+        name='pr_int_24',
+        default=65565,
+        min=-999999,
+        max=999999,
+        soft_max=4096,
+        soft_min=0,
+        subtype='UNSIGNED'
+        )
+    pr_int_25 : IntProperty(
+        name='pr_int_25',
+        default=65565,
+        min=-999999,
+        max=999999,
+        soft_max=4096,
+        soft_min=0,
+        subtype='UNSIGNED'
+        )
+    pr_int_26 : IntProperty(
+        name='pr_int_26',
+        default=65565,
+        min=-999999,
+        max=999999,
+        soft_max=4096,
+        soft_min=0,
+        subtype='UNSIGNED'
+        )
+    pr_int_27 : IntProperty(
+        name='pr_int_27',
+        default=65565,
+        min=-999999,
+        max=999999,
+        soft_max=4096,
+        soft_min=0,
+        subtype='UNSIGNED'
+        )
+    pr_int_28 : IntProperty(
+        name='pr_int_28',
+        default=65565,
+        min=-999999,
+        max=999999,
+        soft_max=4096,
+        soft_min=0,
+        subtype='UNSIGNED'
+        )
+    pr_int_29 : IntProperty(
+        name='pr_int_29',
+        default=65565,
+        min=-999999,
+        max=999999,
+        soft_max=4096,
+        soft_min=0,
+        subtype='UNSIGNED'
+        )
+    pr_int_30 : IntProperty(
+        name='pr_int_30',
+        default=65565,
+        min=-999999,
+        max=999999,
+        soft_max=4096,
+        soft_min=0,
+        subtype='UNSIGNED'
+        )
+    pr_int_31 : IntProperty(
+        name='pr_int_31',
+        default=65565,
+        min=-999999,
+        max=999999,
+        soft_max=4096,
+        soft_min=0,
+        subtype='UNSIGNED'
+        )
+    pr_int_32 : IntProperty(
+        name='pr_int_32',
         default=65565,
         min=-999999,
         max=999999,
@@ -1835,7 +2147,6 @@ class blender_ents_obj(PropertyGroup):
         max=99999.0,
         precision=4
         )
-
     pr_float_2 : FloatProperty(
         name='pr_float_2',
         default=65565.0,
@@ -1843,7 +2154,6 @@ class blender_ents_obj(PropertyGroup):
         max=99999.0,
         precision=4
         )
-        
     pr_float_3 : FloatProperty(
         name='pr_float_3',
         default=65565.0,
@@ -1851,7 +2161,6 @@ class blender_ents_obj(PropertyGroup):
         max=99999.0,
         precision=4
         )
-
     pr_float_4 : FloatProperty(
         name='pr_float_4',
         default=65565.0,
@@ -1859,7 +2168,6 @@ class blender_ents_obj(PropertyGroup):
         max=99999.0,
         precision=4
         )
-        
     pr_float_5 : FloatProperty(
         name='pr_float_5',
         default=65565.0,
@@ -1867,7 +2175,6 @@ class blender_ents_obj(PropertyGroup):
         max=99999.0,
         precision=4
         )
-
     pr_float_6 : FloatProperty(
         name='pr_float_6',
         default=65565.0,
@@ -1875,7 +2182,6 @@ class blender_ents_obj(PropertyGroup):
         max=99999.0,
         precision=4
         )
-        
     pr_float_7 : FloatProperty(
         name='pr_float_7',
         default=65565.0,
@@ -1883,7 +2189,6 @@ class blender_ents_obj(PropertyGroup):
         max=99999.0,
         precision=4
         )
-
     pr_float_8 : FloatProperty(
         name='pr_float_8',
         default=65565.0,
@@ -1891,7 +2196,6 @@ class blender_ents_obj(PropertyGroup):
         max=99999.0,
         precision=4
         )
-        
     pr_float_9 : FloatProperty(
         name='pr_float_9',
         default=65565.0,
@@ -1899,7 +2203,6 @@ class blender_ents_obj(PropertyGroup):
         max=99999.0,
         precision=4
         )
-
     pr_float_10 : FloatProperty(
         name='pr_float_10',
         default=65565.0,
@@ -1907,7 +2210,6 @@ class blender_ents_obj(PropertyGroup):
         max=99999.0,
         precision=4
         )
-        
     pr_float_11 : FloatProperty(
         name='pr_float_11',
         default=65565.0,
@@ -1915,7 +2217,6 @@ class blender_ents_obj(PropertyGroup):
         max=99999.0,
         precision=4
         )
-
     pr_float_12 : FloatProperty(
         name='pr_float_12',
         default=65565.0,
@@ -1923,7 +2224,6 @@ class blender_ents_obj(PropertyGroup):
         max=99999.0,
         precision=4
         )
-        
     pr_float_13 : FloatProperty(
         name='pr_float_13',
         default=65565.0,
@@ -1931,7 +2231,6 @@ class blender_ents_obj(PropertyGroup):
         max=99999.0,
         precision=4
         )
-
     pr_float_14 : FloatProperty(
         name='pr_float_14',
         default=65565.0,
@@ -1939,23 +2238,131 @@ class blender_ents_obj(PropertyGroup):
         max=99999.0,
         precision=4
         )
-        
     pr_float_15 : FloatProperty(
         name='pr_float_15',
         default=65565.0,
         min=-99999.0,
         max=99999.0,
         precision=4
-
         )
-
     pr_float_16 : FloatProperty(
         name='pr_float_16',
         default=65565.0,
         min=-99999.0,
         max=99999.0,
         precision=4
-
+        )
+    pr_float_17 : FloatProperty(
+        name='pr_float_17',
+        default=65565.0,
+        min=-99999.0,
+        max=99999.0,
+        precision=4
+        )
+    pr_float_18 : FloatProperty(
+        name='pr_float_18',
+        default=65565.0,
+        min=-99999.0,
+        max=99999.0,
+        precision=4
+        )
+    pr_float_19 : FloatProperty(
+        name='pr_float_19',
+        default=65565.0,
+        min=-99999.0,
+        max=99999.0,
+        precision=4
+        )
+    pr_float_20 : FloatProperty(
+        name='pr_float_20',
+        default=65565.0,
+        min=-99999.0,
+        max=99999.0,
+        precision=4
+        )
+    pr_float_21 : FloatProperty(
+        name='pr_float_21',
+        default=65565.0,
+        min=-99999.0,
+        max=99999.0,
+        precision=4
+        )
+    pr_float_22 : FloatProperty(
+        name='pr_float_22',
+        default=65565.0,
+        min=-99999.0,
+        max=99999.0,
+        precision=4
+        )
+    pr_float_23 : FloatProperty(
+        name='pr_float_23',
+        default=65565.0,
+        min=-99999.0,
+        max=99999.0,
+        precision=4
+        )
+    pr_float_24 : FloatProperty(
+        name='pr_float_24',
+        default=65565.0,
+        min=-99999.0,
+        max=99999.0,
+        precision=4
+        )
+    pr_float_25 : FloatProperty(
+        name='pr_float_25',
+        default=65565.0,
+        min=-99999.0,
+        max=99999.0,
+        precision=4
+        )
+    pr_float_26 : FloatProperty(
+        name='pr_float_26',
+        default=65565.0,
+        min=-99999.0,
+        max=99999.0,
+        precision=4
+        )
+    pr_float_27 : FloatProperty(
+        name='pr_float_27',
+        default=65565.0,
+        min=-99999.0,
+        max=99999.0,
+        precision=4
+        )
+    pr_float_28 : FloatProperty(
+        name='pr_float_28',
+        default=65565.0,
+        min=-99999.0,
+        max=99999.0,
+        precision=4
+        )
+    pr_float_29 : FloatProperty(
+        name='pr_float_29',
+        default=65565.0,
+        min=-99999.0,
+        max=99999.0,
+        precision=4
+        )
+    pr_float_30 : FloatProperty(
+        name='pr_float_30',
+        default=65565.0,
+        min=-99999.0,
+        max=99999.0,
+        precision=4
+        )
+    pr_float_31 : FloatProperty(
+        name='pr_float_31',
+        default=65565.0,
+        min=-99999.0,
+        max=99999.0,
+        precision=4
+        )
+    pr_float_32 : FloatProperty(
+        name='pr_float_32',
+        default=65565.0,
+        min=-99999.0,
+        max=99999.0,
+        precision=4
         )
 
 
@@ -2437,6 +2844,38 @@ class blender_ents_obj(PropertyGroup):
 
 
 
+#
+# hwm append Menu mechanism
+#
+
+
+
+
+# create a submenu in the hammer ents subcategory
+class hammer_ents_w_icons(bpy.types.Menu):
+    bl_idname = 'OBJECT_MT_hammer_ents_w_icons'
+    bl_label = 'Hammer Ents'
+    def draw(self, context):
+        for supported_icon in supported_icons:
+            self.layout.operator(
+                'mesh.foil_add_hwm_ent',
+                text=supported_icon[0]
+            ).icon_ent_type = supported_icon[0]
+
+
+
+
+
+
+
+# append submenu
+def draw_hwm_presets(self, context):
+    self.layout.separator()
+    self.layout.menu('OBJECT_MT_hammer_ents_w_icons', icon='LIGHT')
+
+
+
+
 
 
 
@@ -2559,6 +2998,14 @@ class VIEW3D_PT_blender_foil_dn_enum(bpy.types.Panel):
             """
 
 
+def ffd_app(self, context):
+    if (context.active_object):
+        if (len(context.active_object.modifiers)):
+            col = self.layout.column(align=True)
+
+            row = col.row(align=True)
+            # row.label(text='Spawnflags')
+
 
 
 
@@ -2576,6 +3023,8 @@ rclasses = (
     OBJECT_OT_vmf_export_foil,
     OBJECT_OT_foil_test_export,
     blender_ents_obj,
+    hammer_ents_w_icons,
+    OBJECT_OT_foil_add_hwm_ent
 )
 
 register_, unregister_ = bpy.utils.register_classes_factory(rclasses)
@@ -2591,6 +3040,10 @@ def register():
     
     # bpy.utils.register_class(blender_ents_obj)
     bpy.types.Object.ent_conf = PointerProperty(type=blender_ents_obj)
+    
+    bpy.types.VIEW3D_MT_add.append(draw_hwm_presets)
+    
+    bpy.types.DATA_PT_modifiers.prepend(ffd_app)
 
 
 def unregister():
@@ -2602,3 +3055,7 @@ def unregister():
     # bpy.utils.unregister_class(OBJECT_OT_foil_test_export)
     del bpy.types.Scene.blents
     del bpy.types.Object.ent_conf
+    
+    bpy.types.VIEW3D_MT_light_add.remove(draw_hwm_presets)
+    
+    bpy.types.DATA_PT_modifiers.remove(ffd_app)
