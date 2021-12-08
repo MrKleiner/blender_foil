@@ -1,10 +1,10 @@
 bl_info = {
-    'name': 'dynamic enum',
+    'name': 'BlenderFoil',
     'author': 'MrKleiner',
     'version': (1, 0),
-    'blender': (2, 93, 1),
+    'blender': (3, 0, 0),
     'location': 'N menu',
-    'description': '',
+    'description': 'Export shit from blender to source engine. Also, I like bread',
     'warning': '',
     'doc_url': '',
     'category': 'Add Mesh',
@@ -48,19 +48,53 @@ import pathlib
 from math import radians
 from mathutils import Matrix
 
-addon_root_dir = Path(__file__).absolute().parent
+# figure out a way of loading this from a subfodler, if possible
+from bs4 import BeautifulSoup
+from bs4 import Tag, NavigableString
 
-# vp_radpath = pathlib.Path(bpy.context.scene.blents.dn_str)
-vp_radpath = pathlib.Path('C:\\Users\\DrHax\\AppData\\Roaming\\Blender Foundation\\Blender\\2.93\\scripts\\addons\\blender_foil\\bl_point_ents\\blpe_main.json')
-vp_entfile = open(vp_radpath)
-vp_entjson = vp_entfile.read()
-print('rebuild json')
-# all possible ents
-vp_prop_ents = json.loads(vp_entjson)
 
 # todo: Separate actions into functions as often as possible
 
 
+
+# get the current directory. Just in case
+addon_root_dir = Path(__file__).absolute().parent
+
+# vp_radpath = pathlib.Path(bpy.context.scene.blents.dn_str)
+
+# get path to the entity definition json
+# should be in the subdir of this file on release
+vp_blpe_path = pathlib.Path('E:\\!!Blend_Projects\\scripts\\wallworm4blender\\blender_foil\\blender_foil\\blpe_main.json')
+
+print('rebuild json')
+
+# parse json and therefore obtain the list of all the entities and their params
+vp_blpe_ents = json.loads(open(vp_blpe_path).read())
+
+
+
+# define names of the supported icons
+# gui_name:real_ent_name
+# a json should have a corresponding entry
+supported_icons = [
+    ('logic_case', 'nein'),
+    ('env_cubemap', 'nicht'),
+    ('logic_relay', 'nicht'),
+    ('filter_activator_name', 'nicht')
+    
+]
+
+
+
+
+
+
+
+# =========================================================
+#----------------------------------------------------------
+#                           Enums
+#----------------------------------------------------------
+# =========================================================
 
 
 def enum_returner_1(self, context):
@@ -72,37 +106,23 @@ def enum_returner_1(self, context):
 
     if cent_type != 'nil':
         current_enum = shit_number - 1
-        radpath = pathlib.Path(bpy.context.scene.blents.dn_str)
-        entfile = open(radpath)
-        entjson = entfile.read()
-        
-        # all possible ents
-        prop_ents = json.loads(entjson)
-        
-        
-        
+
         # index all the enum ballsacks
         indexed_ballsack = []
         
         # make list of all enums:
-        for enum_ind, enum_name in enumerate(prop_ents[cent_type][4]):
+        for enum_ind, enum_name in enumerate(vp_blpe_ents[cent_type][4]):
             indexed_ballsack.append(enum_name)
-
-
-
         
         # append all enums for this entity type, delete the selected one and prepend it in the beginning of the array
         lizard_sex = []
         
-        
-        
-        
-        # for enum_item, enum_ballsack in enumerate(prop_ents[cent_type][4]):
-            # obj.ent_conf['pr_str_' + str(str_j_idx + 1)] = prop_ents[cent_type][0][str_pr].split(':-:')[1]
+        # for enum_item, enum_ballsack in enumerate(vp_blpe_ents[cent_type][4]):
+            # obj.ent_conf['pr_str_' + str(str_j_idx + 1)] = vp_blpe_ents[cent_type][0][str_pr].split(':-:')[1]
             
-        for enum_item, enum_ballsack in enumerate(prop_ents[cent_type][4][indexed_ballsack[current_enum]][0]):
-            # lizard_sex.append(('enum_entry', prop_ents[cent_type][4][indexed_ballsack[0]][0][enum_ballsack], 'enum_entry'))
-            lizard_sex.append((prop_ents[cent_type][4][indexed_ballsack[current_enum]][0][enum_ballsack], enum_ballsack, 'enum_entry'))
+        for enum_item, enum_ballsack in enumerate(vp_blpe_ents[cent_type][4][indexed_ballsack[current_enum]][0]):
+            # lizard_sex.append(('enum_entry', vp_blpe_ents[cent_type][4][indexed_ballsack[0]][0][enum_ballsack], 'enum_entry'))
+            lizard_sex.append((vp_blpe_ents[cent_type][4][indexed_ballsack[current_enum]][0][enum_ballsack], enum_ballsack, 'enum_entry'))
         
         
         
@@ -121,25 +141,19 @@ def enum_returner_2(self, context):
 
     if cent_type != 'nil':
         current_enum = shit_number - 1
-        radpath = pathlib.Path(bpy.context.scene.blents.dn_str)
-        entfile = open(radpath)
-        entjson = entfile.read()
-        
-        # all possible ents
-        prop_ents = json.loads(entjson)
 
         # index all the enum ballsacks
         indexed_ballsack = []
         
         # make list of all enums:
-        for enum_ind, enum_name in enumerate(prop_ents[cent_type][4]):
+        for enum_ind, enum_name in enumerate(vp_blpe_ents[cent_type][4]):
             indexed_ballsack.append(enum_name)
 
         # append all enums for this entity type, delete the selected one and prepend it in the beginning of the array
         lizard_sex = []
 
-        for enum_item, enum_ballsack in enumerate(prop_ents[cent_type][4][indexed_ballsack[current_enum]][0]):
-            lizard_sex.append((prop_ents[cent_type][4][indexed_ballsack[current_enum]][0][enum_ballsack], enum_ballsack, 'enum_entry'))
+        for enum_item, enum_ballsack in enumerate(vp_blpe_ents[cent_type][4][indexed_ballsack[current_enum]][0]):
+            lizard_sex.append((vp_blpe_ents[cent_type][4][indexed_ballsack[current_enum]][0][enum_ballsack], enum_ballsack, 'enum_entry'))
 
         return lizard_sex
         
@@ -156,25 +170,19 @@ def enum_returner_3(self, context):
 
     if cent_type != 'nil':
         current_enum = shit_number - 1
-        radpath = pathlib.Path(bpy.context.scene.blents.dn_str)
-        entfile = open(radpath)
-        entjson = entfile.read()
-        
-        # all possible ents
-        prop_ents = json.loads(entjson)
 
         # index all the enum ballsacks
         indexed_ballsack = []
         
         # make list of all enums:
-        for enum_ind, enum_name in enumerate(prop_ents[cent_type][4]):
+        for enum_ind, enum_name in enumerate(vp_blpe_ents[cent_type][4]):
             indexed_ballsack.append(enum_name)
 
         # append all enums for this entity type, delete the selected one and prepend it in the beginning of the array
         lizard_sex = []
 
-        for enum_item, enum_ballsack in enumerate(prop_ents[cent_type][4][indexed_ballsack[current_enum]][0]):
-            lizard_sex.append((prop_ents[cent_type][4][indexed_ballsack[current_enum]][0][enum_ballsack], enum_ballsack, 'enum_entry'))
+        for enum_item, enum_ballsack in enumerate(vp_blpe_ents[cent_type][4][indexed_ballsack[current_enum]][0]):
+            lizard_sex.append((vp_blpe_ents[cent_type][4][indexed_ballsack[current_enum]][0][enum_ballsack], enum_ballsack, 'enum_entry'))
 
         return lizard_sex
         
@@ -191,25 +199,19 @@ def enum_returner_4(self, context):
 
     if cent_type != 'nil':
         current_enum = shit_number - 1
-        radpath = pathlib.Path(bpy.context.scene.blents.dn_str)
-        entfile = open(radpath)
-        entjson = entfile.read()
-        
-        # all possible ents
-        prop_ents = json.loads(entjson)
 
         # index all the enum ballsacks
         indexed_ballsack = []
         
         # make list of all enums:
-        for enum_ind, enum_name in enumerate(prop_ents[cent_type][4]):
+        for enum_ind, enum_name in enumerate(vp_blpe_ents[cent_type][4]):
             indexed_ballsack.append(enum_name)
 
         # append all enums for this entity type, delete the selected one and prepend it in the beginning of the array
         lizard_sex = []
 
-        for enum_item, enum_ballsack in enumerate(prop_ents[cent_type][4][indexed_ballsack[current_enum]][0]):
-            lizard_sex.append((prop_ents[cent_type][4][indexed_ballsack[current_enum]][0][enum_ballsack], enum_ballsack, 'enum_entry'))
+        for enum_item, enum_ballsack in enumerate(vp_blpe_ents[cent_type][4][indexed_ballsack[current_enum]][0]):
+            lizard_sex.append((vp_blpe_ents[cent_type][4][indexed_ballsack[current_enum]][0][enum_ballsack], enum_ballsack, 'enum_entry'))
 
         return lizard_sex
         
@@ -226,25 +228,19 @@ def enum_returner_5(self, context):
 
     if cent_type != 'nil':
         current_enum = shit_number - 1
-        radpath = pathlib.Path(bpy.context.scene.blents.dn_str)
-        entfile = open(radpath)
-        entjson = entfile.read()
-        
-        # all possible ents
-        prop_ents = json.loads(entjson)
 
         # index all the enum ballsacks
         indexed_ballsack = []
         
         # make list of all enums:
-        for enum_ind, enum_name in enumerate(prop_ents[cent_type][4]):
+        for enum_ind, enum_name in enumerate(vp_blpe_ents[cent_type][4]):
             indexed_ballsack.append(enum_name)
 
         # append all enums for this entity type, delete the selected one and prepend it in the beginning of the array
         lizard_sex = []
 
-        for enum_item, enum_ballsack in enumerate(prop_ents[cent_type][4][indexed_ballsack[current_enum]][0]):
-            lizard_sex.append((prop_ents[cent_type][4][indexed_ballsack[current_enum]][0][enum_ballsack], enum_ballsack, 'enum_entry'))
+        for enum_item, enum_ballsack in enumerate(vp_blpe_ents[cent_type][4][indexed_ballsack[current_enum]][0]):
+            lizard_sex.append((vp_blpe_ents[cent_type][4][indexed_ballsack[current_enum]][0][enum_ballsack], enum_ballsack, 'enum_entry'))
 
         return lizard_sex
         
@@ -261,25 +257,19 @@ def enum_returner_6(self, context):
 
     if cent_type != 'nil':
         current_enum = shit_number - 1
-        radpath = pathlib.Path(bpy.context.scene.blents.dn_str)
-        entfile = open(radpath)
-        entjson = entfile.read()
-        
-        # all possible ents
-        prop_ents = json.loads(entjson)
 
         # index all the enum ballsacks
         indexed_ballsack = []
         
         # make list of all enums:
-        for enum_ind, enum_name in enumerate(prop_ents[cent_type][4]):
+        for enum_ind, enum_name in enumerate(vp_blpe_ents[cent_type][4]):
             indexed_ballsack.append(enum_name)
 
         # append all enums for this entity type, delete the selected one and prepend it in the beginning of the array
         lizard_sex = []
 
-        for enum_item, enum_ballsack in enumerate(prop_ents[cent_type][4][indexed_ballsack[current_enum]][0]):
-            lizard_sex.append((prop_ents[cent_type][4][indexed_ballsack[current_enum]][0][enum_ballsack], enum_ballsack, 'enum_entry'))
+        for enum_item, enum_ballsack in enumerate(vp_blpe_ents[cent_type][4][indexed_ballsack[current_enum]][0]):
+            lizard_sex.append((vp_blpe_ents[cent_type][4][indexed_ballsack[current_enum]][0][enum_ballsack], enum_ballsack, 'enum_entry'))
 
         return lizard_sex
         
@@ -296,25 +286,19 @@ def enum_returner_7(self, context):
 
     if cent_type != 'nil':
         current_enum = shit_number - 1
-        radpath = pathlib.Path(bpy.context.scene.blents.dn_str)
-        entfile = open(radpath)
-        entjson = entfile.read()
-        
-        # all possible ents
-        prop_ents = json.loads(entjson)
 
         # index all the enum ballsacks
         indexed_ballsack = []
         
         # make list of all enums:
-        for enum_ind, enum_name in enumerate(prop_ents[cent_type][4]):
+        for enum_ind, enum_name in enumerate(vp_blpe_ents[cent_type][4]):
             indexed_ballsack.append(enum_name)
 
         # append all enums for this entity type, delete the selected one and prepend it in the beginning of the array
         lizard_sex = []
 
-        for enum_item, enum_ballsack in enumerate(prop_ents[cent_type][4][indexed_ballsack[current_enum]][0]):
-            lizard_sex.append((prop_ents[cent_type][4][indexed_ballsack[current_enum]][0][enum_ballsack], enum_ballsack, 'enum_entry'))
+        for enum_item, enum_ballsack in enumerate(vp_blpe_ents[cent_type][4][indexed_ballsack[current_enum]][0]):
+            lizard_sex.append((vp_blpe_ents[cent_type][4][indexed_ballsack[current_enum]][0][enum_ballsack], enum_ballsack, 'enum_entry'))
 
         return lizard_sex
         
@@ -331,25 +315,19 @@ def enum_returner_8(self, context):
 
     if cent_type != 'nil':
         current_enum = shit_number - 1
-        radpath = pathlib.Path(bpy.context.scene.blents.dn_str)
-        entfile = open(radpath)
-        entjson = entfile.read()
-        
-        # all possible ents
-        prop_ents = json.loads(entjson)
 
         # index all the enum ballsacks
         indexed_ballsack = []
         
         # make list of all enums:
-        for enum_ind, enum_name in enumerate(prop_ents[cent_type][4]):
+        for enum_ind, enum_name in enumerate(vp_blpe_ents[cent_type][4]):
             indexed_ballsack.append(enum_name)
 
         # append all enums for this entity type, delete the selected one and prepend it in the beginning of the array
         lizard_sex = []
 
-        for enum_item, enum_ballsack in enumerate(prop_ents[cent_type][4][indexed_ballsack[current_enum]][0]):
-            lizard_sex.append((prop_ents[cent_type][4][indexed_ballsack[current_enum]][0][enum_ballsack], enum_ballsack, 'enum_entry'))
+        for enum_item, enum_ballsack in enumerate(vp_blpe_ents[cent_type][4][indexed_ballsack[current_enum]][0]):
+            lizard_sex.append((vp_blpe_ents[cent_type][4][indexed_ballsack[current_enum]][0][enum_ballsack], enum_ballsack, 'enum_entry'))
 
         return lizard_sex
         
@@ -366,25 +344,19 @@ def enum_returner_9(self, context):
 
     if cent_type != 'nil':
         current_enum = shit_number - 1
-        radpath = pathlib.Path(bpy.context.scene.blents.dn_str)
-        entfile = open(radpath)
-        entjson = entfile.read()
-        
-        # all possible ents
-        prop_ents = json.loads(entjson)
 
         # index all the enum ballsacks
         indexed_ballsack = []
         
         # make list of all enums:
-        for enum_ind, enum_name in enumerate(prop_ents[cent_type][4]):
+        for enum_ind, enum_name in enumerate(vp_blpe_ents[cent_type][4]):
             indexed_ballsack.append(enum_name)
 
         # append all enums for this entity type, delete the selected one and prepend it in the beginning of the array
         lizard_sex = []
 
-        for enum_item, enum_ballsack in enumerate(prop_ents[cent_type][4][indexed_ballsack[current_enum]][0]):
-            lizard_sex.append((prop_ents[cent_type][4][indexed_ballsack[current_enum]][0][enum_ballsack], enum_ballsack, 'enum_entry'))
+        for enum_item, enum_ballsack in enumerate(vp_blpe_ents[cent_type][4][indexed_ballsack[current_enum]][0]):
+            lizard_sex.append((vp_blpe_ents[cent_type][4][indexed_ballsack[current_enum]][0][enum_ballsack], enum_ballsack, 'enum_entry'))
 
         return lizard_sex
         
@@ -401,25 +373,19 @@ def enum_returner_10(self, context):
 
     if cent_type != 'nil':
         current_enum = shit_number - 1
-        radpath = pathlib.Path(bpy.context.scene.blents.dn_str)
-        entfile = open(radpath)
-        entjson = entfile.read()
-        
-        # all possible ents
-        prop_ents = json.loads(entjson)
 
         # index all the enum ballsacks
         indexed_ballsack = []
         
         # make list of all enums:
-        for enum_ind, enum_name in enumerate(prop_ents[cent_type][4]):
+        for enum_ind, enum_name in enumerate(vp_blpe_ents[cent_type][4]):
             indexed_ballsack.append(enum_name)
 
         # append all enums for this entity type, delete the selected one and prepend it in the beginning of the array
         lizard_sex = []
 
-        for enum_item, enum_ballsack in enumerate(prop_ents[cent_type][4][indexed_ballsack[current_enum]][0]):
-            lizard_sex.append((prop_ents[cent_type][4][indexed_ballsack[current_enum]][0][enum_ballsack], enum_ballsack, 'enum_entry'))
+        for enum_item, enum_ballsack in enumerate(vp_blpe_ents[cent_type][4][indexed_ballsack[current_enum]][0]):
+            lizard_sex.append((vp_blpe_ents[cent_type][4][indexed_ballsack[current_enum]][0][enum_ballsack], enum_ballsack, 'enum_entry'))
 
         return lizard_sex
         
@@ -436,25 +402,19 @@ def enum_returner_11(self, context):
 
     if cent_type != 'nil':
         current_enum = shit_number - 1
-        radpath = pathlib.Path(bpy.context.scene.blents.dn_str)
-        entfile = open(radpath)
-        entjson = entfile.read()
-        
-        # all possible ents
-        prop_ents = json.loads(entjson)
 
         # index all the enum ballsacks
         indexed_ballsack = []
         
         # make list of all enums:
-        for enum_ind, enum_name in enumerate(prop_ents[cent_type][4]):
+        for enum_ind, enum_name in enumerate(vp_blpe_ents[cent_type][4]):
             indexed_ballsack.append(enum_name)
 
         # append all enums for this entity type, delete the selected one and prepend it in the beginning of the array
         lizard_sex = []
 
-        for enum_item, enum_ballsack in enumerate(prop_ents[cent_type][4][indexed_ballsack[current_enum]][0]):
-            lizard_sex.append((prop_ents[cent_type][4][indexed_ballsack[current_enum]][0][enum_ballsack], enum_ballsack, 'enum_entry'))
+        for enum_item, enum_ballsack in enumerate(vp_blpe_ents[cent_type][4][indexed_ballsack[current_enum]][0]):
+            lizard_sex.append((vp_blpe_ents[cent_type][4][indexed_ballsack[current_enum]][0][enum_ballsack], enum_ballsack, 'enum_entry'))
 
         return lizard_sex
         
@@ -471,25 +431,19 @@ def enum_returner_12(self, context):
 
     if cent_type != 'nil':
         current_enum = shit_number - 1
-        radpath = pathlib.Path(bpy.context.scene.blents.dn_str)
-        entfile = open(radpath)
-        entjson = entfile.read()
-        
-        # all possible ents
-        prop_ents = json.loads(entjson)
 
         # index all the enum ballsacks
         indexed_ballsack = []
         
         # make list of all enums:
-        for enum_ind, enum_name in enumerate(prop_ents[cent_type][4]):
+        for enum_ind, enum_name in enumerate(vp_blpe_ents[cent_type][4]):
             indexed_ballsack.append(enum_name)
 
         # append all enums for this entity type, delete the selected one and prepend it in the beginning of the array
         lizard_sex = []
 
-        for enum_item, enum_ballsack in enumerate(prop_ents[cent_type][4][indexed_ballsack[current_enum]][0]):
-            lizard_sex.append((prop_ents[cent_type][4][indexed_ballsack[current_enum]][0][enum_ballsack], enum_ballsack, 'enum_entry'))
+        for enum_item, enum_ballsack in enumerate(vp_blpe_ents[cent_type][4][indexed_ballsack[current_enum]][0]):
+            lizard_sex.append((vp_blpe_ents[cent_type][4][indexed_ballsack[current_enum]][0][enum_ballsack], enum_ballsack, 'enum_entry'))
 
         return lizard_sex
         
@@ -506,25 +460,19 @@ def enum_returner_13(self, context):
 
     if cent_type != 'nil':
         current_enum = shit_number - 1
-        radpath = pathlib.Path(bpy.context.scene.blents.dn_str)
-        entfile = open(radpath)
-        entjson = entfile.read()
-        
-        # all possible ents
-        prop_ents = json.loads(entjson)
 
         # index all the enum ballsacks
         indexed_ballsack = []
         
         # make list of all enums:
-        for enum_ind, enum_name in enumerate(prop_ents[cent_type][4]):
+        for enum_ind, enum_name in enumerate(vp_blpe_ents[cent_type][4]):
             indexed_ballsack.append(enum_name)
 
         # append all enums for this entity type, delete the selected one and prepend it in the beginning of the array
         lizard_sex = []
 
-        for enum_item, enum_ballsack in enumerate(prop_ents[cent_type][4][indexed_ballsack[current_enum]][0]):
-            lizard_sex.append((prop_ents[cent_type][4][indexed_ballsack[current_enum]][0][enum_ballsack], enum_ballsack, 'enum_entry'))
+        for enum_item, enum_ballsack in enumerate(vp_blpe_ents[cent_type][4][indexed_ballsack[current_enum]][0]):
+            lizard_sex.append((vp_blpe_ents[cent_type][4][indexed_ballsack[current_enum]][0][enum_ballsack], enum_ballsack, 'enum_entry'))
 
         return lizard_sex
         
@@ -541,25 +489,19 @@ def enum_returner_14(self, context):
 
     if cent_type != 'nil':
         current_enum = shit_number - 1
-        radpath = pathlib.Path(bpy.context.scene.blents.dn_str)
-        entfile = open(radpath)
-        entjson = entfile.read()
-        
-        # all possible ents
-        prop_ents = json.loads(entjson)
 
         # index all the enum ballsacks
         indexed_ballsack = []
         
         # make list of all enums:
-        for enum_ind, enum_name in enumerate(prop_ents[cent_type][4]):
+        for enum_ind, enum_name in enumerate(vp_blpe_ents[cent_type][4]):
             indexed_ballsack.append(enum_name)
 
         # append all enums for this entity type, delete the selected one and prepend it in the beginning of the array
         lizard_sex = []
 
-        for enum_item, enum_ballsack in enumerate(prop_ents[cent_type][4][indexed_ballsack[current_enum]][0]):
-            lizard_sex.append((prop_ents[cent_type][4][indexed_ballsack[current_enum]][0][enum_ballsack], enum_ballsack, 'enum_entry'))
+        for enum_item, enum_ballsack in enumerate(vp_blpe_ents[cent_type][4][indexed_ballsack[current_enum]][0]):
+            lizard_sex.append((vp_blpe_ents[cent_type][4][indexed_ballsack[current_enum]][0][enum_ballsack], enum_ballsack, 'enum_entry'))
 
         return lizard_sex
         
@@ -576,25 +518,19 @@ def enum_returner_15(self, context):
 
     if cent_type != 'nil':
         current_enum = shit_number - 1
-        radpath = pathlib.Path(bpy.context.scene.blents.dn_str)
-        entfile = open(radpath)
-        entjson = entfile.read()
-        
-        # all possible ents
-        prop_ents = json.loads(entjson)
 
         # index all the enum ballsacks
         indexed_ballsack = []
         
         # make list of all enums:
-        for enum_ind, enum_name in enumerate(prop_ents[cent_type][4]):
+        for enum_ind, enum_name in enumerate(vp_blpe_ents[cent_type][4]):
             indexed_ballsack.append(enum_name)
 
         # append all enums for this entity type, delete the selected one and prepend it in the beginning of the array
         lizard_sex = []
 
-        for enum_item, enum_ballsack in enumerate(prop_ents[cent_type][4][indexed_ballsack[current_enum]][0]):
-            lizard_sex.append((prop_ents[cent_type][4][indexed_ballsack[current_enum]][0][enum_ballsack], enum_ballsack, 'enum_entry'))
+        for enum_item, enum_ballsack in enumerate(vp_blpe_ents[cent_type][4][indexed_ballsack[current_enum]][0]):
+            lizard_sex.append((vp_blpe_ents[cent_type][4][indexed_ballsack[current_enum]][0][enum_ballsack], enum_ballsack, 'enum_entry'))
 
         return lizard_sex
         
@@ -611,25 +547,19 @@ def enum_returner_16(self, context):
 
     if cent_type != 'nil':
         current_enum = shit_number - 1
-        radpath = pathlib.Path(bpy.context.scene.blents.dn_str)
-        entfile = open(radpath)
-        entjson = entfile.read()
-        
-        # all possible ents
-        prop_ents = json.loads(entjson)
 
         # index all the enum ballsacks
         indexed_ballsack = []
         
         # make list of all enums:
-        for enum_ind, enum_name in enumerate(prop_ents[cent_type][4]):
+        for enum_ind, enum_name in enumerate(vp_blpe_ents[cent_type][4]):
             indexed_ballsack.append(enum_name)
 
         # append all enums for this entity type, delete the selected one and prepend it in the beginning of the array
         lizard_sex = []
 
-        for enum_item, enum_ballsack in enumerate(prop_ents[cent_type][4][indexed_ballsack[current_enum]][0]):
-            lizard_sex.append((prop_ents[cent_type][4][indexed_ballsack[current_enum]][0][enum_ballsack], enum_ballsack, 'enum_entry'))
+        for enum_item, enum_ballsack in enumerate(vp_blpe_ents[cent_type][4][indexed_ballsack[current_enum]][0]):
+            lizard_sex.append((vp_blpe_ents[cent_type][4][indexed_ballsack[current_enum]][0][enum_ballsack], enum_ballsack, 'enum_entry'))
 
         return lizard_sex
         
@@ -638,11 +568,12 @@ def enum_returner_16(self, context):
 
 
 
-
 #
 # Targets
 #
 
+# since all the enums are reusable slots - we have to trasfer the chosen value to the static config of the object
+# every object has predefined slots for all possible kinds of data
 def enum_tgt_1(self, context):
     bpy.context.active_object.ent_conf['ob_enum_tgt_1'] = bpy.context.active_object.ent_conf.pr_enum_1
 
@@ -704,9 +635,15 @@ def enum_tgt_16(self, context):
 # =========================================================
 
 
-# reusable, I guess...
-# It is, indeed, reusable, but why would one need this shit reusable???? It'll only get called like fucking once...
-# usage: call this function with an object
+#
+# Base reusable functions
+#
+
+# Returns Object transforms in a format of {'loc': (locx, locy, locz), 'rot': (rotx, roty, rotz)}
+# Usage: call this function with an object
+# eobject - object selector
+# fix90 - 1 to fix the rotation (rotate an object either on Y or other axis)
+# axis - axis to apply the rotation to: X, Y or Z
 def get_obj_locrot_v1(eobject, fix90, axis, self, context):
 
     # extract rotations
@@ -763,17 +700,6 @@ def get_obj_locrot_v1(eobject, fix90, axis, self, context):
     return {'loc': (locx, locy, locz), 'rot': (rotx, roty, rotz)}
 
 
-# define names of the supported icons
-# gui_name:real_ent_name
-supported_icons = [
-    ('logic_case', 'nein'),
-    ('env_cubemap', 'nicht'),
-    ('logic_relay', 'nicht'),
-    ('filter_activator_name', 'nicht')
-    
-]
-
-
 # link all the curves used to visualize an entity
 # so that there are no excess verts
 def cdata_cleanup(self, context):
@@ -802,20 +728,24 @@ def cdata_cleanup(self, context):
 
 
 
+
+
+
+
+
+
+
+
+# dynamically build supported entities enum list (from blpe_main.json)
+# On blender startup - we read and parse the blpe json in the very beginning of the script
+# and then reuse it, for example here.
 def r_enum_list(self, context):
-    current_time = datetime.datetime.now()
-    radpath = pathlib.Path(bpy.context.scene.blents.dn_str)
-    # print(radpath.stat().st_mtime)
+    # current_time = datetime.datetime.now()
     
     if context is None:
         return []
     
-
     print('rebuild enum list ' + str(current_time))
-    # scene_vmf_vgroups = []
-    entfile = open(radpath)
-    entjson = entfile.read()
-    prop_ents = vp_prop_ents
     
     # dev print
     # for thl in radlines:
@@ -825,7 +755,7 @@ def r_enum_list(self, context):
     # so here we read and overwrite everyhing
 
     re_scene_ents = []
-    for ent in prop_ents:
+    for ent in vp_blpe_ents:
         re_scene_ents.append((ent, ent, 'ent'))
         
 
@@ -922,23 +852,12 @@ def r_enum_list_v1(self, context):
         print(fixed_enum)
         return fixed_enum
     
-
+# call this function with object selected to evaluate its spawnflags
+# todo: make this function accept object input
 def eval_spawnflags(self, context):
-    
+
     print('eval spawnflags')
-    
-    radpath = pathlib.Path(bpy.context.scene.blents.dn_str)
-    entfile = open(radpath)
-    entjson = entfile.read()
-    
-    # all possible ents
-    prop_ents = json.loads(entjson)
-    
-    # TODO: DEFAULT ALL THE PARAMS BEFOREHAND. This comment is irrelevant
-    
-    
-    
-    
+
     # evaluate
     for obj in bpy.context.selected_objects:
         print('calc spawnflags')
@@ -947,7 +866,7 @@ def eval_spawnflags(self, context):
         
         calculated_bytes = 0
         
-        for sflag_index, sflag in enumerate(prop_ents[cur_obj_ent_type][6]):
+        for sflag_index, sflag in enumerate(vp_blpe_ents[cur_obj_ent_type][6]):
             
             if obj.ent_conf['pr_sflags_' + str(sflag_index + 1)] == True:
                 calculated_bytes += int(sflag)
@@ -968,25 +887,15 @@ def set_obj_ent(self, context):
         if int(state) != 1 and int(state) != 0:
             return False
 
-    radpath = pathlib.Path(bpy.context.scene.blents.dn_str)
-    entfile = open(radpath)
-    entjson = entfile.read()
-    
-    # all possible ents
-    prop_ents = json.loads(entjson)
     
     # current entity type
     cent_type = bpy.context.scene.blents.dnenum
-    
-
-    
-    
     
     # index all the enum ballsacks
     indexed_ballsack = []
     
     # make list of all enums:
-    for enum_ind, enum_name in enumerate(prop_ents[cent_type][4]):
+    for enum_ind, enum_name in enumerate(vp_blpe_ents[cent_type][4]):
         indexed_ballsack.append(enum_name)
     
     
@@ -998,42 +907,42 @@ def set_obj_ent(self, context):
         
         
         # set strings to default
-        for str_j_idx, str_pr in enumerate(prop_ents[cent_type][0]):
-            obj.ent_conf['pr_str_' + str(str_j_idx + 1)] = prop_ents[cent_type][0][str_pr].split(':-:')[1]
+        for str_j_idx, str_pr in enumerate(vp_blpe_ents[cent_type][0]):
+            obj.ent_conf['pr_str_' + str(str_j_idx + 1)] = vp_blpe_ents[cent_type][0][str_pr].split(':-:')[1]
             
             # dumpster.prop(context.object.ent_conf, 'pr_str_' + str(str_j_idx + 1), text=str_pr)
             
         # set ints to default
-        for ind_j_idx, ind_pr in enumerate(prop_ents[cent_type][1]):
-            obj.ent_conf['pr_int_' + str(ind_j_idx + 1)] = int(prop_ents[cent_type][1][ind_pr].split(':-:')[1])
+        for ind_j_idx, ind_pr in enumerate(vp_blpe_ents[cent_type][1]):
+            obj.ent_conf['pr_int_' + str(ind_j_idx + 1)] = int(vp_blpe_ents[cent_type][1][ind_pr].split(':-:')[1])
         
         # set floats to default
-        for float_j_idx, float_pr in enumerate(prop_ents[cent_type][2]):
-            obj.ent_conf['pr_float_' + str(float_j_idx + 1)] = float(prop_ents[cent_type][2][float_pr].split(':-:')[1])
+        for float_j_idx, float_pr in enumerate(vp_blpe_ents[cent_type][2]):
+            obj.ent_conf['pr_float_' + str(float_j_idx + 1)] = float(vp_blpe_ents[cent_type][2][float_pr].split(':-:')[1])
 
 
         # set enums to default.
-        for enum_j_idx, enum_pr in enumerate(prop_ents[cent_type][4]):
+        for enum_j_idx, enum_pr in enumerate(vp_blpe_ents[cent_type][4]):
             # obj.ent_conf['pr_enum_' + str(enum_j_idx + 1)] = enum_pr.split(':-:')[1]
-            obj.ent_conf['ob_enum_tgt_' + str(enum_j_idx + 1)] = prop_ents[cent_type][4][enum_pr][0][enum_pr.split(':-:')[1]]
-            obj.ent_conf['pr_enum_' + str(enum_j_idx + 1)] = prop_ents[cent_type][4][enum_pr][0][enum_pr.split(':-:')[1]]
-            # print('set def idx ' + str(enum_j_idx) + ' enum to: ' + '"' + str(prop_ents[cent_type][4][enum_pr][0][enum_pr.split(':-:')[1]]) + '"')
+            obj.ent_conf['ob_enum_tgt_' + str(enum_j_idx + 1)] = vp_blpe_ents[cent_type][4][enum_pr][0][enum_pr.split(':-:')[1]]
+            obj.ent_conf['pr_enum_' + str(enum_j_idx + 1)] = vp_blpe_ents[cent_type][4][enum_pr][0][enum_pr.split(':-:')[1]]
+            # print('set def idx ' + str(enum_j_idx) + ' enum to: ' + '"' + str(vp_blpe_ents[cent_type][4][enum_pr][0][enum_pr.split(':-:')[1]]) + '"')
         
 
         # set enum bools to default.
-        for enum_bool_j_idx, enum_bool_pr in enumerate(prop_ents[cent_type][5]):
-            obj.ent_conf['pr_enum_bool_' + str(enum_bool_j_idx + 1)] = eval_state(prop_ents[cent_type][5][enum_bool_pr].split(':-:')[1])
+        for enum_bool_j_idx, enum_bool_pr in enumerate(vp_blpe_ents[cent_type][5]):
+            obj.ent_conf['pr_enum_bool_' + str(enum_bool_j_idx + 1)] = eval_state(vp_blpe_ents[cent_type][5][enum_bool_pr].split(':-:')[1])
             
             
         # set Spawn Flags to default
-        for sflags_j_idx, sflags_pr in enumerate(prop_ents[cent_type][6]):
-            obj.ent_conf['pr_sflags_' + str(sflags_j_idx + 1)] = eval_state(prop_ents[cent_type][6][sflags_pr].split(':-:')[0])
+        for sflags_j_idx, sflags_pr in enumerate(vp_blpe_ents[cent_type][6]):
+            obj.ent_conf['pr_sflags_' + str(sflags_j_idx + 1)] = eval_state(vp_blpe_ents[cent_type][6][sflags_pr].split(':-:')[0])
             
             
         # set Colors to default
-        for color_j_idx, color_pr in enumerate(prop_ents[cent_type][3]):
+        for color_j_idx, color_pr in enumerate(vp_blpe_ents[cent_type][3]):
         
-            jrgb = prop_ents[cent_type][3][color_pr].split(':-:')[1].split(' ')
+            jrgb = vp_blpe_ents[cent_type][3][color_pr].split(':-:')[1].split(' ')
         
             ar = int(jrgb[0]) / 255
             ag = int(jrgb[1]) / 255
@@ -1042,6 +951,8 @@ def set_obj_ent(self, context):
             obj.ent_conf['pr_color_' + str(color_j_idx + 1)] = (ar, ag, ab)
             
     eval_spawnflags(self, context)
+
+
 
 
 
@@ -1410,13 +1321,13 @@ def test_export_v1(self, context):
 def build_suggest_ent_outp(self, context):
     # return []
 
-    # vp_prop_ents
+    # vp_blpe_ents
     
     sg_build = []
     
     cent_type = context.active_object.ent_conf.obj_ent_type
-    # print(vp_prop_ents[cent_type][7])
-    for prm_indx, psb_outp in enumerate(vp_prop_ents[cent_type][7]):
+    # print(vp_blpe_ents[cent_type][7])
+    for prm_indx, psb_outp in enumerate(vp_blpe_ents[cent_type][7]):
         sg_build.append((psb_outp, psb_outp, 'output'))
     # print(sg_build)
     return sg_build
@@ -1461,7 +1372,7 @@ def build_suggest_ent_inpt(self, context):
         # name is always in string
         cent_type = sc_obj.ent_conf.obj_ent_type
         print('scanning ' + str(sc_obj.name) + ' with ent type ' + str(cent_type))
-        for ngui_idx, keyname in enumerate(vp_prop_ents[cent_type][0]):
+        for ngui_idx, keyname in enumerate(vp_blpe_ents[cent_type][0]):
             # Todo: make it look for "targetname"
             if keyname.lower() == 'name':
                 print('Name presented in ' + str(sc_obj.name))
@@ -1469,7 +1380,7 @@ def build_suggest_ent_inpt(self, context):
                 if sc_obj.ent_conf['pr_str_' + str(ngui_idx + 1)] == rq_tgt_name:
                     # get matched ent type
                     print('matched name!!')
-                    matched_ent_type = vp_prop_ents[sc_obj.ent_conf['obj_ent_type']][8]
+                    matched_ent_type = vp_blpe_ents[sc_obj.ent_conf['obj_ent_type']][8]
                     for found_input in matched_ent_type:
                         matched_inputs.append((found_input, found_input, 'input'))
     
@@ -2868,7 +2779,8 @@ class hammer_ents_w_icons(bpy.types.Menu):
 
 
 
-# append submenu
+# append submenu with hammer entities
+# just hammer icons traced with curves with entity type set beforehand
 def draw_hwm_presets(self, context):
     self.layout.separator()
     self.layout.menu('OBJECT_MT_hammer_ents_w_icons', icon='LIGHT')
@@ -2930,8 +2842,8 @@ class VIEW3D_PT_blender_foil_dn_enum(bpy.types.Panel):
             
             
             # show because why not
-            for str_indx, str_prm in enumerate(vp_prop_ents[cent_type][0]):
-                dumpster.label(text=str(str_indx) + ': ' + str_prm + ' - ' + vp_prop_ents[cent_type][0][str_prm].split(':-:')[-1] )
+            for str_indx, str_prm in enumerate(vp_blpe_ents[cent_type][0]):
+                dumpster.label(text=str(str_indx) + ': ' + str_prm + ' - ' + vp_blpe_ents[cent_type][0][str_prm].split(':-:')[-1] )
             
             
             #
@@ -2941,36 +2853,36 @@ class VIEW3D_PT_blender_foil_dn_enum(bpy.types.Panel):
             
         
             # show strings
-            # for str_pr in range(len(vp_prop_ents[cent_type][0])):
-                # dumpster.prop(context.object.ent_conf, 'pr_str_' + str(str_pr + 1), text=vp_prop_ents[cent_type][0][])
+            # for str_pr in range(len(vp_blpe_ents[cent_type][0])):
+                # dumpster.prop(context.object.ent_conf, 'pr_str_' + str(str_pr + 1), text=vp_blpe_ents[cent_type][0][])
             
             # show strings
-            for str_j_idx, str_pr in enumerate(vp_prop_ents[cent_type][0]):
+            for str_j_idx, str_pr in enumerate(vp_blpe_ents[cent_type][0]):
                 dumpster.prop(context.object.ent_conf, 'pr_str_' + str(str_j_idx + 1), text=str_pr)
 
             
             # show ints
-            for int_j_idx, int_pr in enumerate(vp_prop_ents[cent_type][1]):
+            for int_j_idx, int_pr in enumerate(vp_blpe_ents[cent_type][1]):
                 dumpster.prop(context.object.ent_conf, 'pr_int_' + str(int_j_idx + 1), text=int_pr)
 
 
             # show floats
-            for float_j_idx, float_pr in enumerate(vp_prop_ents[cent_type][2]):
+            for float_j_idx, float_pr in enumerate(vp_blpe_ents[cent_type][2]):
                 dumpster.prop(context.object.ent_conf, 'pr_float_' + str(float_j_idx + 1), text=float_pr)
                 
                 
             # show enums
-            for enum_j_idx, enum_pr in enumerate(vp_prop_ents[cent_type][4]):
+            for enum_j_idx, enum_pr in enumerate(vp_blpe_ents[cent_type][4]):
                 dumpster.prop(context.object.ent_conf, 'pr_enum_' + str(enum_j_idx + 1), text=enum_pr.split(':-:')[0])
                 
                 
             # show enum booleans
-            for enum_bool_j_idx, enum_bool_pr in enumerate(vp_prop_ents[cent_type][5]):
+            for enum_bool_j_idx, enum_bool_pr in enumerate(vp_blpe_ents[cent_type][5]):
                 dumpster.prop(context.object.ent_conf, 'pr_enum_bool_' + str(enum_bool_j_idx + 1), text=enum_bool_pr.split(':-:')[0])
                 
                 
             # show colors
-            for color_j_idx, color_pr in enumerate(vp_prop_ents[cent_type][3]):
+            for color_j_idx, color_pr in enumerate(vp_blpe_ents[cent_type][3]):
                 dumpster.prop(context.object.ent_conf, 'pr_color_' + str(color_j_idx + 1), text=color_pr)
                 
                 
@@ -2979,8 +2891,8 @@ class VIEW3D_PT_blender_foil_dn_enum(bpy.types.Panel):
             
             
             # show spawnflags
-            for sfalgs_j_idx, sfalgs_pr in enumerate(vp_prop_ents[cent_type][6]):
-                dumpster.prop(context.object.ent_conf, 'pr_sflags_' + str(sfalgs_j_idx + 1), text=vp_prop_ents[cent_type][6][sfalgs_pr].split(':-:')[1])
+            for sfalgs_j_idx, sfalgs_pr in enumerate(vp_blpe_ents[cent_type][6]):
+                dumpster.prop(context.object.ent_conf, 'pr_sflags_' + str(sfalgs_j_idx + 1), text=vp_blpe_ents[cent_type][6][sfalgs_pr].split(':-:')[1])
                 
                 
                 
