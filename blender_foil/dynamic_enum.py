@@ -54,7 +54,7 @@ from bs4 import Tag, NavigableString
 
 
 # todo: Separate actions into functions as often as possible
-
+# important todo: transfer blpe to xml
 
 
 # get the current directory. Just in case
@@ -66,7 +66,14 @@ addon_root_dir = Path(__file__).absolute().parent
 # should be in the subdir of this file on release
 vp_blpe_path = pathlib.Path('E:\\!!Blend_Projects\\scripts\\wallworm4blender\\blender_foil\\blender_foil\\blpe_main.json')
 
-print('rebuild json')
+
+# a blend file with hammer icons traced with curves
+# should also be in a subdir on release
+# may also contain other things like player scale ref ?
+hammer_icons_blend = pathlib.Path('E:\\!!Blend_Projects\\hammer_icons\\hammer_icons_01a.blend')
+
+
+print('read, rebuild json')
 
 # parse json and therefore obtain the list of all the entities and their params
 vp_blpe_ents = json.loads(open(vp_blpe_path).read())
@@ -92,7 +99,7 @@ supported_icons = [
 
 # =========================================================
 #----------------------------------------------------------
-#                           Enums
+#                       Enums START
 #----------------------------------------------------------
 # =========================================================
 
@@ -572,8 +579,10 @@ def enum_returner_16(self, context):
 # Targets
 #
 
-# since all the enums are reusable slots - we have to trasfer the chosen value to the static config of the object
+# since all the enums are reusable slots - we have to trasfer the chosen value to the static config of the object on change
 # every object has predefined slots for all possible kinds of data
+# important todo: All the properties including floats, ints, etc could be stored in the scene types, not object
+# Although this may not work as expected
 def enum_tgt_1(self, context):
     bpy.context.active_object.ent_conf['ob_enum_tgt_1'] = bpy.context.active_object.ent_conf.pr_enum_1
 
@@ -621,6 +630,18 @@ def enum_tgt_15(self, context):
 
 def enum_tgt_16(self, context):
     bpy.context.active_object.ent_conf['ob_enum_tgt_16'] = bpy.context.active_object.ent_conf.pr_enum_16
+
+
+# =========================================================
+#----------------------------------------------------------
+#                       Enums END
+#----------------------------------------------------------
+# =========================================================
+
+
+
+
+
 
 
 
@@ -700,8 +721,8 @@ def get_obj_locrot_v1(eobject, fix90, axis, self, context):
     return {'loc': (locx, locy, locz), 'rot': (rotx, roty, rotz)}
 
 
-# link all the curves used to visualize an entity
-# so that there are no excess verts
+# link all the curves used to visualize an entity to a single datablock
+# so that there are no excess verts and other data in the scene
 def cdata_cleanup(self, context):
     for existing_icon in supported_icons:
         all_fuckdata = []
@@ -723,6 +744,31 @@ def cdata_cleanup(self, context):
 
 
 
+# This takes all the currently selected objects and re-evaluates their spawnflags
+# todo: make this function accept object input
+def eval_spawnflags(self, context):
+
+    print('eval spawnflags')
+
+    # evaluate
+    for obj in bpy.context.selected_objects:
+        print('calc spawnflags')
+        cur_obj_ent_type = obj.ent_conf.obj_ent_type
+        obj.ent_conf['l3_ent_sflags'] = 0
+        
+        calculated_bytes = 0
+        
+        for sflag_index, sflag in enumerate(vp_blpe_ents[cur_obj_ent_type][6]):
+            
+            if obj.ent_conf['pr_sflags_' + str(sflag_index + 1)] == True:
+                calculated_bytes += int(sflag)
+        
+        obj.ent_conf['l3_ent_sflags'] = calculated_bytes
+        print('calculated flags are: ' + str(calculated_bytes))
+
+    print('end eval spawnflags')
+
+
 
 
 
@@ -739,6 +785,7 @@ def cdata_cleanup(self, context):
 # dynamically build supported entities enum list (from blpe_main.json)
 # On blender startup - we read and parse the blpe json in the very beginning of the script
 # and then reuse it, for example here.
+# todo: Only do this once ?
 def r_enum_list(self, context):
     # current_time = datetime.datetime.now()
     
@@ -761,8 +808,10 @@ def r_enum_list(self, context):
 
     # print(re_scene_ents)
     return re_scene_ents
-    
 
+
+"""
+# unused function to parse lights.rad
 def r_enum_list_rads(self, context):
     current_time = datetime.datetime.now()
     radpath = pathlib.Path(bpy.context.scene.blents.dn_str)
@@ -798,8 +847,9 @@ def r_enum_list_rads(self, context):
 
     # print(re_scene_vmf_vgroups)
     return re_scene_vmf_vgroups
-    
 
+
+# unused function to parse lights.rad v2
 def r_enum_list_v1(self, context):
     current_time = datetime.datetime.now()
     radpath = pathlib.Path(bpy.context.scene.blents.dn_str)
@@ -851,30 +901,8 @@ def r_enum_list_v1(self, context):
             fixed_enum.append(fuck)
         print(fixed_enum)
         return fixed_enum
-    
-# call this function with object selected to evaluate its spawnflags
-# todo: make this function accept object input
-def eval_spawnflags(self, context):
+"""
 
-    print('eval spawnflags')
-
-    # evaluate
-    for obj in bpy.context.selected_objects:
-        print('calc spawnflags')
-        cur_obj_ent_type = obj.ent_conf.obj_ent_type
-        obj.ent_conf['l3_ent_sflags'] = 0
-        
-        calculated_bytes = 0
-        
-        for sflag_index, sflag in enumerate(vp_blpe_ents[cur_obj_ent_type][6]):
-            
-            if obj.ent_conf['pr_sflags_' + str(sflag_index + 1)] == True:
-                calculated_bytes += int(sflag)
-        
-        obj.ent_conf['l3_ent_sflags'] = calculated_bytes
-        print('calculated flags are: ' + str(calculated_bytes))
-    
-        
 # mark currently selected object as an entity
 # and clean all the data which was probably left from the previous entity
 def set_obj_ent(self, context):
@@ -886,20 +914,12 @@ def set_obj_ent(self, context):
             return False
         if int(state) != 1 and int(state) != 0:
             return False
-
     
     # current entity type
     cent_type = bpy.context.scene.blents.dnenum
     
-    # index all the enum ballsacks
-    indexed_ballsack = []
-    
-    # make list of all enums:
-    for enum_ind, enum_name in enumerate(vp_blpe_ents[cent_type][4]):
-        indexed_ballsack.append(enum_name)
-    
-    
-    # set to default
+    # set everything to default
+    # for every currently selected object
     for obj in bpy.context.selected_objects:
         print('set entity')
         obj.ent_conf.obj_ent_type = bpy.context.scene.blents.dnenum
@@ -910,7 +930,6 @@ def set_obj_ent(self, context):
         for str_j_idx, str_pr in enumerate(vp_blpe_ents[cent_type][0]):
             obj.ent_conf['pr_str_' + str(str_j_idx + 1)] = vp_blpe_ents[cent_type][0][str_pr].split(':-:')[1]
             
-            # dumpster.prop(context.object.ent_conf, 'pr_str_' + str(str_j_idx + 1), text=str_pr)
             
         # set ints to default
         for ind_j_idx, ind_pr in enumerate(vp_blpe_ents[cent_type][1]):
@@ -949,7 +968,9 @@ def set_obj_ent(self, context):
             ab = int(jrgb[2]) / 255
 
             obj.ent_conf['pr_color_' + str(color_j_idx + 1)] = (ar, ag, ab)
-            
+    
+    # re-eval spawnflags since the evaluation result (the thing that gets actually exported) is stored in a separate storage
+    # evaluation after setting everything to default will result into default eval result
     eval_spawnflags(self, context)
 
 
@@ -1026,18 +1047,9 @@ def test_export_v1(self, context):
     print(linez)
     file.close()
     # TEST WRITE
-
-
-    
-    
-    
-    
-    radpath = pathlib.Path(bpy.context.scene.blents.dn_str)
-    entfile = open(radpath)
-    entjson = entfile.read()
     
     # all possible ents
-    prop_ents = json.loads(entjson)
+    prop_ents = vp_blpe_ents
     
     
     # we export spotlights separately
@@ -1081,119 +1093,48 @@ def test_export_v1(self, context):
         mk_ent.append('\t' + '"origin" "' + str(obj_locrot['loc'][0]) + ' ' + str(obj_locrot['loc'][1]) + ' ' + str(obj_locrot['loc'][2]) + '"\n')
         
         # if it's stated in the blender config json block that this entity should have angles - write anlges
-        if int(prop_ents[cent_type][9]['angles_enabled']) == 1:
+        if int(vp_blpe_ents[cent_type][9]['angles_enabled']) == 1:
             
             mk_ent.append('\t' + '"angles" "' + str(obj_locrot['rot'][1]) + ' ' + str(obj_locrot['rot'][2]) + ' ' + str(obj_locrot['rot'][0]) + '"\n')
         
         
         # write strings
-        for str_j_idx, str_pr in enumerate(prop_ents[cent_type][0]):
+        for str_j_idx, str_pr in enumerate(vp_blpe_ents[cent_type][0]):
             # strings are never empty, unless you take them off
             if cbt.ent_conf['pr_str_' + str(str_j_idx + 1)] != ' ':
-                mk_ent.append('\t' + '"' + prop_ents[cent_type][0][str_pr].split(':-:')[0] + '" "' + cbt.ent_conf['pr_str_' + str(str_j_idx + 1)] + '"\n')
+                mk_ent.append('\t' + '"' + vp_blpe_ents[cent_type][0][str_pr].split(':-:')[0] + '" "' + cbt.ent_conf['pr_str_' + str(str_j_idx + 1)] + '"\n')
 
 
         # write ints
-        for int_j_idx, int_pr in enumerate(prop_ents[cent_type][1]):
-            mk_ent.append('\t' + '"' + prop_ents[cent_type][1][int_pr].split(':-:')[0] + '" "' + str(cbt.ent_conf['pr_int_' + str(int_j_idx + 1)]) + '"\n')
+        for int_j_idx, int_pr in enumerate(vp_blpe_ents[cent_type][1]):
+            mk_ent.append('\t' + '"' + vp_blpe_ents[cent_type][1][int_pr].split(':-:')[0] + '" "' + str(cbt.ent_conf['pr_int_' + str(int_j_idx + 1)]) + '"\n')
         
         
         # write floats
-        for float_j_idx, float_pr in enumerate(prop_ents[cent_type][2]):
-            mk_ent.append('\t' + '"' + prop_ents[cent_type][2][float_pr].split(':-:')[0] + '" "' + str(round(cbt.ent_conf['pr_float_' + str(float_j_idx + 1)], 4)) + '"\n')
+        for float_j_idx, float_pr in enumerate(vp_blpe_ents[cent_type][2]):
+            mk_ent.append('\t' + '"' + vp_blpe_ents[cent_type][2][float_pr].split(':-:')[0] + '" "' + str(round(cbt.ent_conf['pr_float_' + str(float_j_idx + 1)], 4)) + '"\n')
 
 
         # write colors
-        for color_j_idx, color_pr in enumerate(prop_ents[cent_type][3]):
+        for color_j_idx, color_pr in enumerate(vp_blpe_ents[cent_type][3]):
             rgb = str(int(cbt.ent_conf['pr_color_' + str(color_j_idx + 1)][0] * 255)) + ' ' + str(int(cbt.ent_conf['pr_color_' + str(color_j_idx + 1)][1] * 255)) + ' ' + str(int(cbt.ent_conf['pr_color_' + str(color_j_idx + 1)][2] * 255))
-            mk_ent.append('\t' + '"' + prop_ents[cent_type][3][color_pr].split(':-:')[0] + '" "' + rgb + '"\n')
+            mk_ent.append('\t' + '"' + vp_blpe_ents[cent_type][3][color_pr].split(':-:')[0] + '" "' + rgb + '"\n')
 
 
         # write enums
-        for enum_j_idx, enum_pr in enumerate(prop_ents[cent_type][4]):
+        for enum_j_idx, enum_pr in enumerate(vp_blpe_ents[cent_type][4]):
             mk_ent.append('\t' + '"' + cbt.ent_conf['ob_enum_tgt_' + str(enum_j_idx + 1)].split(':-:')[0] + '" "' + cbt.ent_conf['ob_enum_tgt_' + str(enum_j_idx + 1)].split(':-:')[1] + '"\n')
             # print(cbt.ent_conf['pr_enum_1'])
 
-            
-            
-        """
-        j_enum_amount = len(prop_ents[cent_type][4])
-        
-        if 1 <= j_enum_amount:
-            en1v = cbt.ent_conf.pr_enum_1.split(':-:')
-            mk_ent.append('\t' + '"' + en1v[0] + '" "' + en1v[1] + '"\n')
 
-        if 2 <= j_enum_amount:
-            print('pootis: ' + str(cbt.ent_conf.pr_enum_2))
-            en2v = cbt.ent_conf.pr_enum_2.split(':-:')
-            print('ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ')
-            print(en2v)
-            mk_ent.append('\t' + '"' + en2v[0] + '" "' + en2v[1] + '"\n')
-
-        if 3 <= j_enum_amount:
-            en3v = cbt.ent_conf.pr_enum_3.split(':-:')
-            mk_ent.append('\t' + '"' + en3v[0] + '" "' + en3v[1] + '"\n')
-
-        if 4 <= j_enum_amount:
-            en4v = cbt.ent_conf.pr_enum_4.split(':-:')
-            mk_ent.append('\t' + '"' + en4v[0] + '" "' + en4v[1] + '"\n')
-
-        if 5 <= j_enum_amount:
-            en5v = cbt.ent_conf.pr_enum_5.split(':-:')
-            mk_ent.append('\t' + '"' + en5v[0] + '" "' + en5v[1] + '"\n')
-
-        if 6 <= j_enum_amount:
-            en6v = cbt.ent_conf.pr_enum_6.split(':-:')
-            mk_ent.append('\t' + '"' + en6v[0] + '" "' + en6v[1] + '"\n')
-
-        if 7 <= j_enum_amount:
-            en7v = cbt.ent_conf.pr_enum_7.split(':-:')
-            mk_ent.append('\t' + '"' + en7v[0] + '" "' + en7v[1] + '"\n')
-
-        if 8 <= j_enum_amount:
-            en8v = cbt.ent_conf.pr_enum_8.split(':-:')
-            mk_ent.append('\t' + '"' + en8v[0] + '" "' + en8v[1] + '"\n')
-
-        if 9 <= j_enum_amount:
-            en9v = cbt.ent_conf.pr_enum_9.split(':-:')
-            mk_ent.append('\t' + '"' + en9v[0] + '" "' + en9v[1] + '"\n')
-
-        if 10 <= j_enum_amount:
-            en10v = cbt.ent_conf.pr_enum_10.split(':-:')
-            mk_ent.append('\t' + '"' + en10v[0] + '" "' + en10v[1] + '"\n')
-
-        if 11 <= j_enum_amount:
-            en11v = cbt.ent_conf.pr_enum_11.split(':-:')
-            mk_ent.append('\t' + '"' + en11v[0] + '" "' + en11v[1] + '"\n')
-
-        if 12 <= j_enum_amount:
-            en12v = cbt.ent_conf.pr_enum_12.split(':-:')
-            mk_ent.append('\t' + '"' + en12v[0] + '" "' + en12v[1] + '"\n')
-
-        if 13 <= j_enum_amount:
-            en13v = cbt.ent_conf.pr_enum_13.split(':-:')
-            mk_ent.append('\t' + '"' + en13v[0] + '" "' + en13v[1] + '"\n')
-
-        if 14 <= j_enum_amount:
-            en14v = cbt.ent_conf.pr_enum_14.split(':-:')
-            mk_ent.append('\t' + '"' + en14v[0] + '" "' + en14v[1] + '"\n')
-
-        if 15 <= j_enum_amount:
-            en15v = cbt.ent_conf.pr_enum_15.split(':-:')
-            mk_ent.append('\t' + '"' + en15v[0] + '" "' + en15v[1] + '"\n')
-
-        if 16 <= j_enum_amount:
-            en16v = cbt.ent_conf.pr_enum_16.split(':-:')
-            mk_ent.append('\t' + '"' + en16v[0] + '" "' + en16v[1] + '"\n')
-        """
 
         # write enum booleans
-        for bool_enum_j_idx, bool_enum_pr in enumerate(prop_ents[cent_type][5]):
-            mk_ent.append('\t' + '"' + prop_ents[cent_type][5][bool_enum_pr].split(':-:')[0] + '" "' + str(int(cbt.ent_conf['pr_enum_bool_' + str(bool_enum_j_idx + 1)])) + '"\n')
+        for bool_enum_j_idx, bool_enum_pr in enumerate(vp_blpe_ents[cent_type][5]):
+            mk_ent.append('\t' + '"' + vp_blpe_ents[cent_type][5][bool_enum_pr].split(':-:')[0] + '" "' + str(int(cbt.ent_conf['pr_enum_bool_' + str(bool_enum_j_idx + 1)])) + '"\n')
 
         # write sflags
         # If there are no flags - don't write the spawnflags at all
-        if len(prop_ents[cent_type][6]) > 0:
+        if len(vp_blpe_ents[cent_type][6]) > 0:
             mk_ent.append('\t' + '"spawnflags" "' + str(cbt.ent_conf['l3_ent_sflags']) + '"\n')
 
         
@@ -1249,37 +1190,37 @@ def test_export_v1(self, context):
         
         
         # write strings
-        for str_j_idx, str_pr in enumerate(prop_ents[cent_type][0]):
+        for str_j_idx, str_pr in enumerate(vp_blpe_ents[cent_type][0]):
             # strings are never empty, unless you take them off
             if lizard.ent_conf['pr_str_' + str(str_j_idx + 1)] != ' ':
-                mkspot.append('\t' + '"' + prop_ents[cent_type][0][str_pr].split(':-:')[0] + '" "' + lizard.ent_conf['pr_str_' + str(str_j_idx + 1)] + '"\n')
+                mkspot.append('\t' + '"' + vp_blpe_ents[cent_type][0][str_pr].split(':-:')[0] + '" "' + lizard.ent_conf['pr_str_' + str(str_j_idx + 1)] + '"\n')
         
         # write ints
-        for int_j_idx, int_pr in enumerate(prop_ents[cent_type][1]):
-            mkspot.append('\t' + '"' + prop_ents[cent_type][1][int_pr].split(':-:')[0] + '" "' + str(lizard.ent_conf['pr_int_' + str(int_j_idx + 1)]) + '"\n')
+        for int_j_idx, int_pr in enumerate(vp_blpe_ents[cent_type][1]):
+            mkspot.append('\t' + '"' + vp_blpe_ents[cent_type][1][int_pr].split(':-:')[0] + '" "' + str(lizard.ent_conf['pr_int_' + str(int_j_idx + 1)]) + '"\n')
         
         
         # write floats
-        for float_j_idx, float_pr in enumerate(prop_ents[cent_type][2]):
-            mkspot.append('\t' + '"' + prop_ents[cent_type][2][float_pr].split(':-:')[0] + '" "' + str(round(lizard.ent_conf['pr_float_' + str(float_j_idx + 1)], 4)) + '"\n')
+        for float_j_idx, float_pr in enumerate(vp_blpe_ents[cent_type][2]):
+            mkspot.append('\t' + '"' + vp_blpe_ents[cent_type][2][float_pr].split(':-:')[0] + '" "' + str(round(lizard.ent_conf['pr_float_' + str(float_j_idx + 1)], 4)) + '"\n')
 
         
         
         # write colors
         # sorry, but your shit cannot have negative values. For now
         
-        for color_j_idx, color_pr in enumerate(prop_ents[cent_type][3]):
+        for color_j_idx, color_pr in enumerate(vp_blpe_ents[cent_type][3]):
             rgb = str(int(lizard.ent_conf['pr_color_' + str(color_j_idx + 1)][0] * 255)) + ' ' + str(int(lizard.ent_conf['pr_color_' + str(color_j_idx + 1)][1] * 255)) + ' ' + str(int(lizard.ent_conf['pr_color_' + str(color_j_idx + 1)][2] * 255))
             if '-' in str(rgb):
-                mkspot.append('\t' + '"' + prop_ents[cent_type][3][color_pr].split(':-:')[0] + '" "-1 -1 -1 1"\n')
+                mkspot.append('\t' + '"' + vp_blpe_ents[cent_type][3][color_pr].split(':-:')[0] + '" "-1 -1 -1 1"\n')
             else:
-                mkspot.append('\t' + '"' + prop_ents[cent_type][3][color_pr].split(':-:')[0] + '" "' + rgb + '"\n')
+                mkspot.append('\t' + '"' + vp_blpe_ents[cent_type][3][color_pr].split(':-:')[0] + '" "' + rgb + '"\n')
         
         
         
         # write sflags
         # If there are no flags - don't write the spawnflags at all
-        if len(prop_ents[cent_type][6]) > 0:
+        if len(vp_blpe_ents[cent_type][6]) > 0:
             mkspot.append('\t' + '"spawnflags" "' + str(lizard.ent_conf['l3_ent_sflags']) + '"\n')
 
         
@@ -1390,12 +1331,12 @@ def build_suggest_ent_inpt(self, context):
 
 def add_hwm_entity(self, context):
     #
-    # Todo: make it NOT use bpy.ops !!!!!!!!!!!!!!
+    # Todo: make it NOT use bpy.ops !!!!!!!!!!!!!!. Done ??
     #
     
-    file_path = 'E:\\!!Blend_Projects\\hammer_icons\\hammer_icons_01a.blend'
     inner_path = 'Object'
     object_name = self.icon_ent_type + '_curve'
+
     """
     bpy.ops.wm.append(
         filepath=os.path.join(file_path, inner_path, object_name),
@@ -1406,9 +1347,10 @@ def add_hwm_entity(self, context):
         instance_object_data=False
         )
     """
-    lnk_file = Path(file_path).absolute().name
+
+    lnk_file = hammer_icons_blend.absolute().name
     
-    with bpy.data.libraries.load(file_path) as (data_from, data_to):
+    with bpy.data.libraries.load(hammer_icons_blend) as (data_from, data_to):
         data_to.objects = [object_name]
     
     obj = data_to.objects[0]
@@ -1428,7 +1370,7 @@ def add_hwm_entity(self, context):
     
     
     # gut for helth
-    # todo: make a separate function ?
+    # todo: fix this fucking shit
     cdata_cleanup(self, context)
     # I want 2 die
     
@@ -1437,13 +1379,17 @@ def add_hwm_entity(self, context):
 
 
 # =========================================================
-#----------------------------------------------------------
-#                   Operators
-#----------------------------------------------------------
+# ---------------------------------------------------------
+#                       Operators
+# ---------------------------------------------------------
 # =========================================================
 
+# Things that get triggered when a button is being pressed
+# Shift + A menu counts too
+# Basically operators that you can call from gui or whatever
 
-class OBJECT_OT_vmf_export_foil(Operator, AddObjectHelper):
+# Set object entity
+class OBJECT_OT_foil_add_ham_entity(Operator, AddObjectHelper):
     bl_idname = 'mesh.set_ent_type'
     bl_label = 'Set entity type'
     bl_options = {'REGISTER'}
@@ -1453,7 +1399,7 @@ class OBJECT_OT_vmf_export_foil(Operator, AddObjectHelper):
         return {'FINISHED'}
 
 
-
+# Export vmf
 class OBJECT_OT_foil_test_export(Operator, AddObjectHelper):
     bl_idname = 'mesh.foil_ent_export'
     bl_label = 'Test export entities'
@@ -1464,7 +1410,7 @@ class OBJECT_OT_foil_test_export(Operator, AddObjectHelper):
         return {'FINISHED'}
 
 
-    
+# Add a hammer entity from the Shift + A menu
 class OBJECT_OT_foil_add_hwm_ent(Operator, AddObjectHelper):
 
     bl_idname = 'mesh.foil_add_hwm_ent'
@@ -1487,15 +1433,12 @@ class OBJECT_OT_foil_add_hwm_ent(Operator, AddObjectHelper):
 
 
 
-
+"""
 # test
 def apply_qffd_n(self, context):
 
     print('abandoned_fucntion')
-    
-    
-    
-    
+
 class OBJECT_OT_apply_qffd(Operator, AddObjectHelper):
     bl_idname = 'mesh.apply_qffd'
     bl_label = 'Apply qffd'
@@ -1504,15 +1447,16 @@ class OBJECT_OT_apply_qffd(Operator, AddObjectHelper):
     def execute(self, context):
         apply_qffd_n(self, context)
         return {'FINISHED'}
-        
+"""
 
 
 # =========================================================
-#----------------------------------------------------------
-#                   Classes
-#----------------------------------------------------------
+# ---------------------------------------------------------
+#                       Classes
+# ---------------------------------------------------------
 # =========================================================
 
+# Property specific things
 
 
 class blender_ents(PropertyGroup):
@@ -1560,7 +1504,8 @@ class blender_ents(PropertyGroup):
         )
 
 
-
+# important todo: move shared shit from blender_ents_obj to wherever
+# IF POSSIBLE
 
 class blender_ents_obj(PropertyGroup):
 
@@ -2752,14 +2697,14 @@ class blender_ents_obj(PropertyGroup):
 
 
 
+# =========================================================
+# ---------------------------------------------------------
+#                           GUI
+# ---------------------------------------------------------
+# =========================================================
 
-
-
-#
-# hwm append Menu mechanism
-#
-
-
+# classes too, but specifically for gui
+# and functions too
 
 
 # create a submenu in the hammer ents subcategory
@@ -2776,24 +2721,13 @@ class hammer_ents_w_icons(bpy.types.Menu):
 
 
 
-
-
-
-# append submenu with hammer entities
-# just hammer icons traced with curves with entity type set beforehand
+# append submenu with hammer entities to the Shift + A menu
+# Those just hammer icons traced with curves with entity type set beforehand
 def draw_hwm_presets(self, context):
     self.layout.separator()
     self.layout.menu('OBJECT_MT_hammer_ents_w_icons', icon='LIGHT')
 
 
-
-
-
-
-
-#
-# Viewpanel
-#
 
 
 class VIEW3D_PT_blender_foil_dn_enum(bpy.types.Panel):
@@ -2910,6 +2844,7 @@ class VIEW3D_PT_blender_foil_dn_enum(bpy.types.Panel):
             """
 
 
+"""
 def ffd_app(self, context):
     if (context.active_object):
         if (len(context.active_object.modifiers)):
@@ -2917,22 +2852,30 @@ def ffd_app(self, context):
 
             row = col.row(align=True)
             # row.label(text='Spawnflags')
+"""
 
 
 
 
 
 
-#
-# RegEdit
-#
 
 
+
+
+
+
+
+# ----------------------------------------
+#               RegEdit
+# ----------------------------------------
+
+# register things
 
 rclasses = (
     blender_ents,
     VIEW3D_PT_blender_foil_dn_enum,
-    OBJECT_OT_vmf_export_foil,
+    OBJECT_OT_foil_add_ham_entity,
     OBJECT_OT_foil_test_export,
     blender_ents_obj,
     hammer_ents_w_icons,
@@ -2946,28 +2889,20 @@ def register():
     register_()
     # bpy.utils.register_class(blender_ents)
     bpy.types.Scene.blents = PointerProperty(type=blender_ents)
-    # bpy.utils.register_class(VIEW3D_PT_blender_foil_dn_enum)
-    # bpy.utils.register_class(OBJECT_OT_vmf_export_foil)
-    # bpy.utils.register_class(OBJECT_OT_foil_test_export)
     
-    # bpy.utils.register_class(blender_ents_obj)
     bpy.types.Object.ent_conf = PointerProperty(type=blender_ents_obj)
     
     bpy.types.VIEW3D_MT_add.append(draw_hwm_presets)
     
-    bpy.types.DATA_PT_modifiers.prepend(ffd_app)
+    # bpy.types.DATA_PT_modifiers.prepend(ffd_app)
 
 
 def unregister():
     unregister_()
     # bpy.utils.unregister_class(blender_ents)
-    # bpy.utils.unregister_class(blender_ents_obj)
-    # bpy.utils.unregister_class(VIEW3D_PT_blender_foil_dn_enum)
-    # bpy.utils.unregister_class(OBJECT_OT_vmf_export_foil)
-    # bpy.utils.unregister_class(OBJECT_OT_foil_test_export)
     del bpy.types.Scene.blents
     del bpy.types.Object.ent_conf
     
     bpy.types.VIEW3D_MT_light_add.remove(draw_hwm_presets)
     
-    bpy.types.DATA_PT_modifiers.remove(ffd_app)
+    # bpy.types.DATA_PT_modifiers.remove(ffd_app)
