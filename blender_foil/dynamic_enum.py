@@ -1,7 +1,7 @@
 bl_info = {
     'name': 'BlenderFoil',
     'author': 'MrKleiner',
-    'version': (1, 0),
+    'version': (1, 2),
     'blender': (3, 0, 0),
     'location': 'N menu',
     'description': 'Export shit from blender to source engine. Also, I like bread',
@@ -12,7 +12,7 @@ bl_info = {
 
 import bpy
 from bpy.types import Operator
-from bpy.props import FloatVectorProperty
+# from bpy.props import FloatVectorProperty
 from bpy_extras.object_utils import AddObjectHelper, object_data_add
 from mathutils import Vector
 import re
@@ -55,7 +55,9 @@ from bs4 import Tag, NavigableString
 
 # todo: Separate actions into functions as often as possible
 # important todo: transfer blpe to xml
+# important todo: multibrush entities. Entity id that a brush relates to ?
 
+# todo: it's actually not that hard to assign materials per face
 
 # get the current directory. Just in case
 addon_root_dir = Path(__file__).absolute().parent
@@ -743,7 +745,6 @@ def cdata_cleanup(self, context):
                         bpy.data.curves.remove(ded_data)
 
 
-
 # This takes all the currently selected objects and re-evaluates their spawnflags
 # todo: make this function accept object input
 def eval_spawnflags(self, context):
@@ -770,13 +771,8 @@ def eval_spawnflags(self, context):
 
 
 
-
-
-
-
-
-
-
+# -------------------------------------------------
+# --------------------------------------------------
 
 
 
@@ -787,7 +783,7 @@ def eval_spawnflags(self, context):
 # and then reuse it, for example here.
 # todo: Only do this once ?
 def r_enum_list(self, context):
-    # current_time = datetime.datetime.now()
+    current_time = datetime.datetime.now()
     
     if context is None:
         return []
@@ -1350,7 +1346,7 @@ def add_hwm_entity(self, context):
 
     lnk_file = hammer_icons_blend.absolute().name
     
-    with bpy.data.libraries.load(hammer_icons_blend) as (data_from, data_to):
+    with bpy.data.libraries.load(str(hammer_icons_blend)) as (data_from, data_to):
         data_to.objects = [object_name]
     
     obj = data_to.objects[0]
