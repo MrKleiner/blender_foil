@@ -4,8 +4,8 @@ Strings, floats, ints, boolean_enums
 
 
 Enums:
-	Enum_json_name:-:DEFAULT_BY_GUI_NAME
-		"option_hammer_real_val": 
+	"enum_gui_name:-:DEFAULT_OPTION:-:Description":
+		"GUI_NAME": "KEY_REAL_NAME(always the same):-:CORRESPONDING_VALUE"
 Enum write:
 	grab current state
 
