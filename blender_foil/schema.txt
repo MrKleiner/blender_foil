@@ -1,0 +1,30 @@
+For all simple point entities - just do it the straightforward way: append every key-value and then, if any, append all outputs
+
+For any brushes:
+	- There should be a function which takes an object as an input and gives an object with in a format of: 
+	[
+		FUNCTION SPLITS OBJECT INTO ISLANDS AT ALL TIMES AND RETURNS ISLANDS AS SOLIDS
+		
+		SOLID1
+		{
+			"plane": "(x y z) (x y z) (x y z)", (first 3 verts IN A CORRECT ORDER)
+			"vplus": ["x y z", "x y z", "x y z", etc...], (all verts)
+			"material": "material/path", (if specified to use material slots - use material slots, otherwise - use a single material)
+			"ux": "[X Y SHIFTX SHIFTY] SCALE",
+			"vx": "[0 -1 0 0] 0.25", (example)
+		},
+		
+		SOLID2
+		{
+			"plane": "(x y z) (x y z) (x y z)", (first 3 verts IN A CORRECT ORDER)
+			"vplus": ["x y z", "x y z", "x y z", etc...], (all verts)
+			"material": "material/path", (if specified to use material slots - use material slots, otherwise - use a single material)
+			"ux": "[X Y SHIFTX SHIFTY] SCALE",
+			"vx": "[0 -1 0 0] 0.25", (example)
+		},
+		etc...
+		
+	]
+	- if island is non-manifold - Either skip it or generate convex hull and export it instead
+	
+	- There should be a checkbox whether to use materials from material slots or just fill the object with uniform material
