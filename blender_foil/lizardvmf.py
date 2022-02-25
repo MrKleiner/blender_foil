@@ -112,7 +112,7 @@ class lizardvmf_entity:
 		self.ctag = ct
 		# since it's a pointer it will work just fine. Same as ctag, but with a different name for consistency
 		self.prms = ct
-		# same as .prms, but it's a dict. Is it settable ??
+		# same as .prms, but it's a dict. Is it settable?? Should be...
 		self.prmsdict = ct.attrs
 		# self.groupid = ''
 		# this has to be pre-declared
@@ -158,7 +158,7 @@ class lizardvmf_entity:
 			# todo: don't use try, check if it has visgroupid or not via attribute check
 			vgroupid = self.ctag.select('editor')[0]['visgroupid']
 			parrot = {
-				'id': vgroupid,
+				'id': int(vgroupid),
 				'name': self.lizard.select('visgroup[visgroupid="' + vgroupid + '"]')[0]['name']
 			}
 		except:
@@ -201,7 +201,10 @@ class lizardvmf_entity:
 				qselector = self.lizard.select('visgroup[name="' + query + '"]')
 				self.ctag.select('editor')[0]['visgroupid'] = qselector[0]['visgroupid']
 
-
+	# removes the entity
+	def kill(self):
+		self.ctag.decompose()
+		return True
 
 
 
@@ -902,7 +905,7 @@ class lizardvmf:
 	# def add_ent(self, prmdict, mkid):
 
 
-	# return matches. For now id only
+	# return matches
 	def vmfquery(self, qr):
 		lizard = self.lizard
 		selector = ''
@@ -922,7 +925,7 @@ class lizardvmf:
 		# select by targetname
 		if '$' in qr:
 			# construct selector by targtname which will probably return many entries
-			selector = 'map entity[targetname="' + qr.split('.')[-1] + '"]'
+			selector = 'map entity[targetname="' + qr.split('$')[-1] + '"]'
 			# if selector returns anything - create an array of returned results
 			# in a form of lizardvmf_entity
 			if len(lizard.select(selector)) > 0:
@@ -935,9 +938,9 @@ class lizardvmf:
 
 
 		# any keyvalue query
-		# example: @fogMaxDensity=1
+		# example: ~fogMaxDensity=1
 		if '~' in qr:
-			parts = qr.split('@')[-1].split('=')
+			parts = qr.split('~')[-1].split('=')
 			selector = 'map entity[' + parts[0] + '="' + parts[-1] + '"]'
 			if len(lizard.select(selector)) > 0:
 				qresults = []
@@ -972,8 +975,124 @@ class lizardvmf:
 		return self.lizard.select('map world')[0]
 
 
+	# get a bunch of free ids
+	def getfreeid(self, amount):
+
+		# check that integer has been passed since it's a required parameter
+		# todo: make it accept True and whatever and spit a single id ???
+		# why ??????
+		if isinstance(amount, int):
+			pass
+		else:
+			raise ValueError('Amount can only be an integer. No bigger than 2,147,483,646 and not negative')
+
+		lizard = self.lizard
+
+		# todo: there are many other ways of getting free ids
+		# like cycling through existing ones and finding gaps. Do these gaps actually matter ??
+		# also other ways may result in way more readable ids
+
+		# collect all ids here
+		taken_ids = []
+
+		# get all solid ids
+		# todo: the int() thing is very unreliable here
+		for soid in lizard.select('map solid'):
+			if soid.get('id') != None:
+				taken_ids.append(int(soid['id']))
+
+		# get all entity ids
+		for eid in lizard.select('map entity'):
+			if eid.get('id') != None:
+				taken_ids.append(int(eid['id']))
+
+		# sort ids out
+		# update: not needed anymore
+		# taken_ids.sort()
+
+		# store free ids here
+		free_ids = []
+
+		# lowest id possible
+		# 2,147,483,646
+		basis = -2147483640
+
+		# margin. A safety margin of around a few thousand ids
+		margin = 65535
+
+		basis += margin
+
+		# todo: very reliable but slow
+		while len(free_ids) < amount:
+			# basically test all the ids until we find the suitable one
+			basis += 1
+			if not basis in taken_ids:
+				free_ids.append(basis)
+
+		# There should always be enough free ids
+		return free_ids
 
 
+	# todo: specify classname more easily ??
+	# todo: also assignown id like md5 ????
+	def mk_ent(self, params, loc=None, rot=None, idstate=None):
+		"""
+		Creates an entity and returns lizard entity.
+		It expects following parameters in a following order:
+
+		A dictionary of key-values ("angles" and "origin" are always overwritten)
+		Location (loc), if None or not passed - 0 0 0
+		Rotation (rot), if None or not passed - this parameter is not being set
+		Id (idstate) - if nothing or none - id is assigned automatically. If int - sets passed int as id
+
+		Location, rotation and id are keyword arguments
+		meaning that the only positional argument that matters is the k:v dictionary (always has to be the first argument)
+		
+		Don't forget that dictionary should always have "classname" specified
+		"""
+
+
+		lizard = self.lizard
+
+		# todo: do nothing if params are undefined
+		newent = lizard.new_tag('entity')
+
+		# append editor
+		# todo: should editor always be there or create when neccessary ?
+		edtr = lizard.new_tag('editor', color='202 246 72', visgroupshown='1', visgroupautoshown='1', logicalpos='[0 500]')
+		newent.append(edtr)
+
+		# populate attributes (parameters)
+		for pr in params:
+			newent[pr] = params[pr]
+
+		# set id if told to
+		# ffs, False is an int...
+		if isinstance(idstate, int) and idstate != None and idstate != False and idstate != True:
+			# you cannot have ids bigger than biggest int
+			if idstate < 2147483640 and idstate > -2147483640:
+				newent['id'] = idstate
+			else:
+				raise ValueError('id cannot be bigger than max int (2147483640)')
+		else:
+			newent['id'] = self.getfreeid(1)[0]
+
+		# Location and Rotation
+		# takes tuples with 3 values
+		# todo: only accept vectors ?
+		if loc != None and isinstance(loc, tuple):
+			newent['origin'] = str(loc[0]) + ' ' + str(loc[1]) + ' ' + str(loc[2])
+		else:
+			newent['origin'] = '0 0 0'
+
+		if rot != None and isinstance(loc, tuple):
+			newent['angles'] = str(rot[0]) + ' ' + str(rot[1]) + ' ' + str(rot[2])
+
+		# finally, append constructed tag to map
+		lizard.select('map world')[0].insert_after(newent)
+
+		# and return the lizard entity
+		return lizardvmf_entity(lizard, newent)
 
 
 
@@ -994,7 +1113,12 @@ print(lol.vmfquery('#273').prms['classname'])
 print(lol.mapsettings['skyname'])
 lol.mapsettings['skyname'] = 'tits'
 print(lol.mapsettings['skyname'])
-
+print(lol.getfreeid(7))
+ne = lol.mk_ent({'classname': 'prop_physics'}, (0, 12 , 33), (0, 0, 0))
+print(lol.getfreeid(7))
+print(ne.prms['angles'])
+ne.kill()
+print(lol.getfreeid(7))
 
 
 
