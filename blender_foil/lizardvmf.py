@@ -32,8 +32,174 @@ lizard.display()
 # print(lizard.id)
 """
 
+"""
+	@property
+	def temperature(self):
+		print("Getting value...")
+		return self._temperature
+
+	@temperature.setter
+	def temperature(self, value):
+		print("Setting value...")
+		if value < -273.15:
+			raise ValueError("Temperature below -273 is not possible")
+		self._temperature = value
+"""
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# don't forget that entity could have a solid
+class lizardvmf_entity:
+	'Entity object of the lizard vmf'
+	# A little easier acces of k:v
+	# An ability to distinguish editor k:v and base k:v
+	# takes bs4 tag and root tag as an input
+
+	lizard = None
+	# redundant?
+	# update: For now - yes. This has to be done via @property
+	# groupid = None
+	# this stores all the attributes
+	# yes, it's possible to simply do whatever.prms['whatever'] and whatever.prms['whatever'] = something
+	# just like regular bs4 tag
+	prms = None
+
+	# bs4 also provides us with the attribute dictionary. Make this available with distinctive name
+	prmsdict = None
+
+	# important todo: simply create a variable with editor on init?
+	# so that it's possible to access its params as usual...
+
+	# rt - root tag (whole map)
+	# ct - current tag
+	def __init__(self, rt, ct):
+		# (root tag)
+		self.lizard = rt
+		# it's possible to access the bs4 object via this variable (this is a bs4 tag object)
+		self.ctag = ct
+		# since it's a pointer it will work just fine. Same as ctag, but with a different name for consistency
+		self.prms = ct
+		# same as .prms, but it's a dict. Is it settable ??
+		self.prmsdict = ct.attrs
+		# self.groupid = ''
+		# this has to be pre-declared
+		self.visgroup = ''
+		# self.visgroupid = ''
+		# self.visgroupshown = ''
+
+	
+	# I actually like this variant more than @property fuckery
+
+	def prmquery(self, k, v):
+		# self.ctag[k] = v
+		
+		# if both key and value are present - set it and return true as a confirmation
+		if k != None and v != None:
+			self.ctag[k] = v
+			return True
+
+		# if key is none and val is specified - return key with the following value
+		if k == None and v != None:
+			return [ke for ke, va in self.prmsdict.items() if va == v]
+
+
+
+	"""
+	def editor_z(self, key, value):
+		self.ctag.select('editor')[0][key] = value
+
+	def tovisgroup(self, vgname):
+		lizard = self.lizard
+		found_id = lizard.select('visgroup[name="' + vgname + '"]')[0]['id']
+	"""
+
+
+	# todo: this still could be a function. Just make the function return a value based on a query...
+	# update: todo: make this a function too, since keyvalues are functions as well...
+	# if no query is passed - return group name and id
+	# if set visgroup - return id and name
+	@property
+	def visgroup(self):
+		# print('Getting value...')
+		try:
+			# todo: don't use try, check if it has visgroupid or not via attribute check
+			vgroupid = self.ctag.select('editor')[0]['visgroupid']
+			parrot = {
+				'id': vgroupid,
+				'name': self.lizard.select('visgroup[visgroupid="' + vgroupid + '"]')[0]['name']
+			}
+		except:
+			parrot = {'id':'','name':''}
+		return parrot
+
+
+	@visgroup.setter
+	def visgroup(self, query):
+		# print('Setting value...')
+		"""
+		if value < -273.15:
+			raise ValueError("Temperature below -273 is not possible")
+		self._temperature = value
+		"""
+
+		# first - decide if we want to search by id or name
+		# main task is to get a valid visgroupid and then add it to the editor of the current tag
+		# logic is simple: If no valid visgroup is found - just don't do anything because fuck you
+		"""
+		if isinstance(query, int):
+			qselector = self.lizard.select('visgroup[visgroupid="' + query + '"]')
+			qtype = 'visgroupid'
+		else:
+			# else - assume that it's a string...
+			qselector = self.lizard.select('visgroup[name="' + query + '"]')
+			qtype = 'name'
+
+		# only do shit if query has returned anything
+		if len(qselector) > 0:
+			pass
+		"""
+
+		if len(self.lizard.select('visgroup[visgroupid="' + str(query) + '"]')) > 0 or len(self.lizard.select('visgroup[name="' + str(query) + '"]')):
+			if isinstance(query, int):
+				# qselector = self.lizard.select('visgroup[visgroupid="' + query + '"]')
+				self.ctag.select('editor')[0]['visgroupid'] = str(query)
+			else:
+				# else - assume that it's a string...
+				qselector = self.lizard.select('visgroup[name="' + query + '"]')
+				self.ctag.select('editor')[0]['visgroupid'] = qselector[0]['visgroupid']
 
 
 
@@ -55,6 +221,10 @@ class lizardvmf:
 	# variables inside functions HAVE NO CONNECTION to the class variables no matter what
 	# to access/write stored variables use self.whatever
 
+	# all the additional functionality is quite optional
+	# main purpose of this class is the init function which parses the shit
+	# and tovmf function which converts it back to vmf string
+
 
 
 	#
@@ -68,6 +238,7 @@ class lizardvmf:
 	# The result of reconstructed vmf, None by default
 	# Gotta be careful since this could give outdated results
 	# exists because what if you'd need to access this multiple times ?
+	# Let this be a little secret feature
 	readyvmfstr = None
 
 
@@ -728,12 +899,77 @@ class lizardvmf:
 
 
 	# append point entity
-	def add_ent(self, prmdict, mkid):
+	# def add_ent(self, prmdict, mkid):
 
 
+	# return matches. For now id only
+	def vmfquery(self, qr):
+		lizard = self.lizard
+		selector = ''
+		
+		# todo: repeating code
+		# todo: query itself could contain special symbols. Temp solution: only look at the very first character?
+
+		# Since ids are PRESUMABLY unique, here we should only return the first match...
+		if '#' in qr:
+			selector = 'map entity[id="' + qr.split('#')[-1] + '"]'
+			if len(lizard.select(selector)) > 0:
+				return lizardvmf_entity(lizard, lizard.select(selector)[0])
+			else:
+				return None
 
 
+		# select by targetname
+		if '$' in qr:
+			# construct selector by targtname which will probably return many entries
+			selector = 'map entity[targetname="' + qr.split('.')[-1] + '"]'
+			# if selector returns anything - create an array of returned results
+			# in a form of lizardvmf_entity
+			if len(lizard.select(selector)) > 0:
+				qresults = []
+				for q in lizard.select(selector):
+					qresults.append(lizardvmf_entity(lizard, q))
+				return qresults
+			else:
+				return None
 
+
+		# any keyvalue query
+		# example: @fogMaxDensity=1
+		if '~' in qr:
+			parts = qr.split('@')[-1].split('=')
+			selector = 'map entity[' + parts[0] + '="' + parts[-1] + '"]'
+			if len(lizard.select(selector)) > 0:
+				qresults = []
+				for q in lizard.select(selector):
+					qresults.append(lizardvmf_entity(lizard, q))
+				return qresults
+			else:
+				return None
+
+
+		# any custom query
+		# raw bs4 css query
+		# returns lizard entity
+		# anything beyond that should be done via direct xml access
+		"""
+		if '%' in qr:
+			selector = str(qr)[1:]
+			if len(lizard.select(selector)) > 0:
+				qresults = []
+				for q in lizard.select(selector):
+					qresults.append(lizardvmf_entity(lizard, q))
+				return qresults
+			else:
+				return None
+		"""
+
+
+	# returns map properties
+	# simply because I don't want to add self.mapsettings to the end of the init parser
+	@property
+	def mapsettings(self):
+		return self.lizard.select('map world')[0]
 
 
 
@@ -748,4 +984,24 @@ fr = open(r'E:\!!Blend_Projects\scripts\map_parser\example_map_src.vmf', 'r').re
 
 lol = lizardvmf(fr)
 
-print(lol.vmfstats())
+# lol.vmfquery('#273')['classname'] = 'prop_ass'
+print(lol.vmfquery('#273').visgroup)
+print(lol.vmfquery('#273').visgroup['name'])
+print(lol.vmfquery('#273').visgroup['id'])
+print(lol.vmfquery('#273').prms['classname'])
+lol.vmfquery('#273').prms['classname'] = 'dicks'
+print(lol.vmfquery('#273').prms['classname'])
+print(lol.mapsettings['skyname'])
+lol.mapsettings['skyname'] = 'tits'
+print(lol.mapsettings['skyname'])
+
+
+
+
+
+
+# print(lol.vmfquery('#272').visgroup)
+
+# lol.vmfquery('#273').visgroup = 'sideramp'
+
+# print(lol.vmfquery('#273').visgroup)
