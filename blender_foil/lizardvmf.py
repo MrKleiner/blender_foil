@@ -51,6 +51,145 @@ lizard.display()
 
 
 
+# takes global map root tag and solid tag as an input
+class lizardvmf_solid:
+	'Solid (brush) object of the lizard vmf'
+
+	# -(base taken from entity class)-
+
+	# takes bs4 tag and root tag as an input
+
+	lizard = None
+	# groupid - redundant?
+	# update: For now - yes. This has to be done via @property
+	# groupid = None
+
+	# this stores all the attributes
+	# yes, it's possible to simply do whatever.prms['whatever'] and whatever.prms['whatever'] = something
+	# just like regular bs4 tag
+	# todo: Solid doesn't has them (it only has id)
+	prms = None
+
+	# bs4 also provides us with the attribute dictionary. Make this available with distinctive name
+	# todo: Solid doesn't has them (it only has id)
+	prmsdict = None
+
+	# important todo: simply create a variable with editor on init?
+	# so that it's possible to access its params as usual...
+
+	# rt - root tag (whole map)
+	# ct - current tag
+	def __init__(self, rt, ct):
+		# (root tag)
+		self.lizard = rt
+		# it's possible to access the bs4 object via this variable (this is a bs4 tag object)
+		self.ctag = ct
+		# since it's a pointer it will work just fine. Same as ctag, but with a different name for consistency
+		self.prms = ct
+		# same as .prms, but it's a dict. Is it settable?? Should be...
+		self.prmsdict = ct.attrs
+		# self.groupid = ''
+		# this has to be pre-declared
+		self.visgroup = ''
+		# self.visgroupid = ''
+		# self.visgroupshown = ''
+
+	
+	# I actually like this variant more than @property fuckery
+
+	def prmquery(self, k, v):
+		# self.ctag[k] = v
+		
+		# if both key and value are present - set it and return true as a confirmation
+		if k != None and v != None:
+			self.ctag[k] = v
+			return True
+
+		# if key is none and val is specified - return key with the following value
+		if k == None and v != None:
+			return [ke for ke, va in self.prmsdict.items() if va == v]
+
+
+
+	# todo: this still could be a function. Just make the function return a value based on a query...
+	# update: todo: make this a function too, since keyvalues are functions as well...
+	# if no query is passed - return group name and id
+	# if set visgroup - return id and name
+	@property
+	def visgroup(self):
+		# print('Getting value...')
+		try:
+			# todo: don't use try, check if it has visgroupid or not via attribute check
+			vgroupid = self.ctag.select('editor')[0]['visgroupid']
+			parrot = {
+				'id': int(vgroupid),
+				'name': self.lizard.select('visgroup[visgroupid="' + vgroupid + '"]')[0]['name']
+			}
+		except:
+			parrot = {'id':'','name':''}
+		return parrot
+
+
+	@visgroup.setter
+	def visgroup(self, query):
+		# -(copied from entity class)-
+
+		# todo: what if the name of the group is a number too ?
+		if len(self.lizard.select('visgroup[visgroupid="' + str(query) + '"]')) > 0 or len(self.lizard.select('visgroup[name="' + str(query) + '"]')):
+			if isinstance(query, int):
+				# qselector = self.lizard.select('visgroup[visgroupid="' + query + '"]')
+				self.ctag.select('editor')[0]['visgroupid'] = str(query)
+			else:
+				# else - assume that it's a string...
+				qselector = self.lizard.select('visgroup[name="' + query + '"]')
+				self.ctag.select('editor')[0]['visgroupid'] = qselector[0]['visgroupid']
+
+
+	# removes the solid
+	def kill(self):
+		self.ctag.decompose()
+		return True
+
+
+	# removes solid from entity and moves it to world
+	def toworld(self):
+		lizard = self.lizard
+		# csolid = self.ctag
+
+		solid_extracted = self.ctag.extract()
+		lizard.select('map world')[0].append(solid_extracted)
+
+
+	# moves solid to an entity if it's not a displacement
+	# either takes a lizard entity or entity id as an input
+	def toent(self, tgt_ent):
+		lizard = self.lizard
+
+		# cannot be a displacement...
+		for sd in self.ctag.select('side'):
+			# todo: is it possible to do sd.dispinfo ?
+			if len(sd.select('dispinfo')) > 0:
+				return False
+
+		# todo: check if current tag has id ??
+
+		# by entity class
+		if isinstance(tgt_ent, lizardvmf_entity):
+			# tgt_ent.add_solid(self.ctag['id'])
+			extracted_solid = self.ctag.extract()
+			lizard.select('map entity[id="' + str(self.ctag['id']) + '"]')[0].append(extracted_solid)
+			return True
+
+		# by entity id
+		if isinstance(tgt_ent, int):
+			# tgt_ent.add_solid(self.ctag['id'])
+			extracted_solid = self.ctag.extract()
+			lizard.select('map entity[id="' + str(tgt_ent) + '"]')[0].append(extracted_solid)
+			return True
+
+		# important todo: There should be a centralized system of returning success or whatever??
+		# todo: should it return the solid? Would be pretty useful when id was passed...
+		
 
 
 
@@ -68,20 +207,7 @@ lizard.display()
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-# don't forget that entity could have a solid
+# todo: don't forget that entity could have a solid
 class lizardvmf_entity:
 	'Entity object of the lizard vmf'
 	# A little easier acces of k:v
@@ -192,6 +318,7 @@ class lizardvmf_entity:
 			pass
 		"""
 
+		# todo: what if the name of the group is a number too ?
 		if len(self.lizard.select('visgroup[visgroupid="' + str(query) + '"]')) > 0 or len(self.lizard.select('visgroup[name="' + str(query) + '"]')):
 			if isinstance(query, int):
 				# qselector = self.lizard.select('visgroup[visgroupid="' + query + '"]')
@@ -207,6 +334,54 @@ class lizardvmf_entity:
 		return True
 
 
+	# adds solid to the entity if it's not a displacement
+	def add_solid(self, tgt_solid):
+		# -(base copied from lizard solid toent)-
+
+		lizard = self.lizard
+
+		extracted_solid = None
+
+		# by solid class
+		if isinstance(tgt_solid, lizardvmf_solid):
+			extracted_solid = lizard.select('map solid[id="' + tgt_solid.prms['id'] + '"]')[0].extract()
+
+		# by solid id
+		if isinstance(tgt_solid, int):
+			# tgt_solid.add_solid(self.ctag['id'])
+			extracted_solid = lizard.select('map solid[id="' + str(tgt_solid) + '"]')[0].extract()
+			
+		# check if we got any solids
+		if extracted_solid == None:
+			return False
+
+		# cannot be a displacement...
+		for sd in self.ctag.select('side'):
+			# todo: is it possible to do sd.dispinfo ?
+			if len(sd.select('dispinfo')) > 0:
+				return False
+
+		# if passed checks - append
+		self.ctag.append(extracted_solid)
+		return True
+
+
+	# returns a collection of solids of the current entity
+	# @property
+	def solids(self):
+		solid_collection = []
+		for sl in self.ctag.select('solid'):
+			solid_collection.append(lizardvmf_solid(self.lizard, sl))
+		return solid_collection
+
+
+
+
+
+
+
+
+
 
 
 
@@ -217,6 +392,7 @@ class lizardvmf_entity:
 # you can add (and store) variables to class with internal functions via self.whatever
 # you can also have this name pre-defined and then overwrite it.
 # All imports should happen in init. It will be reusable in all the other functions.
+# todo: make all spawners round shit if neccessary and basically do some fixups
 class lizardvmf:
 	'Simple, but flexible vmf parser, read more at https://mrkleiner.github.io/source_tricks'
 	# anything that is specified becomes defaults. Useful
@@ -976,7 +1152,7 @@ class lizardvmf:
 
 
 	# get a bunch of free ids
-	def getfreeid(self, amount):
+	def getfreeid(self, amount, doside=False):
 
 		# check that integer has been passed since it's a required parameter
 		# todo: make it accept True and whatever and spit a single id ???
@@ -995,16 +1171,21 @@ class lizardvmf:
 		# collect all ids here
 		taken_ids = []
 
-		# get all solid ids
-		# todo: the int() thing is very unreliable here
-		for soid in lizard.select('map solid'):
-			if soid.get('id') != None:
-				taken_ids.append(int(soid['id']))
+		if doside == True:
+			for soid in lizard.select('map solid side'):
+				if soid.get('id') != None:
+					taken_ids.append(int(soid['id']))
+		else:
+			# get all solid ids
+			# todo: the int() thing is very unreliable here
+			for soid in lizard.select('map solid'):
+				if soid.get('id') != None:
+					taken_ids.append(int(soid['id']))
 
-		# get all entity ids
-		for eid in lizard.select('map entity'):
-			if eid.get('id') != None:
-				taken_ids.append(int(eid['id']))
+			# get all entity ids
+			for eid in lizard.select('map entity'):
+				if eid.get('id') != None:
+					taken_ids.append(int(eid['id']))
 
 		# sort ids out
 		# update: not needed anymore
@@ -1032,10 +1213,11 @@ class lizardvmf:
 		# There should always be enough free ids
 		return free_ids
 
-
+	# create entity
 	# todo: specify classname more easily ??
-	# todo: also assignown id like md5 ????
+	# todo: also assign own id like md5 ????
 	def mk_ent(self, params, loc=None, rot=None, idstate=None):
+		
 		"""
 		Creates an entity and returns lizard entity.
 		It expects following parameters in a following order:
@@ -1047,9 +1229,10 @@ class lizardvmf:
 
 		Location, rotation and id are keyword arguments
 		meaning that the only positional argument that matters is the k:v dictionary (always has to be the first argument)
-		
+
 		Don't forget that dictionary should always have "classname" specified
 		"""
+		
 
 
 		lizard = self.lizard
@@ -1085,6 +1268,8 @@ class lizardvmf:
 		else:
 			newent['origin'] = '0 0 0'
 
+		# it's impossible to guess which entity should have angles and which not
+		# therefore, assume that if not passed - entity doesn't has angles
 		if rot != None and isinstance(loc, tuple):
 			newent['angles'] = str(rot[0]) + ' ' + str(rot[1]) + ' ' + str(rot[2])
 
@@ -1093,6 +1278,140 @@ class lizardvmf:
 
 		# and return the lizard entity
 		return lizardvmf_entity(lizard, newent)
+
+
+	# for now displacements are not possible
+	# todo: some defaults ?
+	def mk_solid(self, sides, idstate=None):
+		"""
+		It expects following parameters in the following order:
+		An array of side dicts the solid has.
+		Wether to generate id or not.
+
+		Dictionary of the side is as follows. Accepts ints and floats (for now all params are mandatory):
+
+		material: path to vmt
+		rotation: texture rotation
+		lightmapscale: lightmapscale
+		smoothing_groups: shitty 3dmax-like smoothing groups (an int)
+
+		3verts: 3 verts of the face in the right order - ((LocVector), (LocVector), (LocVector))
+		uaxis/vaxis: ((u/vVector), (Shift, Scale)), for example ((0 1 0), (-22, 0.5))
+		allverts: an array of all verts of the face (optional) - [LocVector, LocVector ...]
+		"""
+
+		lizard = self.lizard
+
+		# keep in mind that a solid cannot have more than 128 faces
+		# todo: all these functions can receive a lot of malformed data
+		# raise error or skip?
+		if len(sides) > 127:
+			raise ValueError('A solid cannot have more than 127 faces, while current one has ' + str(len(sides)))
+			return
+
+		# create base tag
+		solidtag = lizard.new_tag('solid')
+
+		# add sides
+		for sid in sides:
+			# create side tag
+			sidetag = lizard.new_tag('side')
+			
+			# do attributes (parameters)
+
+			# plane
+			# ((LocVector), (LocVector), (LocVector))
+			# ordered !
+			sidetag['plane'] = ''
+			# 1
+			sidetag['plane'] += '(' + str(sid['3verts'][0][0]) + ' ' + str(sid['3verts'][0][1]) + ' ' + str(sid['3verts'][0][2]) + ')'
+			# 2
+			sidetag['plane'] += '(' + str(sid['3verts'][1][0]) + ' ' + str(sid['3verts'][1][1]) + ' ' + str(sid['3verts'][1][2]) + ')'
+			# 3
+			sidetag['plane'] += '(' + str(sid['3verts'][2][0]) + ' ' + str(sid['3verts'][2][1]) + ' ' + str(sid['3verts'][2][2]) + ')'
+
+			# do uppercase ?
+			sidetag['material'] = str(sid['material'])
+
+			sidetag['rotation'] = str(sid['rotation'])
+			sidetag['lightmapscale'] = str(sid['lightmapscale'])
+			sidetag['smoothing_groups'] = str(sid['smoothing_groups'])
+
+			
+			# ((0 1 0), (-22, 0.5))
+			# ((Vector), (Shift, Scale))
+
+			# U
+			sidetag['uaxis'] = ''
+			sidetag['uaxis'] += '[' + str(sid['uaxis'][0][0]) + ' ' + str(sid['uaxis'][0][1]) + ' ' + str(sid['uaxis'][0][2]) + str(sid['uaxis'][1][0]) + ']'
+			sidetag['uaxis'] += ' '
+			sidetag['uaxis'] += str(sid['uaxis'][1][1])
+
+			# V
+			sidetag['vaxis'] = ''
+			sidetag['vaxis'] += '[' + str(sid['vaxis'][0][0]) + ' ' + str(sid['vaxis'][0][1]) + ' ' + str(sid['vaxis'][0][2]) + str(sid['vaxis'][1][0]) + ']'
+			sidetag['vaxis'] += ' '
+			sidetag['vaxis'] += str(sid['vaxis'][1][1])
+
+
+			# vertices plus IF PRESENT
+			if 'allverts' in sid:
+				# create verts plus tag
+				vtplus = lizard.new_tag('vertices_plus')
+				# add actual verts to that tag
+				for vrt in sid['allverts']:
+					vertag = lizard.new_tag('v')
+					vertag.string = str(vrt[0]) + ' ' + str(vrt[1]) + ' ' + str(vrt[2])
+					vtplus.append(vertag)
+
+				# after done adding verts - append the verts plus to the side
+				sidetag.append(vtplus)
+
+			# assign id to the side
+			# todo: get required amount of ids in advance?
+			sidetag['id'] = getfreeid(1, True)
+
+			# append side to solid
+			solidtag.append(sidetag)
+
+
+		# Once done with all the sides - assign id to the solid
+		# todo: finally come up with smarter logic for detecting good ints
+		if idstate != True and idstate != False and idstate != None and isinstance(idstate, int):
+			solidtag['id'] = str(idstate)
+		else:
+			solidtag['id'] = getfreeid(1)
+
+		# Also add editor, we try to keep it present everywhere...
+		edtr = lizard.new_tag('editor', color='202 246 72', visgroupshown='1', visgroupautoshown='1', logicalpos='[0 500]')
+		solidtag.append(edtr)
+
+		# Finally, append to world and return lizard solid because fuck you
+		# todo: things like 'map world' are probably better done with lizard.map.world
+		lizard.select('map world')[0].append(solidtag)
+
+		return lizardvmf_solid(lizard, solidtag)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1104,6 +1423,7 @@ fr = open(r'E:\!!Blend_Projects\scripts\map_parser\example_map_src.vmf', 'r').re
 lol = lizardvmf(fr)
 
 # lol.vmfquery('#273')['classname'] = 'prop_ass'
+"""
 print(lol.vmfquery('#273').visgroup)
 print(lol.vmfquery('#273').visgroup['name'])
 print(lol.vmfquery('#273').visgroup['id'])
@@ -1114,11 +1434,19 @@ print(lol.mapsettings['skyname'])
 lol.mapsettings['skyname'] = 'tits'
 print(lol.mapsettings['skyname'])
 print(lol.getfreeid(7))
-ne = lol.mk_ent({'classname': 'prop_physics'}, (0, 12 , 33), (0, 0, 0))
+prmdict = {
+	'classname': 'prop_physics',
+	'model': 'models/props_junk/plasticbucket001a.mdl',
+	'spawnflags': '256',
+	'modelscale': '1'
+}
+ne = lol.mk_ent(prmdict, (0, 12 , 33), (0, 0, 0))
 print(lol.getfreeid(7))
-print(ne.prms['angles'])
+print(ne.prms['model'])
 ne.kill()
 print(lol.getfreeid(7))
+"""
+# print(lol.mk_ent.__doc__)
 
 
 
@@ -1129,3 +1457,5 @@ print(lol.getfreeid(7))
 # lol.vmfquery('#273').visgroup = 'sideramp'
 
 # print(lol.vmfquery('#273').visgroup)
+
+
