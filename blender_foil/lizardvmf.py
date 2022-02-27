@@ -286,6 +286,7 @@ class lizardvmf_cordon:
 
 
 	# for now, takes a tuple of two tuples: location, scale, ORDER IS IMPORTANT
+	# YES, scale, NOT dimensions
 	# made specifically to accept raw params from empty cube objects
 	@box.setter
 	def box(self, obtr):
@@ -999,6 +1000,7 @@ class lizardvmf_entity:
 
 
 	# returns a collection of solids of the current entity
+	# todo: make a property again ?
 	# @property
 	def solids(self):
 		solid_collection = []
@@ -1009,12 +1011,29 @@ class lizardvmf_entity:
 
 	# return connections, if any
 	# returns False if no connections for this entity
+	# todo: return empty array ?
+	# important todo: create if none? Not too big of a deal anyway...
 	@property
 	def connections(self):
 		if len(self.ctag.select('connections')) > 0:
 			return(lizardvmf_connections(self.lizard, self.ctag.select('connections')[0]))
 		else:
 			return False
+
+	# if passed true - adds connection param
+	# if passed false - kills everything
+	# todo: "kills everything" should also be a function of the connections class
+	@connections.setter
+	def connections(self, yesno):
+		if yesno == True:
+			mk_connections = self.lizard.new_tag('connections')
+			self.ctag.append(mk_connections)
+
+		if yesno == False:
+			# important todo: finally use .find, it returns none if nothing was found
+			get_connections = self.ctag.select('connections')
+			if len(get_connections) > 0:
+				get_connections.decompose()
 
 
 
@@ -1776,8 +1795,18 @@ class lizardvmf:
 			else:
 				return None
 
+		# select solids by id
+		# todo: use something else than ^, % for example
+		if '^' in qr:
+			selector = 'map solid[id="' + qr.split('^')[-1] + '"]'
+			if len(lizard.select(selector)) > 0:
+				return lizardvmf_solid(lizard, lizard.select(selector)[0])
+			else:
+				return None
 
-		# select by targetname
+
+
+		# select by targetname (name)
 		if '$' in qr:
 			# construct selector by targtname which will probably return many entries
 			selector = 'map entity[targetname="' + qr.split('$')[-1] + '"]'
@@ -1794,6 +1823,7 @@ class lizardvmf:
 
 		# any keyvalue query
 		# example: ~fogMaxDensity=1
+		# todo: make this accept something smarter than that
 		if '~' in qr:
 			parts = qr.split('~')[-1].split('=')
 			selector = 'map entity[' + parts[0] + '="' + parts[-1] + '"]'
@@ -1803,6 +1833,7 @@ class lizardvmf:
 					qresults.append(lizardvmf_entity(lizard, q))
 				return qresults
 			else:
+				# todo (also applies to selectors above): return empty array if nothing found ?
 				return None
 
 
@@ -1821,6 +1852,14 @@ class lizardvmf:
 			else:
 				return None
 		"""
+
+
+	# returns all entities
+	def ents(self):
+		all_ents = []
+		for en in self.lizard.select('map entity'):
+			all_ents.append(lizardvmf_entity(self.lizard, en))
+		return all_ents
 
 
 	# returns map properties
@@ -2283,6 +2322,7 @@ print(lol.vmfquery('#273').prms['classname'])
 """
 
 print(lol.mapsettings['skyname'])
+print(len(lol.ents()))
 lol.mapsettings['skyname'] = 'tits'
 print(lol.mapsettings['skyname'])
 print(lol.getfreeid(7))
@@ -2295,6 +2335,7 @@ prmdict = {
 ne = lol.mk_ent(prmdict, (0, 12 , 33), (0, 0, 0))
 print(lol.getfreeid(7))
 print(ne.prms['model'])
+print(len(lol.ents()))
 ne.kill()
 print(lol.getfreeid(7))
 print(lol.mk_group())
@@ -2349,6 +2390,8 @@ mkconnection = {
 
 ent_w_cnts.connections.add('OnDamaged', mkconnection)
 print(ent_w_cnts.connections.items[-1].ctag.string)
+
+print(len(lol.ents()))
 
 # print()
 # print(lol.tovmf())
