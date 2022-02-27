@@ -83,7 +83,7 @@ class lizardvmf_visgroup:
 			return False
 
 
-	# get a bunch of free ids
+	# get a free id for a visgroup
 	def vgetfreeid(self):
 		lizard = self.lizard
 
@@ -372,12 +372,6 @@ class lizardvmf_cordons:
 
 
 
-
-
-
-
-
-
 # takes global map root tag and solid tag as an input
 class lizardvmf_solid:
 	'Solid (brush) object of the lizard vmf'
@@ -594,13 +588,6 @@ class lizardvmf_solid:
 		for sol_side in self.ct.select('side'):
 			colsides.append(lizardvmf_solid_side(self.lizard, self.ct))
 		return colsides
-
-
-
-
-
-
-
 
 
 
@@ -1991,8 +1978,63 @@ class lizardvmf:
 			return lizardvmf_cordon(lizard, cordtag)
 
 
+	# important todo: this is the second duplicate of such kind
+	# always returns an array because apparently, you can have mutiple visgroups with the same name
+	def visgroups(self, vname=None):
+		allvis = []
+
+		if vname != None and vname != '':
+			for vi in self.lizard.select('map visgroups visgroup[name="'str(vname)'"]'):
+				allvis.append(lizardvmf_visgroup(self.lizard, vi))
+		else:
+			for vi in self.lizard.select('map visgroups visgroup'):
+				allvis.append(lizardvmf_visgroup(self.lizard, vi))
+		return allvis
 
 
+
+	# get a free id for a visgroup
+	def vgetfreeid(self):
+		lizard = self.lizard
+
+		# collect all ids here
+		taken_ids = []
+
+		# groups share id pool with ents and solids
+		for vgid in lizard.select('map visgroups visgroup'):
+			if eid.get('visgroupid') != None:
+				taken_ids.append(int(eid['visgroupid']))
+
+		# store free ids here
+		free_ids = None
+
+		# basis
+		basis = 4
+
+		# todo: very reliable but slow
+		while free_ids == None:
+			# basically test all the ids until we find the suitable one
+			basis += 1
+			if not basis in taken_ids:
+
+				# There should always be enough free ids
+				return free_ids
+
+
+	# create a new visgroup
+	# important todo: Make this function accept custom ids ?
+	# important todo: Fuck visgroups with the same names, do not allow the creation of duplicate name visgroups
+	# simply return an existing one
+	def new_visgroup(self, vname=None):
+		if str(vname).strip() != '' and vname != None:
+			lizard = self.lizard
+			vgtag = lizard.new_tag('visgroup', name=str(corname), visgroupid=str(self.vgetfreeid()), color='202 246 72')
+
+			lizard.select('map visgroups')[0].append(vgtag)
+
+			return lizardvmf_visgroup(lizard, vgtag)
+		else:
+			return False
 
 
 
