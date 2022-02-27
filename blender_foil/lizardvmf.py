@@ -347,6 +347,18 @@ class lizardvmf_solid_side:
 		return True
 
 
+	# returns all vertices+, if any
+	# lmfao why
+	def verts(self):
+		all_vp = []
+		for vp in self.ctag.select('vertices_plus v'):
+			stepstring = vp.string.split(' ')
+			all_vp.append((stepstring[0], stepstring[1], stepstring[2]))
+
+		return all_vp
+
+
+
 
 
 
@@ -1984,7 +1996,7 @@ class lizardvmf:
 		allvis = []
 
 		if vname != None and vname != '':
-			for vi in self.lizard.select('map visgroups visgroup[name="'str(vname)'"]'):
+			for vi in self.lizard.select('map visgroups visgroup[name="' + str(vname) + '"]'):
 				allvis.append(lizardvmf_visgroup(self.lizard, vi))
 		else:
 			for vi in self.lizard.select('map visgroups visgroup'):
@@ -2023,7 +2035,7 @@ class lizardvmf:
 
 	# create a new visgroup
 	# important todo: Make this function accept custom ids ?
-	# important todo: Fuck visgroups with the same names, do not allow the creation of duplicate name visgroups
+	# important todo: Fuck visgroups with the same names, disallow the creation of visgroups with duplicate names
 	# simply return an existing one
 	def new_visgroup(self, vname=None):
 		if str(vname).strip() != '' and vname != None:
@@ -2083,7 +2095,7 @@ print(lol.mk_group())
 
 print(lol.cordonstate(True))
 print(lol.cordons()[1].box)
-print(lol.cordons()[1].box)
+print(lol.cordons()[2].box)
 # print()
 # print(lol.tovmf())
 # print(str(lol.lizard))
