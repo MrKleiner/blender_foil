@@ -47,6 +47,54 @@ lizard.display()
 """
 
 
+class lizardvmf_solid_side:
+	"""Side of a solid"""
+
+	def __init__(self, rt, ct):
+		# super(lizardvmf_solid_side, self).__init__()
+		# self.material = arg
+		# (root tag)
+		self.lizard = rt
+		# it's possible to access the bs4 object via this variable (this is a bs4 tag object)
+		self.ctag = ct
+		# since it's a pointer it will work just fine. Same as ctag, but with a different name for consistency
+		self.prms = ct
+		# same as .prms, but it's a dict. Is it settable?? Should be...
+		self.prmsdict = ct.attrs
+
+
+
+
+
+
+
+
+
+
+class lizardvmf_cordons:
+	"""A collection of cordons, if any"""
+
+	def __init__(self, rt, ct):
+		# super(lizardvmf_solid_side, self).__init__()
+		# self.material = arg
+		# (root tag)
+		self.lizard = rt
+		# it's possible to access the bs4 object via this variable (this is a bs4 tag object)
+		self.ctag = ct
+		# since it's a pointer it will work just fine. Same as ctag, but with a different name for consistency
+		self.prms = ct
+		# same as .prms, but it's a dict. Is it settable?? Should be...
+		self.prmsdict = ct.attrs
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -91,6 +139,7 @@ class lizardvmf_solid:
 		# self.groupid = ''
 		# this has to be pre-declared
 		self.visgroup = ''
+		self.group = None
 		# self.visgroupid = ''
 		# self.visgroupshown = ''
 
@@ -145,6 +194,75 @@ class lizardvmf_solid:
 				self.ctag.select('editor')[0]['visgroupid'] = qselector[0]['visgroupid']
 
 
+	# simple groups (id groups n stuff)
+
+	# the @ parametrical shit is kinda obsolete
+
+	# @property
+	def group_z(self):
+		""" If this entity is in a group - returns group id """
+		# print('Getting value...')
+		try:
+			# todo: don't use try, check if it has visgroupid or not via attribute check
+			vgroupid = self.ctag.select('editor')[0]['groupid']
+		except:
+			vgroupid = None
+		return vgroupid
+
+
+	# @group.setter
+	def group_z(self, grpid :int):
+		""" Takes either string or an integer as an input, it has """
+		# -(partially copied from entity class)-
+
+		# check if we can even do anything
+		# todo: regexp???
+		try:
+			groupid_int = int(grpid)
+		except:
+			return False
+
+		# if this group exists...
+		# todo: check if id exceeds max int ??
+		if len(self.lizard.select('map world group[id="' + str(query) + '"]')) > 0:
+			# todo: a solid/entity could have no editor
+			# create if neccessary ? or skip ?
+			self.ctag.select('editor')[0]['groupid'] = str(query)
+
+
+	# todo: why use properties ?
+	# todo: trim stuff, just in case ?
+	# if nothing given - returns the group id if any
+	# if anything was specified - it'll try to find a group with the given id and assign the entity to it
+	def group(self, grpid=None):
+		# if groupid is specified then try to set
+		if grpid != None:
+			# if something was pecified - it mans that we need to try to set shit
+
+			# check if we can even do anything
+			try:
+				groupid_int = int(grpid)
+			except:
+				return False
+
+			# if this group exists...
+			# todo: check if id exceeds max int ??
+			if len(self.lizard.select('map world group[id="' + str(query) + '"]')) > 0:
+				# todo: a solid/entity could have no editor
+				# create if neccessary ? or skip ?
+				self.ctag.select('editor')[0]['groupid'] = str(query)
+		else:
+			# if None - means we don't need to set anything and just return group id if any
+
+			try:
+				# todo: don't use try, check if it has visgroupid or not via attribute check
+				vgroupid = self.ctag.select('editor')[0]['groupid']
+			except:
+				vgroupid = None
+			return vgroupid
+
+
+
 	# removes the solid
 	def kill(self):
 		self.ctag.decompose()
@@ -191,7 +309,12 @@ class lizardvmf_solid:
 		# todo: should it return the solid? Would be pretty useful when id was passed...
 		
 
-
+	# returns all the sides of a solid
+	def sides(self):
+		colsides = []
+		for sol_side in self.ct.select('side'):
+			colsides.append(lizardvmf_solid_side(self.lizard, self.ct))
+		return colsides
 
 
 
@@ -274,7 +397,7 @@ class lizardvmf_entity:
 
 
 	# todo: this still could be a function. Just make the function return a value based on a query...
-	# update: todo: make this a function too, since keyvalues are functions as well...
+	# update: todo: make this a function too?? since keyvalues are functions as well...
 	# if no query is passed - return group name and id
 	# if set visgroup - return id and name
 	@property
@@ -294,6 +417,12 @@ class lizardvmf_entity:
 
 	@visgroup.setter
 	def visgroup(self, query):
+		"""
+		Either takes int or a string
+		If string - look for visgroup with the name
+		If int - look for visgroup with id
+		"""
+
 		# print('Setting value...')
 		"""
 		if value < -273.15:
@@ -327,6 +456,39 @@ class lizardvmf_entity:
 				# else - assume that it's a string...
 				qselector = self.lizard.select('visgroup[name="' + query + '"]')
 				self.ctag.select('editor')[0]['visgroupid'] = qselector[0]['visgroupid']
+
+
+	# todo: why use properties ?
+	# if nothing given - returns the group id if any
+	# if anything was specified - it'll try to find a group with the given id and assign the entity to it
+	def group(self, grpid=None):
+		# if groupid is specified then try to set
+		if grpid != None:
+			# if something was pecified - it mans that we need to try to set shit
+
+			# check if we can even do anything
+			try:
+				groupid_int = int(grpid)
+			except:
+				return False
+
+			# if this group exists...
+			# todo: check if id exceeds max int ??
+			if len(self.lizard.select('map world group[id="' + str(query) + '"]')) > 0:
+				# todo: a solid/entity could have no editor
+				# create if neccessary ? or skip ?
+				self.ctag.select('editor')[0]['groupid'] = str(query)
+		else:
+			# if None - means we don't need to set anything and just return group id if any
+
+			try:
+				# todo: don't use try, check if it has visgroupid or not via attribute check
+				vgroupid = self.ctag.select('editor')[0]['groupid']
+			except:
+				vgroupid = None
+			return vgroupid
+
+
 
 	# removes the entity
 	def kill(self):
@@ -394,7 +556,7 @@ class lizardvmf_entity:
 # All imports should happen in init. It will be reusable in all the other functions.
 # todo: make all spawners round shit if neccessary and basically do some fixups
 class lizardvmf:
-	'Simple, but flexible vmf parser, read more at https://mrkleiner.github.io/source_tricks'
+	'Simple, but flexible vmf parser, read more at https://mrkleiner.github.io/source_tricks/?lt=b50a2cad'
 	# anything that is specified becomes defaults. Useful
 	# Create a string at the very top of the class to make it a documentation
 	# variables inside functions HAVE NO CONNECTION to the class variables no matter what
@@ -430,9 +592,12 @@ class lizardvmf:
 
 
 	# Supposedly, the parse should happen when the class is being created...
+	# important todo: with all respect, this has to be an external function...
+	# as well as reconstructor
 	def __init__(self, pootis):
 		from bs4 import BeautifulSoup, Tag, NavigableString
 		import io
+		import base64
 
 		# confirmed to work with
 		# Half Life 2 and Episodes
@@ -446,12 +611,33 @@ class lizardvmf:
 		# Left 4 Dead, l4d2
 		# DOD
 
+		# important todo: it appears that this class has a serious weakness:
+		# creating a map from scratch is fucking hard
+		# for now just use the base from gmod
+		# pro tip: Fuck notepad++ b64 encoder...
+		newdefault = """
+			dmVyc2lvbmluZm8KewoJImVkaXRvcnZlcnNpb24iICI0MDAiCgkibWFwdmVyc2lvbiIgIjAiCgkiZm9ybWF0dmVyc
+			2lvbiIgIjEwMCIKCSJwcmVmYWIiICIwIgp9CnZpZXdzZXR0aW5ncwp7CgkiYlNuYXBUb0dyaWQiICIxIgoJImJTaG
+			93R3JpZCIgIjEiCgkiYlNob3dMb2dpY2FsR3JpZCIgIjAiCgkibkdyaWRTcGFjaW5nIiAiNjQiCgkiYlNob3czREd
+			yaWQiICIwIgp9CndvcmxkCnsKCSJpZCIgIjEiCgkibWFwdmVyc2lvbiIgIjEiCgkiY2xhc3NuYW1lIiAid29ybGRz
+			cGF3biIKCSJza3luYW1lIiAic2t5X2RheTAxXzAxIgoJIm1heHByb3BzY3JlZW53aWR0aCIgIi0xIgoJImRldGFpb
+			HZic3AiICJkZXRhaWwudmJzcCIKCSJkZXRhaWxtYXRlcmlhbCIgImRldGFpbC9kZXRhaWxzcHJpdGVzIgp9CmNhbW
+			VyYXMKewoJImFjdGl2ZWNhbWVyYSIgIi0xIgp9CmNvcmRvbgp7CgkibWlucyIgIigtMTAyNCAtMTAyNCAtMTAyNCk
+			iCgkibWF4cyIgIigxMDI0IDEwMjQgMTAyNCkiCgkiYWN0aXZlIiAiMCIKfQo=
+		"""
 
-		# Since we're not dealing with files anymore (at least for now) - we cannot just do .readlines()
-		# gotta use io module
-		inpstr = io.StringIO(pootis)
+		# pass True to the class instead of vmf to create a new vmf
+		if pootis == True:
+			inpstr = io.StringIO(base64.b64decode(newdefault.replace('\n', '').replace(' ', '').encode('utf-8')).decode('utf-8'))
+		else:
+			# Since we're not dealing with files anymore (at least for now) - we cannot just do .readlines()
+			# gotta use io module
+			inpstr = io.StringIO(pootis)
+
 		# so that we have access to .readlines() again
 		maplines = inpstr.readlines()
+
+		# print(maplines)
 
 		# we no longer create a file, we store processed raw vmf in a variable
 		# this stores super raw unrefined xml
@@ -630,6 +816,8 @@ class lizardvmf:
 	# This will convert xml to a valid .vmf string
 	# and store it in class
 	# Theoretically, this should NOT do anything with the xml
+	# important todo: with all respect, this has to be an external function...
+	# as well as init :(
 	def tovmf(self):
 		#
 		# reconstruct
@@ -968,6 +1156,7 @@ class lizardvmf:
 
 
 		# reconstruct cordons, IF ANY
+		# keep in mind that sometimes in old map files we only have one cordon
 		if len(lizard.select('cordons cordon')) > 0:
 			# write global cordons k:v
 			rcf += (op('cordons', 0))
@@ -997,7 +1186,17 @@ class lizardvmf:
 
 			# close global cordons
 			rcf += (cl(0))
-
+		else:
+			# try to locate the one-box cordon
+			# todo: drop support for this retarded shit, force users to use h++ and convert parsed old vmfs to new format
+			# if on refinery onebox cordon detected - create cordons and append that box there
+			cordonlocate = lizard.select('map > cordon')
+			if len(cordonlocate) > 0:
+				rcf += (op('cordon', 0))
+				# for every versioninfo k:v of the current map
+				for cum_kv in cordonlocate[0].attrs:
+				   rcf += (wapr(cum_kv, cordonlocate[0].attrs, 1, 1))
+				rcf += (cl(0))
 
 
 		# finally, write reconstruct back and return the string
@@ -1187,6 +1386,11 @@ class lizardvmf:
 				if eid.get('id') != None:
 					taken_ids.append(int(eid['id']))
 
+			# groups share id pool with ents and solids
+			for eid in lizard.select('map world group'):
+				if eid.get('id') != None:
+					taken_ids.append(int(eid['id']))
+
 		# sort ids out
 		# update: not needed anymore
 		# taken_ids.sort()
@@ -1369,7 +1573,7 @@ class lizardvmf:
 
 			# assign id to the side
 			# todo: get required amount of ids in advance?
-			sidetag['id'] = getfreeid(1, True)
+			sidetag['id'] = getfreeid(1, True)[0]
 
 			# append side to solid
 			solidtag.append(sidetag)
@@ -1380,7 +1584,7 @@ class lizardvmf:
 		if idstate != True and idstate != False and idstate != None and isinstance(idstate, int):
 			solidtag['id'] = str(idstate)
 		else:
-			solidtag['id'] = getfreeid(1)
+			solidtag['id'] = getfreeid(1)[0]
 
 		# Also add editor, we try to keep it present everywhere...
 		edtr = lizard.new_tag('editor', color='202 246 72', visgroupshown='1', visgroupautoshown='1', logicalpos='[0 500]')
@@ -1393,14 +1597,57 @@ class lizardvmf:
 		return lizardvmf_solid(lizard, solidtag)
 
 
+	# creates a group
+	# it looks like groups share same id pool as solids n stuff
+	# todo: A pool of ids occupied by some of the spawners?
+	# because, is it possible for something to exist with an id and yet not exist in the xml tree????
+	# todo: should it inherit visgroup options (hidden/visible) since there are parameters like visgroupshown ???
+	# todo: separate class for groups ???
+	def mk_group(self):
+		lizard = self.lizard
+		# create the group itself
+		grp = lizard.new_tag('group')
+		# and append editor into it
+		edtr = lizard.new_tag('editor', color='202 246 72', visgroupshown='1', visgroupautoshown='1')
+		grp.append(edtr)
+
+		# now, create an id for it and assign it
+		mk_id = self.getfreeid(1)[0]
+		grp['id'] = mk_id
+
+		# once done - append to world
+		lizard.select('map world')[0].append(grp)
+
+		return mk_id
 
 
+	# set cordon state, accepts true or false, none to return status
+	def cordonstate(self, state):
+		lizard = self.lizard
+		cords = lizard.select('map > cordons')
+		onecord = lizard.select('map > cordon')
 
+		# prioritize cordons...
+		# todo: the fucking returns
+		if len(cords) > 0:
+			if state == True:
+				cords[0]['active'] = '1'
 
+			if state == False:
+				cords[0]['active'] = '0'
 
+			return 'new'
+		elif len(onecord) > 0:
+			# check for old-ass cordon method, where you can only have one
+			if state == True:
+				onecord[0]['active'] = '1'
 
+			if state == False:
+				onecord[0]['active'] = '0'
 
-
+			return 'old'
+		else:
+			return False
 
 
 
@@ -1419,10 +1666,14 @@ class lizardvmf:
 
 # test
 fr = open(r'E:\!!Blend_Projects\scripts\map_parser\example_map_src.vmf', 'r').read()
+# fr = open(r'E:\!!Blend_Projects\scripts\map_parser\tmp\tmp_empty_gmod.vmf', 'r').read()
+# fr = open(r'E:\!!!!!opforce2\reverse\bms\maps\src\bms_map_src\2331428357\Singleplayer\C4A3-Interloper\bm_c4a3d.vmf', 'r').read()
 
 lol = lizardvmf(fr)
+# lol = lizardvmf(True)
 
 # lol.vmfquery('#273')['classname'] = 'prop_ass'
+
 """
 print(lol.vmfquery('#273').visgroup)
 print(lol.vmfquery('#273').visgroup['name'])
@@ -1430,6 +1681,8 @@ print(lol.vmfquery('#273').visgroup['id'])
 print(lol.vmfquery('#273').prms['classname'])
 lol.vmfquery('#273').prms['classname'] = 'dicks'
 print(lol.vmfquery('#273').prms['classname'])
+"""
+"""
 print(lol.mapsettings['skyname'])
 lol.mapsettings['skyname'] = 'tits'
 print(lol.mapsettings['skyname'])
@@ -1445,7 +1698,18 @@ print(lol.getfreeid(7))
 print(ne.prms['model'])
 ne.kill()
 print(lol.getfreeid(7))
+print(lol.mk_group())
+print(lol.mk_group())
+print(lol.mk_group())
+print(lol.mk_group())
+print(lol.mk_group())
 """
+print(lol.cordonstate(True))
+# print(lol.tovmf())
+# print(str(lol.lizard))
+
+
+# print(lol.tovmf())
 # print(lol.mk_ent.__doc__)
 
 
