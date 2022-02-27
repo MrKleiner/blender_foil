@@ -92,8 +92,8 @@ class lizardvmf_visgroup:
 
 		# groups share id pool with ents and solids
 		for vgid in lizard.select('map visgroups visgroup'):
-			if eid.get('visgroupid') != None:
-				taken_ids.append(int(eid['visgroupid']))
+			if vgid.get('visgroupid') != None:
+				taken_ids.append(int(vgid['visgroupid']))
 
 		# store free ids here
 		free_ids = None
@@ -106,17 +106,18 @@ class lizardvmf_visgroup:
 			# basically test all the ids until we find the suitable one
 			basis += 1
 			if not basis in taken_ids:
-
+				free_ids = basis
 				# There should always be enough free ids
-				return free_ids
+				return basis
 
 
 	# create a new visgroup
 	# important todo: Make this function accept custom ids ?
-	def add_new(self, vname):
-		if str(newname).strip() != '' and newname != None:
+	def add_new(self, vname=None):
+		if str(vname).strip() != '' and vname != None:
 			lizard = self.lizard
-			vgtag = lizard.new_tag('visgroup', name=str(corname), visgroupid=str(self.vgetfreeid()), color='202 246 72')
+			vgtag = lizard.new_tag('visgroup', visgroupid=str(self.vgetfreeid()), color='202 246 72')
+			vgtag['name'] = str(vname)
 
 			self.ctag.append(vgtag)
 
@@ -604,6 +605,195 @@ class lizardvmf_solid:
 
 
 
+# a collection of connections
+# todo: make them all attributes ????
+# todo: make this also accept a dict to overwrite current shit
+class lizardvmf_connection:
+	"""Connection"""
+
+	def __init__(self, rt, ct):
+		# super(lizardvmf_solid_side, self).__init__()
+		# self.material = arg
+		# (root tag)
+		self.lizard = rt
+		# it's possible to access the bs4 object via this variable (this is a bs4 tag object)
+		self.ctag = ct
+		# since it's a pointer it will work just fine. Same as ctag, but with a different name for consistency
+		self.prms = ct
+		# same as .prms, but it's a dict. Is it settable?? Should be...
+		self.prmsdict = ct.attrs
+
+
+		# set defaults
+		# self.tgt_ents = ''
+		# self.action = ''
+		# self.params = ''
+		# self.delay = ''
+		# self.refire_limit = ''
+
+
+	# todo: check if there are enough commas
+	@property
+	def tgt_ents(self):
+		return self.ctag.string.split(',')[0]
+
+	@tgt_ents.setter
+	def tgt_ents(self, newtgt):
+		val_set = self.ctag.string.split(',')
+		val_set[0] = str(newtgt)
+		self.ctag.string = ','.join(val_set)
+		# todo: return dict instead
+		return ','.join(val_set)
+
+
+	@property
+	def action(self):
+		return self.ctag.string.split(',')[1]
+
+	@action.setter
+	def action(self, newact):
+		val_set = self.ctag.string.split(',')
+		val_set[1] = str(newact)
+		self.ctag.string = ','.join(val_set)
+		# todo: return dict instead
+		return ','.join(val_set)
+
+
+	@property
+	def params(self):
+		return self.ctag.string.split(',')[2]
+
+	@params.setter
+	def params(self, newprm):
+		val_set = self.ctag.string.split(',')
+		val_set[2] = str(newprm)
+		self.ctag.string = ','.join(val_set)
+		# todo: return dict instead
+		return ','.join(val_set)
+
+	
+	@property
+	def delay(self):
+		try:
+			proper = float(self.ctag.string.split(',')[3])
+		except:
+			proper = str(self.ctag.string.split(',')[3])
+
+		return proper
+
+	@delay.setter
+	def delay(self, newdl):
+		val_set = self.ctag.string.split(',')
+		val_set[3] = str(newdl)
+		self.ctag.string = ','.join(val_set)
+		# todo: return dict instead
+		return ','.join(val_set)
+
+
+	@property
+	def refire_limit(self):
+		try:
+			proper = float(self.ctag.string.split(',')[4])
+		except:
+			proper = str(self.ctag.string.split(',')[4])
+		
+		return proper
+
+	@refire_limit.setter
+	def refire_limit(self, newrefire):
+		val_set = self.ctag.string.split(',')
+		val_set[4] = str(newrefire)
+		self.ctag.string = ','.join(val_set)
+		# todo: return dict instead
+		return ','.join(val_set)
+
+
+	@property
+	def output_name(self):
+		return self.ctag.name
+
+	@output_name.setter
+	def output_name(self, newtgname):
+		if newtgname != None:
+			self.ctag.name = str(newtgname)
+			return True
+		else:
+			return False
+
+
+		
+
+
+
+
+
+
+
+# a collection of connections
+class lizardvmf_connections:
+	"""connection collection"""
+
+	def __init__(self, rt, ct):
+		# super(lizardvmf_solid_side, self).__init__()
+		# self.material = arg
+		# (root tag)
+		self.lizard = rt
+		# it's possible to access the bs4 object via this variable (this is a bs4 tag object)
+		self.ctag = ct
+		# since it's a pointer it will work just fine. Same as ctag, but with a different name for consistency
+		self.prms = ct
+		# same as .prms, but it's a dict. Is it settable?? Should be...
+		self.prmsdict = ct.attrs
+
+
+	@property
+	def items(self):
+		allchilds = []
+		for cnt in self.ctag.children:
+			allchilds.append(lizardvmf_connection(self.lizard, cnt))
+
+		return allchilds
+
+	# add a connection
+	def add(self, ctype=None, actiondict=None):
+		"""
+		Expects following params either in order or named:
+
+		ctype - input type (My output named), like "OnPressed"
+
+		actiondict - a dictionary of the actions where:
+			tgt_ents - Target entities named
+			action - Via this input
+			params - With a parameter override of
+			delay - Fire after delay in seconds of (accepts ints and floats)
+			refire_limit - Limit to this many fires (-1 = infinite) (accepts ints and floats)
+
+		"""
+
+		if ctype != None and actiondict != None:
+			lizard = self.lizard
+			# todo: for now - silently delete spaces
+			newc = lizard.new_tag(str(ctype).replace(' ', ''))
+
+			# todo: is it possible to use += with .string ?
+			gm_construct = ''
+
+			gm_construct += actiondict['tgt_ents']
+			gm_construct += ','
+			gm_construct += actiondict['action']
+			gm_construct += ','
+			gm_construct += actiondict['params']
+			gm_construct += ','
+			gm_construct += str(actiondict['delay'])
+			gm_construct += ','
+			gm_construct += str(actiondict['refire_limit'])
+
+			newc.string = gm_construct
+
+			self.ctag.append(newc)
+
+			return lizardvmf_connection(lizard, newc)
+
 
 
 
@@ -775,6 +965,8 @@ class lizardvmf_entity:
 
 
 	# adds solid to the entity if it's not a displacement
+	# takes either solid id or solid class as an input
+	# todo: what if solid has no id ? add one ?
 	def add_solid(self, tgt_solid):
 		# -(base copied from lizard solid toent)-
 
@@ -815,7 +1007,14 @@ class lizardvmf_entity:
 		return solid_collection
 
 
-
+	# return connections, if any
+	# returns False if no connections for this entity
+	@property
+	def connections(self):
+		if len(self.ctag.select('connections')) > 0:
+			return(lizardvmf_connections(self.lizard, self.ctag.select('connections')[0]))
+		else:
+			return False
 
 
 
@@ -833,6 +1032,10 @@ class lizardvmf_entity:
 # you can also have this name pre-defined and then overwrite it.
 # All imports should happen in init. It will be reusable in all the other functions.
 # todo: make all spawners round shit if neccessary and basically do some fixups
+# todo: pyvmf-like spawner: .Child('whatever', {}) n shit
+# todo: int's kinda possible to specify data type like int: whatever
+
+# important todo: apparently, solid or entity could belong to mulptiple visgroups
 class lizardvmf:
 	'Simple, but flexible vmf parser, read more at https://mrkleiner.github.io/source_tricks/?lt=b50a2cad'
 	# anything that is specified becomes defaults. Useful
@@ -894,14 +1097,13 @@ class lizardvmf:
 		# for now just use the base from gmod
 		# pro tip: Fuck notepad++ b64 encoder...
 		newdefault = """
-			dmVyc2lvbmluZm8KewoJImVkaXRvcnZlcnNpb24iICI0MDAiCgkibWFwdmVyc2lvbiIgIjAiCgkiZm9ybWF0dmVyc
-			2lvbiIgIjEwMCIKCSJwcmVmYWIiICIwIgp9CnZpZXdzZXR0aW5ncwp7CgkiYlNuYXBUb0dyaWQiICIxIgoJImJTaG
-			93R3JpZCIgIjEiCgkiYlNob3dMb2dpY2FsR3JpZCIgIjAiCgkibkdyaWRTcGFjaW5nIiAiNjQiCgkiYlNob3czREd
-			yaWQiICIwIgp9CndvcmxkCnsKCSJpZCIgIjEiCgkibWFwdmVyc2lvbiIgIjEiCgkiY2xhc3NuYW1lIiAid29ybGRz
-			cGF3biIKCSJza3luYW1lIiAic2t5X2RheTAxXzAxIgoJIm1heHByb3BzY3JlZW53aWR0aCIgIi0xIgoJImRldGFpb
-			HZic3AiICJkZXRhaWwudmJzcCIKCSJkZXRhaWxtYXRlcmlhbCIgImRldGFpbC9kZXRhaWxzcHJpdGVzIgp9CmNhbW
-			VyYXMKewoJImFjdGl2ZWNhbWVyYSIgIi0xIgp9CmNvcmRvbgp7CgkibWlucyIgIigtMTAyNCAtMTAyNCAtMTAyNCk
-			iCgkibWF4cyIgIigxMDI0IDEwMjQgMTAyNCkiCgkiYWN0aXZlIiAiMCIKfQo=
+			dmVyc2lvbmluZm8KewoJImVkaXRvcnZlcnNpb24iICI0MDAiCgkibWFwdmVyc2lvbiIgIjAiCgkiZm9ybWF0dmVyc2l
+			vbiIgIjEwMCIKCSJwcmVmYWIiICIwIgp9CnZpZXdzZXR0aW5ncwp7CgkiYlNuYXBUb0dyaWQiICIxIgoJImJTaG93R3
+			JpZCIgIjEiCgkiYlNob3dMb2dpY2FsR3JpZCIgIjAiCgkibkdyaWRTcGFjaW5nIiAiNjQiCgkiYlNob3czREdyaWQiI
+			CIwIgp9CndvcmxkCnsKCSJpZCIgIjEiCgkibWFwdmVyc2lvbiIgIjEiCgkiY2xhc3NuYW1lIiAid29ybGRzcGF3biIK
+			CSJza3luYW1lIiAic2t5X2RheTAxXzAxIgoJIm1heHByb3BzY3JlZW53aWR0aCIgIi0xIgoJImRldGFpbHZic3AiICJ
+			kZXRhaWwudmJzcCIKCSJkZXRhaWxtYXRlcmlhbCIgImRldGFpbC9kZXRhaWxzcHJpdGVzIgp9CmNhbWVyYXMKewoJIm
+			FjdGl2ZWNhbWVyYSIgIi0xIgp9CmNvcmRvbnMKewoJImFjdGl2ZSIgIjAiCn0K
 		"""
 
 		# pass True to the class instead of vmf to create a new vmf
@@ -951,7 +1153,7 @@ class lizardvmf:
 
 		# This will be a bs4 xml object
 		# It will be modified (refined)
-		lizard = BeautifulSoup(rawvmf, 'html.parser')
+		lizard = BeautifulSoup(rawvmf, 'html.parser', multi_valued_attributes=None)
 
 		# print(lizard.select('map item[type="entity"]')[13].next_element)
 		# print(lizard.select('map item[type="world"]')[0].next_element)
@@ -1699,6 +1901,7 @@ class lizardvmf:
 	# create entity
 	# todo: specify classname more easily ??
 	# todo: also assign own id like md5 ????
+	# todo: the defaults for loc, rot could be (0, 0, 0)
 	def mk_ent(self, params, loc=None, rot=None, idstate=None):
 		
 		"""
@@ -1978,7 +2181,8 @@ class lizardvmf:
 		lizard = self.lizard
 		if corname != None and str(corname).strip() != '':
 
-			cordtag = lizard.new_tag('cordon', name=str(corname), active='1')
+			cordtag = lizard.new_tag('cordon', active='1')
+			cordtag['name'] = str(corname)
 			convertbox = self.blender_to_cordon(corbox)
 			min_s = '(' + str(convertbox['mins'][0]) + ' ' + str(convertbox['mins'][1]) + ' ' + str(convertbox['mins'][2]) + ')'
 			max_s = '(' + str(convertbox['maxs'][0]) + ' ' + str(convertbox['maxs'][1]) + ' ' + str(convertbox['maxs'][2]) + ')'
@@ -2014,8 +2218,11 @@ class lizardvmf:
 
 		# groups share id pool with ents and solids
 		for vgid in lizard.select('map visgroups visgroup'):
-			if eid.get('visgroupid') != None:
-				taken_ids.append(int(eid['visgroupid']))
+			# important todo: WHAT ???
+			if vgid.get('visgroupid') != None:
+				# print(vgid['an'] == 'None')
+				# print(vgid['name'])
+				taken_ids.append(int(vgid['visgroupid']))
 
 		# store free ids here
 		free_ids = None
@@ -2028,9 +2235,9 @@ class lizardvmf:
 			# basically test all the ids until we find the suitable one
 			basis += 1
 			if not basis in taken_ids:
-
+				free_ids = basis
 				# There should always be enough free ids
-				return free_ids
+				return basis
 
 
 	# create a new visgroup
@@ -2040,7 +2247,9 @@ class lizardvmf:
 	def new_visgroup(self, vname=None):
 		if str(vname).strip() != '' and vname != None:
 			lizard = self.lizard
-			vgtag = lizard.new_tag('visgroup', name=str(corname), visgroupid=str(self.vgetfreeid()), color='202 246 72')
+			# vgtag = lizard.new_tag('visgroup', name=str(vname), visgroupid=str(self.vgetfreeid()), color='202 246 72')
+			vgtag = lizard.new_tag('visgroup', visgroupid=str(self.vgetfreeid()), color='202 246 72')
+			vgtag['name'] = str(vname)
 
 			lizard.select('map visgroups')[0].append(vgtag)
 
@@ -2049,6 +2258,7 @@ class lizardvmf:
 			return False
 
 
+	# todo: add cameras (the ones created with the camera tool in hammer)
 
 
 
@@ -2096,6 +2306,50 @@ print(lol.mk_group())
 print(lol.cordonstate(True))
 print(lol.cordons()[1].box)
 print(lol.cordons()[2].box)
+print(lol.cordons()[0].box)
+
+print(len(lol.visgroups()))
+
+newis = lol.new_visgroup('fuck pingas')
+
+print(newis.name)
+newis.name = 'tits dick'
+print(newis.name)
+print(len(lol.visgroups()))
+
+another_vis = newis.add_new('pills here')
+print(another_vis.name)
+another_vis.name = 'pills there'
+print(another_vis.name)
+
+ent_w_cnts = lol.vmfquery('#742')
+print(ent_w_cnts)
+print(ent_w_cnts.connections)
+print(ent_w_cnts.connections.items)
+print(ent_w_cnts.connections.items[0])
+print(ent_w_cnts.connections.items[0].output_name)
+print(ent_w_cnts.connections.items[0].tgt_ents)
+print(ent_w_cnts.connections.items[0].action)
+print(ent_w_cnts.connections.items[0].params)
+print(ent_w_cnts.connections.items[0].delay)
+print(ent_w_cnts.connections.items[0].refire_limit)
+print(ent_w_cnts.connections.items[0].ctag.string)
+
+ent_w_cnts.connections.items[0].tgt_ents = 'botle*'
+
+print(ent_w_cnts.connections.items[0].ctag.string)
+
+mkconnection = {
+	'tgt_ents': 'everyone',
+	'action': 'kill',
+	'params': '',
+	'delay': 2.73,
+	'refire_limit': -1
+}
+
+ent_w_cnts.connections.add('OnDamaged', mkconnection)
+print(ent_w_cnts.connections.items[-1].ctag.string)
+
 # print()
 # print(lol.tovmf())
 # print(str(lol.lizard))
@@ -2113,5 +2367,3 @@ print(lol.cordons()[2].box)
 # lol.vmfquery('#273').visgroup = 'sideramp'
 
 # print(lol.vmfquery('#273').visgroup)
-
-
