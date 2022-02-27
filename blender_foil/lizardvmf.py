@@ -47,6 +47,284 @@ lizard.display()
 """
 
 
+
+
+class lizardvmf_visgroup:
+	"""visgroup"""
+
+	# todo: Some defaults ??
+	def __init__(self, rt, ct):
+
+		# super(lizardvmf_solid_side, self).__init__()
+		# self.material = arg
+		# (root tag)
+		self.lizard = rt
+		# it's possible to access the bs4 object via this variable (this is a bs4 tag object)
+		self.ctag = ct
+		# since it's a pointer it will work just fine. Same as ctag, but with a different name for consistency
+		self.prms = ct
+		# same as .prms, but it's a dict. Is it settable?? Should be...
+		self.prmsdict = ct.attrs
+		self.name = ct['name']
+		self.visgroupid = ct['visgroupid']
+
+
+
+	@property
+	def name(self):
+		return self.ctag['name']
+	
+	@name.setter
+	def name(self, newname):
+		if str(newname).strip() != '' and newname != None:
+			self.ctag['name'] = str(newname)
+			return True
+		else:
+			return False
+
+
+	# get a bunch of free ids
+	def vgetfreeid(self):
+		lizard = self.lizard
+
+		# collect all ids here
+		taken_ids = []
+
+		# groups share id pool with ents and solids
+		for vgid in lizard.select('map visgroups visgroup'):
+			if eid.get('visgroupid') != None:
+				taken_ids.append(int(eid['visgroupid']))
+
+		# store free ids here
+		free_ids = None
+
+		# basis
+		basis = 4
+
+		# todo: very reliable but slow
+		while free_ids == None:
+			# basically test all the ids until we find the suitable one
+			basis += 1
+			if not basis in taken_ids:
+
+				# There should always be enough free ids
+				return free_ids
+
+
+	# create a new visgroup
+	# important todo: Make this function accept custom ids ?
+	def add_new(self, vname):
+		if str(newname).strip() != '' and newname != None:
+			lizard = self.lizard
+			vgtag = lizard.new_tag('visgroup', name=str(corname), visgroupid=str(self.vgetfreeid()), color='202 246 72')
+
+			self.ctag.append(vgtag)
+
+			return lizardvmf_visgroup(lizard, vgtag)
+		else:
+			return False
+
+
+	# properly remove visgroup
+	def kill(self):
+		lizard = self.lizard
+		# first - remove all references to it from solids and ents
+		# important todo: it's possible to select multiple things at once with ,
+		for ref in lizard.select('map solid editor[visgroupid="' + str(self.ctag['visgroupid']) + '"], map entity editor[visgroupid="' + str(self.ctag['visgroupid']) + '"]'):
+			del ref['visgroupid']
+
+		# and finally - commit self die
+		self.ctag.decompose()
+		return True
+
+
+
+
+
+
+class lizardvmf_cordon:
+	"""Cordon box"""
+
+	box = None
+
+	# returns box center and scales
+	# takes strings as an input...
+	# todo: take tuple as an input ?
+	def cordon_to_blender(self, mins, maxs):
+		import math
+		minsplit = mins.replace('(', '').replace(')', '').split(' ')
+		maxsplit = maxs.replace('(', '').replace(')', '').split(' ')
+
+		min = (float(minsplit[0]), float(minsplit[1]), float(minsplit[2]))
+		max = (float(maxsplit[0]), float(maxsplit[1]), float(maxsplit[2]))
+
+		# x y z
+		p1 = (min[0], min[1], max[2])
+		p2 = (max[0], min[1], max[2])
+		p3 = (max[0], min[1], min[2])
+		p4 = (min[0], min[1], min[2])
+		p5 = (min[0], max[1], max[2])
+		p6 = (max[0], max[1], max[2])
+		p7 = (max[0], max[1], min[2])
+		p8 = (min[0], max[1], min[2])
+
+		# get distance
+		def distance(x1, y1, z1, x2, y2, z2):
+			  
+			d = math.sqrt(math.pow(x2 - x1, 2) +
+						math.pow(y2 - y1, 2) +
+						math.pow(z2 - z1, 2)* 1.0)
+			return d
+
+		# get 3D modpoint
+		def midpoint(n1, n2):
+			cx = (n1[0] + n2[0]) / 2
+			cy = (n1[1] + n2[1]) / 2
+			cz = (n1[2] + n2[2]) / 2
+			return (cx, cy, cz)
+
+		oct = (midpoint(p1, p2)[0], midpoint(p4, p8)[1], midpoint(p1, p4)[2])
+
+		obs_x = distance(p1[0], p1[1], p1[2], p2[0], p2[1], p2[2]) / 2
+		obs_y = distance(p1[0], p1[1], p1[2], p5[0], p5[1], p5[2]) / 2
+		obs_z = distance(p1[0], p1[1], p1[2], p4[0], p4[1], p4[2]) / 2
+
+		pl_badwater = {
+			'center': (oct[0], oct[1], oct[2]),
+			'scale': (obs_x, obs_y, obs_z),
+			'points': [p1, p2, p3, p4, p5, p6, p7, p8]
+		}
+
+		return pl_badwater
+
+
+	# todo: Some defaults ??
+	def __init__(self, rt, ct):
+
+		# super(lizardvmf_solid_side, self).__init__()
+		# self.material = arg
+		# (root tag)
+		self.lizard = rt
+		# it's possible to access the bs4 object via this variable (this is a bs4 tag object)
+		self.ctag = ct
+		# since it's a pointer it will work just fine. Same as ctag, but with a different name for consistency
+		self.prms = ct
+		# same as .prms, but it's a dict. Is it settable?? Should be...
+		self.prmsdict = ct.attrs
+		self.name = ct['name']
+		self.active = ct['active']
+		# todo: what if box not found ? skip this cordon ?
+		self.boxart = ct.select('box')[0]
+		# mins and maxs
+		# todo: make it also accept cubes ?
+		self.box_z = None
+		self.box_x = None
+		# a cooler way to return box
+		# self.box = ((0, 0, 0), (1024, 1024, 1024))
+
+
+	# takes location and scale tupe, returns mins and maxs
+	# important todo: this function was duplicated into the lizardvmf
+	# either make these 2 functions external or place them better
+	def blender_to_cordon(self, eloc, escale):
+		cent = (eloc[0], eloc[1], eloc[2])
+		scl = (escale[0], escale[1], escale[2])
+
+		min_x = cent[0] - (scl[0] / 2)
+		min_y = cent[1] - (scl[1] / 2)
+		min_z = cent[2] - (scl[2] / 2)
+
+		max_x = cent[0] + (scl[0] / 2)
+		max_y = cent[1] + (scl[1] / 2)
+		max_z = cent[2] + (scl[2] / 2)
+
+		# print(min_x, min_y, min_z)
+		# print(max_x, max_y, max_z)
+
+		ret = {
+			'mins': (min_x, min_y, min_z),
+			'maxs': (max_x, max_y, max_z)
+		}
+		return ret
+
+
+
+	@property
+	def active(self):
+		if self.ctag['active'] == '1':
+			return True
+		if self.ctag['active'] == '0':
+			return False
+	
+	@active.setter
+	def active(self, cstate):
+		if cstate == True:
+			self.ctag['active'] = '1'
+
+		if cstate == False:
+			self.ctag['active'] = '0'
+
+
+	@property
+	def name(self):
+		return self.ctag['name']
+	
+	@name.setter
+	def name(self, newname):
+		if str(newname).strip() != '' and newname != None:
+			self.ctag['name'] = str(newname)
+			return True
+		else:
+			return False
+
+
+
+	@property
+	def box(self):
+		return self.cordon_to_blender(self.boxart['mins'], self.boxart['maxs'])
+
+
+	# for now, takes a tuple of two tuples: location, scale, ORDER IS IMPORTANT
+	# made specifically to accept raw params from empty cube objects
+	@box.setter
+	def box(self, obtr):
+		# todo: check if proper syntax was passed
+
+		# mins
+		self.boxart['mins'] = ''
+		self.boxart['mins'] += '('
+		self.boxart['mins'] += str(self.blender_to_cordon(obtr[0], obtr[1])['mins'][0])
+		self.boxart['mins'] += ' '
+		self.boxart['mins'] += str(self.blender_to_cordon(obtr[0], obtr[1])['mins'][1])
+		self.boxart['mins'] += ' '
+		self.boxart['mins'] += str(self.blender_to_cordon(obtr[0], obtr[1])['mins'][2])
+		self.boxart['mins'] += ')'
+
+		# maxs
+		self.boxart['maxs'] = ''
+		self.boxart['maxs'] += '('
+		self.boxart['maxs'] += str(self.blender_to_cordon(obtr[0], obtr[1])['maxs'][0])
+		self.boxart['maxs'] += ' '
+		self.boxart['maxs'] += str(self.blender_to_cordon(obtr[0], obtr[1])['maxs'][1])
+		self.boxart['maxs'] += ' '
+		self.boxart['maxs'] += str(self.blender_to_cordon(obtr[0], obtr[1])['maxs'][2])
+		self.boxart['maxs'] += ')'
+
+
+	# removes the cordon
+	def kill(self):
+		self.ctag.decompose()
+		return True
+
+
+
+
+
+
+
+
+
+
 class lizardvmf_solid_side:
 	"""Side of a solid"""
 
@@ -63,14 +341,17 @@ class lizardvmf_solid_side:
 		self.prmsdict = ct.attrs
 
 
+	# removes the side. Why ??????
+	def kill(self):
+		self.ctag.decompose()
+		return True
 
 
 
 
 
 
-
-
+# todo: redundant ?
 class lizardvmf_cordons:
 	"""A collection of cordons, if any"""
 
@@ -85,8 +366,6 @@ class lizardvmf_cordons:
 		self.prms = ct
 		# same as .prms, but it's a dict. Is it settable?? Should be...
 		self.prmsdict = ct.attrs
-
-
 
 
 
@@ -1370,6 +1649,7 @@ class lizardvmf:
 		# collect all ids here
 		taken_ids = []
 
+		# important todo: it's possible to select multiple things at once with ,
 		if doside == True:
 			for soid in lizard.select('map solid side'):
 				if soid.get('id') != None:
@@ -1651,9 +1931,64 @@ class lizardvmf:
 
 
 
+	# returns a collection of cordons IF ANY
+	# todo: old single-cordon is not supported yet
+	# update: this now supports queries
+	# meaning that you can select cordons by name righ away
+	def cordons(self, cquery=None):
+		lizard = self.lizard
+		crd = []
+		if cquery != None:
+			for cor in lizard.select('cordons cordon[name="' + str(cquery) + '"]'):
+				crd.append(lizardvmf_cordon(lizard, cor))
+		else:
+			for cor in lizard.select('cordons cordon'):
+				crd.append(lizardvmf_cordon(lizard, cor))
+
+		return crd
+
+
+	# todo: duplicated from the cordon class
+	def blender_to_cordon(self, eloc, escale):
+		cent = (eloc[0], eloc[1], eloc[2])
+		scl = (escale[0], escale[1], escale[2])
+
+		min_x = cent[0] - (scl[0] / 2)
+		min_y = cent[1] - (scl[1] / 2)
+		min_z = cent[2] - (scl[2] / 2)
+
+		max_x = cent[0] + (scl[0] / 2)
+		max_y = cent[1] + (scl[1] / 2)
+		max_z = cent[2] + (scl[2] / 2)
+
+		# print(min_x, min_y, min_z)
+		# print(max_x, max_y, max_z)
+
+		ret = {
+			'mins': (min_x, min_y, min_z),
+			'maxs': (max_x, max_y, max_z)
+		}
+		return ret
 
 
 
+	# add cordon to map. Make it part of cordons and make cordons a class?
+	# todo: old single-cordon is not supported yet
+	# for now, takes a tuple of two tuples: location, scale, ORDER IS IMPORTANT
+	def new_cordon(self, corname, corbox):
+		lizard = self.lizard
+		if corname != None and str(corname).strip() != '':
+
+			cordtag = lizard.new_tag('cordon', name=str(corname), active='1')
+			convertbox = self.blender_to_cordon(corbox)
+			min_s = '(' + str(convertbox['mins'][0]) + ' ' + str(convertbox['mins'][1]) + ' ' + str(convertbox['mins'][2]) + ')'
+			max_s = '(' + str(convertbox['maxs'][0]) + ' ' + str(convertbox['maxs'][1]) + ' ' + str(convertbox['maxs'][2]) + ')'
+			boxtag = lizard.new_tag('box', mins=min_s, maxs=max_s)
+			cordtag.append(boxtag)
+
+			lizard.select('map cordons').append(cordtag)
+
+			return lizardvmf_cordon(lizard, cordtag)
 
 
 
@@ -1682,7 +2017,7 @@ print(lol.vmfquery('#273').prms['classname'])
 lol.vmfquery('#273').prms['classname'] = 'dicks'
 print(lol.vmfquery('#273').prms['classname'])
 """
-"""
+
 print(lol.mapsettings['skyname'])
 lol.mapsettings['skyname'] = 'tits'
 print(lol.mapsettings['skyname'])
@@ -1703,8 +2038,11 @@ print(lol.mk_group())
 print(lol.mk_group())
 print(lol.mk_group())
 print(lol.mk_group())
-"""
+
 print(lol.cordonstate(True))
+print(lol.cordons()[1].box)
+print(lol.cordons()[1].box)
+# print()
 # print(lol.tovmf())
 # print(str(lol.lizard))
 
