@@ -133,6 +133,12 @@ class lizardvmf_visgroup:
 		# important todo: it's possible to select multiple things at once with ,
 		for ref in lizard.select('map solid editor[visgroupid="' + str(self.ctag['visgroupid']) + '"], map entity editor[visgroupid="' + str(self.ctag['visgroupid']) + '"]'):
 			del ref['visgroupid']
+			# todo: is try really needed ?
+			try:
+				ref['visgroupshown'] = '1'
+				ref['visgroupautoshown'] = '1'
+			except:
+				pass
 
 		# and finally - commit self die
 		self.ctag.decompose()
@@ -350,7 +356,7 @@ class lizardvmf_solid_side:
 
 
 	# returns all vertices+, if any
-	# lmfao why
+	# @property
 	def verts(self):
 		all_vp = []
 		for vp in self.ctag.select('vertices_plus v'):
@@ -604,11 +610,21 @@ class lizardvmf_solid:
 		return colsides
 
 
+	# returns an entity this solid is assigned to, if any...
+	def entity(self):
+		selector = self.ctag.parent.name
+		if selector == 'entity':
+			return lizardvmf_entity(self.lizard, self.ctag.parent)
+		else:
+			return None
+
+
 
 
 # a collection of connections
 # todo: make them all attributes ????
 # todo: make this also accept a dict to overwrite current shit
+# todo: create reverse searcher for connection target
 class lizardvmf_connection:
 	"""Connection"""
 
@@ -722,7 +738,12 @@ class lizardvmf_connection:
 			return False
 
 
-		
+	# removes the connection
+	def kill(self):
+		self.ctag.decompose()
+		return True
+
+
 
 
 
@@ -884,6 +905,7 @@ class lizardvmf_entity:
 		return parrot
 
 
+
 	@visgroup.setter
 	def visgroup(self, query):
 		"""
@@ -1033,7 +1055,7 @@ class lizardvmf_entity:
 			# important todo: finally use .find, it returns none if nothing was found
 			get_connections = self.ctag.select('connections')
 			if len(get_connections) > 0:
-				get_connections.decompose()
+				get_connections[0].decompose()
 
 
 
@@ -1788,6 +1810,7 @@ class lizardvmf:
 		# todo: query itself could contain special symbols. Temp solution: only look at the very first character?
 
 		# Since ids are PRESUMABLY unique, here we should only return the first match...
+		# important todo: make all queries support * wildcards
 		if '#' in qr:
 			selector = 'map entity[id="' + qr.split('#')[-1] + '"]'
 			if len(lizard.select(selector)) > 0:
@@ -1860,6 +1883,25 @@ class lizardvmf:
 		for en in self.lizard.select('map entity'):
 			all_ents.append(lizardvmf_entity(self.lizard, en))
 		return all_ents
+
+
+
+	# returns all entities
+	# pool - which pool to grab from:
+	# world - world pool
+	# ents - entity pool
+	def solids(self, world=True, ents=True):
+		all_ents = []
+		if ents == True:
+			for en in self.lizard.select('map entity solid'):
+				all_ents.append(lizardvmf_solid(self.lizard, en))
+		if world == True:
+			for en in self.lizard.select('map world solid'):
+				all_ents.append(lizardvmf_solid(self.lizard, en))
+
+		return all_ents
+
+
 
 
 	# returns map properties
@@ -1941,6 +1983,7 @@ class lizardvmf:
 	# todo: specify classname more easily ??
 	# todo: also assign own id like md5 ????
 	# todo: the defaults for loc, rot could be (0, 0, 0)
+	# todo: loc rot as a tuple of two tuples ?
 	def mk_ent(self, params, loc=None, rot=None, idstate=None):
 		
 		"""
@@ -2011,7 +2054,7 @@ class lizardvmf:
 		"""
 		It expects following parameters in the following order:
 		An array of side dicts the solid has.
-		Wether to generate id or not.
+		Wether to generate id or not. Takes an int if you want to specify an id. Can be left empty (recommended)
 
 		Dictionary of the side is as follows. Accepts ints and floats (for now all params are mandatory):
 
@@ -2047,6 +2090,7 @@ class lizardvmf:
 			# plane
 			# ((LocVector), (LocVector), (LocVector))
 			# ordered !
+			# todo: round to 4 digits ?
 			sidetag['plane'] = ''
 			# 1
 			sidetag['plane'] += '(' + str(sid['3verts'][0][0]) + ' ' + str(sid['3verts'][0][1]) + ' ' + str(sid['3verts'][0][2]) + ')'
@@ -2065,6 +2109,8 @@ class lizardvmf:
 			
 			# ((0 1 0), (-22, 0.5))
 			# ((Vector), (Shift, Scale))
+
+			# todo: make it also accept raw data and calculate UV coords here ?
 
 			# U
 			sidetag['uaxis'] = ''
@@ -2393,6 +2439,17 @@ print(ent_w_cnts.connections.items[-1].ctag.string)
 
 print(len(lol.ents()))
 
+
+ent_w_no_cnts = lol.vmfquery('#138')
+print(ent_w_no_cnts.connections)
+ent_w_no_cnts.connections = True
+print(ent_w_no_cnts.connections)
+print(ent_w_no_cnts.connections.items)
+ent_w_no_cnts.connections.add('OnPlayerUse', mkconnection)
+print(ent_w_no_cnts.connections.items[0].ctag.string)
+ent_w_no_cnts.connections = False
+print(ent_w_no_cnts.connections)
+print(lol.vmfstats())
 # print()
 # print(lol.tovmf())
 # print(str(lol.lizard))
