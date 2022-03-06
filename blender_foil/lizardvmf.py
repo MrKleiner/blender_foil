@@ -48,7 +48,7 @@ lizard.display()
 
 
 
-
+# important todo: Find entities assigned to this visgroup...
 class lizardvmf_visgroup:
 	"""visgroup"""
 
@@ -468,6 +468,8 @@ class lizardvmf_solid:
 				'name': self.lizard.select('visgroup[visgroupid="' + vgroupid + '"]')[0]['name']
 			}
 		except:
+			# todo: return False !!!!!!!!!!!!!
+			# important todo: make those external functions....
 			parrot = {'id':'','name':''}
 		return parrot
 
@@ -616,7 +618,7 @@ class lizardvmf_solid:
 		if selector == 'entity':
 			return lizardvmf_entity(self.lizard, self.ctag.parent)
 		else:
-			return None
+			return False
 
 
 
@@ -768,6 +770,7 @@ class lizardvmf_connections:
 		self.prmsdict = ct.attrs
 
 
+	# Why property ???
 	@property
 	def items(self):
 		allchilds = []
@@ -890,6 +893,7 @@ class lizardvmf_entity:
 	# update: todo: make this a function too?? since keyvalues are functions as well...
 	# if no query is passed - return group name and id
 	# if set visgroup - return id and name
+	# important todo: Return a visgroup object...
 	@property
 	def visgroup(self):
 		# print('Getting value...')
