@@ -2,7 +2,7 @@ from enum import Enum
 from typing import Union, Tuple, List
 from pathlib import Path
 
-# from ...shared.content_providers.content_manager import ContentManager
+from .content_providers.content_manager import ContentManager
 from .fgd_classes import FGDEntity
 
 
