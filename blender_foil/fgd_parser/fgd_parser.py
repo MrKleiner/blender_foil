@@ -3,7 +3,7 @@ from typing import Union, Tuple, List
 from pathlib import Path
 
 # from ...shared.content_providers.content_manager import ContentManager
-from .fgd_parser.fgd_classes import FGDEntity
+from .fgd_classes import FGDEntity
 
 
 class FGDLexerException(Exception):
