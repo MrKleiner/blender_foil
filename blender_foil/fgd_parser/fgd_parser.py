@@ -2,7 +2,7 @@ from enum import Enum
 from typing import Union, Tuple, List
 from pathlib import Path
 
-from .content_providers.content_manager import ContentManager
+# from .content_providers.content_manager import ContentManager
 from .fgd_classes import FGDEntity
 
 
@@ -238,11 +238,17 @@ class FGDParser:
                 raise FGDParserException(
                     f"Unexpected token {token}:\"{value}\" in {self._path} at {self._lexer.line}:{self._lexer.column}")
 
+
     def _parse_include(self):
         include = self.expect(FGDToken.STRING)
-        file = ContentManager().find_file(include)
+        # file = ContentManager().find_file(include)
+        file = None
+        if (self._path.parent / include).is_file():
+            file = open(self._path.parent / include, 'rb')
+        print(include)
+        print(file)
         if file is not None:
-            parsed_include = FGDParser(buffer_and_name=(file.read().decode("ascii"), include))
+            parsed_include = FGDParser(buffer_and_name=(file.read().decode(encoding="ascii", errors="ignore"), include))
             parsed_include.parse()
             self.classes.extend(parsed_include.classes)
             self.pragmas.update(parsed_include.pragmas)
