@@ -243,8 +243,9 @@ class FGDParser:
         include = self.expect(FGDToken.STRING)
         # file = ContentManager().find_file(include)
         file = None
-        if (self._path.parent / include).is_file():
-            file = open(self._path.parent / include, 'rb')
+        selfpath = Path(self._path)
+        if (selfpath.parent / include).is_file():
+            file = open(selfpath.parent / include, 'rb')
         print(include)
         print(file)
         if file is not None:
