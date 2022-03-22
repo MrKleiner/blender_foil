@@ -1,0 +1,342 @@
+{
+	"prop_dynamic": [
+		[
+			{
+				"guiname": "World Model",
+				"idname": "model",
+				"default": "",
+				"descr": "Path to .mdl"
+			},
+			{
+				"guiname": "Name",
+				"idname": "targetname",
+				"default": "",
+				"descr": "The name that other entities refer to this entity by."
+			},
+			{
+				"guiname": "Parent",
+				"idname": "parentname",
+				"default": "",
+				"descr": "The name of this entity's parent in the movement hierarchy. Entities with parents move with their parent."
+			},
+			{
+				"guiname": "Default Animation",
+				"idname": "DefaultAnim",
+				"default": "",
+				"descr": "The name of the idle animation that this prop will revert to whenever it finishes a random or forced animation."
+			},
+			{
+				"guiname": "Global Entity Name",
+				"idname": "globalname",
+				"default": "",
+				"descr": "Name by which this entity is linked to another entity in a different map. When the player transitions to a new map, entities in the new map with globalnames matching entities in the previous map will have the previous map's state copied over their state."
+			},
+			{
+				"guiname": "Damage Filter",
+				"idname": "damagefilter",
+				"default": "",
+				"descr": "Name of the filter entity that controls which entities can damage us."
+			}
+		],
+		[
+			{
+				"guiname": "Skin",
+				"idname": "skin",
+				"default": "0",
+				"descr": "Some models have multiple versions of their textures, called skins. Set this to a number other than 0 to use that skin instead of the default."
+			},
+			{
+				"guiname": "Explosion Damage",
+				"idname": "ExplodeDamage",
+				"default": "0",
+				"descr": "If non-zero, when this entity breaks it will create an explosion that causes the specified amount of damage. See also 'Explosion Radius'."
+			},
+			{
+				"guiname": "Explosion Radius",
+				"idname": "ExplodeRadius",
+				"default": "0",
+				"descr": "If non-zero, when this entity breaks it will create an explosion with a radius of the specified amount. See also 'Explosion Damage'."
+			}
+		],
+		[
+			{
+				"guiname": "Scale",
+				"idname": "modelscale",
+				"default": "1.0",
+				"descr": "A multiplier for the size of the model."
+			}
+		],
+		[
+			{
+				"guiname": "FX Color",
+				"idname": "rendercolor",
+				"default": "255 255 255",
+				"descr": "The FX color is used by the selected Render Mode."
+			}
+		],
+
+		[
+			{
+				"guiname": "Collisions",
+				"default": "Use Vphysics",
+				"idname": "solid",
+				"descr": "Description",
+				"eitems": {
+						"Use Vphysics": "6",
+						"Use Bounding Box": "2",
+						"Not Solid": "0"
+				}
+			},
+			{
+				"guiname": "Render FX",
+				"default": "Normal",
+				"idname": "renderfx",
+				"descr": "Description",
+				"eitems": {
+						"Normal": "0",
+						"Slow Pulse": "1",
+						"Fast Pulse": "2",
+						"Slow Wide Pulse": "3",
+						"Fast Wide Pulse": "4",
+						"Slow Strobe": "9",
+						"Fast Strobe": "10",
+						"Faster Strobe": "11",
+						"Slow Flicker": "12",
+						"Fast Flicker": "13",
+						"Slow Fade Away": "5",
+						"Fast Fade Away": "6",
+						"Slow Become Solid": "7",
+						"Fast Become Solid": "8",
+						"Constant Glow": "14",
+						"Distort": "15",
+						"Hologram (Distort + fade)": "16",
+						"Cull By Distance (TEST)": "23",
+						"Spotlight FX": "24",
+						"Fade Near":"26"
+				}
+			},
+			{
+				"guiname": "Render Mode",
+				"default": "Normal",
+				"idname": "rendermode",
+				"descr": "Description",
+				"eitems": {
+						"Normal": "0",
+						"Color": "1",
+						"Glow": "3",
+						"Solid": "4",
+						"Additive": "5",
+						"Additive Fractional Frame": "7",
+						"World Space Glow": "9",
+						"Dont Render": "10"
+				}
+			},
+			{
+				"guiname": "Performance Mode",
+				"default": "Full Gibs on All Platforms",
+				"idname": "PerformanceMode",
+				"descr": "Description",
+				"eitems": {
+						"Full Gibs on All Platforms": "2",
+						"Normal": "0",
+						"No Gibs": "1",
+						"Reduced gibs": "3"
+				}
+			}
+		],
+		[
+			{
+				"guiname": "Disable Shadows",
+				"idname": "disableshadows",
+				"default": "0",
+				"descr": "Description."
+			},
+			{
+				"guiname": "Disable Receiving Shadows",
+				"idname": "disablereceiveshadows",
+				"default": "0",
+				"descr": "Description."
+			},
+			{
+				"guiname": "Randomly Animate",
+				"idname": "RandomAnimation",
+				"default": "0",
+				"descr": "If set, this prop will randomly choose and play animations, based upon the times specified in 'Min/Max Random Anim Time'. Inbetween the random animations, it will revert to playing the 'Default Animation'."
+			},
+			{
+				"guiname": "Start Disabled",
+				"idname": "StartDisabled",
+				"default": "0",
+				"descr": "Description."
+			},
+			{
+				"guiname": "Disable Bone Followers",
+				"idname": "DisableBoneFollowers",
+				"default": "0",
+				"descr": "If set, this prop won't generate bone followers, even if they're listed in the model's .qc"
+			}
+		],
+		[
+			{
+				"byte": "64",
+				"default": "0",
+				"descr": "Use Hitboxes for Renderbox"
+			},
+			{
+				"byte": "256",
+				"default": "0",
+				"descr": "Start with collision disabled"
+			},
+			{
+				"byte": "16",
+				"default": "0",
+				"descr": "Break on Touch"
+			},
+			{
+				"byte": "32",
+				"default": "0",
+				"descr": "Break on Pressure"
+			}
+		],
+		[
+			"OnMotionEnabled",
+			"OnAwakened",
+			"OnPhysGunPickup",
+			"OnPhysGunPunt",
+			"OnPhysGunOnlyPickup",
+			"OnPhysGunDrop",
+			"OnPlayerUse",
+			"OnPlayerPickup",
+			"OnOutOfWorld"
+		],
+		[
+			"Wake",
+			"Sleep",
+			"EnableMotion",
+			"DisableMotion",
+			"DisableFloating",
+			"SetBodyGroup",
+			"physdamagescale",
+			"EnableDamageForces",
+			"DisableDamageForces",
+			"EnablePuntSound",
+			"DisablePuntSound"
+		],
+		{
+			"angles_enabled": "1"
+		}
+	],
+	
+	
+	"prop_static": [
+		[
+			{
+				"guiname": "Lighting Origin",
+				"idname": "model",
+				"default": "",
+				"descr": "Path to .mdl"
+			},
+			{
+				"guiname": "World Model",
+				"idname": "lightingorigin",
+				"default": "",
+				"descr": "Select an info_lighting to specify a location to sample lighting from, instead of using this entity's origin."
+			}
+		],
+		[
+			{
+				"guiname": "Skin",
+				"idname": "skin",
+				"default": "0",
+				"descr": "Some models have multiple versions of their textures, called skins. Set this to a number other than 0 to use that skin instead of the default."
+			},
+			{
+				"guiname": "Start Fade Dist/Pixels",
+				"idname": "fademindist",
+				"default": "-1",
+				"descr": "Distance at which the prop starts to fade (<0 = use fademaxdist). If 'Screen Space Fade' is selected, this represents the number of pixels wide covered by the prop when it starts to fade."
+			},
+			{
+				"guiname": "End Fade Dist/Pixels",
+				"idname": "fademaxdist",
+				"default": "0",
+				"descr": "Maximum distance at which the prop is visible (0 = don't fade out). If 'Screen Space Fade' is selected, this represents the *minimum* number of pixels wide covered by the prop when it fades."
+			},
+			{
+				"guiname": "Fade Scale",
+				"idname": "fadescale",
+				"default": "1",
+				"descr": "If you specify a fade in the worldspawn, or if the engine is running under dx7 [hl2/ep1/portal] or dx8 [ep2/tf], then the engine will forcibly fade out props even if fademindist/fademaxdist isn't specified. This scale factor gives you some control over the fade. Using 0 here turns off the forcible fades. Numbers smaller than 1 cause the prop to fade out at further distances, and greater than 1 cause it to fade out at closer distances."
+			}
+		],
+		[
+
+		],
+		[
+
+		],
+		[
+			{
+				"guiname": "Collisions",
+				"default": "Use Vphysics",
+				"idname": "solid",
+				"descr": "Description",
+				"eitems": {
+						"Use Vphysics": "6",
+						"Use Bounding Box": "2",
+						"Not Solid": "0"
+				}
+			}
+		],
+		[
+			{
+				"guiname": "Disable Shadows",
+				"idname": "disableshadows",
+				"default": "0",
+				"descr": "Description."
+			},
+			{
+				"guiname": "Screen Space Fade",
+				"idname": "FIXMEIMBROKEN",
+				"default": "0",
+				"descr": "Description."
+			},
+			{
+				"guiname": "Disable Vertex lighting",
+				"idname": "disablevertexlighting",
+				"default": "0",
+				"descr": "Description."
+			},
+			{
+				"guiname": "Disable Self-Shadowing with vertex lighting",
+				"idname": "disableselfshadowing",
+				"default": "0",
+				"descr": "Description."
+			},
+			{
+				"guiname": "Disable Self-Shadowing with vertex lighting",
+				"idname": "disableselfshadowing",
+				"default": "0",
+				"descr": "Description."
+			},
+			{
+				"guiname": "Ignore surface normal for computing vertex lighting",
+				"idname": "ignorenormals",
+				"default": "0",
+				"descr": "Description."
+			}
+		],
+		[
+
+		],
+		[
+			
+		],
+		[
+			
+		],
+		{
+			"angles_enabled": "1"
+		}
+	]
+}

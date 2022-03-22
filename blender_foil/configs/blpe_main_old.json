@@ -1,0 +1,733 @@
+{
+	"prop_dynamic": [
+		{
+			"World Model": "model:-: :-:Path to .mdl",
+			"Name": "targetname:-: :-:The name that other entities refer to this entity by.",
+			"Parent": "parentname:-: :-:The name of this entity's parent in the movement hierarchy. Entities with parents move with their parent.",
+			"Default Animation": "DefaultAnim:-: :-:The name of the idle animation that this prop will revert to whenever it finishes a random or forced animation.",
+			"Global Entity Name": "globalname:-: :-:Name by which this entity is linked to another entity in a different map. When the player transitions to a new map, entities in the new map with globalnames matching entities in the previous map will have the previous map's state copied over their state.",
+			"Damage Filter": "damagefilter:-: :-:Name of the filter entity that controls which entities can damage us."
+
+		},
+		{
+			"Skin": "skin:-:0:-:Some models have multiple versions of their textures, called skins. Set this to a number other than 0 to use that skin instead of the default.",
+			"Explosion Damage": "ExplodeDamage:-:0:-:If non-zero, when this entity breaks it will create an explosion that causes the specified amount of damage. See also 'Explosion Radius'.",
+			"Explosion Radius": "ExplodeRadius:-:0:-:If non-zero, when this entity breaks it will create an explosion with a radius of the specified amount. See also 'Explosion Damage'."
+		},
+		{
+			"Scale": "modelscale:-:1.0:-:A multiplier for the size of the model."
+		},
+		{
+			"FX Color": "rendercolor:-:255 255 255:-:The FX color is used by the selected Render Mode."
+		},
+		{
+			"Collisions:-:Use Vphysics:-:Description": [
+					{
+						"Use Vphysics": "solid:-:6",
+						"Use Bounding Box": "solid:-:2",
+						"Not Solid": "solid:-:0"
+					}
+			],
+			"Render FX:-:Normal:-:Description": [
+					{
+						"Normal": "renderfx:-:0",
+						"Slow Pulse": "renderfx:-:1",
+						"Fast Pulse": "renderfx:-:2",
+						"Slow Wide Pulse": "renderfx:-:3",
+						"Fast Wide Pulse": "renderfx:-:4",
+						"Slow Strobe": "renderfx:-:9",
+						"Fast Strobe": "renderfx:-:10",
+						"Faster Strobe": "renderfx:-:11",
+						"Slow Flicker": "renderfx:-:12",
+						"Fast Flicker": "renderfx:-:13",
+						"Slow Fade Away": "renderfx:-:5",
+						"Fast Fade Away": "renderfx:-:6",
+						"Slow Become Solid": "renderfx:-:7",
+						"Fast Become Solid": "renderfx:-:8",
+						"Constant Glow": "renderfx:-:14",
+						"Distort": "renderfx:-:15",
+						"Hologram (Distort + fade)": "renderfx:-:16",
+						"Cull By Distance (TEST)": "renderfx:-:23",
+						"Spotlight FX": "renderfx:-:24",
+						"Fade Near":"renderfx:-:26"
+					}
+			],
+			"Render Mode:-:Normal:-:Description": [
+					{
+						"Normal": "rendermode:-:0",
+						"Color": "rendermode:-:1",
+						"Glow": "rendermode:-:3",
+						"Solid": "rendermode:-:4",
+						"Additive": "rendermode:-:5",
+						"Additive Fractional Frame": "rendermode:-:7",
+						"World Space Glow": "rendermode:-:9",
+						"Dont Render": "rendermode:-:10"
+					}
+			],
+			"Performance Mode:-:Full Gibs on All Platforms:-:DESCRIPTION": [
+					{
+						"Full Gibs on All Platforms": "PerformanceMode:-:2",
+						"Normal": "PerformanceMode:-:0",
+						"No Gibs": "PerformanceMode:-:1",
+						"Reduced gibs": "PerformanceMode:-:3"
+					}
+			]
+			
+		},
+		{
+			"Disable Shadows": "disableshadows:-:0:-:Description",
+			"Disable Receiving Shadows": "disablereceiveshadows:-:0:-:Description",
+			"Randomly Animate": "RandomAnimation:-:0:-:If set, this prop will randomly choose and play animations, based upon the times specified in 'Min/Max Random Anim Time'. Inbetween the random animations, it will revert to playing the 'Default Animation'.",
+			"Start Disabled": "StartDisabled:-:0:-:Description",
+			"Disable Bone Followers": "DisableBoneFollowers:-:0:-:If set, this prop won't generate bone followers, even if they're listed in the model's .qc"
+		},
+		{
+			"64": "0:-:Use Hitboxes for Renderbox",
+			"256": "0:-:Start with collision disabled",
+			"16": "0:-:Break on Touch",
+			"32": "0:-:Break on Pressure"
+		},
+		{
+			"OnMotionEnabled": "1",
+			"OnAwakened": "1",
+			"OnPhysGunPickup": "1",
+			"OnPhysGunPunt": "1",
+			"OnPhysGunOnlyPickup": "1",
+			"OnPhysGunDrop": "1",
+			"OnPlayerUse": "1",
+			"OnPlayerPickup": "1",
+			"OnOutOfWorld": "1"
+		},
+		{
+			"Wake": "1",
+			"Sleep": "1",
+			"EnableMotion": "1",
+			"DisableMotion": "1",
+			"DisableFloating": "1",
+			"SetBodyGroup": "1",
+			"physdamagescale": "1",
+			"EnableDamageForces": "1",
+			"DisableDamageForces": "1",
+			"EnablePuntSound": "1",
+			"DisablePuntSound": "1"
+		},
+		{
+			"angles_enabled": "1"
+		}
+	],
+	
+	
+	"prop_static": [
+		{
+			"World Model": "model:-: :-:Path to .mdl",
+			"Lighting Origin": "lightingorigin:-: :-:Select an info_lighting to specify a location to sample lighting from, instead of using this entity's origin."
+
+		},
+		{
+			"Skin": "skin:-:0:-:Some models have multiple versions of their textures, called skins. Set this to a number other than 0 to use that skin instead of the default.",
+			"Start Fade Dist/Pixels": "fademindist:-:-1:-:Distance at which the prop starts to fade (<0 = use fademaxdist). If 'Screen Space Fade' is selected, this represents the number of pixels wide covered by the prop when it starts to fade.",
+			"End Fade Dist/Pixels": "fademaxdist:-:0:-:Maximum distance at which the prop is visible (0 = don't fade out). If 'Screen Space Fade' is selected, this represents the *minimum* number of pixels wide covered by the prop when it fades.",
+			"Fade Scale": "fadescale:-:1:-:If you specify a fade in the worldspawn, or if the engine is running under dx7 [hl2/ep1/portal] or dx8 [ep2/tf], then the engine will forcibly fade out props even if fademindist/fademaxdist isn't specified. This scale factor gives you some control over the fade. Using 0 here turns off the forcible fades. Numbers smaller than 1 cause the prop to fade out at further distances, and greater than 1 cause it to fade out at closer distances."
+		},
+		{
+
+		},
+		{
+
+		},
+		{
+			"Collisions:-:Use Vphysics:-:Description": [
+					{
+						"Use Vphysics": "solid:-:6",
+						"Use Bounding Box": "solid:-:2",
+						"Not Solid": "solid:-:0"
+					}
+			]
+			
+		},
+		{
+			"Disable Shadows": "disableshadows:-:0:-: ",
+			"Screen Space Fade": "disableshadows:-:0:-: ",
+			"Disable Vertex lighting": "disablevertexlighting:-:0:-: ",
+			"Disable Self-Shadowing with vertex lighting": "disableselfshadowing:-:0:-: ",
+			"Ignore surface normal for computing vertex lighting": "ignorenormals:-:0:-: "
+		},
+		{
+
+		},
+		{
+			
+		},
+		{
+			
+		},
+		{
+			"angles_enabled": "1"
+		}
+	],
+
+
+	"prop_dynamic_override": [
+		{
+			"World Model": "model:-: :-:Path to .mdl",
+			"Name": "targetname:-: :-:The name that other entities refer to this entity by.",
+			"Parent": "parentname:-: :-:The name of this entity's parent in the movement hierarchy. Entities with parents move with their parent.",
+			"Default Animation": "DefaultAnim:-: :-:The name of the idle animation that this prop will revert to whenever it finishes a random or forced animation.",
+			"Global Entity Name": "globalname:-: :-:Name by which this entity is linked to another entity in a different map. When the player transitions to a new map, entities in the new map with globalnames matching entities in the previous map will have the previous map's state copied over their state.",
+			"Damage Filter": "damagefilter:-: :-:Name of the filter entity that controls which entities can damage us."
+
+		},
+		{
+			"Skin": "skin:-:0:-:Some models have multiple versions of their textures, called skins. Set this to a number other than 0 to use that skin instead of the default.",
+			"Explosion Damage": "ExplodeDamage:-:0:-:If non-zero, when this entity breaks it will create an explosion that causes the specified amount of damage. See also 'Explosion Radius'.",
+			"Explosion Radius": "ExplodeRadius:-:0:-:If non-zero, when this entity breaks it will create an explosion with a radius of the specified amount. See also 'Explosion Damage'.",
+			"Health": "health:-:0:-:Number of points of damage to take before breaking. 0 means don't break."
+			
+		},
+		{
+			"Scale": "modelscale:-:1.0:-:A multiplier for the size of the model."
+		},
+		{
+			"FX Color": "rendercolor:-:255 255 255:-:The FX color is used by the selected Render Mode."
+		},
+		{
+			"Collisions:-:Use Vphysics:-:Description": [
+					{
+						"Use Vphysics": "solid:-:6",
+						"Use Bounding Box": "solid:-:2",
+						"Not Solid": "solid:-:0"
+					}
+			],
+			"Render FX:-:Normal:-:Description": [
+					{
+						"Normal": "renderfx:-:0",
+						"Slow Pulse": "renderfx:-:1",
+						"Fast Pulse": "renderfx:-:2",
+						"Slow Wide Pulse": "renderfx:-:3",
+						"Fast Wide Pulse": "renderfx:-:4",
+						"Slow Strobe": "renderfx:-:9",
+						"Fast Strobe": "renderfx:-:10",
+						"Faster Strobe": "renderfx:-:11",
+						"Slow Flicker": "renderfx:-:12",
+						"Fast Flicker": "renderfx:-:13",
+						"Slow Fade Away": "renderfx:-:5",
+						"Fast Fade Away": "renderfx:-:6",
+						"Slow Become Solid": "renderfx:-:7",
+						"Fast Become Solid": "renderfx:-:8",
+						"Constant Glow": "renderfx:-:14",
+						"Distort": "renderfx:-:15",
+						"Hologram (Distort + fade)": "renderfx:-:16",
+						"Cull By Distance (TEST)": "renderfx:-:23",
+						"Spotlight FX": "renderfx:-:24",
+						"Fade Near":"renderfx:-:26"
+					}
+			],
+			"Render Mode:-:Normal:-:Description": [
+					{
+						"Normal": "rendermode:-:0",
+						"Color": "rendermode:-:1",
+						"Glow": "rendermode:-:3",
+						"Solid": "rendermode:-:4",
+						"Additive": "rendermode:-:5",
+						"Additive Fractional Frame": "rendermode:-:7",
+						"World Space Glow": "rendermode:-:9",
+						"Dont Render": "rendermode:-:10"
+					}
+			],
+			"Performance Mode:-:Full Gibs on All Platforms:-:DESCRIPTION": [
+					{
+						"Full Gibs on All Platforms": "PerformanceMode:-:2",
+						"Normal": "PerformanceMode:-:0",
+						"No Gibs": "PerformanceMode:-:1",
+						"Reduced gibs": "PerformanceMode:-:3"
+					}
+			]
+			
+		},
+		{
+			"Disable Shadows": "disableshadows:-:0:-:Description",
+			"Disable Receiving Shadows": "disablereceiveshadows:-:0:-:Description",
+			"Randomly Animate": "RandomAnimation:-:0:-:If set, this prop will randomly choose and play animations, based upon the times specified in 'Min/Max Random Anim Time'. Inbetween the random animations, it will revert to playing the 'Default Animation'.",
+			"Disable Bone Followers": "DisableBoneFollowers:-:0:-:If set, this prop won't generate bone followers, even if they're listed in the model's .qc"
+		},
+		{
+			"64": "0:-:Use Hitboxes for Renderbox",
+			"256": "0:-:Start with collision disabled",
+			"16": "0:-:Break on Touch",
+			"32": "0:-:Break on Pressure"
+		},
+		{
+			"Outputs": "1"
+		},
+		{
+			"Inputs": "1"
+		},
+		
+		{
+			"angles_enabled": "1"
+		}
+	],
+	
+	
+	"prop_physics": [
+		{
+			"World Model": "model:-: :-:Path to .mdl",
+			"Name": "targetname:-: :-:The name that other entities refer to this entity by.",
+			"Global Entity Name": "globalname:-: :-:Name by which this entity is linked to another entity in a different map. When the player transitions to a new map, entities in the new map with globalnames matching entities in the previous map will have the previous map's state copied over their state.",
+			"Damage Filter": "damagefilter:-: :-:Name of the filter entity that controls which entities can damage us.",
+			"Override Parameters": "overridescript:-: :-:A list of physics key/value pairs that are usually in a physics prop .qc file. Format is 'key,value,key,value,etc'.",
+			"Sound to make when punted": "puntsound:-: :-: ",
+			"Break Model Message": "BreakModelMessage:-: :-:If set, will use this break model message instead of the normal break behavior."
+
+		},
+		{
+			"Skin": "skin:-:0:-:Some models have multiple versions of their textures, called skins. Set this to a number other than 0 to use that skin instead of the default.",
+			"Explosion Damage": "ExplodeDamage:-:0:-:If non-zero, when this entity breaks it will create an explosion that causes the specified amount of damage. See also 'Explosion Radius'.",
+			"Explosion Radius": "ExplodeRadius:-:0:-:If non-zero, when this entity breaks it will create an explosion with a radius of the specified amount. See also 'Explosion Damage'.",
+			"Pressure Delay": "pressuredelay:-:0:-:Delay, in seconds, after 'broken' by pressure before breaking apart (allows for sound to play before breaking apart).",
+			
+			"Start Fade Dist/Pixels": "fademindist:-:-1:-:Distance at which the prop starts to fade (<0 = use fademaxdist). If 'Screen Space Fade' is selected, this represents the number of pixels wide covered by the prop when it starts to fade.",
+			"End Fade Dist/Pixels": "fademaxdist:-:0:-:Maximum distance at which the prop is visible (0 = don't fade out). If 'Screen Space Fade' is selected, this represents the *minimum* number of pixels wide covered by the prop when it fades.",
+			"Fade Scale": "fadescale:-:1:-:If you specify a fade in the worldspawn, or if the engine is running under dx7 [hl2/ep1/portal] or dx8 [ep2/tf], then the engine will forcibly fade out props even if fademindist/fademaxdist isn't specified. This scale factor gives you some control over the fade. Using 0 here turns off the forcible fades. Numbers smaller than 1 cause the prop to fade out at further distances, and greater than 1 cause it to fade out at closer distances.",
+			"Min Damage to Hurt": "minhealthdmg:-:0:-:The prop will ignore any damage events if the damage is less than this amount.",
+			"Shadow Cast Distance": "shadowcastdist:-:0:-:Use this to override how far this object casts shadows. 0 = default distance.",
+			"Health Level to Override Motion": "damagetoenablemotion:-:0:-:If specified, this object will start motion disabled. Once its health has dropped below this specified amount, it will enable motion.",
+			"Physics Impact Force to Override Motion": "forcetoenablemotion:-:0:-:If specified, this object will start motion disabled. Any impact that imparts a force greater than this value will enable motion.",
+			"FX Amount (0-255)": "renderamt:-:255:-:The FX amount is used by the selected Render Mode."
+
+		},
+		{
+			"Model Scale": "modelscale:-:1.0:-:A multiplier for the size of the model.",
+			"Physics Impact Damage Scale": "physdamagescale:-:0.1:-:Scales damage energy when this object is hit by a physics object. NOTE: 0 means this feature is disabled for backwards compatibility. Set to 1.0 for materials as strong as flesh, smaller numbers indicate stronger materials.",
+			"Scale Factor For Interia": "inertiaScale:-:1.0:-:Scales the angular mass of an object. Used to hack angular damage and collision response.",
+			"Mass Scale": "massScale:-:0.0:-:A scale multiplier for the object's mass."
+			
+		},
+		{
+			"FX Color": "rendercolor:-:255 255 255:-:The FX color is used by the selected Render Mode."
+		},
+		{
+			
+			"Impact damage type:-:Blunt:-:Description": [
+					{
+						"Blunt": "Damagetype:-:0",
+						"Sharp": "Damagetype:-:1"
+					}
+			],
+			
+			
+			"Collisions:-:Use Vphysics:-:Description": [
+					{
+						"Use Vphysics": "solid:-:6",
+						"Use Bounding Box": "solid:-:2",
+						"Not Solid": "solid:-:0"
+					}
+			],
+			"Render FX:-:Normal:-:Description": [
+					{
+						"Normal": "renderfx:-:0",
+						"Slow Pulse": "renderfx:-:1",
+						"Fast Pulse": "renderfx:-:2",
+						"Slow Wide Pulse": "renderfx:-:3",
+						"Fast Wide Pulse": "renderfx:-:4",
+						"Slow Strobe": "renderfx:-:9",
+						"Fast Strobe": "renderfx:-:10",
+						"Faster Strobe": "renderfx:-:11",
+						"Slow Flicker": "renderfx:-:12",
+						"Fast Flicker": "renderfx:-:13",
+						"Slow Fade Away": "renderfx:-:5",
+						"Fast Fade Away": "renderfx:-:6",
+						"Slow Become Solid": "renderfx:-:7",
+						"Fast Become Solid": "renderfx:-:8",
+						"Constant Glow": "renderfx:-:14",
+						"Distort": "renderfx:-:15",
+						"Hologram (Distort + fade)": "renderfx:-:16",
+						"Cull By Distance (TEST)": "renderfx:-:23",
+						"Spotlight FX": "renderfx:-:24",
+						"Fade Near":"renderfx:-:26"
+					}
+			],
+			"Render Mode:-:Normal:-:Description": [
+					{
+						"Normal": "rendermode:-:0",
+						"Color": "rendermode:-:1",
+						"Glow": "rendermode:-:3",
+						"Solid": "rendermode:-:4",
+						"Additive": "rendermode:-:5",
+						"Additive Fractional Frame": "rendermode:-:7",
+						"World Space Glow": "rendermode:-:9",
+						"Dont Render": "rendermode:-:10"
+					}
+			],
+			"Performance Mode:-:Full Gibs on All Platforms:-:DESCRIPTION": [
+					{
+						"Full Gibs on All Platforms": "PerformanceMode:-:2",
+						"Normal": "PerformanceMode:-:0",
+						"No Gibs": "PerformanceMode:-:1",
+						"Reduced gibs": "PerformanceMode:-:3"
+					}
+			]
+			
+		},
+		{
+			"Disable Shadows": "disableshadows:-:0:-:Description",
+			"Disable Receiving Shadows": "disablereceiveshadows:-:0:-:Description",
+			"Dmaging it Doesn't Push it": "nodamageforces:-:0:-:Used to determine whether or not damage should cause the entity to move."
+		},
+		{
+			"64": "0:-:Use Hitboxes for Renderbox",
+			"256": "0:-:Start with collision disabled",
+			"16": "0:-:Break on Touch",
+			"32": "0:-:Break on Pressure"
+		},
+		{
+			"Outputs": "1"
+		},
+		{
+			"Inputs": "1"
+		},
+		
+		{
+			"angles_enabled": "1"
+		}
+		
+	],
+	
+	
+	"light_spot": [
+		{
+			"Name": "targetname:-: :-:The name that other entities refer to this entity by.",
+			"Custom Appearance": "pattern:-: :-:A string of characters, like a sequence of piano keys, that define a pattern of brightness. a is dark and z is full intensity. Applies only to lights with a targetname.",
+			"Entity to point at": "target:-: :-:The name of an entity in the map that the spotlight will point at. This will override the spotlight's angles."
+
+		},
+		{
+			
+
+		},
+		{
+			"BrightnessScaleHDR": "_lightscaleHDR:-:1.0:-:Some models have multiple versions of their textures, called skins. Set this to a number other than 0 to use that skin instead of the default.",
+			"Constant": "_constant_attn:-:0:-: DESCR",
+			"Linear": "_linear_attn:-:1:-: DESCR",
+			"Quadratic": "_quadratic_attn:-:0:-: DESCR",
+			"50 percent falloff distance": "_fifty_percent_distance:-:0.0:-: Distance at which brightness should fall off to 50%. If set, overrides linear constant and quadratic paramaters.",
+			"0 percent falloff distance": "_zero_percent_distance:-:0.0:-: Distance at which brightness should fall off to negligible (1/256)%. Must set _fifty_percent_distance to use.",
+			"Inner (bright) angle": "_inner_cone:-:30.0:-: The angles of the inner spotlight beam. Value larger than 90 is interpreted as 90.",
+			"Outer (fading) angle": "_cone:-:45.0:-: The angles of the outer spotlight beam. Value larger than 90 is interpreted as 90.",
+			"Focus": "_exponent:-:1.0:-: Changes the distance between the umbra and penumbra cone. Higher values make the edge of the light more blurred. When increasing the Focus value to for example 5 you can use the spotlight as a directional fill light.",
+			"Maximum distance": "_distance:-:0:-: Changes the distance between the umbra and penumbra cone. Higher values make the edge of the light more blurred. When increasing the Focus value to for example 5 you can use the spotlight as a directional fill light."
+		},
+		{
+			"Brightness": "_light:-:255 255 255:-:The FX color is used by the selected Render Mode.",
+			"BrightnessHDR": "_lightHDR:-:-255 -255 -255:-:The FX color is used by the selected Render Mode."
+		},
+		{
+			
+			"Appearance:-:Normal:-:Description": [
+					{
+						"Normal": "style:-:0",
+						"Fluorescent flicker": "style:-:10",
+						"Slow, strong pulse": "style:-:2",
+						"Slow pulse, noblack": "style:-:11",
+						"Gentle pulse": "style:-:5",
+						"Flicker A": "style:-:1",
+						"Flicker B": "style:-:6",
+						"Candle A": "style:-:3",
+						"Candle B": "style:-:7",
+						"Candle C": "style:-:8",
+						"Fast strobe": "style:-:4",
+						"Slow strobe": "style:-:9"
+					}
+			]
+
+			
+		},
+		{
+			"Hard falloff": "_hardfalloff:-:1:-:Causes lights to fall to exactly zero beyond the 0% distance. May cause unrealistic lighting if not used carefully."
+		},
+		{
+			"1": "0:-:Initially dark"
+		},
+		{
+			"Outputs": "1"
+		},
+		{
+			"Inputs": "1"
+		},
+		
+		{
+			"angles_enabled": "96"
+		}
+		
+	],
+
+
+	"logic_auto": [
+		{
+
+		},
+		{
+			
+
+		},
+		{
+			
+		},
+		{
+
+		},
+		{
+			
+			"Global State to Read:-:--- None ---:-:Description": [
+					{
+						"--- None ---": "globalstate:-:" ,
+						"Gordon pre-criminal": "globalstate:-:gordon_precriminal",
+						"Antlions are player allies": "globalstate:-:antlion_allied",
+						"Suit sprint function not yet enabled": "globalstate:-:suit_no_sprint",
+						"Super phys gun is enabled": "globalstate:-:super_phys_gun",
+						"Friendly encounter sequence (lower weapons, etc.)": "globalstate:-:friendly_encounter",
+						"Gordon is invulnerable": "globalstate:-:gordon_invulnerable",
+						"Don't spawn seagulls on the jeep": "globalstate:-:no_seagulls_on_jeep",
+						"Game is running on a console": "globalstate:-:is_console",
+						"Game is running on a PC": "globalstate:-:is_pc"
+					}
+			]
+
+			
+		},
+		{
+			
+		},
+		{
+			"1": "1:-:Remove on fire"
+		},
+		{
+			"OnMapSpawn": "1",
+			"OnNewGame": "1",
+			"OnLoadGame": "1",
+			"OnMapTransition": "1",
+			"OnBackgroundMap": "1",
+			"OnMultiNewMap": "1",
+			"OnMultiNewRound": "1"
+		},
+		{
+			"OnUser1": "1",
+			"OnUser2": "1"
+		},
+		
+		{
+			"angles_enabled": "0"
+		}
+		
+	],
+	
+	"logic_case": [
+		{
+			"Name": "targetname:-: :-:The name that other entities refer to this entity by.",
+			"Case 01": "Case01:-: :-:The values to test against.",
+			"Case 02": "Case02:-: :-:The values to test against.",
+			"Case 03": "Case03:-: :-:The values to test against.",
+			"Case 04": "Case04:-: :-:The values to test against.",
+			"Case 05": "Case05:-: :-:The values to test against.",
+			"Case 06": "Case06:-: :-:The values to test against.",
+			"Case 07": "Case07:-: :-:The values to test against.",
+			"Case 08": "Case08:-: :-:The values to test against.",
+			"Case 09": "Case09:-: :-:The values to test against.",
+			"Case 10": "Case10:-: :-:The values to test against.",
+			"Case 11": "Case11:-: :-:The values to test against.",
+			"Case 12": "Case12:-: :-:The values to test against.",
+			"Case 13": "Case13:-: :-:The values to test against.",
+			"Case 14": "Case14:-: :-:The values to test against.",
+			"Case 15": "Case15:-: :-:The values to test against.",
+			"Case 16": "Case16:-: :-:The values to test against."
+		},
+		{
+			
+
+		},
+		{
+			
+		},
+		{
+
+		},
+		{
+			
+		},
+		{
+			
+		},
+		{
+
+		},
+		{
+			"OnCase01": "1",
+			"OnCase02": "1",
+			"OnCase03": "1",
+			"OnCase04": "1",
+			"OnCase05": "1",
+			"OnCase06": "1",
+			"OnCase07": "1",
+			"OnCase08": "1",
+			"OnCase09": "1",
+			"OnCase10": "1",
+			"OnCase11": "1",
+			"OnCase12": "1",
+			"OnCase13": "1",
+			"OnCase14": "1",
+			"OnCase15": "1",
+			"OnCase16": "1",
+			"OnDefault": "1",
+			
+			"OnUser1": "1",
+			"OnUser2": "1",
+			"OnUser3": "1",
+			"OnUser4": "1"
+		},
+		{
+			"InValue": "1",
+			"PickRandom": "1",
+			"PickRandomShuffle": "1",
+			
+			"FireUser1": "1",
+			"FireUser2": "1",
+			"FireUser3": "1",
+			"FireUser4": "1"
+		},
+		
+		{
+			"angles_enabled": "0"
+		}
+		
+	],
+	
+	"env_cubemap": [
+		{
+			"Brush faces": "sides:-: :-:(Optional) Brushes faces to directly attach to the env_cubemap. Press Pick then click on faces in the 3D View to select them. Use CTRL while clicking to add or remove from the selection."
+		},
+		{
+			
+		},
+		{
+			
+		},
+		{
+			
+		},
+		{
+			
+			"Cubemap Size:-:Default:-:Description": [
+				{
+					"Default": "cubemapsize:-:0",
+					"1x1": "cubemapsize:-:1",
+					"2x2": "cubemapsize:-:2",
+					"4x4": "cubemapsize:-:3",
+					"8x8": "cubemapsize:-:4",
+					"16x16": "cubemapsize:-:5",
+					"32x32": "cubemapsize:-:6",
+					"64x64": "cubemapsize:-:7",
+					"128x128": "cubemapsize:-:8",
+					"256x256": "cubemapsize:-:9"
+				}
+			]
+			
+		},
+		{
+			
+		},
+		{
+			
+		},
+		{
+			
+		},
+		{
+			
+		},
+		{
+			"angles_enabled": "0"
+		}
+	],
+	
+	
+	"logic_relay": [
+		{
+			"Name": "targetname:-: :-:The name that other entities refer to this entity by."
+		},
+		{
+			
+		},
+		{
+			
+		},
+		{
+			
+		},
+		{
+			
+		},
+		{
+			"Start Disabled": "StartDisabled:-:0:-:Description"
+		},
+		{
+			"1": "0:-:Only trigger once",
+			"2": "0:-:Allow fast retrigger"
+		},
+		{
+			"OnSpawn": "1",
+			"OnTrigger": "1"
+		},
+		{
+			"Trigger": "1",
+			"Toggle": "1",
+			"CancelPending": "1"
+		},
+		
+		{
+			"angles_enabled": "0"
+		}
+		
+	],
+	
+	"filter_activator_name": [
+		{
+			"Name": "targetname:-: :-:The name that other entities refer to this entity by.",
+			"Filter Name": "filtername:-: :-:The name to filter by. If the filter mode is Allow, only entities whose name matches the given string will pass the filter. If the filter mode is Disallow, all entities EXCEPT those whose name matches the string will pass the filter."
+		},
+		{
+			
+		},
+		{
+			
+		},
+		{
+			
+		},
+		{
+			"Filter mode:-:Allow entities that match criteria:-:Description": [
+					{
+						"Allow entities that match criteria": "Negated:-:0",
+						"Disallow entities that match criteria": "Negated:-:1"
+					}
+			]
+		},
+		{
+			
+		},
+		{
+
+		},
+		{
+			"OnPass": "1",
+			"OnFail": "1"
+		},
+		{
+			"TestActivator": "1"
+		},
+		
+		{
+			"angles_enabled": "0"
+		}
+		
+	]
+}
