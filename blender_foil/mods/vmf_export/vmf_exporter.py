@@ -1,5 +1,4 @@
 import bpy
-from bpy.types import Operator
 # from bpy.props import FloatVectorProperty
 from bpy_extras.object_utils import AddObjectHelper, object_data_add
 from mathutils import Vector
@@ -46,7 +45,14 @@ from bs4 import Tag, NavigableString
 
 
 # todo: Separate actions into functions as often as possible
-# important todo: transfer blpe to xml
+# important todo: transfer blpe to xml.
+# update: No. Json forever
+
+# important todo: at some point there could be way too many items with icon support.
+# (epsecially considering the fact that it's very easy to add custom ones)
+# the genius solution would be to check if currently selected entity class in the entity class selector is available as "icon"
+# and display a button which sez "append as icon"
+# menus and submenus are also possible, but the "append as icon" is way more rational
 
 # get the current directory. Just in case
 addon_root_dir = Path(__file__).absolute().parent.parent.parent
@@ -65,7 +71,10 @@ hammer_icons_blend = pathlib.Path('E:\\!!Blend_Projects\\hammer_icons\\hammer_ic
 print('read and rebuild json')
 
 # parse json and therefore obtain the list of all the entities and their params
-vp_blpe_ents = json.loads(open(vp_blpe_path).read())
+vp_blpe_ents = None
+with open(str(vp_blpe_path), 'r') as ec_json:
+    vp_blpe_ents = json.loads(ec_json.read())
+    print(len(vp_blpe_ents))
 
 
 # define names of the supported icons
@@ -108,8 +117,6 @@ def blfoil_ents_supported_icons(from_file, tovar):
         if curvedel.get('blfoil_cdel') == '1':
             bpy.data.curves.remove(curvedel)
 
-
-# blfoil_ents_supported_icons(hammer_icons_blend, supported_icons)
 
 
 
@@ -234,7 +241,85 @@ def enum_returner_16(self, context):
     cent_type = context.active_object.ent_conf.obj_ent_type
     return enum_re(shit_number, cent_type)
 
+def enum_returner_17(self, context):
+    shit_number = 17
+    cent_type = context.active_object.ent_conf.obj_ent_type
+    return enum_re(shit_number, cent_type)
 
+def enum_returner_18(self, context):
+    shit_number = 18
+    cent_type = context.active_object.ent_conf.obj_ent_type
+    return enum_re(shit_number, cent_type)
+
+def enum_returner_19(self, context):
+    shit_number = 19
+    cent_type = context.active_object.ent_conf.obj_ent_type
+    return enum_re(shit_number, cent_type)
+
+def enum_returner_20(self, context):
+    shit_number = 20
+    cent_type = context.active_object.ent_conf.obj_ent_type
+    return enum_re(shit_number, cent_type)
+
+def enum_returner_21(self, context):
+    shit_number = 21
+    cent_type = context.active_object.ent_conf.obj_ent_type
+    return enum_re(shit_number, cent_type)
+
+def enum_returner_22(self, context):
+    shit_number = 22
+    cent_type = context.active_object.ent_conf.obj_ent_type
+    return enum_re(shit_number, cent_type)
+
+def enum_returner_23(self, context):
+    shit_number = 23
+    cent_type = context.active_object.ent_conf.obj_ent_type
+    return enum_re(shit_number, cent_type)
+
+def enum_returner_24(self, context):
+    shit_number = 24
+    cent_type = context.active_object.ent_conf.obj_ent_type
+    return enum_re(shit_number, cent_type)
+
+def enum_returner_25(self, context):
+    shit_number = 25
+    cent_type = context.active_object.ent_conf.obj_ent_type
+    return enum_re(shit_number, cent_type)
+
+def enum_returner_26(self, context):
+    shit_number = 26
+    cent_type = context.active_object.ent_conf.obj_ent_type
+    return enum_re(shit_number, cent_type)
+
+def enum_returner_27(self, context):
+    shit_number = 27
+    cent_type = context.active_object.ent_conf.obj_ent_type
+    return enum_re(shit_number, cent_type)
+
+def enum_returner_28(self, context):
+    shit_number = 28
+    cent_type = context.active_object.ent_conf.obj_ent_type
+    return enum_re(shit_number, cent_type)
+
+def enum_returner_29(self, context):
+    shit_number = 29
+    cent_type = context.active_object.ent_conf.obj_ent_type
+    return enum_re(shit_number, cent_type)
+
+def enum_returner_30(self, context):
+    shit_number = 30
+    cent_type = context.active_object.ent_conf.obj_ent_type
+    return enum_re(shit_number, cent_type)
+
+def enum_returner_31(self, context):
+    shit_number = 31
+    cent_type = context.active_object.ent_conf.obj_ent_type
+    return enum_re(shit_number, cent_type)
+
+def enum_returner_32(self, context):
+    shit_number = 32
+    cent_type = context.active_object.ent_conf.obj_ent_type
+    return enum_re(shit_number, cent_type)
 
 
 
@@ -295,6 +380,53 @@ def enum_tgt_15(self, context):
 def enum_tgt_16(self, context):
     bpy.context.active_object.ent_conf['ob_enum_tgt_16'] = bpy.context.active_object.ent_conf.pr_enum_16
 
+def enum_tgt_17(self, context):
+    bpy.context.active_object.ent_conf['ob_enum_tgt_17'] = bpy.context.active_object.ent_conf.pr_enum_17
+
+def enum_tgt_18(self, context):
+    bpy.context.active_object.ent_conf['ob_enum_tgt_18'] = bpy.context.active_object.ent_conf.pr_enum_18
+
+def enum_tgt_19(self, context):
+    bpy.context.active_object.ent_conf['ob_enum_tgt_19'] = bpy.context.active_object.ent_conf.pr_enum_19
+
+def enum_tgt_20(self, context):
+    bpy.context.active_object.ent_conf['ob_enum_tgt_20'] = bpy.context.active_object.ent_conf.pr_enum_20
+
+def enum_tgt_21(self, context):
+    bpy.context.active_object.ent_conf['ob_enum_tgt_21'] = bpy.context.active_object.ent_conf.pr_enum_21
+
+def enum_tgt_22(self, context):
+    bpy.context.active_object.ent_conf['ob_enum_tgt_22'] = bpy.context.active_object.ent_conf.pr_enum_22
+
+def enum_tgt_23(self, context):
+    bpy.context.active_object.ent_conf['ob_enum_tgt_23'] = bpy.context.active_object.ent_conf.pr_enum_23
+
+def enum_tgt_24(self, context):
+    bpy.context.active_object.ent_conf['ob_enum_tgt_24'] = bpy.context.active_object.ent_conf.pr_enum_24
+
+def enum_tgt_25(self, context):
+    bpy.context.active_object.ent_conf['ob_enum_tgt_25'] = bpy.context.active_object.ent_conf.pr_enum_25
+
+def enum_tgt_26(self, context):
+    bpy.context.active_object.ent_conf['ob_enum_tgt_26'] = bpy.context.active_object.ent_conf.pr_enum_26
+
+def enum_tgt_27(self, context):
+    bpy.context.active_object.ent_conf['ob_enum_tgt_27'] = bpy.context.active_object.ent_conf.pr_enum_27
+
+def enum_tgt_28(self, context):
+    bpy.context.active_object.ent_conf['ob_enum_tgt_28'] = bpy.context.active_object.ent_conf.pr_enum_28
+
+def enum_tgt_29(self, context):
+    bpy.context.active_object.ent_conf['ob_enum_tgt_29'] = bpy.context.active_object.ent_conf.pr_enum_29
+
+def enum_tgt_30(self, context):
+    bpy.context.active_object.ent_conf['ob_enum_tgt_30'] = bpy.context.active_object.ent_conf.pr_enum_30
+
+def enum_tgt_31(self, context):
+    bpy.context.active_object.ent_conf['ob_enum_tgt_31'] = bpy.context.active_object.ent_conf.pr_enum_31
+
+def enum_tgt_32(self, context):
+    bpy.context.active_object.ent_conf['ob_enum_tgt_32'] = bpy.context.active_object.ent_conf.pr_enum_32
 
 # =========================================================
 #----------------------------------------------------------
@@ -314,9 +446,9 @@ def enum_tgt_16(self, context):
 
 
 # =========================================================
-#----------------------------------------------------------
+# ---------------------------------------------------------
 #                   Base functionality
-#----------------------------------------------------------
+# ---------------------------------------------------------
 # =========================================================
 
 
@@ -329,28 +461,13 @@ def enum_tgt_16(self, context):
 def cdata_cleanup(self, context):
     # todo: revisit
     return
-    for existing_icon in supported_icons:
-        all_fuckdata = []
-        
-        for foil_obj in bpy.data.objects:
-            if foil_obj.type == 'CURVE':
-                if existing_icon[0] + '_curve_data' in foil_obj.data.name:
-                    all_fuckdata.append(foil_obj.data)
-
-        if len(all_fuckdata) > 1:
-            for foil_obj in bpy.data.objects:
-                if existing_icon[0] + '_curve_data' in foil_obj.data.name:
-                    foil_obj.data = all_fuckdata[0]
-            
-            for ded_data in bpy.data.curves:
-                if existing_icon[0] + '_curve_data' in ded_data.name:
-                    if ded_data != all_fuckdata[0]:
-                        bpy.data.curves.remove(ded_data)
 
 
 # This takes all the currently selected objects and re-evaluates their spawnflags
 # todo: make this function accept object input
-def eval_spawnflags(self, context):
+# update: done. Now takes object input
+
+def eval_spawnflags_auto(self, context):
 
     print('eval spawnflags')
 
@@ -373,6 +490,25 @@ def eval_spawnflags(self, context):
 
     print('end eval spawnflags')
 
+def eval_spawnflags(blfoil_obj):
+    print('blfoil: eval spawnflags for', blfoil_obj.name)
+    cur_obj_ent_type = blfoil_obj.ent_conf.obj_ent_type
+    blfoil_obj.ent_conf['l3_ent_sflags'] = 0
+    
+    calculated_bytes = 0
+    
+    for sflag_index, sflag in enumerate(vp_blpe_ents[cur_obj_ent_type][6]):
+        if blfoil_obj.ent_conf['pr_sflags_' + str(sflag_index + 1)] == True:
+            # in case some retard creates malformed bytes
+            try:
+                calculated_bytes += int(sflag['byte'])
+            except:
+                calculated_bytes += 0
+    
+    blfoil_obj.ent_conf['l3_ent_sflags'] = calculated_bytes
+    print('blfoil: Calculated flags are: ', calculated_bytes)
+
+    print('blfoil: Done evaluating spawnflags for', blfoil_obj.name)
 
 
 # --------------------------------------------------
@@ -423,7 +559,7 @@ def blfoil_entity_classnames_resync(scen, blpe):
         print(d, len(blpe))
 
 
-def r_enum_listd():
+def blfoil_ent_classnames_list_builder():
     from time import sleep
     fu = True
     sleep(1)
@@ -450,23 +586,7 @@ def r_enum_listd():
 
     # build_ent_en.join()
 
-# do listen
 
-
-# def r_enum_list():
-#     fu = True
-#     while fu:
-#         print('trying')
-#         try:
-#             d = 0
-#             for ent in vp_blpe_ents:
-#                 bpy.data.scenes[0].pootis_my_list.add()
-#                 d += 1
-#                 print(d, len(vp_blpe_ents))
-#             fu = False
-#             break
-#         except:
-#             pass
 """
 # unused function to parse lights.rad
 def r_enum_list_rads(self, context):
@@ -562,11 +682,14 @@ def r_enum_list_v1(self, context):
 
 # mark currently selected object as an entity
 # and clean all the data which was probably left from the previous entity
+# todo: the context is pretty much useless here...
+# just make it accept objects.
+# afterall, the execute function can handle simple pre-process steps like collecting objects
 def set_obj_ent(self, context):
     
     # current entity type
     # points to a "dynamic enum" enum list which stores all the supported entities
-    cent_type = bpy.context.scene.blfoil_etype_selector_list[bpy.context.scene.blfoil_etype_selector_list_index].name
+    cent_type = context.scene.blfoil_etype_selector_list[context.scene.blfoil_etype_selector_list_index].name
 
     # set everything to default
     # for every currently selected object
@@ -601,7 +724,7 @@ def set_obj_ent(self, context):
             # set target (not gui)
             # todo: set default in definition file by idname and not gui ?
 
-            # in some absolutely absurd cases, there's no id for the default and it's the first item in the dict...
+            # in some absolutely absurd cases, the default is not in the dict and it's the first item in the dict...
             if enum_pr['eitems'].get(enum_pr['default']) == None:
                 # so, set the first occurance in the dict...
                 empty_default = next(iter(enum_pr['eitems']))
@@ -629,27 +752,33 @@ def set_obj_ent(self, context):
         for color_j_idx, color_pr in enumerate(vp_blpe_ents[cent_type][3]):
         
             jrgb = color_pr['default'].split(' ')
-        
-            ar = int(jrgb[0]) / 255
-            ag = int(jrgb[1]) / 255
-            ab = int(jrgb[2]) / 255
+            try:
+                ar = float(int(jrgb[0]) / 255)
+                ag = float(int(jrgb[1]) / 255)
+                ab = float(int(jrgb[2]) / 255)
+            except:
+                ar, ag, ab = 255.0, 255.0, 255.0
 
             obj.ent_conf['pr_color_' + str(color_j_idx + 1)] = (ar, ag, ab)
+
+        # evaluate spawnflags for the current object. This is kind of an unnecessary since it should happen on data retreive...
+        eval_spawnflags(obj)
     
-    # re-eval spawnflags since the evaluation result (the thing that gets actually exported) is stored in a separate storage
-    # evaluation after setting everything to default will result into default eval result
-    eval_spawnflags(self, context)
+
 
 
 
 # Export entities to a given vmf
-def test_export_v1(self, context):
+# todo: Also do preparational steps in the execute function of the operator...
+def blfoil_full_vmf_export(self, context):
     # TESTING
     pootisd = open('E:\\map\\export_test\\wow.vmf', 'r').read()
     towrite = blfoil_vmf_exporter(self, context, vp_blpe_ents, pootisd)
     pootis_ded = open('E:\\map\\export_test\\wow.vmf', 'w')
     pootis_ded.write(towrite)
     return
+
+
 
 
 #
@@ -728,7 +857,7 @@ def build_suggest_ent_inpt(self, context):
     return list(dict.fromkeys(matched_inputs))
 
 
-def add_hwm_entity(self, context):
+def blfoil_add_hwm_entity(self, context):
     
     inner_path = 'Object'
     # object_name = self.icon_ent_type + '_curve'
@@ -752,16 +881,19 @@ def add_hwm_entity(self, context):
     
     
     obj.select_set(True)
-    if obj.get('blfoil_entity_icon_iscube') == '1':
+    if obj.get('blfoil_entity_icon_iscube') == '1' or obj.get('blfoil_entity_icon_iscube') == 1:
+        bpy.context.view_layer.update()
         obj.dimensions[0] = 16
+        bpy.context.view_layer.update()
         obj.dimensions[1] = 16
+        bpy.context.view_layer.update()
         obj.dimensions[2] = 16
     
     context.view_layer.objects.active = obj
     bpy.data.libraries.remove(bpy.data.libraries[lnk_file])
     
     
-    # gut for helth
+    # gud for helth
     # todo: fix this fucking shit
     cdata_cleanup(self, context)
     # I want 2 die
@@ -819,7 +951,7 @@ class OBJECT_OT_foil_add_hwm_ent(Operator, AddObjectHelper):
     
     def execute(self, context):
         # print(self.gr_id)
-        add_hwm_entity(self, context)
+        blfoil_add_hwm_entity(self, context)
 
         return {'FINISHED'}
 
@@ -890,6 +1022,7 @@ class blender_ents(PropertyGroup):
 
 # important todo: move shared shit from blender_ents_obj to wherever
 # IF POSSIBLE
+
 
 class blender_ents_obj(PropertyGroup):
 
@@ -1080,7 +1213,72 @@ class blender_ents_obj(PropertyGroup):
         description='lizards are sexy',
         default = 'pr_str_32'
         )
-        
+    pr_str_33 : StringProperty(
+        name='pr_str_33',
+        description='lizards are sexy',
+        default = 'pr_str_33'
+        )
+    pr_str_34 : StringProperty(
+        name='pr_str_34',
+        description='lizards are sexy',
+        default = 'pr_str_34'
+        )
+    pr_str_35 : StringProperty(
+        name='pr_str_35',
+        description='lizards are sexy',
+        default = 'pr_str_35'
+        )
+    pr_str_36 : StringProperty(
+        name='pr_str_36',
+        description='lizards are sexy',
+        default = 'pr_str_36'
+        )
+    pr_str_37 : StringProperty(
+        name='pr_str_37',
+        description='lizards are sexy',
+        default = 'pr_str_37'
+        )
+    pr_str_38 : StringProperty(
+        name='pr_str_38',
+        description='lizards are sexy',
+        default = 'pr_str_38'
+        )
+    pr_str_39 : StringProperty(
+        name='pr_str_39',
+        description='lizards are sexy',
+        default = 'pr_str_39'
+        )
+    pr_str_40 : StringProperty(
+        name='pr_str_40',
+        description='lizards are sexy',
+        default = 'pr_str_40'
+        )
+    pr_str_41 : StringProperty(
+        name='pr_str_41',
+        description='lizards are sexy',
+        default = 'pr_str_41'
+        )
+    pr_str_42 : StringProperty(
+        name='pr_str_42',
+        description='lizards are sexy',
+        default = 'pr_str_42'
+        )
+    pr_str_43 : StringProperty(
+        name='pr_str_43',
+        description='lizards are sexy',
+        default = 'pr_str_43'
+        )
+    pr_str_44 : StringProperty(
+        name='pr_str_44',
+        description='lizards are sexy',
+        default = 'pr_str_44'
+        )
+    pr_str_45 : StringProperty(
+        name='pr_str_45',
+        description='lizards are sexy',
+        default = 'pr_str_45'
+        )
+
     # =================================================
     #                       Ints
     # =================================================
@@ -1722,7 +1920,117 @@ class blender_ents_obj(PropertyGroup):
         update=enum_tgt_16
         )
     
-    
+    pr_enum_17 : EnumProperty(
+        items=enum_returner_17,
+        name='Entity',
+        description='I like bread',
+        update=enum_tgt_17
+        )
+
+    pr_enum_18 : EnumProperty(
+        items=enum_returner_18,
+        name='Entity',
+        description='I like bread',
+        update=enum_tgt_18
+        )
+
+    pr_enum_19 : EnumProperty(
+        items=enum_returner_19,
+        name='Entity',
+        description='I like bread',
+        update=enum_tgt_19
+        )
+
+    pr_enum_20 : EnumProperty(
+        items=enum_returner_20,
+        name='Entity',
+        description='I like bread',
+        update=enum_tgt_20
+        )
+
+    pr_enum_21 : EnumProperty(
+        items=enum_returner_21,
+        name='Entity',
+        description='I like bread',
+        update=enum_tgt_21
+        )
+
+    pr_enum_22 : EnumProperty(
+        items=enum_returner_22,
+        name='Entity',
+        description='I like bread',
+        update=enum_tgt_22
+        )
+
+    pr_enum_23 : EnumProperty(
+        items=enum_returner_23,
+        name='Entity',
+        description='I like bread',
+        update=enum_tgt_23
+        )
+
+    pr_enum_24 : EnumProperty(
+        items=enum_returner_24,
+        name='Entity',
+        description='I like bread',
+        update=enum_tgt_24
+        )
+
+    pr_enum_25 : EnumProperty(
+        items=enum_returner_25,
+        name='Entity',
+        description='I like bread',
+        update=enum_tgt_25
+        )
+
+    pr_enum_26 : EnumProperty(
+        items=enum_returner_26,
+        name='Entity',
+        description='I like bread',
+        update=enum_tgt_26
+        )
+
+    pr_enum_27 : EnumProperty(
+        items=enum_returner_27,
+        name='Entity',
+        description='I like bread',
+        update=enum_tgt_27
+        )
+
+    pr_enum_28 : EnumProperty(
+        items=enum_returner_28,
+        name='Entity',
+        description='I like bread',
+        update=enum_tgt_28
+        )
+
+    pr_enum_29 : EnumProperty(
+        items=enum_returner_29,
+        name='Entity',
+        description='I like bread',
+        update=enum_tgt_29
+        )
+
+    pr_enum_30 : EnumProperty(
+        items=enum_returner_30,
+        name='Entity',
+        description='I like bread',
+        update=enum_tgt_30
+        )
+
+    pr_enum_31 : EnumProperty(
+        items=enum_returner_31,
+        name='Entity',
+        description='I like bread',
+        update=enum_tgt_31
+        )
+
+    pr_enum_32 : EnumProperty(
+        items=enum_returner_32,
+        name='Entity',
+        description='I like bread',
+        update=enum_tgt_32
+        )
     
     
     
@@ -1837,77 +2145,77 @@ class blender_ents_obj(PropertyGroup):
         name='pr_sflags_1',
         description='Pootis',
         default = False,
-        update=eval_spawnflags
+        update=eval_spawnflags_auto
         )
         
     pr_sflags_2 : BoolProperty(
         name='pr_sflags_2',
         description='Pootis',
         default = False,
-        update=eval_spawnflags
+        update=eval_spawnflags_auto
         )
         
     pr_sflags_3 : BoolProperty(
         name='pr_sflags_3',
         description='Pootis',
         default = False,
-        update=eval_spawnflags
+        update=eval_spawnflags_auto
         )
         
     pr_sflags_4 : BoolProperty(
         name='pr_sflags_4',
         description='Pootis',
         default = False,
-        update=eval_spawnflags
+        update=eval_spawnflags_auto
         )
 
     pr_sflags_5 : BoolProperty(
         name='pr_sflags_5',
         description='Pootis',
         default = False,
-        update=eval_spawnflags
+        update=eval_spawnflags_auto
         )
         
     pr_sflags_6 : BoolProperty(
         name='pr_sflags_6',
         description='Pootis',
         default = False,
-        update=eval_spawnflags
+        update=eval_spawnflags_auto
         )
         
     pr_sflags_7 : BoolProperty(
         name='pr_sflags_7',
         description='Pootis',
         default = False,
-        update=eval_spawnflags
+        update=eval_spawnflags_auto
         )
         
     pr_sflags_8 : BoolProperty(
         name='pr_sflags_8',
         description='Pootis',
         default = False,
-        update=eval_spawnflags
+        update=eval_spawnflags_auto
         )
         
     pr_sflags_9 : BoolProperty(
         name='pr_sflags_9',
         description='Pootis',
         default = False,
-        update=eval_spawnflags
+        update=eval_spawnflags_auto
         )
         
     pr_sflags_10 : BoolProperty(
         name='pr_sflags_10',
         description='Pootis',
         default = False,
-        update=eval_spawnflags
+        update=eval_spawnflags_auto
         )
         
     pr_sflags_11 : BoolProperty(
         name='pr_sflags_11',
         description='Pootis',
         default = False,
-        update=eval_spawnflags
+        update=eval_spawnflags_auto
         )
         
     pr_sflags_12 : BoolProperty(
@@ -1920,140 +2228,140 @@ class blender_ents_obj(PropertyGroup):
         name='pr_sflags_13',
         description='Pootis',
         default = False,
-        update=eval_spawnflags
+        update=eval_spawnflags_auto
         )
         
     pr_sflags_14 : BoolProperty(
         name='pr_sflags_14',
         description='Pootis',
         default = False,
-        update=eval_spawnflags
+        update=eval_spawnflags_auto
         )
         
     pr_sflags_15 : BoolProperty(
         name='pr_sflags_15',
         description='Pootis',
         default = False,
-        update=eval_spawnflags
+        update=eval_spawnflags_auto
         )
         
     pr_sflags_16 : BoolProperty(
         name='pr_sflags_16',
         description='Pootis',
         default = False,
-        update=eval_spawnflags
+        update=eval_spawnflags_auto
         )
 
     pr_sflags_17 : BoolProperty(
         name='pr_sflags_17',
         description='Pootis',
         default = False,
-        update=eval_spawnflags
+        update=eval_spawnflags_auto
         )
         
     pr_sflags_18 : BoolProperty(
         name='pr_sflags_18',
         description='Pootis',
         default = False,
-        update=eval_spawnflags
+        update=eval_spawnflags_auto
         )
         
     pr_sflags_19 : BoolProperty(
         name='pr_sflags_19',
         description='Pootis',
         default = False,
-        update=eval_spawnflags
+        update=eval_spawnflags_auto
         )
         
     pr_sflags_20 : BoolProperty(
         name='pr_sflags_20',
         description='Pootis',
         default = False,
-        update=eval_spawnflags
+        update=eval_spawnflags_auto
         )
 
     pr_sflags_21 : BoolProperty(
         name='pr_sflags_21',
         description='Pootis',
         default = False,
-        update=eval_spawnflags
+        update=eval_spawnflags_auto
         )
         
     pr_sflags_22 : BoolProperty(
         name='pr_sflags_22',
         description='Pootis',
         default = False,
-        update=eval_spawnflags
+        update=eval_spawnflags_auto
         )
         
     pr_sflags_23 : BoolProperty(
         name='pr_sflags_23',
         description='Pootis',
         default = False,
-        update=eval_spawnflags
+        update=eval_spawnflags_auto
         )
         
     pr_sflags_24 : BoolProperty(
         name='pr_sflags_24',
         description='Pootis',
         default = False,
-        update=eval_spawnflags
+        update=eval_spawnflags_auto
         )
         
     pr_sflags_25 : BoolProperty(
         name='pr_sflags_25',
         description='Pootis',
         default = False,
-        update=eval_spawnflags
+        update=eval_spawnflags_auto
         )
         
     pr_sflags_26 : BoolProperty(
         name='pr_sflags_26',
         description='Pootis',
         default = False,
-        update=eval_spawnflags
+        update=eval_spawnflags_auto
         )
         
     pr_sflags_27 : BoolProperty(
         name='pr_sflags_27',
         description='Pootis',
         default = False,
-        update=eval_spawnflags
+        update=eval_spawnflags_auto
         )
         
     pr_sflags_28 : BoolProperty(
         name='pr_sflags_28',
         description='Pootis',
         default = False,
-        update=eval_spawnflags
+        update=eval_spawnflags_auto
         )
         
     pr_sflags_29 : BoolProperty(
         name='pr_sflags_29',
         description='Pootis',
         default = False,
-        update=eval_spawnflags
+        update=eval_spawnflags_auto
         )
         
     pr_sflags_30 : BoolProperty(
         name='pr_sflags_30',
         description='Pootis',
         default = False,
-        update=eval_spawnflags
+        update=eval_spawnflags_auto
         )
         
     pr_sflags_31 : BoolProperty(
         name='pr_sflags_31',
         description='Pootis',
         default = False,
-        update=eval_spawnflags
+        update=eval_spawnflags_auto
         )
         
     pr_sflags_32 : BoolProperty(
         name='pr_sflags_32',
         description='Pootis',
         default = False,
-        update=eval_spawnflags
+        update=eval_spawnflags_auto
         )
 
 
@@ -2179,109 +2487,70 @@ class VIEW3D_PT_blender_foil_dn_enum(bpy.types.Panel):
         dumpster = layout.column(align=False)
         dumpster.use_property_split = True
         dumpster.use_property_decorate = False
-        
-
-        # bpy.types.Scene.prop_obj = PointerProperty(type=pootis_ListItem)
-        
-        # bpy.types.Scene.pootis_my_list = CollectionProperty(type = pootis_ListItem)
-        # bpy.types.Scene.pootis_list_index = IntProperty(name = 'Index for my_list', default = 0)
 
         # dumpster.prop(context.scene.blents, 'dnenum')
-        the_filter = dumpster.template_list("blfoil_etype_selector_panel_itemdraw", "", context.scene, "blfoil_etype_selector_list", context.scene, "blfoil_etype_selector_list_index")
-        # dumpster.prop(bpy.context.scene, 'pootis_my_list')
-        # dumpster.prop_search(bpy.context.scene, 'pootis_my_list', bpy.context.scene.pootis_my_list, 'name')
-        # dumpster.prop_search(bpy.context.scene, 'pootis_my_list', bpy.context.scene.pootis_my_list, 'pootis_ListItem.name')
-        # dumpster.prop(bpy.context.scene.pootis_my_list, 'wtflol')
-        # dumpster.prop_search(bpy.context.scene, "pootis_my_list", bpy.context.scene, "pootis_my_list")
+        the_filter = dumpster.template_list('blfoil_etype_selector_panel_itemdraw', '', context.scene, 'blfoil_etype_selector_list', context.scene, 'blfoil_etype_selector_list_index')
 
-        dumpster.operator('mesh.set_ent_type',
-            text='Mark entity'
-        )
+        dumpster.operator('mesh.set_ent_type', text='Mark entity')
         
-        dumpster.operator('mesh.foil_ent_export',
-            text='Test export'
-        )
-        
-        
-        # raw json test
-        # if context.object != None:
-            # for str_indx, str_prm in enumerate(prop_ents[bpy.context.scene.blents.dnenum][0]):
-                # dumpster.label(text=str(str_indx) + ': ' + str_prm + ' - ' + prop_ents[bpy.context.scene.blents.dnenum][0][str_prm].split(':-:')[-1] )
+        dumpster.operator('mesh.foil_ent_export', text='Test export')
 
 
-
-        
+        # todo: performance ??????
+        # todo: check if current entity type is in the dict or not
+        # if context.object != None and context.object.ent_conf.obj_ent_type != 'nil':
         if context.object != None and context.object.ent_conf.obj_ent_type != 'nil':
              
             cur_object = context.active_object
-            cent_type = context.active_object.ent_conf.obj_ent_type
+            # important todo: all cent_types are actually redundant. Just do vp_blpe_ents[cent_type] right away...
+            cent_type = vp_blpe_ents[context.active_object.ent_conf.obj_ent_type]
+            cent_name = context.active_object.ent_conf.obj_ent_type
 
             dumpster.label(text=bpy.context.active_object.ent_conf.obj_ent_type)
 
-
             # show because why not
-            for str_indx, str_prm in enumerate(vp_blpe_ents[cent_type][0]):
+            for str_indx, str_prm in enumerate(cent_type[0]):
                 dumpster.label(text=str(str_indx) + ': ' + str_prm['guiname'] + ' - ' + str_prm['descr'])
 
 
-            #
-            # FOR IN RANGE LENGTH OF TOTAL NUMBER OF THE JSON ENTRIES
-            #
+            # todo: Yes, this is smarter, but what abour performance ?
+            # todo: Safety measures
+            # Overengineering ?
+            ent_prop_types = {
+                'pr_str_': 0,
+                'pr_int_': 1,
+                'pr_float_': 2,
+                'pr_enum_': 4,
+                'pr_enum_bool_': 5,
+                'pr_color_': 3,
+                'pr_sflags_': 6
+            }
+
+            ent_prop_separators = {
+                'pr_sflags_': 'Spawnflags'
+            }
+
+            # ecl - Entity CLass
+            for ecl_prop_type in ent_prop_types:
+                if ent_prop_separators.get(ecl_prop_type) != None:
+                    dumpster.label(text=ent_prop_separators[ecl_prop_type])
+
+                for ecl_prop_index, ecl_prop in enumerate(cent_type[ent_prop_types[ecl_prop_type]]):
+                    dumpster.prop(context.object.ent_conf, ecl_prop_type + str(ecl_prop_index + 1), text=ecl_prop['guiname'])
 
 
-            # show strings
-            # for str_pr in range(len(vp_blpe_ents[cent_type][0])):
-                # dumpster.prop(context.object.ent_conf, 'pr_str_' + str(str_pr + 1), text=vp_blpe_ents[cent_type][0][])
-            
+            """
+            # Old method (other entries were deleted): 
             # show strings
             for str_j_idx, str_pr in enumerate(vp_blpe_ents[cent_type][0]):
                 dumpster.prop(context.object.ent_conf, 'pr_str_' + str(str_j_idx + 1), text=str_pr['guiname'])
+            """
 
 
-            # show ints
-            for int_j_idx, int_pr in enumerate(vp_blpe_ents[cent_type][1]):
-                dumpster.prop(context.object.ent_conf, 'pr_int_' + str(int_j_idx + 1), text=int_pr['guiname'])
 
 
-            # show floats
-            for float_j_idx, float_pr in enumerate(vp_blpe_ents[cent_type][2]):
-                dumpster.prop(context.object.ent_conf, 'pr_float_' + str(float_j_idx + 1), text=float_pr['guiname'])
 
 
-            # show enums
-            for enum_j_idx, enum_pr in enumerate(vp_blpe_ents[cent_type][4]):
-                dumpster.prop(context.object.ent_conf, 'pr_enum_' + str(enum_j_idx + 1), text=enum_pr['guiname'])
-
-
-            # show enum booleans
-            for enum_bool_j_idx, enum_bool_pr in enumerate(vp_blpe_ents[cent_type][5]):
-                dumpster.prop(context.object.ent_conf, 'pr_enum_bool_' + str(enum_bool_j_idx + 1), text=enum_bool_pr['guiname'])
-
-
-            # show colors
-            for color_j_idx, color_pr in enumerate(vp_blpe_ents[cent_type][3]):
-                dumpster.prop(context.object.ent_conf, 'pr_color_' + str(color_j_idx + 1), text=color_pr['guiname'])
-
-
-            # Flags separator
-            dumpster.label(text='Spawnflags')
-
-
-            # show spawnflags
-            for sfalgs_j_idx, sfalgs_pr in enumerate(vp_blpe_ents[cent_type][6]):
-                dumpster.prop(context.object.ent_conf, 'pr_sflags_' + str(sfalgs_j_idx + 1), text=sfalgs_pr['descr'])
-
-
-"""
-# what is this ?
-def ffd_app(self, context):
-    if (context.active_object):
-        if (len(context.active_object.modifiers)):
-            col = self.layout.column(align=True)
-
-            row = col.row(align=True)
-            # row.label(text='Spawnflags')
-"""
 
 
 

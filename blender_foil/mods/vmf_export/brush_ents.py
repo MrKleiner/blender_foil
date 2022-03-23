@@ -21,13 +21,13 @@ def get_islands(bm, verts=[]):
 			v.tag = switch
 	tag(bm.verts, True)
 	tag(verts, False)
-	ret = {"islands" : []}
+	ret = {'islands' : []}
 	verts = set(verts)
 	while verts:
 		v = verts.pop()
 		verts.add(v)
 		island = set(walk_island(v))
-		ret["islands"].append(list(island))
+		ret['islands'].append(list(island))
 		tag(island, False) # remove tag = True
 		verts -= island
 	return ret
@@ -113,13 +113,34 @@ def blfoil_easy_brushes(objs):
 			# reversed
 			# vert_reversed = reversed()
 
-			three_v = (fc.verts[0].co, fc.verts[1].co, fc.verts[2].co)
+			# fresh addition, revert if problems !
+			# three_v = (fc.verts[0].co, fc.verts[1].co, fc.verts[2].co)
 
 			all_v = []
 
 			for vt in fc.verts:
 				all_v.append(vt.co)
 			
+			"""
+			# important todo: WHAT THE FUCK IS THIS FUCKING SHIT ???????????
+			# update: improved
+
+			# three_v = (revo[0], revo[1], revo[2])
+			fuck = {}
+			revo = reversed(fc.verts)
+			vnum = 0
+			for rev in revo:
+				fuck[vnum] = rev
+				vnum += 1
+				if vnum > 2:
+					break
+
+			three_v = (fuck[0].co, fuck[1].co, fuck[2].co)
+			"""
+
+			revo_energy = [revo for revo in reversed(fc.verts)]
+			three_v = (revo_energy[0].co, revo_energy[1].co, revo_energy[2].co)
+
 			# todo: would it make more sense to do uv math right here ?
 			face_payload = {
 				'three': three_v,

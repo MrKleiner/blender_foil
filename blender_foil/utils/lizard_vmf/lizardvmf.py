@@ -1403,7 +1403,7 @@ class lizardvmf:
 	# todo: the defaults for loc, rot could be (0, 0, 0)
 	# todo: loc rot as a tuple of two tuples ?
 	# todo: SOME brush entities don't have an origin!!!!! Like func_detail, while others do !!!!!
-	def mk_ent(self, params, loc=None, rot=None, idstate=None, no_origin=False):
+	def mk_ent(self, params, loc=None, rot=None, idstate=None):
 		
 		"""
 		Creates an entity and returns lizard entity.
@@ -1411,7 +1411,7 @@ class lizardvmf:
 
 		params: A dictionary of key-values ("angles" and "origin" are always overwritten)
 		loc: Location, a tuple of X Y Z. If None or not passed - 0 0 0
-		rot: Rotation, if None or not passed - this parameter is not being set
+		rot: Rotation, if None or not passed - this parameter is not being set. EXPECTS CORRECT ORDER: Y Z X
 		idstate: Id - if nothing or none - id is assigned automatically. If int - sets passed int as id
 
 		Location, rotation, no origin and id are keyword arguments
@@ -1464,10 +1464,14 @@ class lizardvmf:
 			newent['origin'] = str(loc[0]) + ' ' + str(loc[1]) + ' ' + str(loc[2])
 		else:
 			newent['origin'] = '0 0 0'
+		# todo: better logic
+		if loc == False:
+			del newent['origin']
 
 		# SOME brush entities do not have an origin, like func_detail
-		if no_origin == True:
-			del newent['origin']
+		# update: replaced with code above
+		# if no_origin == True:
+		# 	del newent['origin']
 
 		# it's impossible to guess which entity should have angles and which not
 		# therefore, assume that if not passed - entity doesn't has angles

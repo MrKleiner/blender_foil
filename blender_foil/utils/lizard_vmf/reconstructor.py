@@ -153,18 +153,33 @@ def xmf_reconstructor(vxml):
 			# open side
 			rcf += (op('side', 2))
 			# for every keyvalue of a current side
+			# ALRIGHT, LET'S DO IT TEXAS STYLE
+			"""
 			for cside_kv in wrside.attrs:
 				rcf += (wapr(cside_kv, wrside.attrs, 1, 3))
+			"""
 
-			# reconstruct hammer vertices plus
+			rcf += (wapr('id', wrside.attrs, 1, 3))
+			rcf += (wapr('plane', wrside.attrs, 1, 3))
+
+			# reconstruct hammer vertices plus, IF ANY
 			# todo: for now - require hammer++
-			# done. hammer++ not required
+			# Done. No hammer++ required
 			if len(wrside.select('vertices_plus')) > 0:
 				rcf += (op('vertices_plus', 3))
-				# for every vert+ (tag) in the current side, if any
+				# for every vert+ (tag) in the current side
 				for vplus in wrside.find('vertices_plus'):
 					rcf += (unwapr(vplus, 4))
+				# close v+
 				rcf += (cl(3))
+
+			rcf += (wapr('material', wrside.attrs, 1, 3))
+			rcf += (wapr('uaxis', wrside.attrs, 1, 3))
+			rcf += (wapr('vaxis', wrside.attrs, 1, 3))
+			rcf += (wapr('rotation', wrside.attrs, 1, 3))
+			rcf += (wapr('lightmapscale', wrside.attrs, 1, 3))
+			rcf += (wapr('smoothing_groups', wrside.attrs, 1, 3))
+
 
 
 			# a side COULD have displacement
@@ -281,8 +296,15 @@ def xmf_reconstructor(vxml):
 						# open side
 						rcf += (op('side', 2))
 						# for every keyvalue of a current side
+
+						# ALRIGHT, LET'S DO IT TEXAS STYLE
+						"""
 						for cside_kv in wrside.attrs:
 							rcf += (wapr(cside_kv, wrside.attrs, 1, 3))
+						"""
+
+						rcf += (wapr('id', wrside.attrs, 1, 3))
+						rcf += (wapr('plane', wrside.attrs, 1, 3))
 
 						# reconstruct hammer vertices plus, IF ANY
 						# todo: for now - require hammer++
@@ -294,6 +316,14 @@ def xmf_reconstructor(vxml):
 								rcf += (unwapr(vplus, 4))
 							# close v+
 							rcf += (cl(3))
+
+						rcf += (wapr('material', wrside.attrs, 1, 3))
+						rcf += (wapr('uaxis', wrside.attrs, 1, 3))
+						rcf += (wapr('vaxis', wrside.attrs, 1, 3))
+						rcf += (wapr('rotation', wrside.attrs, 1, 3))
+						rcf += (wapr('lightmapscale', wrside.attrs, 1, 3))
+						rcf += (wapr('smoothing_groups', wrside.attrs, 1, 3))
+
 						# close side
 						rcf += (cl(2))
 

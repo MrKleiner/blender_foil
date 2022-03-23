@@ -30,25 +30,30 @@ def eval_state(state):
 # eobject - object selector
 # fix90 - 1 to fix the rotation (rotate an object either on Y or other axis)
 # axis - axis to apply the rotation to: X, Y or Z
+# RETURNS X Y Z
 def get_obj_locrot_v1(eobject, fix90, axis, self, context):
     import bpy
     import mathutils
     from mathutils import Matrix
     import math
-    from math import radians
-    # extract rotations
     
     # get scene scale
     if context.scene.unit_settings.system != 'NONE':
         sce_scale = bpy.context.scene.unit_settings.scale_length
     else:
         sce_scale = 1
-    
-    if 'z' in str(axis).lower():
-        fl_axis = 'Z'
-    else: 
+
+    if str(axis).upper() in ['X', 'Y', 'Z', '-X', '-Y', '-Z', '+X', '+Y', '+Z']:
+        fl_axis = str(axis).upper().replace('-', '').replace('+', '')
+    else:
         fl_axis = 'Y'
-        
+
+    
+    # if 'z' in str(axis).lower():
+    #     fl_axis = 'Z'
+    # else: 
+    #     fl_axis = 'Y'
+
     if '-' in str(axis).lower():
         rfactor = -1
     else:
@@ -59,8 +64,9 @@ def get_obj_locrot_v1(eobject, fix90, axis, self, context):
         # eobject.rotation_euler.rotate_axis(fl_axis, math.radians(-90 * rfactor))
         # bpy.context.view_layer.update()
         
-        # rotall = ((eobject.rotation_euler.to_matrix() @ Matrix.Rotation(radians(90 * rfactor), 3, 'Y')) @ eobject.matrix_world).to_euler()
-        rot_st = Matrix.Rotation(radians(90 * rfactor), 4, 'Y')
+        # rotall = ((eobject.rotation_euler.to_matrix() @ Matrix.Rotation(math.radians(90 * rfactor), 3, 'Y')) @ eobject.matrix_world).to_euler()
+        # These two lines is where magic happens
+        rot_st = Matrix.Rotation(math.radians(90 * rfactor), 4, fl_axis)
         
         rotall = (eobject.matrix_world @ rot_st).to_euler()
         
@@ -71,16 +77,7 @@ def get_obj_locrot_v1(eobject, fix90, axis, self, context):
         rotx = float(round(math.degrees(eobject.matrix_world.to_euler()[0]), 4))
         roty = float(round(math.degrees(eobject.matrix_world.to_euler()[1]), 4))
         rotz = float(round(math.degrees(eobject.matrix_world.to_euler()[2]), 4))
-    
 
-    
-    # print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
-    # print(eobject.rotation_euler[2])
-    
-    # hack pentagon
-    # if int(fix90) == 1:
-        # eobject.rotation_euler.rotate_axis(fl_axis, math.radians(+90 * rfactor))
-        # bpy.context.view_layer.update()
 
     # extract locations
     locx = float(round(eobject.matrix_world[0][3], 4) * sce_scale)

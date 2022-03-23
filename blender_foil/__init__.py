@@ -66,8 +66,6 @@ from time import sleep
 
 # The faster we start listening for shit - the better
 # this is a port listener so that it's possible to connect an app with blender
-# lmfao this is fucking useles
-# totally NOT fucking worth of 9 hrs of research
 def blender_foil_guiappconnect():
     port = 50000  # Reserve a port for your service every new transfer wants a new port or you must wait.
     s = socket.socket()  # Create a socket object
@@ -116,6 +114,7 @@ blfoil_check_pypackages()
 # so that you can add weapon entities for your mod
 
 
+# important todo: bd script
 
 
 
@@ -167,16 +166,7 @@ class pootis_lol(bpy.types.Operator):
         s_one.start()
 
 
-rclasses = (
-    ms_Init
-)
 
-register_, unregister_ = bpy.utils.register_classes_factory(rclasses)
-
-"""
-
-
-"""
 @persistent
 def blfoil_plugin(scene):
     try:
@@ -231,10 +221,10 @@ register_, unregister_ = bpy.utils.register_classes_factory(rclasses)
 def load_handler(dummy):
     # print("Load Handler:", bpy.data.filepath)
 
-    # after done loading the blend -
+    # stuff to execute after the blend file has been loaded
 
     # check and resync classnames
-    r_enum_listd()
+    blfoil_ent_classnames_list_builder()
 
     # get all icons n shit from the blend file
     blfoil_ents_supported_icons(hammer_icons_blend, supported_icons)
