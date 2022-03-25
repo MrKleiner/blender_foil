@@ -195,6 +195,7 @@ def blfoil_vmf_exporter(self, context, entity_definition, tgt_vmf):
     context.scene['blfoil_id_pool'] = blfoil_sce_id_pool
 
     # print(iguana.tovmf())
+    # print
     print('exec to vmf')
     return iguana.tovmf()
 
