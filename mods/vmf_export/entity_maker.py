@@ -115,8 +115,10 @@ def blfoil_to_ent(eobj, edef, tgt_xmf, self, context):
     # IMPORTANT: CONTRIBUTE TO THE GLOBAL ID POOL
     # So that it's possible to detect entity deletion
     # basically, if this does not match with what is currently in the scene - delete what's no longer there from the vmf too
-    get_old_array = context.scene['blfoil_id_pool'].to_list()
-    get_old_array.append(id_return[0].prms['id'])
-    context.scene['blfoil_id_pool'] = get_old_array
+    # only append if it's not there already
+    if not id_return[0].prms['id'] in context.scene['blfoil_id_pool']:
+        get_old_array = context.scene['blfoil_id_pool'].to_list()
+        get_old_array.append(id_return[0].prms['id'])
+        context.scene['blfoil_id_pool'] = get_old_array
 
     return id_return

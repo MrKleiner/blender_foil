@@ -106,7 +106,7 @@ def rotation_matrix(axis, theta):
 	"""
 	import numpy as np
 	import math
-	
+
 	axis = np.asarray(axis)
 	axis = axis / math.sqrt(np.dot(axis, axis))
 	a = math.cos(theta / 2.0)
@@ -168,7 +168,7 @@ def vert_uv_math(tverts):
 	vec_c = np.cross(vec_a, vec_b)
 
 	# prepare to rotate things by 90 degrees in radians
-	radians_angle = math.radians(90)
+	radians_angle = math.radians(-90)
 
 	# first vector remains unchanged
 	result_a = vec_a

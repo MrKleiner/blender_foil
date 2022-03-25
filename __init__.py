@@ -186,7 +186,12 @@ rclasses = (
     hammer_ents_w_icons,
     OBJECT_OT_foil_add_hwm_ent,
     blfoil_etype_selector_list_prp_col,
-    blfoil_etype_selector_panel_itemdraw
+    blfoil_etype_selector_panel_itemdraw,
+    blfoil_ents_dedicated_params,
+    VIEW3D_PT_blender_foil_brush_config_gui,
+    blfoil_common_brush_materials,
+    blfoil_common_brush_materials_item_draw,
+    OBJECT_OT_blfoil_set_suggested_mat
 )
 
 register_, unregister_ = bpy.utils.register_classes_factory(rclasses)
@@ -200,11 +205,30 @@ def load_handler(dummy):
     # Check and resync classnames
     blfoil_ent_classnames_list_builder()
 
+    # Check and resync suggested materials
+    blfoil_suggested_mats_builder()
+
     # Get all icons n shit from the blend file
     # Accessing and reading files is probably a costly operation. Avoid doing that at random points in time
     # do it on load
     blfoil_ents_supported_icons(hammer_icons_blend, supported_icons)
 
+
+# How to create UIList:
+# Create a class containing any amount of properties
+# register bpy.types.Scene.WHATEVER_LIST = CollectionProperty(type=CLASS_WITH_PROPERTIES)
+# and also register bpy.types.Scene.WHATEVER_LIST_INDEX = IntProperty(name='LIST_INDEX', default = 0)
+# Then, create a class responsible for list item drawing
+# After that - populate the thing with bpy.types.Scene.WHATEVER_LIST.add()
+# Finally, 
+# .template_list(
+# 'DRAWING_CLASS', 
+# '', 
+# whatever was specified in bpy.types.Scene (context.scene), 
+# 'WHATEVER_LIST(AS REGISTERED - NOT CLASS)', 
+# context.scene, 
+# 'WHATEVER_LIST_INDEX(AS REGISTERED - NOT CLASS)'
+# )
 
 
 def register():
@@ -213,6 +237,7 @@ def register():
     bpy.types.Scene.blents = PointerProperty(type=blender_ents)
     
     bpy.types.Object.ent_conf = PointerProperty(type=blfoil_predefined_entity_prop_slots)
+    bpy.types.Object.blfoil_ent_specials = PointerProperty(type=blfoil_ents_dedicated_params)
     
     bpy.types.VIEW3D_MT_add.append(draw_hwm_presets)
     
@@ -220,8 +245,21 @@ def register():
 
     # bpy.types.Scene.prop_obj = PointerProperty(type=bpy.types.StringProperty)
 
-    bpy.types.Scene.blfoil_etype_selector_list = CollectionProperty(type = blfoil_etype_selector_list_prp_col)
-    bpy.types.Scene.blfoil_etype_selector_list_index = IntProperty(name = 'Entity type selector index', default = 0)
+
+
+    bpy.types.Scene.blfoil_etype_selector_list = CollectionProperty(type=blfoil_etype_selector_list_prp_col)
+    bpy.types.Scene.blfoil_etype_selector_list_index = IntProperty(name='Entity type selector index', default = 0)
+
+
+    bpy.types.Scene.blfoil_common_brush_materials = CollectionProperty(type=blfoil_common_brush_materials)
+    bpy.types.Scene.blfoil_common_brush_materials_index = IntProperty(name='Suggested materials index', default = 0)
+
+
+
+
+
+
+
     bpy.app.handlers.load_post.append(load_handler)
 
 def unregister():
@@ -229,6 +267,7 @@ def unregister():
     # bpy.utils.unregister_class(blender_ents)
     del bpy.types.Scene.blents
     del bpy.types.Object.ent_conf
+    del bpy.types.Object.blfoil_ent_specials
     
     bpy.types.VIEW3D_MT_light_add.remove(draw_hwm_presets)
     

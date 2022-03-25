@@ -474,23 +474,24 @@ def eval_spawnflags_auto(self, context):
     print('auto eval spawnflags')
 
     # quite stupid, but less logic required
-    if vp_blpe_ents.get(obj.ent_conf.obj_ent_type) == None:
-        return
+    # if vp_blpe_ents.get(obj.ent_conf.obj_ent_type) != None:
+    #     return
 
     for obj in bpy.context.selected_objects:
-        print('calc spawnflags')
-        cur_obj_ent_type = obj.ent_conf.obj_ent_type
-        obj.ent_conf['l3_ent_sflags'] = 0
-        
-        calculated_bytes = 0
-        
-        for sflag_index, sflag in enumerate(vp_blpe_ents[cur_obj_ent_type][6]):
+        if vp_blpe_ents.get(obj.ent_conf.obj_ent_type) != None:
+            print('calc spawnflags')
+            cur_obj_ent_type = obj.ent_conf.obj_ent_type
+            obj.ent_conf['l3_ent_sflags'] = 0
             
-            if obj.ent_conf['pr_sflags_' + str(sflag_index + 1)] == True:
-                calculated_bytes += int(sflag['byte'])
-        
-        obj.ent_conf['l3_ent_sflags'] = calculated_bytes
-        print('calculated flags are: ' + str(calculated_bytes))
+            calculated_bytes = 0
+            
+            for sflag_index, sflag in enumerate(vp_blpe_ents[cur_obj_ent_type][6]):
+                
+                if obj.ent_conf['pr_sflags_' + str(sflag_index + 1)] == True:
+                    calculated_bytes += int(sflag['byte'])
+            
+            obj.ent_conf['l3_ent_sflags'] = calculated_bytes
+            print('calculated flags are: ' + str(calculated_bytes))
 
     print('end eval spawnflags')
 
@@ -564,6 +565,45 @@ def blfoil_entity_classnames_resync(scen, blpe):
         # print(bpy.data.scenes[0].blfoil_etype_selector_list[-1].name)
         d += 1
         print(d, len(blpe))
+
+
+def blfoil_suggested_mats_builder():
+    
+    # todo: make it read this from config
+    # todo: make icons for this
+    # 'tools/toolsnodraw': 'nodraw_icon'
+    # if not specified - default icon
+
+    # todo MAYBE: make it a enum with cool icon previews?
+    
+    dev_textures_json = None
+    with open(str(addon_root_dir/ 'configs' / 'dev_texture_list.json'), 'r') as dev_json:
+        dev_textures_json = json.loads(dev_json.read())
+
+    # wait for global context to become available
+    # todo: We no longer have to wait. This function is called with a cool handler
+    print('blfoil Rebuild suggested mats list')
+    # if available - do shit and break out of the loop when done
+    if bpy.context != None:
+        # YAAAY, it appears that once it's added and saved - it stays there !
+        # check if every scene has classnames and if the amount is the same
+        for allsc in bpy.data.scenes:
+            # if this scene doesn't has the same amount of ents - resync. Otherwise - pass
+            if len(dev_textures_json) != len(allsc.blfoil_common_brush_materials):
+
+                # first - delete existing
+                # todo: make it a while loop
+                for dle in range(len(allsc.blfoil_common_brush_materials)):
+                    allsc.blfoil_common_brush_materials.remove(0)
+
+                d = 0
+                for sg_mat in dev_textures_json:
+                    allsc.blfoil_common_brush_materials.add()
+                    allsc.blfoil_common_brush_materials[-1].name = sg_mat
+                    d += 1
+                    print(d, len(dev_textures_json))
+
+    return
 
 """
 # awaits for context
@@ -983,6 +1023,44 @@ class OBJECT_OT_foil_add_hwm_ent(Operator, AddObjectHelper):
         return {'FINISHED'}
 
 
+# Set suggested material
+class OBJECT_OT_blfoil_set_suggested_mat(Operator, AddObjectHelper):
+
+    bl_idname = 'mesh.blfoil_set_suggested_mat'
+    bl_label = 'Set material'
+    # bl_options = {'REGISTER'}
+    
+    def execute(self, context):
+
+        sce = context.scene
+
+        for objs in context.selected_objects:
+            objs.blfoil_ent_specials.brush_material_name = sce.blfoil_common_brush_materials[sce.blfoil_common_brush_materials_index].name
+
+        return {'FINISHED'}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 """
 # test
@@ -1009,6 +1087,12 @@ class OBJECT_OT_apply_qffd(Operator, AddObjectHelper):
 
 # Property specific things
 
+
+
+
+#
+# Rubbish
+#
 
 class blender_ents(PropertyGroup):
     """
@@ -1046,6 +1130,84 @@ class blender_ents(PropertyGroup):
         # update=apply_loutp_suggestion
         # default = "nil"
         )
+
+
+
+
+
+
+# 
+# Dedicated and shared params, like brush material and special entity config, like light/light_spot properties 
+#
+
+class blfoil_ents_dedicated_params(PropertyGroup):
+
+    # ----------------------------
+    #           Brushes
+    # ----------------------------
+
+    brush_material_name : StringProperty(
+        name='Material path',
+        description='Path to the material .vmt, like tools/toolsnodraw',
+        default = 'brick/brickfloor001a'
+        )
+
+    lightmap_scale : IntProperty(
+        name='Lightmap scale',
+        default=16,
+        min=1,
+        max=128,
+        soft_max=64,
+        soft_min=1
+        )
+
+    texture_scale : FloatProperty(
+        name='Texture scale',
+        default=0.25,
+        min=-65535.0,
+        max=65535.0,
+        precision=3
+        )
+
+
+
+
+
+
+#
+# Suggested materials
+#
+
+# property
+class blfoil_common_brush_materials(PropertyGroup):
+
+    material_name : StringProperty(
+        name='Material path',
+        description='Path to the material .vmt, like tools/toolsnodraw',
+        default = 'brick/brickfloor001a'
+        )
+
+# drawing
+class blfoil_common_brush_materials_item_draw(bpy.types.UIList):
+    def draw_item(self, context, layout, data, item, icon, active_data, active_propname):
+        ob = data
+        ma = item
+        self.use_filter_show = True
+        if self.layout_type in {'DEFAULT', 'COMPACT'}:
+            if ma:
+                layout.label(text=ma.name, icon='NODE_TEXTURE', translate=False)
+            else:
+                layout.label(text='', translate=False, icon='SHAPEKEY_DATA')
+        elif self.layout_type in {'GRID'}:
+            layout.alignment = 'CENTER'
+
+
+
+
+
+
+
+
 
 
 # important todo: move shared shit from blender_ents_obj to wherever
@@ -2493,6 +2655,7 @@ def draw_hwm_presets(self, context):
 
 
 
+# Entity assignment and configuration
 class VIEW3D_PT_blender_foil_vmf_gui(bpy.types.Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
@@ -2568,11 +2731,38 @@ class VIEW3D_PT_blender_foil_vmf_gui(bpy.types.Panel):
 
 
 
+# Brush parameters manager
+class VIEW3D_PT_blender_foil_brush_config_gui(bpy.types.Panel):
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'UI'
+    bl_category = 'Lizards'
+    bl_label = 'Tegu'
+    # https://youtu.be/6tCz-M66_vo
 
+    def draw(self, context):
+        layout = self.layout
+        
+        
+        dumpster = layout.column(align=False)
+        dumpster.use_property_split = True
+        dumpster.use_property_decorate = False
 
+        # dumpster.prop(context.scene.blents, 'dnenum')
+        # the_filter = dumpster.template_list('blfoil_etype_selector_panel_itemdraw', '', context.scene, 'blfoil_etype_selector_list', context.scene, 'blfoil_etype_selector_list_index')
 
+        # dumpster.operator('mesh.set_ent_type', text='Mark entity')
+        
+        # dumpster.operator('mesh.blfoil_export_vmf', text='Export vmf')
+        # 
 
+        cent_type = context.object.ent_conf.obj_ent_type
 
+        if context.object != None and cent_type != 'nil' and vp_blpe_ents.get(cent_type) != None:
+            if vp_blpe_ents[cent_type][9]['brush_ent'] == '1':
 
+                dumpster.template_list('blfoil_common_brush_materials_item_draw', '', context.scene, 'blfoil_common_brush_materials', context.scene, 'blfoil_common_brush_materials_index')
+                dumpster.operator('mesh.blfoil_set_suggested_mat', text='Set Material')
 
-
+                dumpster.prop(context.object.blfoil_ent_specials, 'brush_material_name')
+                dumpster.prop(context.object.blfoil_ent_specials, 'lightmap_scale')
+                dumpster.prop(context.object.blfoil_ent_specials, 'texture_scale')

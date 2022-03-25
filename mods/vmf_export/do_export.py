@@ -34,7 +34,7 @@ def blfoil_vmf_exporter(self, context, entity_definition, tgt_vmf):
 
 
     # ========================================================
-    #          Write everything except brushes
+    #         Write everything except world brushes
     # ========================================================
 
 
@@ -51,7 +51,7 @@ def blfoil_vmf_exporter(self, context, entity_definition, tgt_vmf):
 
 
         # =======================================
-        #                   brushes
+        #             brushes, if any
         # =======================================
         
         if vp_blpe_ents[cent_type][9]['brush_ent'] == '1':
@@ -94,16 +94,16 @@ def blfoil_vmf_exporter(self, context, entity_definition, tgt_vmf):
                     # oneside_payload = {}
                     side_uv = side['uv']
                     oneside_payload = {
-                        'material': 'BRICK/BRICKFLOOR001A',
+                        'material': ob.blfoil_ent_specials.brush_material_name,
                         'rotation': 0,
-                        'lightmapscale': 16,
+                        'lightmapscale': ob.blfoil_ent_specials.lightmap_scale,
                         'smoothing_groups': 0,
                         # oh yea so that's the only difference when not including 3verts separately
                         '3verts': side['three'],
                         # '3verts': (side['three'][0], side['three'][1], side['three'][2]),
 
-                        'uaxis': (side_uv['u'], (0, 0.25)),
-                        'vaxis': (side_uv['v'], (0, 0.25)),
+                        'uaxis': (side_uv['u'], (0, ob.blfoil_ent_specials.texture_scale)),
+                        'vaxis': (side_uv['v'], (0, ob.blfoil_ent_specials.texture_scale)),
                         'allverts': side['allv']
                     }
 
@@ -123,6 +123,8 @@ def blfoil_vmf_exporter(self, context, entity_definition, tgt_vmf):
                 new_solid.toent(regular_ent[0])
 
                 # important todo: IMPORTANT THINGS ARE DONE AT RANDOM PLACES !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                # Re-evaluate face ids
+                # todo: the way it decides whether to recalc ids or not is absolutely abstract
                 if regular_ent[1] == True:
                     # print('RE-EVAL')
                     idget = int(round(time.time() * 1000))
@@ -140,15 +142,19 @@ def blfoil_vmf_exporter(self, context, entity_definition, tgt_vmf):
 
 
 
+
+
     # =======================================
     #               Synchronizer
     # =======================================
+
+    # At this point the export is done. Now sync vmf to scene
+
 
     # If an object from the previous export is no longer in the scene - delete it from vmf
     # this has to be run after all the brush and entity contributions
 
     # get fresh list of all object ids
-    # todo: use generators more often
     fresh_ids = []
     for obj_redundant in context.scene.objects:
         if obj_redundant.get('blfoil_vmf_id') != None:
