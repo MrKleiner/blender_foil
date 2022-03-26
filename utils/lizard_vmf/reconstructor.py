@@ -64,7 +64,7 @@ def xmf_reconstructor(vxml):
 
 	# reconstruct versioninfo and viewsettings, if any
 	if len(lizard.select('versioninfo')) > 0 or len(lizard.select('viewsettings')) > 0:
-		common_pre_world = ['versioninfo', 'viewsettings']
+		common_pre_world = ['versioninfo', 'viewsettings', 'palette_plus', 'colorcorrection_plus', 'light_plus', 'bgimages_plus']
 		for kingdom_cum in common_pre_world:
 			# check if current selection exists
 			if len(lizard.select('map ' + kingdom_cum)) > 0:

@@ -116,7 +116,7 @@ def vmfparser(mlines):
 	# update: which parent ?
 
 	# format type "move exposed key-values to group name"
-	forma = ['versioninfo', 'viewsettings', 'world', 'editor', 'entity', 'side', 'solid', 'dispinfo', 'cordons', 'cordon', 'box', 'cameras', 'camera', 'group']
+	forma = ['palette_plus', 'colorcorrection_plus', 'light_plus', 'bgimages_plus', 'versioninfo', 'viewsettings', 'world', 'editor', 'entity', 'side', 'solid', 'dispinfo', 'cordons', 'cordon', 'box', 'cameras', 'camera', 'group']
 
 	for fm in forma:
 		select_frm = lizard.select('map ' + fm)

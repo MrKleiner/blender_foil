@@ -1538,7 +1538,7 @@ class lizardvmf:
 
 		# add sides
 
-		
+
 
 		if assign_ids != None:
 			if len(assign_ids) >= len(sides):
@@ -1625,9 +1625,15 @@ class lizardvmf:
 		# Once done with all the sides - assign id to the solid
 		# todo: finally come up with smarter logic for detecting good ints
 		if idstate != True and idstate != False and idstate != None and isinstance(idstate, int):
-			solidtag['id'] = str(idstate)
+			# super fucking important todo: It appears that object type is preserved in the xml object
+			solidtag['id'] = idstate
 		else:
 			solidtag['id'] = self.getfreeid(1)[0]
+
+		# in case the requested id exists - overwrite
+		idchecker = self.vmfquery('^' + str(idstate))
+		if idchecker != None:
+			idchecker.kill()
 
 		# Also add editor, we try to keep it present everywhere...
 		edtr = lizard.new_tag('editor', color='202 246 72', visgroupshown='1', visgroupautoshown='1')
@@ -1638,7 +1644,9 @@ class lizardvmf:
 		# lizard.select('map world')[0].append(solidtag)
 		lizard.map.world.append(solidtag)
 
-		return lizardvmf_solid(lizard, solidtag)
+		new_solid = lizardvmf_solid(lizard, solidtag)
+
+		return new_solid
 
 
 	# creates a group

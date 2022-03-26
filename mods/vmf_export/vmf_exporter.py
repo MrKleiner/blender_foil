@@ -827,6 +827,9 @@ def set_obj_ent(self, context):
 
         # evaluate spawnflags for the current object. This is kind of an unnecessary since it should happen on data retreive...
         eval_spawnflags(obj)
+
+        # and unmark it from world brush
+        obj.is_world_brush = False
     
 
 
@@ -1039,8 +1042,21 @@ class OBJECT_OT_blfoil_set_suggested_mat(Operator, AddObjectHelper):
 
         return {'FINISHED'}
 
+# Mark object as a world brush
+class OBJECT_OT_blfoil_mark_as_world_brush(Operator, AddObjectHelper):
 
+    bl_idname = 'mesh.blfoil_mark_as_world_brush'
+    bl_label = 'Set material'
+    # bl_options = {'REGISTER'}
+    
+    def execute(self, context):
 
+        sce = context.scene
+
+        for objs in context.selected_objects:
+            objs.blfoil_ent_specials.is_world_brush = True
+
+        return {'FINISHED'}
 
 
 
@@ -1142,9 +1158,9 @@ class blender_ents(PropertyGroup):
 
 class blfoil_ents_dedicated_params(PropertyGroup):
 
-    # ----------------------------
-    #           Brushes
-    # ----------------------------
+    # ----------------------------------
+    #              Brushes
+    # ----------------------------------
 
     brush_material_name : StringProperty(
         name='Material path',
@@ -1167,6 +1183,12 @@ class blfoil_ents_dedicated_params(PropertyGroup):
         min=-65535.0,
         max=65535.0,
         precision=3
+        )
+
+    is_world_brush : BoolProperty(
+        name='Object is a world brush',
+        description='Cannot contain multiple islands',
+        default = False 
         )
 
 
@@ -1209,6 +1231,9 @@ class blfoil_common_brush_materials_item_draw(bpy.types.UIList):
 
 
 
+#
+# Predefined parameter slots: strings, ints, enums, whatever
+#
 
 # important todo: move shared shit from blender_ents_obj to wherever
 # IF POSSIBLE
@@ -2568,7 +2593,12 @@ class blfoil_predefined_entity_prop_slots(PropertyGroup):
 
 
 
+
+
+
+#
 # list of all possible entities
+#
 class blfoil_etype_selector_list_prp_col(PropertyGroup):
     """Group of properties representing an item in the list."""
 
@@ -2578,8 +2608,7 @@ class blfoil_etype_selector_list_prp_col(PropertyGroup):
         default = 'nil'
         )
 
-
-
+# list of all possible entities item draw
 class blfoil_etype_selector_panel_itemdraw(bpy.types.UIList):
     # The draw_item function is called for each item of the collection that is visible in the list.
     #   data is the RNA object containing the collection,
@@ -2623,6 +2652,7 @@ class blfoil_etype_selector_panel_itemdraw(bpy.types.UIList):
 
 
 
+
 # =========================================================
 # ---------------------------------------------------------
 #                           GUI
@@ -2655,7 +2685,10 @@ def draw_hwm_presets(self, context):
 
 
 
-# Entity assignment and configuration
+
+#
+# Entity or Brush assignment and configuration
+#
 class VIEW3D_PT_blender_foil_vmf_gui(bpy.types.Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
@@ -2675,6 +2708,7 @@ class VIEW3D_PT_blender_foil_vmf_gui(bpy.types.Panel):
         the_filter = dumpster.template_list('blfoil_etype_selector_panel_itemdraw', '', context.scene, 'blfoil_etype_selector_list', context.scene, 'blfoil_etype_selector_list_index')
 
         dumpster.operator('mesh.set_ent_type', text='Mark entity')
+        dumpster.operator('mesh.blfoil_mark_as_world_brush', text='Mark brush')
         
         dumpster.operator('mesh.blfoil_export_vmf', text='Export vmf')
 
@@ -2731,7 +2765,33 @@ class VIEW3D_PT_blender_foil_vmf_gui(bpy.types.Panel):
 
 
 
+
+
+
+#
 # Brush parameters manager
+#
+
+# Brush parameters manager dev textures list
+class VIEW3D_PT_blfoil_brush_config_dev_texture_picker_menu(bpy.types.Panel):
+    bl_category = 'Lizards'
+    # bl_context = '.objectmode'  # dot on purpose (access from topbar)
+    bl_label = 'Dev Textures'
+    bl_parent_id = 'VIEW3D_PT_blender_foil_brush_config_gui'
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'UI'
+
+    def draw(self, context):
+        layout = self.layout
+
+        dumpster = layout.column(align=False)
+        dumpster.use_property_split = True
+        dumpster.use_property_decorate = False
+
+        dumpster.template_list('blfoil_common_brush_materials_item_draw', '', context.scene, 'blfoil_common_brush_materials', context.scene, 'blfoil_common_brush_materials_index')
+        dumpster.operator('mesh.blfoil_set_suggested_mat', text='Set Material')
+
+# Brush parameters manager brush params
 class VIEW3D_PT_blender_foil_brush_config_gui(bpy.types.Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
@@ -2753,16 +2813,38 @@ class VIEW3D_PT_blender_foil_brush_config_gui(bpy.types.Panel):
         # dumpster.operator('mesh.set_ent_type', text='Mark entity')
         
         # dumpster.operator('mesh.blfoil_export_vmf', text='Export vmf')
-        # 
+        #
 
-        cent_type = context.object.ent_conf.obj_ent_type
+        if context.object != None:
+            cent_type = context.object.ent_conf.obj_ent_type
+            isbrush = context.object.blfoil_ent_specials.is_world_brush
 
-        if context.object != None and cent_type != 'nil' and vp_blpe_ents.get(cent_type) != None:
-            if vp_blpe_ents[cent_type][9]['brush_ent'] == '1':
+            brush_config_show = False
 
-                dumpster.template_list('blfoil_common_brush_materials_item_draw', '', context.scene, 'blfoil_common_brush_materials', context.scene, 'blfoil_common_brush_materials_index')
-                dumpster.operator('mesh.blfoil_set_suggested_mat', text='Set Material')
+            if vp_blpe_ents.get(cent_type) != None:
+                brush_config_show = True
+
+            if brush_config_show:
+                if vp_blpe_ents[cent_type][9]['brush_ent'] == '1':
+                    brush_config_show = True
+                else:
+                    brush_config_show = False
+
+            if isbrush:
+                brush_config_show = True
+
+
+
+            if brush_config_show:
+
+                # dumpster.template_list('blfoil_common_brush_materials_item_draw', '', context.scene, 'blfoil_common_brush_materials', context.scene, 'blfoil_common_brush_materials_index')
+                # dumpster.operator('mesh.blfoil_set_suggested_mat', text='Set Material')
 
                 dumpster.prop(context.object.blfoil_ent_specials, 'brush_material_name')
                 dumpster.prop(context.object.blfoil_ent_specials, 'lightmap_scale')
                 dumpster.prop(context.object.blfoil_ent_specials, 'texture_scale')
+
+
+
+
+

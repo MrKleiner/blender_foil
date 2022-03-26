@@ -85,3 +85,4 @@ def get_obj_locrot_v1(eobject, fix90, axis, self, context):
     locz = float(round(eobject.matrix_world[2][3], 4) * sce_scale)
 
     return {'loc': (locx, locy, locz), 'rot': (rotx, roty, rotz)}
+

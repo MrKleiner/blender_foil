@@ -2,6 +2,144 @@
 
 
 
+
+def obj_to_brushes(tgt_obj, lmf=None, doent=None):
+    from ...utils.shared import eval_state, get_obj_locrot_v1
+    from ...utils.lizard_vmf.lizardvmf import lizardvmf, lizardvmf_entity
+    from .brush_ents import blfoil_easy_brushes, vert_uv_math
+    from .entity_maker import blfoil_to_ent
+    import time
+
+
+    iguana = lmf
+
+    # get a nicely organised dict of faces and islands of the object
+    easy_br = blfoil_easy_brushes(tgt_obj)
+
+    # reserve id for every island
+    reserved_brush_ids = iguana.getfreeid((len(easy_br) * 2) + 1)
+
+    # reserve ids for all faces
+    # very important. Getting an id for every face separately will always be slow.
+    reserve_face_id_length = sum([len(ebr) for ebr in easy_br], 1)
+    
+    # todo: combine these two actions
+    # reserve them in lizardvmf
+    reserved_face_ids = iguana.getfreeid(reserve_face_id_length * 2, doside=True)
+
+    # index of last used face id
+    # todo: delete used ids so that no stupid index is needed?
+    last_used_id_index = 0
+
+    # collect all pointers to appended brushes here and return them later
+    return_brushes = []
+
+
+    for island_index, island in enumerate(easy_br):
+        sides_payload = []
+        # for every side of that island (brush)
+        for side_index, side in enumerate(island):
+            brush_took = int(round(time.time() * 1000))
+            # oneside_payload = {}
+            side_uv = side['uv']
+            oneside_payload = {
+                'material': tgt_obj.blfoil_ent_specials.brush_material_name,
+                'rotation': 0,
+                'lightmapscale': tgt_obj.blfoil_ent_specials.lightmap_scale,
+                'smoothing_groups': 0,
+                # oh yea so that's the only difference when not including 3verts separately
+                '3verts': side['three'],
+                # '3verts': (side['three'][0], side['three'][1], side['three'][2]),
+
+                'uaxis': (side_uv['u'], (0, tgt_obj.blfoil_ent_specials.texture_scale)),
+                'vaxis': (side_uv['v'], (0, tgt_obj.blfoil_ent_specials.texture_scale)),
+                'allverts': side['allv']
+            }
+
+            # obj_mt_world @ side['three'][0]
+            # (side_uv['u'], (0, 0.25))
+
+            sides_payload.append(oneside_payload)
+
+
+
+        # If it's not an entity - manage ids
+        do_id = reserved_brush_ids[island_index]
+        if not isinstance(doent, lizardvmf_entity):
+            # if id is not set - set it
+            # important todo: Such important step is done so softly and at a random point in time !!!!!!!!!!!!!!!!!
+            if tgt_obj.get('blfoil_vmf_id') != None:
+                # IMPORTANT: If associated name (asname) does not match with the current name - get new id!!!!!!!
+                # Becuase this is how duplicates work
+                dupli_id = tgt_obj.get('blfoil_vmf_id')
+
+                # warning todo: AND ALSO re-eval all solid ids!
+                if dupli_id['asname'] != tgt_obj.name:
+                    do_id = iguana.getfreeid(1)[0]
+                    # todo: make it a util function in lizardvmf
+                    reval_solids = True  
+                else:
+                    do_id = dupli_id['eid']
+
+
+        # once done with all the sides and id - create the solid
+        new_solid = iguana.mk_solid(sides_payload, 
+            idstate=do_id,
+            assign_ids=[reserved_face_ids[last_used_id_index + add_id_index] for add_id_index in range(len(island))]
+            )
+
+
+        # if this isnot an entity - manage ids
+        if not isinstance(doent, lizardvmf_entity):
+            tgt_obj['blfoil_vmf_id'] = {
+                'eid': new_solid.prms['id'],
+                'asname': tgt_obj.name
+            }
+
+
+        # important todo: IMPORTANT THINGS ARE DONE AT RANDOM PLACES !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        # Re-evaluate face ids
+        # todo: for now always re-evaluate if it's an entity
+        # todo: the way it decides whether to recalc ids or not is absolutely abstract
+        if isinstance(doent, lizardvmf_entity):
+            # assign solid to the entity, since it's an entity
+            new_solid.toent(doent)
+
+            # log the amount of time it takes to re-evaluate side ids
+            island_face_reval_time = round(time.time() * 1000, 5)
+            
+            # free_ids = iguana.getfreeid(len(new_solid.sides()) + 1)
+            
+            # new_solid.prms['id'] = free_ids[-1]
+            new_solid.prms['id'] = reserved_brush_ids[(island_index + 1) * -1]
+            for reval_index, reval in enumerate(new_solid.sides()):
+                reval.prms['id'] = reserved_face_ids[(reval_index + 1) * -1]
+
+            print('Re-eval for island', island_index, 'Of', tgt_obj.name, 'Took', round(time.time() * 1000, 5) - island_face_reval_time)
+
+
+        print('Island', island_index + 1, '/',  len(easy_br), 'Of a brush', tgt_obj.name, 'Took:', round((time.time() * 1000), 5) - brush_took)
+
+        return_brushes.append(new_solid)
+
+    return return_brushes
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # the exporter
 # additionaly takes the blpe definition file as an input and target vmf string
 def blfoil_vmf_exporter(self, context, entity_definition, tgt_vmf):
@@ -9,8 +147,8 @@ def blfoil_vmf_exporter(self, context, entity_definition, tgt_vmf):
     from ...utils.lizard_vmf.lizardvmf import lizardvmf
     from .brush_ents import blfoil_easy_brushes, vert_uv_math
     from .entity_maker import blfoil_to_ent
-
     import time
+
 
     print('exec export')
 
@@ -53,92 +191,41 @@ def blfoil_vmf_exporter(self, context, entity_definition, tgt_vmf):
         # =======================================
         #             brushes, if any
         # =======================================
-        
+
+        # pro tip: brush id does not matter here
         if vp_blpe_ents[cent_type][9]['brush_ent'] == '1':
-
-            # from this we get an array of islands (every island is a brush)
-            # island_id: [
-            #    {
-            #       three: Three verts (1, 2 ,3)
-            #       allv: All verts
-            #    }
-            # ]
-
-            # for now no longer takes an array
-            easy_b = blfoil_easy_brushes(ob)
+            obj_to_brushes(ob, lmf=iguana, doent=regular_ent[0])
 
 
-            # get the total amount of the brush islands
-            # and multiply by 2 because id reassignment could happen later
-            print('reserve brush ids')
-            reserved_brush_ids = iguana.getfreeid((len(easy_b) * 2) + 1)
-
-            reserve_face_id_length = 1
-            # collect face amount
-            for fm in easy_b:
-                reserve_face_id_length += len(fm)
-
-            # reserved face ids
-            print('reserve face ids')
-            reserved_face_ids = iguana.getfreeid(reserve_face_id_length * 2, doside=True)
-
-            last_used_id_index = 0
-
-            total_length = len(easy_b)
-
-            for island_index, island in enumerate(easy_b):
-                sides_payload = []
-                # for every side of that island (brush)
-                for side_index, side in enumerate(island):
-                    brush_took = int(round(time.time() * 1000))
-                    # oneside_payload = {}
-                    side_uv = side['uv']
-                    oneside_payload = {
-                        'material': ob.blfoil_ent_specials.brush_material_name,
-                        'rotation': 0,
-                        'lightmapscale': ob.blfoil_ent_specials.lightmap_scale,
-                        'smoothing_groups': 0,
-                        # oh yea so that's the only difference when not including 3verts separately
-                        '3verts': side['three'],
-                        # '3verts': (side['three'][0], side['three'][1], side['three'][2]),
-
-                        'uaxis': (side_uv['u'], (0, ob.blfoil_ent_specials.texture_scale)),
-                        'vaxis': (side_uv['v'], (0, ob.blfoil_ent_specials.texture_scale)),
-                        'allverts': side['allv']
-                    }
-
-                    # obj_mt_world @ side['three'][0]
-                    # (side_uv['u'], (0, 0.25))
-
-                    sides_payload.append(oneside_payload)
 
 
-                # once done with all the sides - create the solid
-                new_solid = iguana.mk_solid(sides_payload, 
-                    idstate=reserved_brush_ids[island_index],
-                    assign_ids=[reserved_face_ids[last_used_id_index + add_id_index] for add_id_index in range(len(island))]
-                    )
 
-                # assign solid to the entity
-                new_solid.toent(regular_ent[0])
 
-                # important todo: IMPORTANT THINGS ARE DONE AT RANDOM PLACES !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                # Re-evaluate face ids
-                # todo: the way it decides whether to recalc ids or not is absolutely abstract
-                if regular_ent[1] == True:
-                    # print('RE-EVAL')
-                    idget = int(round(time.time() * 1000))
-                    
-                    # free_ids = iguana.getfreeid(len(new_solid.sides()) + 1)
-                    
-                    # new_solid.prms['id'] = free_ids[-1]
-                    new_solid.prms['id'] = reserved_brush_ids[(island_index + 1) * -1]
-                    for reval_index, reval in enumerate(new_solid.sides()):
-                        reval.prms['id'] = reserved_face_ids[(reval_index + 1) * -1]
+    # ========================================================
+    #                     Do world brushes
+    # ========================================================
 
-                    print('re-eval took', int(round(time.time() * 1000)) - idget)
+    applicable_world_brushes = []
+    for apl in context.scene.objects:
+        if apl.blfoil_ent_specials.is_world_brush == True:
+            applicable_world_brushes.append(apl)
 
-                print('Brush', island_index, '/',  total_length, 'took:', int(round(time.time() * 1000)) - brush_took)
+
+
+    for ob in applicable_world_brushes:
+        new_w_brush = obj_to_brushes(ob, lmf=iguana)[0]
+
+        if not new_w_brush.prms['id'] in context.scene['blfoil_id_pool']:
+            get_old_array = context.scene['blfoil_id_pool'].to_list()
+            get_old_array.append(new_w_brush.prms['id'])
+            context.scene['blfoil_id_pool'] = get_old_array
+
+
+
+
+
+
+
 
 
 
@@ -173,10 +260,13 @@ def blfoil_vmf_exporter(self, context, entity_definition, tgt_vmf):
 
     # important todo: make it possible to delete an array if ids at once
     # if an id from the scene pool is no longer in the scene - delete it from vmf and scene
+    print('fresh ids', fresh_ids)
+    print('sce pool', blfoil_sce_id_pool)
     for red_id in blfoil_sce_id_pool:
         if not red_id in fresh_ids:
-            print('do vmf query')
-            wtf = iguana.vmfquery('#' + str(red_id))
+            print('do vmf query', red_id)
+            wtf = iguana.vmfquery('#' + str(red_id)) or iguana.vmfquery('^' + str(red_id))
+            print('vmf query returned', iguana.vmfquery('^' + str(red_id)))
             if wtf != None:
                 wtf.kill()
                 blfoil_old_ids_to_del.append(red_id)

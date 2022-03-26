@@ -117,6 +117,9 @@ blfoil_check_pypackages()
 
 # important todo: bd script
 
+# important todo: Marmoset Toolbag
+
+# important todo: Discord reaction images indexer
 
 
 """
@@ -191,7 +194,10 @@ rclasses = (
     VIEW3D_PT_blender_foil_brush_config_gui,
     blfoil_common_brush_materials,
     blfoil_common_brush_materials_item_draw,
-    OBJECT_OT_blfoil_set_suggested_mat
+    VIEW3D_PT_blfoil_brush_config_dev_texture_picker_menu,
+    OBJECT_OT_blfoil_set_suggested_mat,
+    OBJECT_OT_blfoil_mark_as_world_brush
+
 )
 
 register_, unregister_ = bpy.utils.register_classes_factory(rclasses)

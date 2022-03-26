@@ -271,7 +271,7 @@ def blfoil_easy_brushes(objct):
 	bm = bmesh.new()
 	bm.from_mesh(objct.data)
 
-	# Which is faster?
+	# todo: Which is faster?
 	obj_verts = bm.verts
 	# obj_verts = objct.data.vertices
 
@@ -296,9 +296,6 @@ def blfoil_easy_brushes(objct):
 			# todo: would it make more sense to do uv math right here ?
 			# update: Yes. Done
 
-			# shit has to be even:
-			# todo: this is still not that one proper mathematical implementation
-			# but like... it's just one if, why bother with maths ?
 			uv_verts = (three_v[0], three_v[1], three_v[2])
 			if len(revo_energy) > 4:
 				vtxstep = math.floor(len(revo_energy) / 3)
