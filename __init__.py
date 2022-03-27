@@ -82,8 +82,10 @@ def blender_foil_guiappconnect():
                 # get shit
                 print('Got connection from', address)
                 data = conn.recv(1024)
-                print('Server received', data)
-
+                if data != b'':
+                    print('Server received', data)
+                else:
+                    print('Server received shit, but its fucking empty')
                 # respond to the sender
                 response = 'Thank you for connecting'
                 byt = response.encode()
@@ -120,58 +122,6 @@ blfoil_check_pypackages()
 # important todo: Marmoset Toolbag
 
 # important todo: Discord reaction images indexer
-
-
-"""
-
-class pootis_lol(bpy.types.Operator):
-
-    bl_idname = "blfoil.bhuruthed"
-    bl_label = "Observer"
-    # socketCount = 0
-
-    def execute(self, context):
-
-        def server_one():
-            port = 50000  # Reserve a port for your service every new transfer wants a new port or you must wait.
-            s = socket.socket()  # Create a socket object
-            host = ""  # Get local machine name
-            s.bind(('localhost', port))  # Bind to the port
-            s.listen(5)  # Now wait for client connection.
-
-            print('Server listening....')
-
-            x = 0
-
-            while True:
-                conn, address = s.accept()  # Establish connection with client.
-
-                while True:
-                    try:
-                        print('Got connection from', address)
-                        data = conn.recv(1024)
-                        print('Server 1 received', data)
-
-                        st = 'Thank you for connecting'
-                        byt = st.encode()
-                        conn.send(byt)
-
-                        x += 1
-
-                    except Exception as e:
-                        print(e)
-                        print('all good')
-                        break
-
-            conn.close()
-
-        s_one = threading.Thread(target=server_one)
-
-        s_one.start()
-
-
-"""
-
 
 
 # =======================================================

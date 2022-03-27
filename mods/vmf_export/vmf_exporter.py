@@ -829,7 +829,7 @@ def set_obj_ent(self, context):
         eval_spawnflags(obj)
 
         # and unmark it from world brush
-        obj.is_world_brush = False
+        obj.blfoil_ent_specials.is_world_brush = False
     
 
 

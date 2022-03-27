@@ -132,17 +132,20 @@ def obj_to_brushes(tgt_obj, lmf=None, doent=None):
 
 
 
+# ================================================================
+# ----------------------------------------------------------------
+#                          The exporter
+# ----------------------------------------------------------------
+# ================================================================
 
-
-
-
-
-
-
-
-# the exporter
-# additionaly takes the blpe definition file as an input and target vmf string
+# todo: self and context is pretty much useless here.
+# all what is needed is the scene
 def blfoil_vmf_exporter(self, context, entity_definition, tgt_vmf):
+    """
+    entity_definition - entity definition json
+    tgt_vmf - a raw vmf string to parse and write to 
+    """
+
     from ...utils.shared import eval_state, get_obj_locrot_v1
     from ...utils.lizard_vmf.lizardvmf import lizardvmf
     from .brush_ents import blfoil_easy_brushes, vert_uv_math
@@ -156,6 +159,10 @@ def blfoil_vmf_exporter(self, context, entity_definition, tgt_vmf):
 
     iguana = lizardvmf(tgt_vmf)
 
+
+    # ========================================================
+    #                      Write Entities
+    # ========================================================
     obj_applicable = []
 
     # create an array of objects applicable for export in the current scene
@@ -170,12 +177,6 @@ def blfoil_vmf_exporter(self, context, entity_definition, tgt_vmf):
         context.scene['blfoil_id_pool'] = []
 
 
-
-    # ========================================================
-    #         Write everything except world brushes
-    # ========================================================
-
-
     # for every object which is a blfoil entity
     for ob in obj_applicable:
 
@@ -185,7 +186,6 @@ def blfoil_vmf_exporter(self, context, entity_definition, tgt_vmf):
         regular_ent = blfoil_to_ent(ob, vp_blpe_ents, iguana, self, context)
 
         # obj_mt_world = ob.matrix_world
-
 
 
         # =======================================
@@ -202,7 +202,7 @@ def blfoil_vmf_exporter(self, context, entity_definition, tgt_vmf):
 
 
     # ========================================================
-    #                     Do world brushes
+    #                    Write world brushes
     # ========================================================
 
     applicable_world_brushes = []
@@ -231,9 +231,9 @@ def blfoil_vmf_exporter(self, context, entity_definition, tgt_vmf):
 
 
 
-    # =======================================
-    #               Synchronizer
-    # =======================================
+    # ========================================================
+    #                       Synchronizer
+    # ========================================================
 
     # At this point the export is done. Now sync vmf to scene
 
@@ -266,7 +266,7 @@ def blfoil_vmf_exporter(self, context, entity_definition, tgt_vmf):
         if not red_id in fresh_ids:
             print('do vmf query', red_id)
             wtf = iguana.vmfquery('#' + str(red_id)) or iguana.vmfquery('^' + str(red_id))
-            print('vmf query returned', iguana.vmfquery('^' + str(red_id)))
+            print('vmf query returned', wtf)
             if wtf != None:
                 wtf.kill()
                 blfoil_old_ids_to_del.append(red_id)
@@ -285,8 +285,6 @@ def blfoil_vmf_exporter(self, context, entity_definition, tgt_vmf):
     # write pool back
     context.scene['blfoil_id_pool'] = blfoil_sce_id_pool
 
-    # print(iguana.tovmf())
-    # print
     print('exec to vmf')
     return iguana.tovmf()
 
