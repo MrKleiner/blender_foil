@@ -60,6 +60,7 @@ import atexit
 import sys
 
 from .mods.vmf_export.vmf_exporter import *
+from .mods.skyboxer.skybox_maker import *
 from .installer import blfoil_check_pypackages
 
 from time import sleep
@@ -146,8 +147,10 @@ rclasses = (
     blfoil_common_brush_materials_item_draw,
     VIEW3D_PT_blfoil_brush_config_dev_texture_picker_menu,
     OBJECT_OT_blfoil_set_suggested_mat,
-    OBJECT_OT_blfoil_mark_as_world_brush
-
+    OBJECT_OT_blfoil_mark_as_world_brush,
+    VIEW3D_PT_blfoil_skyboxer,
+    blfoil_skyboxer_settings,
+    OBJECT_OT_blfoil_full_skybox_export
 )
 
 register_, unregister_ = bpy.utils.register_classes_factory(rclasses)
@@ -190,6 +193,9 @@ def load_handler(dummy):
 def register():
     register_()
     # bpy.utils.register_class(blender_ents)
+
+
+    # rubbish
     bpy.types.Scene.blents = PointerProperty(type=blender_ents)
     
     bpy.types.Object.ent_conf = PointerProperty(type=blfoil_predefined_entity_prop_slots)
@@ -202,17 +208,18 @@ def register():
     # bpy.types.Scene.prop_obj = PointerProperty(type=bpy.types.StringProperty)
 
 
-
+    # Huge list of all the supported entities
     bpy.types.Scene.blfoil_etype_selector_list = CollectionProperty(type=blfoil_etype_selector_list_prp_col)
     bpy.types.Scene.blfoil_etype_selector_list_index = IntProperty(name='Entity type selector index', default = 0)
 
 
+    # A small list of suggested dev materials
     bpy.types.Scene.blfoil_common_brush_materials = CollectionProperty(type=blfoil_common_brush_materials)
     bpy.types.Scene.blfoil_common_brush_materials_index = IntProperty(name='Suggested materials index', default = 0)
 
 
-
-
+    # Skyboxer settings
+    bpy.types.Scene.blfoil_skyboxer_settings = PointerProperty(type=blfoil_skyboxer_settings)
 
 
 

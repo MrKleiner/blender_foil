@@ -7,8 +7,35 @@
 	</head>
 	<body>
 		<script src="./apis/crypto_js/3_1_2/aes.js" integrity="sha256-/H4YS+7aYb9kJ5OKhFYPUjSJdrtV6AeyJOtTkw6X72o=" crossorigin="anonymous"></script>
-		<h1>Source Engine Is Shit</h1>
-		<button onclick="while_sender()">Fuck you</button>
+
+		<div id="skyboxer_app">
+			<div id="skyboxer_squares">
+
+				<!-- Row 1: Up -->
+				<div id="skybox_sq_row_1" class="skybox_sq_row">
+					<img id="sky_up" class="skybox_square"></img>
+				</div>
+
+				<!-- Row 2: Front Left Back Right -->
+				<div id="skybox_sq_row_2" class="skybox_sq_row">
+					<img id="sky_front" class="skybox_square"></img>
+					<img id="sky_left" class="skybox_square"></img>
+					<img id="sky_back" class="skybox_square"></img>
+					<img id="sky_right" class="skybox_square"></img>
+				</div>
+
+				<!-- Row 3: Down -->
+				<div id="skybox_sq_row_3" class="skybox_sq_row">
+					<img id="sky_down" class="skybox_square"></img>
+				</div>
+
+			</div>
+		</div>
+
+
+
+
+
 	</body>
   
 	<script src='./apis/jquery/3_6_0/jquery.min.js'></script>

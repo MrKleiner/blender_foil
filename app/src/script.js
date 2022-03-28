@@ -9,6 +9,8 @@ window.py_common_opts = {
 		pythonOptions: ['-u'],
 		scriptPath: path.join(__dirname, '/app/')
 	  };
+const net = require('net');
+
 
 
 // encode
@@ -73,13 +75,13 @@ document.addEventListener('keydown', kvt => {
 
 $(document).ready(function(){
 	// Include Nodejs' net module.
-	const Net = require('net');
+	// const Net = require('net');
 	// The port on which the server is listening.
 	const port = 1337;
 
 	// Use net.createServer() in your code. This is just for illustration purpose.
 	// Create a new TCP server.
-	const server = new Net.Server();
+	const server = new net.Server();
 	// The server listens to a socket for a client to make a connection request.
 	// Think of a socket as an end point.
 	server.listen(port, function() {
@@ -115,7 +117,6 @@ $(document).ready(function(){
 });
 
 
-
 /*
 ============================================================
 ------------------------------------------------------------
@@ -124,11 +125,8 @@ $(document).ready(function(){
 ============================================================
 */
 
-
-function while_sender()
+function apc_send()
 {
-	var net = require('net');
-
 	var client = new net.Socket();
 	client.connect(50000, '127.0.0.1', function() {
 		console.log('Connected');
@@ -144,6 +142,78 @@ function while_sender()
 		console.log('Connection closed');
 	});
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+=====================================================================
+---------------------------------------------------------------------
+                               Skyboxer
+---------------------------------------------------------------------
+=====================================================================
+*/
+
+
+// takes two params:
+// side_img - image binary
+// side_d - string. Side, like "left"
+function skyboxer_sides_filler(side_img, side_d)
+{
+	$('#sky_' + side_d)[0].src = side_img;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
