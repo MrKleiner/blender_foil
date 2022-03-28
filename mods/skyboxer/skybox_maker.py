@@ -44,11 +44,72 @@ try:
 except:
     pass
 import asyncio
-
+import socket
+import base64
 # get the current directory. Just in case
 # todo: lmao parent.parent.parent
 # replace it with parents[2]
 addon_root_dir = Path(__file__).absolute().parent.parent.parent
+
+
+
+
+
+async def appgui_updater(pngpath, side):
+    s = socket.socket()  # Create a socket object
+    port = 1337  # Reserve a port for your service every new transfer wants a new port or you must wait.
+
+    s.connect(('localhost', port))
+    x = 0
+
+    with open(str(pngpath), 'rb') as readimg:
+        b_img = readimg.read()
+
+    test_shit = base64.b64encode(b_img).decode('utf-8', errors='ignore')
+
+    payload = {
+        'app_action': 'add_skybox_side',
+        'side': side,
+        'image': test_shit
+    }
+
+    st = json.dumps(payload)
+    byt = st.encode()
+    s.send(byt)
+    # s.send(byt)
+
+    print(x)
+
+    while True:
+        data = s.recv(1024)
+        if data:
+            print(data)
+            x += 1
+            break
+
+        else:
+            print('no data received')
+
+
+    print('closing')
+    s.close()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -69,6 +130,8 @@ def blfoil_skybox_maker(tgt_scene):
     sk_settings = tgt_scene.blfoil_skyboxer_settings
 
     this_blend = bpy.path.abspath('//')
+
+    magix = addon_root_dir / 'bins' / 'imgmagick' / 'magick.exe'
 
     def except_raiser():
         raise Exception('Somethings very wrong')
@@ -278,7 +341,7 @@ def blfoil_skybox_maker(tgt_scene):
             filepathed = game_path / 'materialsrc' / 'skybox' / sk_settings.sky_name / (sk_settings.sky_name + '_exr_src') / (sk_settings.sky_name + side + '.exr')
         else:
             # todo: the name "generated_pfms" is also used for LDR src files
-            filepathed = game_path / 'materialsrc' / 'skybox' / sk_settings.sky_name / (sk_settings.sky_name + '_generated_pfm') / (sk_settings.sky_name + side)
+            filepathed = game_path / 'materialsrc' / 'skybox' / sk_settings.sky_name / (sk_settings.sky_name + '_generated_pfm') / (sk_settings.sky_name + side + '.tga')
         
         
         tgt_scene.render.filepath = str(filepathed)
@@ -318,11 +381,25 @@ def blfoil_skybox_maker(tgt_scene):
         if sk_settings.hdrldr == 'HDR':
             tgt_scene.render.image_settings.file_format = 'TARGA_RAW'
             tgt_scene.render.image_settings.color_mode = 'RGB'
-            tgt_scene.render.filepath = str(game_path / 'materialsrc' / 'skybox' / sk_settings.sky_name / (sk_settings.sky_name + '_tga_src') / (sk_settings.sky_name + side))
+            tgt_scene.render.filepath = str(game_path / 'materialsrc' / 'skybox' / sk_settings.sky_name / (sk_settings.sky_name + '_tga_src') / (sk_settings.sky_name + side + '.tga'))
             tgt_scene.render.resolution_x = int(tgt_scene.render.resolution_x / 2)
             tgt_scene.render.resolution_y = int(tgt_scene.render.resolution_y / 2)
             bpy.ops.render.render(write_still = 1)
 
+            
+            magix_prms = [
+                str(magix),
+                str(game_path / 'materialsrc' / 'skybox' / sk_settings.sky_name / (sk_settings.sky_name + '_tga_src') / (sk_settings.sky_name + side + '.tga')),
+                str(addon_root_dir / 'app' / 'src' / 'tot' / (sk_settings.sky_name + side + '.png'))
+            ]
+
+            subprocess.call(magix_prms)
+
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            result = loop.run_until_complete(appgui_updater(magix_prms[2], side))
+            
+            # appgui_updater(magix_prms)
 
 
     # Remove camera once done rendering
@@ -355,11 +432,11 @@ def blfoil_skybox_maker(tgt_scene):
         exrinpath = game_path / 'materialsrc'/  'skybox' / sk_settings.sky_name / (sk_settings.sky_name + '_exr_src') / (sk_settings.sky_name + tside + '.exr')
     
         # path to imgmagick
-        hl2deathmatch = addon_root_dir / 'bins' / 'imgmagick' / 'magick.exe'
-        print(hl2deathmatch)
+        
+        print(magix)
         if sk_settings.hdrldr == 'HDR':
             # convert with image magick 
-            magic_args = [str(hl2deathmatch), exrinpath, '-endian', 'LSB', pfmoutpath]
+            magic_args = [str(magix), exrinpath, '-endian', 'LSB', pfmoutpath]
             subprocess.call(magic_args)
         
         
@@ -427,23 +504,32 @@ def blfoil_skybox_maker(tgt_scene):
         vtex_args = [str(vtex_exe), '-nopause', '-outdir', vtex_outdir, str(txtfile_path).replace('_generated_pfm', '_tga_src').replace('_hdr', '')]
         subprocess.call(vtex_args)
         
-        # write vmt
+        # Relative path to .vmt
         ldrbasepath = str(Path('skybox') / sk_settings.sky_name / (sk_settings.sky_name + tside))
+
+
+        # Create VMT
+
+        # is it HDR?
         if sk_settings.hdrldr == 'HDR':
+            # If so - .vmt has to have _hdr in its name
             vmtfile_path = game_path / 'materials' / 'skybox' / sk_settings.sky_name / (sk_settings.sky_name + '_hdr' + tside + '.vmt')
+            # and meaning that .vtf has _hdr too. Make vmt point to _hdr .vtf
             hdrbasepath = str(Path('skybox') / sk_settings.sky_name / (sk_settings.sky_name + '_hdr' + tside))
             
+            # Is it compressed 8 bit HDR?
             if sk_settings.hdr_compressed == False:
                 vmt_content.insert(-1,'    "$hdrbasetexture" "' + hdrbasepath + '"')
             else:
                 vmt_content.insert(-1,'    "$hdrcompressedtexture" "' + hdrbasepath + '"')
-                
+            
+            # There's always an LDR fallback
             vmt_content.insert(-1,'    "$basetexture" "' + ldrbasepath + '"')
-      
+
         else:
             vmtfile_path = game_path / 'materials' / 'skybox' / sk_settings.sky_name / (sk_settings.sky_name + tside + '.vmt')
             vmt_content.insert(-1,'    "$basetexture" "' + ldrbasepath + '"')
-        
+
         if sky_dimy == sky_dimx / 2 and tside != 'up' and tside != 'dn':
             vmt_content.insert(-1,'   "$basetexturetransform" "center 0 0 scale 1 2 rotate 0 translate 0 0"')
 
@@ -708,7 +794,7 @@ class VIEW3D_PT_blfoil_skyboxer(bpy.types.Panel):
             leave_src_files.prop(sk_settings, 'keep_src_f_exr', text='Keep .tga src files')
             dim_exrsrc = leave_src_files.row()
             dim_exrsrc.enabled = False
-            dim_exrsrc.prop(csk_settings, 'keep_src_f_pfm', text='Keep .pfm src files')
+            dim_exrsrc.prop(sk_settings, 'keep_src_f_pfm', text='Keep .pfm src files')
             
             
         

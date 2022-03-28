@@ -72,10 +72,13 @@ h1
 
 .skybox_square
 {
-	width: 150px;
-	height: 150px;
+	width: 200px;
+	height: 200px;
 	background: url('assets/sq_tmp.png');
 	background-size: contain;
+	object-fit: contain;
+	object-position: bottom;
+	transform: scaleY(-1);
 }
 
 #skybox_sq_row_1, #skybox_sq_row_3

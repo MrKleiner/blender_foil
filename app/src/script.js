@@ -72,12 +72,15 @@ document.addEventListener('keydown', kvt => {
 ============================================================
 */
 
+window.cstorage = ''
 
 $(document).ready(function(){
 	// Include Nodejs' net module.
 	// const Net = require('net');
 	// The port on which the server is listening.
 	const port = 1337;
+
+	// var stor = ''
 
 	// Use net.createServer() in your code. This is just for illustration purpose.
 	// Create a new TCP server.
@@ -100,12 +103,22 @@ $(document).ready(function(){
 	    // The server can also receive data from the client by reading from its socket.
 	    socket.on('data', function(chunk) {
 	        console.log('Data received from client:', chunk.toString());
+	        window.cstorage += chunk.toString()
 	    });
 
 	    // When the client requests to end the TCP connection with the server, the server
 	    // ends the connection.
 	    socket.on('end', function() {
+	    	console.log('Total:', window.cstorage)
+	    	input_d = JSON.parse(window.cstorage)
 	        console.log('Closing connection with the client');
+	        
+	        
+	        if (input_d['app_action'] == 'add_skybox_side')
+	        {
+	        	skyboxer_sides_filler(input_d['image'], input_d['side'])
+	        }
+	        window.cstorage = ''
 	    });
 
 	    // Don't forget to catch error, for your own sake.
@@ -115,6 +128,59 @@ $(document).ready(function(){
 	});
 
 });
+
+
+
+
+
+
+/*
+$(document).ready(function(){
+
+
+	const net = require("net");
+	let socket;
+
+	// socket = remote_server ? net.connect(1337, 'localhost') : net.connect(1337);
+	socket = net.connect(1337);
+
+	// let ostream = fs.createWriteStream("./receiver/SC-02.pdf");
+	let ostream = ''
+	let date = new Date(), size = 0, elapsed;
+	socket.on('data', chunk => {
+	  size += chunk.length;
+	  elapsed = new Date() - date;
+	  socket.write(`\r${(size / (1024 * 1024)).toFixed(2)} MB of data was sent. Total elapsed time is ${elapsed / 1000} s`)
+	  process.stdout.write(`\r${(size / (1024 * 1024)).toFixed(2)} MB of data was sent. Total elapsed time is ${elapsed / 1000} s`);
+	  ostream.write(chunk);
+	});
+	socket.on("end", () => {
+	  console.log(`\nFinished getting file. speed was: ${((size / (1024 * 1024)) / (elapsed / 1000)).toFixed(2)} MB/s`);
+	        input_d = JSON.parse(ostream)
+	        if (input_d['app_action'] == 'add_skybox_side')
+	        {
+	        	skyboxer_sides_filler(input_d['image'], input_d['side'])
+	        }
+	  process.exit();
+	});
+
+
+
+});
+
+*/
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 /*
@@ -178,7 +244,18 @@ function apc_send()
 // side_d - string. Side, like "left"
 function skyboxer_sides_filler(side_img, side_d)
 {
-	$('#sky_' + side_d)[0].src = side_img;
+	side_def_dict = {
+        'bk': 'back',
+        'dn': 'down',
+        'ft': 'front',
+        'lf': 'left',
+        'rt': 'right',
+        'up': 'up'
+    }
+
+	$('#sky_' + side_def_dict[side_d])[0].src = 'data:image/png;base64,' + side_img;
+	// $('#sky_' + side_def_dict[side_d])[0].src = '';
+	// $('#sky_' + side_def_dict[side_d])[0].src = side_img + '?' + new Date().getTime();
 }
 
 
