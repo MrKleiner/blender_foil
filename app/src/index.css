@@ -124,7 +124,7 @@ h1
 	flex-direction: column;
 	position: absolute;
 	width: 65px;
-	background: gray;
+	/*background: gray;*/
     margin-right: -70px;
     user-select: none;
 }
@@ -166,7 +166,7 @@ h1
 	flex-direction: row;
 	position: absolute;
 	height: 65px;
-	background: gray;
+	/*background: gray;*/
     margin-top: -70px;
     user-select: none;
 }

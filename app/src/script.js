@@ -73,7 +73,7 @@ document.addEventListener('keydown', kvt => {
 */
 
 window.cstorage = ''
-
+// let cst = ''
 $(document).ready(function(){
 	// Include Nodejs' net module.
 	// const Net = require('net');
@@ -95,6 +95,9 @@ $(document).ready(function(){
 	// socket dedicated to that client.
 	// A new session has been created, everything inside is in the context of that session
 	server.on('connection', function(socket) {
+		// let cst = ''
+		console.log(socket)
+		window['cst_cache' + socket.remotePort.toString()] = ''
 	    console.log('A new connection has been established.');
 
 	    // Now that a TCP connection has been established, the server can send data to
@@ -105,11 +108,12 @@ $(document).ready(function(){
 	    // Client will be sending chunks of data DURING the session
 	    // When data was received - write it down into storage
 	    // todo: define storage as let ?
-	    let cst = ''
+	    
 	    socket.on('data', function(chunk) {
 	        console.log('Data received from client:', chunk.toString());
 	        // window.cstorage += chunk.toString()
-	        cst += chunk.toString()
+	        // cst += chunk.toString()
+	        window['cst_cache' + socket.remotePort.toString()] += chunk.toString()
 	    });
 
 	    // When the client requests to end the TCP connection with the server, the server
@@ -117,12 +121,16 @@ $(document).ready(function(){
 	    // End means that presumably, all chunks of data have been sent by now
 	    socket.on('end', function() {
 	    	// console.log('Total:', window.cstorage)
-	    	console.log('Total:', cst)
+	    	// console.log('Total:', cst)
+	    	console.log('Total:', window['cst_cache' + socket.remotePort.toString()])
+
 	    	console.log('Closing connection with the client');
 
 	    	// Data should always be a json
 	    	// input_d = JSON.parse(window.cstorage)
-	    	input_d = JSON.parse(cst)
+	    	// input_d = JSON.parse(cst)
+	    	input_d = JSON.parse(window['cst_cache' + socket.remotePort.toString()])
+
 
 
 	    	//
@@ -141,7 +149,8 @@ $(document).ready(function(){
 
 			// flush the storage
 	        // window.cstorage = ''
-	        let cst = ''
+	        // let cst = ''
+	        delete window['cst_cache' + socket.remotePort.toString()]
 	    });
 
 
@@ -264,24 +273,20 @@ function skyboxer_module_manager(pl)
 		case 'add_skybox_side':
 			skyboxer_sides_filler(pl['image'], pl['side'])
 			break;
+		case 'upd_side_status':
+			skyboxer_status_updater(pl['side'], pl['what'], pl['status'])
+			break;
+		case 'reset':
+			skyboxer_scene_reset()
+			break;
 		default:
 			console.log('The module has been called, but no corresponding action was found')
 			break;
 	}
 
-
-
 }
 
-
-
-
-// takes two params:
-// side_img - image binary
-// side_d - string. Side, like "left"
-function skyboxer_sides_filler(side_img, side_d)
-{
-	side_def_dict = {
+var	side_def_dict = {
         'bk': 'back',
         'dn': 'down',
         'ft': 'front',
@@ -290,15 +295,37 @@ function skyboxer_sides_filler(side_img, side_d)
         'up': 'up'
     }
 
+var side_status_def = {
+	'blender': '.blender_icon .icon_indicator_circle',
+	'pfm': '.pfm_icon .icon_indicator_circle',
+	'vtf': '.vtf_icon .icon_indicator_circle',
+}
+
+// takes two params:
+// side_img - image binary
+// side_d - string. Side, like "left"
+function skyboxer_sides_filler(side_img, side_d)
+{
 	$('#sky_' + side_def_dict[side_d] + ' .skybox_square')[0].src = 'data:image/png;base64,' + side_img;
 	// $('#sky_' + side_def_dict[side_d])[0].src = '';
 	// $('#sky_' + side_def_dict[side_d])[0].src = side_img + '?' + new Date().getTime();
 }
 
+// set status
+function skyboxer_status_updater(wside, elem, status)
+{
+	var decide_status = 'lime'
+	if (status == false){
+		var decide_status = 'red'
+	}
+	$('#sky_' + side_def_dict[wside]).find(side_status_def[elem]).css('background', decide_status);
+}
 
-
-
-
+function skyboxer_scene_reset()
+{
+	$('.icon_indicator_circle').css('background', 'red');
+	$('.skybox_side_container .skybox_square').attr('src', 'assets/cross_square.png');
+}
 
 
 

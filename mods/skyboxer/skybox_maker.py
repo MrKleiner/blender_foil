@@ -209,6 +209,7 @@ def blfoil_skybox_maker(tgt_scene):
     }
 
     # sidez = ['bk:90:0:-90', 'dn:0:0:-180', 'ft:90:0:90', 'lf:90:0:0', 'rt:90:0:-180', 'up:180:0:180']
+    """
     sidez = {
         'bk': (90, 0, -90),
         'dn': (0, 0, -180),
@@ -217,6 +218,18 @@ def blfoil_skybox_maker(tgt_scene):
         'rt': (90, 0, -180),
         'up': (180, 0, 180)
     }
+    """
+
+    # better order so that it looks cooler visually in app
+    sidez = {
+        'ft': (90, 0, 90),
+        'lf': (90, 0, 0),
+        'bk': (90, 0, -90),
+        'up': (180, 0, 180),
+        'rt': (90, 0, -180),
+        'dn': (0, 0, -180)
+    }
+
 
     # create camera
     sky_camera_data = bpy.data.cameras.new(name='blfoil_skybox_maker_camera_data')
@@ -359,6 +372,15 @@ def blfoil_skybox_maker(tgt_scene):
                 'image': img_b64
             })
 
+        app_command_send({
+            'app_module': 'skyboxer',
+            'mod_action': 'upd_side_status',
+            'side': side,
+            'what': 'blender',
+            'status': True
+        })
+
+
 
 
     # Remove camera once done rendering
@@ -397,7 +419,15 @@ def blfoil_skybox_maker(tgt_scene):
             # convert with image magick 
             magic_args = [str(magix), exrinpath, '-endian', 'LSB', pfmoutpath]
             subprocess.call(magic_args)
-        
+
+            app_command_send({
+                'app_module': 'skyboxer',
+                'mod_action': 'upd_side_status',
+                'side': tside,
+                'what': 'pfm',
+                'status': True
+            })
+            
         
         
         # write text file
@@ -462,6 +492,14 @@ def blfoil_skybox_maker(tgt_scene):
         # convert ldr vtf
         vtex_args = [str(vtex_exe), '-nopause', '-outdir', vtex_outdir, str(txtfile_path).replace('_generated_pfm', '_tga_src').replace('_hdr', '')]
         subprocess.call(vtex_args)
+
+        app_command_send({
+            'app_module': 'skyboxer',
+            'mod_action': 'upd_side_status',
+            'side': tside,
+            'what': 'vtf',
+            'status': True
+        })
         
         # Relative path to .vmt
         ldrbasepath = str(Path('skybox') / sk_settings.sky_name / (sk_settings.sky_name + tside))
@@ -525,7 +563,10 @@ class OBJECT_OT_blfoil_full_skybox_export(Operator, AddObjectHelper):
     # bl_options = {'REGISTER'}
     
     def execute(self, context):
-
+        app_command_send({
+            'app_module': 'skyboxer',
+            'mod_action': 'reset',
+        })
         blfoil_skybox_maker(context.scene)
 
         return {'FINISHED'}
