@@ -93,6 +93,7 @@ $(document).ready(function(){
 
 	// When a client requests a connection with the server, the server creates a new
 	// socket dedicated to that client.
+	// A new session has been created, everything inside is in the context of that session
 	server.on('connection', function(socket) {
 	    console.log('A new connection has been established.');
 
@@ -101,38 +102,66 @@ $(document).ready(function(){
 	    socket.write('Hello, client.');
 
 	    // The server can also receive data from the client by reading from its socket.
+	    // Client will be sending chunks of data DURING the session
+	    // When data was received - write it down into storage
+	    // todo: define storage as let ?
+	    let cst = ''
 	    socket.on('data', function(chunk) {
 	        console.log('Data received from client:', chunk.toString());
-	        window.cstorage += chunk.toString()
+	        // window.cstorage += chunk.toString()
+	        cst += chunk.toString()
 	    });
 
 	    // When the client requests to end the TCP connection with the server, the server
 	    // ends the connection.
+	    // End means that presumably, all chunks of data have been sent by now
 	    socket.on('end', function() {
-	    	console.log('Total:', window.cstorage)
-	    	input_d = JSON.parse(window.cstorage)
-	        console.log('Closing connection with the client');
-	        
-	        
-	        if (input_d['app_action'] == 'add_skybox_side')
-	        {
-	        	skyboxer_sides_filler(input_d['image'], input_d['side'])
-	        }
-	        window.cstorage = ''
+	    	// console.log('Total:', window.cstorage)
+	    	console.log('Total:', cst)
+	    	console.log('Closing connection with the client');
+
+	    	// Data should always be a json
+	    	// input_d = JSON.parse(window.cstorage)
+	    	input_d = JSON.parse(cst)
+
+
+	    	//
+	    	// Decide what to do
+	    	//
+			switch (input_d['app_module']) {
+				case 'skyboxer':
+					skyboxer_module_manager(input_d)
+					break;
+				default:
+					console.log('The transmission from the other world has ended, but requested action is unknown')
+					break;
+			}
+
+
+
+			// flush the storage
+	        // window.cstorage = ''
+	        let cst = ''
 	    });
+
 
 	    // Don't forget to catch error, for your own sake.
 	    socket.on('error', function(err) {
 	        console.log('Error:', err);
 	    });
+
+
 	});
+
 
 });
 
+/*
+$( "#result" ).load( "ajax/test.html", function() {
+  alert( "Load was performed." );
+});
 
-
-
-
+*/
 
 /*
 $(document).ready(function(){
@@ -220,16 +249,6 @@ function apc_send()
 
 
 
-
-
-
-
-
-
-
-
-
-
 /*
 =====================================================================
 ---------------------------------------------------------------------
@@ -237,6 +256,24 @@ function apc_send()
 ---------------------------------------------------------------------
 =====================================================================
 */
+
+function skyboxer_module_manager(pl)
+{
+
+	switch (pl['mod_action']) {
+		case 'add_skybox_side':
+			skyboxer_sides_filler(pl['image'], pl['side'])
+			break;
+		default:
+			console.log('The module has been called, but no corresponding action was found')
+			break;
+	}
+
+
+
+}
+
+
 
 
 // takes two params:
@@ -253,7 +290,7 @@ function skyboxer_sides_filler(side_img, side_d)
         'up': 'up'
     }
 
-	$('#sky_' + side_def_dict[side_d])[0].src = 'data:image/png;base64,' + side_img;
+	$('#sky_' + side_def_dict[side_d] + ' .skybox_square')[0].src = 'data:image/png;base64,' + side_img;
 	// $('#sky_' + side_def_dict[side_d])[0].src = '';
 	// $('#sky_' + side_def_dict[side_d])[0].src = side_img + '?' + new Date().getTime();
 }

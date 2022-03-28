@@ -79,6 +79,7 @@ h1
 	object-fit: contain;
 	object-position: bottom;
 	transform: scaleY(-1);
+	user-select: none;
 }
 
 #skybox_sq_row_1, #skybox_sq_row_3
@@ -93,3 +94,120 @@ h1
 	display: flex;
 	flex-direction: row;
 }
+
+.skybox_side_container
+{
+	display: flex;
+	/*flex-direction: row-reverse;*/
+}
+
+#sky_front, #sky_left, #sky_back
+{
+	flex-direction: column;
+}
+
+#sky_up, #sky_right, #sky_down
+{
+	flex-direction: row-reverse;
+}
+
+
+
+/*
+ -----------------------
+ 	Vertical info box
+ -----------------------
+*/
+.sky_side_info_box_v
+{
+	display: flex;
+	flex-direction: column;
+	position: absolute;
+	width: 65px;
+	background: gray;
+    margin-right: -70px;
+    user-select: none;
+}
+
+.sky_side_info_box_v .sky_info_icon
+{
+	display: flex;
+	flex-direction: row;
+	width: 100%;
+	align-items: center;
+}
+
+.sky_side_info_box_v .icon_indicator_circle
+{
+	display: flex;
+	width: 15px;
+	height: 15px;
+	background: cyan;
+	border-radius: 999px;
+	margin-left: 5px;
+}
+
+.sky_side_info_box_v .sky_info_icon:nth-child(n + 2)
+{
+	margin-top: 5px;
+}
+
+
+
+
+/*
+ -----------------------
+   Horizontal info box
+ -----------------------
+*/
+.sky_side_info_box_h
+{
+	display: flex;
+	flex-direction: row;
+	position: absolute;
+	height: 65px;
+	background: gray;
+    margin-top: -70px;
+    user-select: none;
+}
+
+.sky_side_info_box_h .sky_info_icon
+{
+	display: flex;
+	flex-direction: column-reverse;
+	width: 100%;
+	align-items: center;
+}
+
+.sky_side_info_box_h .icon_indicator_circle
+{
+	display: flex;
+	width: 15px;
+	height: 15px;
+	background: cyan;
+	border-radius: 999px;
+	margin-bottom: 5px;
+}
+
+.sky_side_info_box_h .sky_info_icon:nth-child(n + 2)
+{
+	margin-left: 5px;
+}
+
+
+
+
+
+
+
+.sky_info_icon img
+{
+	display: flex;
+	flex-direction: row;
+	width: 30px;
+	height: 30px;
+	object-fit: contain;
+	object-position: center;
+}
+
+

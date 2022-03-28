@@ -36,65 +36,19 @@ import pathlib
 from math import radians
 from mathutils import Matrix
 
-from ...utils.shared import eval_state
+from ...utils.shared import eval_state, app_command_send
 
 try:
     from bs4 import BeautifulSoup
     from bs4 import Tag, NavigableString
 except:
     pass
-import asyncio
 import socket
 import base64
 # get the current directory. Just in case
 # todo: lmao parent.parent.parent
 # replace it with parents[2]
 addon_root_dir = Path(__file__).absolute().parent.parent.parent
-
-
-
-
-
-async def appgui_updater(pngpath, side):
-    s = socket.socket()  # Create a socket object
-    port = 1337  # Reserve a port for your service every new transfer wants a new port or you must wait.
-
-    s.connect(('localhost', port))
-    x = 0
-
-    with open(str(pngpath), 'rb') as readimg:
-        b_img = readimg.read()
-
-    test_shit = base64.b64encode(b_img).decode('utf-8', errors='ignore')
-
-    payload = {
-        'app_action': 'add_skybox_side',
-        'side': side,
-        'image': test_shit
-    }
-
-    st = json.dumps(payload)
-    byt = st.encode()
-    s.send(byt)
-    # s.send(byt)
-
-    print(x)
-
-    while True:
-        data = s.recv(1024)
-        if data:
-            print(data)
-            x += 1
-            break
-
-        else:
-            print('no data received')
-
-
-    print('closing')
-    s.close()
-
-
 
 
 
@@ -395,11 +349,16 @@ def blfoil_skybox_maker(tgt_scene):
 
             subprocess.call(magix_prms)
 
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
-            result = loop.run_until_complete(appgui_updater(magix_prms[2], side))
-            
-            # appgui_updater(magix_prms)
+            with open(str(magix_prms[2]), 'rb') as b6i:
+                img_b64 = base64.b64encode(b6i.read()).decode('utf-8', errors='ignore')
+
+            app_command_send({
+                'app_module': 'skyboxer',
+                'mod_action': 'add_skybox_side',
+                'side': side,
+                'image': img_b64
+            })
+
 
 
     # Remove camera once done rendering

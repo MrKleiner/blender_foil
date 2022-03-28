@@ -1,4 +1,6 @@
-
+import asyncio
+import socket
+import json
 
 # Returns True or False from either a string or int 1/0
 def eval_state(state):
@@ -86,3 +88,57 @@ def get_obj_locrot_v1(eobject, fix90, axis, self, context):
 
     return {'loc': (locx, locy, locz), 'rot': (rotx, roty, rotz)}
 
+
+
+
+# Send commands to app
+async def appgui_updater(pl):
+    s = socket.socket()  # Create a socket object
+    port = 1337  # Reserve a port for your service every new transfer wants a new port or you must wait.
+
+    s.connect(('localhost', port))
+    x = 0
+
+    # test_shit = base64.b64encode(b_img).decode('utf-8', errors='ignore')
+
+    """
+    payload = {
+        'app_module': 'skyboxer',
+        'mod_action': 'add_skybox_side',
+        'side': side,
+        'image': test_shit
+    }
+    """
+
+    st = json.dumps(pl)
+    byt = st.encode()
+    s.send(byt)
+    # s.send(byt)
+
+    print(x)
+
+    collect_data = b''
+
+    while True:
+        data = s.recv(1024)
+        if data:
+            print(data)
+            collect_data += data
+            x += 1
+            break
+
+        else:
+            print('no data received')
+
+    print('closing')
+    print('Complete response:', collect_data)
+    s.close()
+
+
+
+
+
+def app_command_send(payload):
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    result = loop.run_until_complete(appgui_updater(payload))
