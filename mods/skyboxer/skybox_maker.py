@@ -122,10 +122,10 @@ def blfoil_skybox_maker(tgt_scene):
         except_raiser('Game path invalid, go kys: Unable to locate vtex.exe')
 
 
+    sky_is_rect = sk_settings.halfsize
 
-    # important todo: XY size enum
-    sky_dimx = sk_settings.size_x
-    sky_dimy = sk_settings.size_y
+    sky_dimx = int(sk_settings.size)
+    sky_dimy = int(sky_dimx / 2 if sky_is_rect else None or sky_dimx)
 
 
     # Check the destination folder condition: If exists, but overwrite is False - stop and throw error
@@ -230,13 +230,15 @@ def blfoil_skybox_maker(tgt_scene):
     }
     """
 
-    sky_is_rect = sky_dimy == sky_dimx / 2
+    # sky_is_rect = sky_dimy == sky_dimx / 2
+    # sky_is_rect = sk_settings.halfsize
+    # sky_dim
 
     # important: if not square and NOT a proper rectangle - stop
     # firstly - Y cannot be bigger than x
     # secondly - if X Y are not the same, check if triangle is proper
-    if sky_dimy > sky_dimx or (sky_dimy != sky_dimx and not sky_is_rect):
-        except_raiser('Invalid sky size setup!')
+    # if sky_dimy > sky_dimx or (sky_dimy != sky_dimx and not sky_is_rect):
+    #     except_raiser('Invalid sky size setup!')
 
     # better order so that it looks cooler visually in app
     sidez = {
@@ -669,6 +671,7 @@ class blfoil_skyboxer_settings(PropertyGroup):
         default = 'blfoil_sky_boxname - nil'
         )
         
+    """
     size_x : IntProperty(
         name='Skybox X size',
         description='Size of each skybox square on X axis',
@@ -679,7 +682,33 @@ class blfoil_skyboxer_settings(PropertyGroup):
         soft_min=128,
         subtype='UNSIGNED'
         )
-        
+    """
+
+    size : EnumProperty(
+        items=[
+        ('8', '8', 'ded2'),
+        ('16', '16', 'ded2'),
+        ('32', '32', 'ded2'),
+        ('64', '64', 'ded2'),
+        ('128', '128', 'ded2'),
+        ('256', '256', 'ded2'),
+        ('512', '512', 'ded2'),
+        ('1024', '1024', 'ded2'),
+        ('2048', '2048', 'ded2'),
+        ('4096', '4096', 'ded2'),
+        ],
+        name='sizes',
+        description='I want to kiss a lizard',
+        default = '2048'
+        )
+
+    halfsize : BoolProperty(
+        name='Half The Size',
+        description='Skybox Half Size',
+        default = False
+        )
+
+    """
     size_y : IntProperty(
         name='Skybox X size',
         description='Size of each skybox square on X axis',
@@ -690,6 +719,7 @@ class blfoil_skyboxer_settings(PropertyGroup):
         soft_min=128,
         subtype='UNSIGNED'
         )
+    """
 
     keep_src_f_exr : BoolProperty(
         name='Whether to keep the src exr files or not',
@@ -821,8 +851,10 @@ class VIEW3D_PT_blfoil_skyboxer(bpy.types.Panel):
         dimensions_col.use_property_split = True
         dimensions_col.use_property_decorate = False
         
-        dimensions_col.prop(sk_settings, 'size_x')
-        dimensions_col.prop(sk_settings, 'size_y', text='Skybox Y size')
+        # dimensions_col.prop(sk_settings, 'size_x')
+        # dimensions_col.prop(sk_settings, 'size_x')
+        dimensions_col.prop(sk_settings, 'size', text='Skybox size')
+        dimensions_col.prop(sk_settings, 'halfsize', text='Half the size')
         
         
         dimensions_col.prop(sk_settings, 'nobottom', text='No bottom')
