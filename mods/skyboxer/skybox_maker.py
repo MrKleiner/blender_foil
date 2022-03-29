@@ -45,6 +45,8 @@ except:
     pass
 import socket
 import base64
+
+from ...utils.lizard_scales.lizard_scales import lizard_scales
 # get the current directory. Just in case
 # todo: lmao parent.parent.parent
 # replace it with parents[2]
@@ -81,14 +83,20 @@ addon_root_dir = Path(__file__).absolute().parent.parent.parent
 
 def blfoil_skybox_maker(tgt_scene):
 
+    # exception raiser
+    def except_raiser(details=''):
+        # self.report({'WARNING'}, 'Game path invalid, go kys, fucker: Unable to locate vtex.exe')
+        raise Exception('Somethings very wrong: ' + str(details))
+
+
+    # Skybox settings
     sk_settings = tgt_scene.blfoil_skyboxer_settings
 
+    # Absolute path to the current blend file
     this_blend = bpy.path.abspath('//')
 
+    # Path to magick.exe image converter
     magix = addon_root_dir / 'bins' / 'imgmagick' / 'magick.exe'
-
-    def except_raiser():
-        raise Exception('Somethings very wrong')
 
 
     # Check if game path exists. If not - stop script execution and throw a warning
@@ -100,18 +108,18 @@ def blfoil_skybox_maker(tgt_scene):
             sky_foil_gpath = tgt_scene.sourceops.game_items[tgt_scene.sourceops.game_index]['game']
         except:
             # self.report({'WARNING'}, 'Unable to locate any SourceOps games. Go drink some tea')
-            except_raiser()
+            except_raiser('It was requested to use SourceOps game path, but SourceOps could not be located OR game is invalid')
     else:
         sky_foil_gpath = bpy.path.abspath(sk_settings.game_path)
 
+    # Path to 'Half-Life 2/ep2'
     game_path = Path(bpy.path.abspath(sky_foil_gpath))
 
     # vtex has to be present. Else - can't do shit
     vtex_path = game_path.parent / 'bin' / 'vtex.exe'
     print(str(vtex_path))
     if not vtex_path.is_file():
-        # self.report({'WARNING'}, 'Game path invalid, go kys, fucker: Unable to locate vtex.exe')
-        except_raiser()
+        except_raiser('Game path invalid, go kys: Unable to locate vtex.exe')
 
 
 
@@ -124,16 +132,10 @@ def blfoil_skybox_maker(tgt_scene):
     dest_folder = game_path / 'materialsrc' / 'skybox' / sk_settings.sky_name
 
     if dest_folder.is_file() and sk_settings.overwrite_shit == False:
-        # self.report({'WARNING'}, 'The specified path exists, but overwrite checkbox is tunred off')
-        except_raiser()
-    else:
-        try:
-            shutil.rmtree(dest_folder)
-        except OSError as e:
-            print('Error: %s : %s' % (dest_folder, e.strerror))
+        except_raiser('Skybox destination folder exists, but overwrite is set to False')
 
 
-    # Run cleanup just in case :
+    # Run cleanup just in case ?
     # important todo: redo this
     def docleanup():
         # delete all images
@@ -160,12 +162,12 @@ def blfoil_skybox_maker(tgt_scene):
         # todo: also delete object data n shit
 
 
-    docleanup()
-    # delete src dir if any
-    try:
-        shutil.rmtree(str(dest_folder))
-    except:
-        print('materialsrc folder does not exist alr')
+    # docleanup()
+
+
+    # delete materialsrc dir if any
+    shutil.rmtree(str(dest_folder), ignore_errors=True)
+
 
     # Overengineering shit again ?!
     destinations = [
@@ -189,6 +191,14 @@ def blfoil_skybox_maker(tgt_scene):
         'aspecty': tgt_scene.render.pixel_aspect_y,
         
         'render_region': tgt_scene.render.use_border,
+
+        # Colour management
+        'display_device': tgt_scene.display_settings.display_device,
+        'view_transform': tgt_scene.view_settings.view_transform,
+        'look': tgt_scene.view_settings.look,
+        'exposure': tgt_scene.view_settings.exposure,
+        'gamma': tgt_scene.view_settings.gamma,
+
         
         # Output mode
         'render_filepath': tgt_scene.render.filepath,
@@ -220,6 +230,14 @@ def blfoil_skybox_maker(tgt_scene):
     }
     """
 
+    sky_is_rect = sky_dimy == sky_dimx / 2
+
+    # important: if not square and NOT a proper rectangle - stop
+    # firstly - Y cannot be bigger than x
+    # secondly - if X Y are not the same, check if triangle is proper
+    if sky_dimy > sky_dimx or (sky_dimy != sky_dimx and not sky_is_rect):
+        except_raiser('Invalid sky size setup!')
+
     # better order so that it looks cooler visually in app
     sidez = {
         'ft': (90, 0, 90),
@@ -229,6 +247,33 @@ def blfoil_skybox_maker(tgt_scene):
         'rt': (90, 0, -180),
         'dn': (0, 0, -180)
     }
+
+    # size dict
+    side_sizes = {
+        'ft': (sky_dimx, sky_dimy),
+        'lf': (sky_dimx, sky_dimy),
+        'bk': (sky_dimx, sky_dimy),
+        'up': (sky_dimx, sky_dimx),
+        'rt': (sky_dimx, sky_dimy),
+        # 8 if nobottom or side is a rect else - defaults
+        'dn': (8 if sk_settings.nobottom or sky_is_rect else sky_dimx, 8 if sk_settings.nobottom or sky_is_rect else sky_dimy)
+    }
+
+    # cam shift dict
+    camshift = {
+        'ft': 0.25 if sky_is_rect else 0,
+        'lf': 0.25 if sky_is_rect else 0,
+        'bk': 0.25 if sky_is_rect else 0,
+        'up': 0,
+        'rt': 0.25 if sky_is_rect else 0,
+        'dn': 0
+    }
+
+    # preview path dict
+    # preview_paths = {
+    #     'HDR': 
+    # }
+
 
 
     # create camera
@@ -248,9 +293,10 @@ def blfoil_skybox_maker(tgt_scene):
     tgt_scene.camera = sky_camera_object
 
 
-    # Render each side into .exr
+    # Render each side into .exr OR .tga
     for side in sidez:
 
+        # Set camera rotation
         csidex = sidez[side][0]
         csidey = sidez[side][1]
         csidez = sidez[side][2]
@@ -259,62 +305,21 @@ def blfoil_skybox_maker(tgt_scene):
         sky_camera_object.rotation_euler[1] = math.radians(csidey)
         sky_camera_object.rotation_euler[2] = math.radians(csidez)
 
-        # Setup render settings
 
+        # Setup camera and render settings
 
-        # Set render size
+        # render size
+        tgt_scene.render.resolution_x = side_sizes[side][0]
+        tgt_scene.render.resolution_y = side_sizes[side][1]
 
-        tgt_scene.render.resolution_x = sky_dimx
-        tgt_scene.render.resolution_y = sky_dimy
-
-        if sk_settings.nobottom == True and side == 'dn':
-            tgt_scene.render.resolution_x = 8
-            tgt_scene.render.resolution_y = 8
-
-
-
-        # adjust camera if half the size
-        if sky_dimy == sky_dimx / 2:
-            print('blfoil sky: dimy = dimx/2 (Skybox side is a rectangle)')
-
-            # up and down are always square
-            if side == 'dn' or side == 'up':
-
-                sky_camera_data.shift_y = 0
-                sky_camera_data.shift_x = 0
-                tgt_scene.render.resolution_x = sky_dimx
-                tgt_scene.render.resolution_y = sky_dimx
-                # print('triggered dn or up side = ' + side + ' set to ' + str(bpy.context.scene.render.resolution_y) + ' ' + str(bpy.context.scene.render.resolution_x))
-            else:
-                sky_camera_data.shift_y = 0.25
-                sky_camera_data.shift_x = 0
-                tgt_scene.render.resolution_x = sky_dimx
-                tgt_scene.render.resolution_y = sky_dimy
-                # print('triggered else side = ' + side + ' set to ' + str(bpy.context.scene.render.resolution_y) + ' ' + str(bpy.context.scene.render.resolution_x))
-
-            # If sides are rectangular - there could be no bottom
-            if side == 'dn':
-                tgt_scene.render.resolution_x = 8
-                tgt_scene.render.resolution_y = 8
-                # print('triggered dn side = ' + side + ' set to ' + str(bpy.context.scene.render.resolution_y) + ' ' + str(bpy.context.scene.render.resolution_x))
- 
+        # camera shift
+        sky_camera_data.shift_y = camshift[side]
+        sky_camera_data.shift_x = 0
         
-        # print('final side = ' + side + ' set to ' + str(bpy.context.scene.render.resolution_y) + ' ' + str(bpy.context.scene.render.resolution_x))
-
-        
-
-        # set output dir per side
-        if sk_settings.hdrldr == 'HDR':
-            filepathed = game_path / 'materialsrc' / 'skybox' / sk_settings.sky_name / (sk_settings.sky_name + '_exr_src') / (sk_settings.sky_name + side + '.exr')
-        else:
-            # todo: the name "generated_pfms" is also used for LDR src files
-            filepathed = game_path / 'materialsrc' / 'skybox' / sk_settings.sky_name / (sk_settings.sky_name + '_generated_pfm') / (sk_settings.sky_name + side + '.tga')
-        
-        
-        tgt_scene.render.filepath = str(filepathed)
         
         # set output prefs
         if sk_settings.hdrldr == 'HDR':
+            tgt_scene.render.filepath = str(dest_folder / (sk_settings.sky_name + '_exr_src') / (sk_settings.sky_name + side + '.exr'))
             tgt_scene.render.image_settings.file_format = 'OPEN_EXR'
             tgt_scene.render.image_settings.color_mode = 'RGB'
             tgt_scene.render.image_settings.color_depth = '32'
@@ -322,6 +327,7 @@ def blfoil_skybox_maker(tgt_scene):
             tgt_scene.render.image_settings.use_zbuffer = False
             tgt_scene.render.image_settings.use_preview = False
         else:
+            tgt_scene.render.filepath = str(dest_folder / (sk_settings.sky_name + '_tga_src') / (sk_settings.sky_name + side + '.tga'))
             tgt_scene.render.image_settings.file_format = 'TARGA_RAW'
             tgt_scene.render.image_settings.color_mode = 'RGB'
             
@@ -330,48 +336,60 @@ def blfoil_skybox_maker(tgt_scene):
         tgt_scene.render.use_overwrite = True
         tgt_scene.render.use_placeholder = False
 
-
         # set sequencer to false and dither to 1
         tgt_scene.render.use_sequencer = False
         tgt_scene.render.use_compositing = True
         tgt_scene.render.dither_intensity = 1.0
 
 
-        # Render
+        # Do Render
         bpy.ops.render.render(write_still = 1)
         
         
         # if HDR then we need stupid LDR fallbacks
         # fuck them really - downscale them fuckers by a factor of fucking 2
-        # todo: finally predefine scene resolution x. or nah ?
-        # important todo: DOUBLE RENDER IS HAPPENING. Use imagemagick to convert existing .exr to tga shit
+        # simply re-save it with blender
         if sk_settings.hdrldr == 'HDR':
+
+            # Set export settings to .png
             tgt_scene.render.image_settings.file_format = 'TARGA_RAW'
             tgt_scene.render.image_settings.color_mode = 'RGB'
-            tgt_scene.render.filepath = str(game_path / 'materialsrc' / 'skybox' / sk_settings.sky_name / (sk_settings.sky_name + '_tga_src') / (sk_settings.sky_name + side + '.tga'))
+            # tgt_scene.render.image_settings.compression = 15
+
+            # half the resolution
             tgt_scene.render.resolution_x = int(tgt_scene.render.resolution_x / 2)
             tgt_scene.render.resolution_y = int(tgt_scene.render.resolution_y / 2)
-            bpy.ops.render.render(write_still = 1)
 
-            
-            magix_prms = [
-                str(magix),
-                str(game_path / 'materialsrc' / 'skybox' / sk_settings.sky_name / (sk_settings.sky_name + '_tga_src') / (sk_settings.sky_name + side + '.tga')),
-                str(addon_root_dir / 'app' / 'src' / 'tot' / (sk_settings.sky_name + side + '.png'))
-            ]
+            # set filepath
+            # tgt_scene.render.filepath = str(game_path / 'materialsrc' / 'skybox' / sk_settings.sky_name / (sk_settings.sky_name + '_tga_src') / (sk_settings.sky_name + side + '.tga'))
 
-            subprocess.call(magix_prms)
+            # load resulting .exr or
+            apply_filmic = bpy.data.images.load(str(dest_folder / (sk_settings.sky_name + '_exr_src') / (sk_settings.sky_name + side + '.exr')))
 
-            with open(str(magix_prms[2]), 'rb') as b6i:
-                img_b64 = base64.b64encode(b6i.read()).decode('utf-8', errors='ignore')
+            # export exr with filmic applied
+            apply_filmic.save_render(str(dest_folder / (sk_settings.sky_name + '_tga_src') / (sk_settings.sky_name + side + '.tga')))
 
-            app_command_send({
-                'app_module': 'skyboxer',
-                'mod_action': 'add_skybox_side',
-                'side': side,
-                'image': img_b64
-            })
 
+        # Use magick to convert tga to png (there's always a tga)
+        magix_prms = [
+            str(magix),
+            str(dest_folder / (sk_settings.sky_name + '_tga_src') / (sk_settings.sky_name + side + '.tga')),
+            str(addon_root_dir / 'app' / 'src' / 'tot' / (sk_settings.sky_name + side + '.png'))
+        ]
+        # exec magick
+        subprocess.call(magix_prms)
+        # read resulting png to base64
+        with open(str(magix_prms[2]), 'rb') as b6i:
+            img_b64 = base64.b64encode(b6i.read()).decode('utf-8', errors='ignore')
+
+        # Send image to app
+        app_command_send({
+            'app_module': 'skyboxer',
+            'mod_action': 'add_skybox_side',
+            'side': side,
+            'image': img_b64
+        })
+        # send update that blender is green
         app_command_send({
             'app_module': 'skyboxer',
             'mod_action': 'upd_side_status',
@@ -386,6 +404,7 @@ def blfoil_skybox_maker(tgt_scene):
     # Remove camera once done rendering
     bpy.data.objects.remove(sky_camera_object)
 
+
     # Make some paths for later use
     vtex_exe = game_path.parent / 'bin' / 'vtex.exe'
     vtex_outdir = game_path / 'materials' / 'skybox' / sk_settings.sky_name
@@ -395,58 +414,79 @@ def blfoil_skybox_maker(tgt_scene):
     # create pfms and text files for vtex.exe
     #
 
-    try:
-        shutil.rmtree(vtex_outdir)
-    except:
-        print('no vtf path alr')
-    
-    
+    # clean output directory
+    shutil.rmtree(str(vtex_outdir), ignore_errors=True)
+
+
+
     for tside in sidez:
         
         # construct pfm output
         # todo: shorten game_path / 'materialsrc' / 'skybox' /
         # or even
         # game_path / 'materialsrc' / 'skybox' / sk_settings.sky_name / sk_settings.sky_name
-        pfmoutpath = game_path / 'materialsrc' / 'skybox' / sk_settings.sky_name / (sk_settings.sky_name + '_generated_pfm') / (sk_settings.sky_name + '_hdr' + tside + '.pfm')
+        pfmoutpath = dest_folder / (sk_settings.sky_name + '_generated_pfm') / (sk_settings.sky_name + '_hdr' + tside + '.pfm')
     
         # construct exr inp path
-        exrinpath = game_path / 'materialsrc'/  'skybox' / sk_settings.sky_name / (sk_settings.sky_name + '_exr_src') / (sk_settings.sky_name + tside + '.exr')
+        exrinpath = dest_folder / (sk_settings.sky_name + '_exr_src') / (sk_settings.sky_name + tside + '.exr')
     
-        # path to imgmagick
-        
+
+
+        # Literally the heart of this exporter: Converting .exr to PROPER .pfms
+        # -endian LSB !!!!!        
         print(magix)
         if sk_settings.hdrldr == 'HDR':
             # convert with image magick 
             magic_args = [str(magix), exrinpath, '-endian', 'LSB', pfmoutpath]
             subprocess.call(magic_args)
 
-            app_command_send({
-                'app_module': 'skyboxer',
-                'mod_action': 'upd_side_status',
-                'side': tside,
-                'what': 'pfm',
-                'status': True
-            })
+        # Basically, this should be triggered regardless
+        app_command_send({
+            'app_module': 'skyboxer',
+            'mod_action': 'upd_side_status',
+            'side': tside,
+            'what': 'pfm',
+            'status': True
+        })
             
         
         
-        # write text file
+        # write text file for vtex
+        # todo: create a class for vtex manipulations
+        # todo: create a class for imgmagick manips
 
         # important todo: Portal 2 cannot have ignorez 1
         
+        # HDR
+        # todo: this still lacks common sense
+        # just move this inside if HDR ??
         text_file_content = [
             'nolod 1',
             'nomip 1',
-            'nonice 1'
+            'nonice 1',
+            'pfm 1' if sk_settings.hdrldr == 'HDR' else '',
+            'pfmscale 1' if sk_settings.hdrldr == 'HDR' else '',
+            # Not specifying nocompress 1 automatically means that it will be compressed
+            'nocompress 1' if sk_settings.hdrldr == 'HDR' and sk_settings.hdr_compressed == False else '',
+            # Rectangle skyboxes should not repeat. Clamp
+            'clamps 1' if sky_is_rect and tside != 'up' and tside != 'dn' else '',
+            'clampt 1' if sky_is_rect and tside != 'up' and tside != 'dn' else ''
         ]
 
-        vmt_content = [
-            '"sky"',
-            '{',
-            '',
-            '}'
-        ]
+        # ' '.join(filter(None, strings))
 
+        # vmt_content = [
+        #     '"sky"',
+        #     '{',
+        #     '',
+        #     '}'
+        # ]
+
+        
+
+        # There are always targas
+        # this is static for now
+        # (till there's a noz 1 switch)
         ldr_tga_txt = [
             'nolod 1',
             'clamps 1',
@@ -456,43 +496,74 @@ def blfoil_skybox_maker(tgt_scene):
             'nocompress 1'
         ]
 
-        # construct text file path and text file
+        vmtbasepath = Path('skybox') / sk_settings.sky_name / sk_settings.sky_name
+
+        # Additional conversions if there's HDR
         if sk_settings.hdrldr == 'HDR':
-            txtfile_path = game_path / 'materialsrc' / 'skybox' / sk_settings.sky_name / (sk_settings.sky_name + '_generated_pfm') / (sk_settings.sky_name + '_hdr' + tside + '.txt')
-            text_file_content.insert(0, 'pfm 1')
-            text_file_content.insert(-1, 'pfmscale 1')
-            if sk_settings.hdr_compressed == False:
-                text_file_content.insert(-1, 'nocompress 1')
-        else:
-            txtfile_path = game_path / 'materialsrc' / 'skybox' / sk_settings.sky_name / (sk_settings.sky_name + '_generated_pfm') / (sk_settings.sky_name + tside + '.txt')
-            text_file_content.insert(-1, 'nocompress 1')
+            txtfile_path = dest_folder / (sk_settings.sky_name + '_generated_pfm') / (sk_settings.sky_name + '_hdr' + tside + '.txt')
 
-        if sky_dimy == sky_dimx / 2 and tside != 'up' and tside != 'dn':
-            text_file_content.insert(-1, 'clamps 1')
-            text_file_content.insert(-1, 'clampt 1')
+            # Write the vtex text file for HDR
+            with open(str(txtfile_path), 'w') as txtfile:
+                # join in a specific way because there are empty entries
+                txtfile.write('\n'.join(filter(None, text_file_content)))
+
+            # convert HDR .pfm to .vtf
+            vtex_args = [str(vtex_exe), '-nopause', '-outdir', vtex_outdir, txtfile_path]
+            subprocess.call(vtex_args)
+
+            # write VMT
+
+            hdr_vmt = lizard_scales()
+            # HDR skybox uses "sky" shader
+            hdr_vmt.shader = 'sky'
+            hdr_vmt.setparams({
+                # LDR fallback
+                'basetexture': str(vmtbasepath) + tside,
+                # HDR shit
+                'hdrbasetexture': str(vmtbasepath) + '_hdr' + tside,
+                # transform. If sky is rectangular and if current side is not down or up
+                'basetexturetransform': 'center 0 0 scale 1 2 rotate 0 translate 0 0' if sky_is_rect and tside != 'up' and tside != 'dn' else None 
+            })
+
+            # write resulting vmt
+            with open(str(vtex_outdir / (sk_settings.sky_name + '_hdr' + tside + '.vmt')), 'w') as vmtfile:
+                vmtfile.write(hdr_vmt.to_vmt())
 
 
-        with open(str(txtfile_path), 'w') as txtfile:
-            txtfile.write('\n'.join(text_file_content))
 
 
-        # write ldr fallbacks
-        # important todo: wtf
-        with open(str(txtfile_path).replace('_generated_pfm', '_tga_src').replace('_hdr', ''), 'w') as txtfile:
-            txtfile.write('\n'.join(ldr_tga_txt))
+        # write LDR (which should always be there)
+        # basically, targas are always there
+        txtfile_path = str(dest_folder / (sk_settings.sky_name + '_tga_src') / (sk_settings.sky_name + tside + '.txt'))
+        with open(txtfile_path, 'w') as txtfile:
+            txtfile.write('\n'.join(filter(None, ldr_tga_txt)))
 
 
-
-        # convert to vtf
-        # maybe separate this into a separate for loop?
+        # convert Targas tp vtf
         vtex_args = [str(vtex_exe), '-nopause', '-outdir', vtex_outdir, txtfile_path]
         subprocess.call(vtex_args)
-        
-        
-        # convert ldr vtf
-        vtex_args = [str(vtex_exe), '-nopause', '-outdir', vtex_outdir, str(txtfile_path).replace('_generated_pfm', '_tga_src').replace('_hdr', '')]
-        subprocess.call(vtex_args)
 
+
+        # write LDR VMT
+
+        ldr_vmt = lizard_scales()
+        # LDR skies use UnlitGeneric
+        ldr_vmt.shader = 'UnlitGeneric'
+        ldr_vmt.setparams({
+            'nofog': 1,
+            # important todo: Portal 2 SHOULD NOT HAVE ignorez
+            'ignorez': 1,
+            'basetexture': str(vmtbasepath) + tside,
+            # transform. If sky is rectangular and if current side is not down or up
+            'basetexturetransform': 'center 0 0 scale 1 2 rotate 0 translate 0 0' if sky_is_rect and tside != 'up' and tside != 'dn' else None 
+        })
+
+        # write resulting vmt
+        with open(str(vtex_outdir / (sk_settings.sky_name + tside + '.vmt')), 'w') as vmtfile:
+            vmtfile.write(ldr_vmt.to_vmt())
+
+
+        # Send status update to the gui app
         app_command_send({
             'app_module': 'skyboxer',
             'mod_action': 'upd_side_status',
@@ -500,39 +571,10 @@ def blfoil_skybox_maker(tgt_scene):
             'what': 'vtf',
             'status': True
         })
-        
-        # Relative path to .vmt
-        ldrbasepath = str(Path('skybox') / sk_settings.sky_name / (sk_settings.sky_name + tside))
 
 
-        # Create VMT
-
-        # is it HDR?
-        if sk_settings.hdrldr == 'HDR':
-            # If so - .vmt has to have _hdr in its name
-            vmtfile_path = game_path / 'materials' / 'skybox' / sk_settings.sky_name / (sk_settings.sky_name + '_hdr' + tside + '.vmt')
-            # and meaning that .vtf has _hdr too. Make vmt point to _hdr .vtf
-            hdrbasepath = str(Path('skybox') / sk_settings.sky_name / (sk_settings.sky_name + '_hdr' + tside))
-            
-            # Is it compressed 8 bit HDR?
-            if sk_settings.hdr_compressed == False:
-                vmt_content.insert(-1,'    "$hdrbasetexture" "' + hdrbasepath + '"')
-            else:
-                vmt_content.insert(-1,'    "$hdrcompressedtexture" "' + hdrbasepath + '"')
-            
-            # There's always an LDR fallback
-            vmt_content.insert(-1,'    "$basetexture" "' + ldrbasepath + '"')
-
-        else:
-            vmtfile_path = game_path / 'materials' / 'skybox' / sk_settings.sky_name / (sk_settings.sky_name + tside + '.vmt')
-            vmt_content.insert(-1,'    "$basetexture" "' + ldrbasepath + '"')
-
-        if sky_dimy == sky_dimx / 2 and tside != 'up' and tside != 'dn':
-            vmt_content.insert(-1,'   "$basetexturetransform" "center 0 0 scale 1 2 rotate 0 translate 0 0"')
 
 
-        with open(str(vmtfile_path), 'w') as vmtfile:
-            vmtfile.write('\n'.join(vmt_content))
 
 
 
@@ -565,7 +607,7 @@ class OBJECT_OT_blfoil_full_skybox_export(Operator, AddObjectHelper):
     def execute(self, context):
         app_command_send({
             'app_module': 'skyboxer',
-            'mod_action': 'reset',
+            'mod_action': 'reset'
         })
         blfoil_skybox_maker(context.scene)
 
