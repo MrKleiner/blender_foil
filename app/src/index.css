@@ -1,3 +1,19 @@
+/*Open_Sans*/
+@import url('fonts/Open_Sans/Open_Sans_family.css');
+/*Roboto*/
+@import url('fonts/Roboto/Roboto_family.css');
+/*Roboto_Slab*/
+@import url('fonts/Roboto_Slab/Roboto_Slab_family.css');
+
+/*blender*/
+@font-face
+{
+    font-family: 'blender';
+    font-weight: 200;
+    src: url('fonts/droidsans.ttf');
+}
+
+
 *
 {
 	padding: 0px;
@@ -19,6 +35,7 @@ body
 	background-size: 200px;
 	background-attachment: fixed;
 	display: flex;
+	flex-direction: column;
 	flex-grow: 1;
 	width: 100%;
 	height: 100%;
@@ -28,6 +45,247 @@ h1
 {
 	color: white;
 }
+
+#modules_cont
+{
+	display: flex;
+	margin-top: 50px;
+}
+
+
+
+/*
+========================================================================
+------------------------------------------------------------------------
+                                App
+------------------------------------------------------------------------
+========================================================================
+*/
+
+
+
+/*
+ -----------------------
+	     Toolbar
+ -----------------------
+*/
+
+
+#app_top_toolbar
+{
+	display: flex;
+	flex-direction: row;
+	color: white;
+	background: rgb(25, 25, 25);
+}
+
+.app_top_toolbar_category
+{
+	display: flex;
+	flex-direction: row;
+	height: 100%;
+	font-family: 'Open_Sans';
+	font-weight: 100;
+	user-select: none;
+}
+
+.app_top_toolbar_category_entry
+{
+	display: flex;
+	align-items: center;
+	height: 30px;
+	/*background: black;*/
+	padding: 0px 5px 0px 5px;
+}
+
+.app_top_toolbar_category_entry:hover
+{
+	background: rgb(50, 50, 50);
+}
+
+/*
+.app_top_toolbar_category_entry:active
+{
+	background: rgb(30, 30, 30);
+}
+*/
+
+
+/*important todo: Split all these modules into separate css files*/
+
+
+/*
+========================================================================
+------------------------------------------------------------------------
+                                Menus
+------------------------------------------------------------------------
+========================================================================
+*/
+
+
+@-webkit-keyframes sat_roll {
+  0% 
+  {
+    transform: translateY(-40px);
+    opacity: 0;
+  }
+  
+  100% 
+  {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+
+.tg_head_logo_dropdown.open .dropdown-menu
+{
+  animation: sat-roll 0.25s;
+  animation-timing-function: ease-out/*cubic-bezier(.22,.46,.28,1)*/;
+}
+
+.lizard_menu
+{
+	display: flex;
+	flex-grow: 1;
+	height: 100%;
+	flex-direction: column;
+}
+
+.lizmenu_title
+{
+	display: flex;
+	height: 100%;
+	align-items: center;
+	justify-content: center;
+}
+
+.lizard_menu_entries
+{
+	display: flex;
+	flex-direction: column;
+	position: absolute;
+	max-width: 400px;
+	min-width: 150px;
+	background: rgb(25, 25, 25);
+	color: white;
+	/*margin-left: -5px;*/
+	align-self: flex-start;
+	transition-duration: .0s;
+	/*transform: translateY(-10px);*/
+	border: 1px solid rgb(60, 60, 60);
+	padding: 1px;
+	box-shadow: 0px 0px 7px 0px rgba(0,0,0,0.7);
+	margin-top: 32px;
+	visibility: hidden;
+	opacity: 0;
+	
+}
+
+.lizard_menu:hover .lizard_menu_entries, [haslizmenu]:hover .lizard_menu_entries
+{
+	visibility: visible;
+	transition-duration: .2s;
+	/*transform: translateY(0px);*/
+	display: flex;
+	opacity: 1;
+}
+
+
+.lizard_menu_entry
+{
+	display: flex;
+	align-items: center;
+	height: 25px;
+	/*background: gray;*/
+}
+
+.lizard_menu_entry:hover
+{
+	background: rgb(40, 40, 40);
+}
+
+.lizard_menu_entry:active
+{
+	background: rgb(34, 95, 157);
+}
+
+
+.lizard_menu_entry_icon
+{
+	width: 25px;
+	height: 100%;
+	/*background: rgba(255, 255, 255, 0.1);*/
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+
+.lizard_menu_entry_icon img
+{
+	width: 55%;
+	height: 55%;
+	/*object-fit: contain;*/
+	object-position: center;
+}
+
+
+.lizard_menu_entry_text
+{
+	padding: 0px 6px 0px 5px;
+	font-size: 15px;
+}
+
+.lizard_menu_separator
+{
+	width: 80%;
+	align-self: center;
+	height: 1px;
+	border-top: 1px dashed rgb(70, 70, 70);
+	margin: 1px 0px 0px 0px;
+	/*background: rgb(60, 60, 60);*/
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -45,29 +303,48 @@ h1
 
 
 /*
-=====================================================================
----------------------------------------------------------------------
-                               Skyboxer
----------------------------------------------------------------------
-=====================================================================
+========================================================================
+------------------------------------------------------------------------
+                                Skyboxer
+------------------------------------------------------------------------
+========================================================================
 */
 
 #skyboxer_app
 {
 	display: flex;
+	flex-direction: column;
 	flex-grow: 1;
 	width: 100%;
 	/*height: 100%;*/
 	/*background: rgba(255, 255, 255, 0.5);*/
 	justify-content: center;
+	padding-left: 100px;
 }
+
+
+
 
 
 #skyboxer_squares
 {
 	display: flex;
 	/*width: 100%;*/
-	flex-direction: column;
+	flex-direction: row;
+	/*justify-content: center;*/
+}
+
+
+#skyboxer_squares *
+{
+	user-select: none;
+}
+
+
+#skyboxer_squares_inner
+{
+	display: flex;
+    flex-direction: column;
 }
 
 .skybox_square
@@ -142,7 +419,7 @@ h1
 	display: flex;
 	width: 15px;
 	height: 15px;
-	background: cyan;
+	background: red;
 	border-radius: 999px;
 	margin-left: 5px;
 }
@@ -168,7 +445,6 @@ h1
 	height: 65px;
 	/*background: gray;*/
     margin-top: -70px;
-    user-select: none;
 }
 
 .sky_side_info_box_h .sky_info_icon
@@ -184,7 +460,7 @@ h1
 	display: flex;
 	width: 15px;
 	height: 15px;
-	background: cyan;
+	background: red;
 	border-radius: 999px;
 	margin-bottom: 5px;
 }
@@ -209,5 +485,40 @@ h1
 	object-fit: contain;
 	object-position: center;
 }
+
+
+
+
+#sky_name
+{
+	font-family: 'Roboto';
+	font-weight: 400;
+	color: white;
+	font-size: 50px;
+}
+
+#sky_compile_status
+{
+	font-family: 'Roboto';
+	font-weight: 200;
+	color: rgb(200, 200, 200);
+	font-size: 20px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

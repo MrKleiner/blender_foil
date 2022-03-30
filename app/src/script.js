@@ -58,11 +58,21 @@ function app_reload_refresh(evee)
 	}
 }
 
+
 document.addEventListener('keydown', kvt => {
     console.log('keypress');
     app_reload_refresh(kvt)
 });
 
+document.addEventListener('click', event => {
+    // console.log('click_registered');
+
+	// load skyboxer
+    const skyboxer_app = event.target.closest('[lizmenu_action="load_skyboxer_app"]');
+    if (skyboxer_app) { skyboxer_module_loader() }
+
+
+});
 
 /*
 ============================================================
@@ -72,8 +82,10 @@ document.addEventListener('keydown', kvt => {
 ============================================================
 */
 
-window.cstorage = ''
+// window.cstorage = ''
 // let cst = ''
+
+// important todo: separate server into a separate function
 $(document).ready(function(){
 	// Include Nodejs' net module.
 	// const Net = require('net');
@@ -140,6 +152,9 @@ $(document).ready(function(){
 				case 'skyboxer':
 					skyboxer_module_manager(input_d)
 					break;
+				case 'load_skyboxer_app':
+					skyboxer_module_loader()
+					break;
 				default:
 					console.log('The transmission from the other world has ended, but requested action is unknown')
 					break;
@@ -159,11 +174,104 @@ $(document).ready(function(){
 	        console.log('Error:', err);
 	    });
 
-
 	});
 
+	// lizmenus_init()
+	main_app_init()
 
 });
+
+function main_app_init()
+{
+	// create Preferences menu
+/*	var pr_menu_items = {
+		'menu_name': 'Preferences',
+		'menu_entries': [
+			{
+				'name': 'App Settings',
+				'action': 'open_app_prefs',
+				'icon': 'nen'
+			},
+			{
+				'name': 'Mod Settings',
+				'action': 'open_mod_prefs',
+				'icon': 'nen'
+			},
+			{
+				'type': 'separator'
+			},
+			{
+				'name': 'Exit',
+				'action': 'exit_app',
+				'svg': true,
+				'icon': 'assets/app_exit_icon.svg'
+			}
+		]
+	}
+	*/
+	create_lizmenu(
+			'[apptoolbarctg="preferences"]',
+			{
+			'menu_name': 'Preferences',
+			'menu_entries': [
+				{
+					'name': 'Mod Settings',
+					'action': 'open_mod_prefs',
+					'icon': 'assets/wrench_icon.svg'
+				},
+				{
+					'name': 'App Settings',
+					'action': 'open_app_prefs',
+					'icon': 'assets/cog_icon.svg'
+				},
+				{
+					'type': 'separator'
+				},
+				{
+					'name': 'Exit',
+					'action': 'exit_app',
+					'svg': true,
+					'icon': 'assets/app_exit_icon.svg'
+				}
+			]
+		}
+	)
+
+	// create tools menu
+	create_lizmenu(
+			'[apptoolbarctg="tools"]',
+			{
+			'menu_name': 'Tools',
+			'menu_entries': [
+				{
+					'name': 'Skyboxer',
+					'action': 'load_skyboxer_app',
+					'icon': 'assets/world_sky_icon.svg'
+				},
+				{
+					'name': 'Sound Manager',
+					'action': 'load_sound_manager_app',
+					'icon': 'assets/speaker_icon.svg'
+				},
+				{
+					'name': 'Soundscape Manager',
+					'action': 'load_sound_manager_app',
+					'icon': 'assets/soundscape_icon.svg'
+				}
+			]
+		}
+	)
+
+
+
+
+}
+
+
+
+
+
+
 
 /*
 $( "#result" ).load( "ajax/test.html", function() {
@@ -255,6 +363,256 @@ function apc_send()
 
 
 
+/*
+============================================================
+------------------------------------------------------------
+                          Simple menus
+------------------------------------------------------------
+============================================================
+*/
+
+/*
+function lizmenus_init()
+{
+
+	document.querySelectorAll('[lizmenu_initid]').forEach(function(userItem) {
+		// console.log(userItem)
+
+		var tgt_menu = userItem
+		console.log(userItem);
+		tgt_menu.style.marginTop = (userItem.parentElement.offsetHeight).toString() + 'px'
+		tgt_menu.style.marginLeft = (-1 * parseInt(window.getComputedStyle(userItem.parentElement, null).getPropertyValue('padding-left').replace('px', ''))).toString() + 'px'
+	});
+
+}
+*/
+
+
+
+
+
+/*
+ -----------------------
+	      Maker
+ -----------------------
+*/
+
+// takes selector string and items dict as an input
+// dict is as follows:
+/*
+{
+	'menu_name': 'Pootis',
+	'menu_entries': [
+		{
+			'name': 'Skyboxer',
+			'action': 'load_skyboxer_app',
+			'icon': 'link/to/icon.png OR svg code',
+			'icon_mode': 'bitmap OR svg'
+		},
+		{
+			'name': 'Skyboxer',
+			'action': 'load_skyboxer_app',
+			'icon': 'link/to/icon.png OR svg code',
+			'icon_mode': 'bitmap OR svg'
+		}
+	]
+}
+*/
+// Example result:
+/*
+<div class="lizard_menu">
+	<div class="lizmenu_title">Preferences</div>
+	<div class="lizard_menu_entries">
+		<div class="lizard_menu_entry">
+			<div class="lizard_menu_entry_icon"><img src="" class="lizmenu_entry_icon"></div>
+			<div class="lizard_menu_entry_text">Entry</div>
+		</div>
+		<div class="lizard_menu_entry">
+			<div class="lizard_menu_entry_icon"><img src="" class="lizmenu_entry_icon"></div>
+			<div class="lizard_menu_entry_text">Entry</div>
+		</div>
+	</div>
+</div>
+*/
+// todo: Add more options for the menu and menu entries
+function create_lizmenu(slct, itemsd)
+{
+	//
+	// Populate menu
+	//
+
+	var domenu = $(slct);
+
+	domenu.empty();
+
+	var menu_plate = $(`
+		<div class="lizard_menu">
+			<div class="lizmenu_title">FATAL_ERROR</div>
+			<div class="lizard_menu_entries">
+			</div>
+		</div>
+	`);
+
+	for (var lzitem of itemsd['menu_entries'])
+	{
+		// .hasOwnProperty('name')
+		if (lzitem['type'] != 'separator')
+		{
+			var entry_plate = $(`
+				<div class="lizard_menu_entry">
+					<div class="lizard_menu_entry_icon"><img src="" class="lizmenu_entry_icon"></div>
+					<div class="lizard_menu_entry_text">FATAL_ERROR</div>
+				</div>
+			`);
+
+			// set icon
+			entry_plate.find('.lizard_menu_entry_icon img')[0].src = lzitem['icon'];
+			// set entry text
+			entry_plate.find('.lizard_menu_entry_text').text(lzitem['name']);
+			// set item action
+			entry_plate.attr('lizmenu_action', lzitem['action']);
+			// svg condition
+			if (lzitem['svg'] != true){entry_plate.find('.lizard_menu_entry_icon img').css('object-fit', 'contain')}
+
+		}else{
+			var entry_plate = $(`<div class="lizard_menu_separator"></div>`);
+		}
+
+		// append to entries pool
+		menu_plate.find('.lizard_menu_entries').append(entry_plate);
+	}
+
+	// set menu title
+	menu_plate.find('.lizmenu_title').text(itemsd['menu_name']);
+
+	// append menu to target
+	domenu.append(menu_plate)
+
+	// select appended menu
+	// todo: .append returns selector?
+	var newmenu = domenu.find('.lizard_menu');
+	// Make parent a hitbox too
+	// todo: make this optional
+	domenu.attr('haslizmenu', true);
+	// select menu items
+	var newmenu_items = domenu.find('.lizard_menu_entries');
+
+
+	//
+	// set menu margins
+	//
+
+	// first - margin-top
+	// margin top is: height of the resulting lizmenu + padding-top of the parent container
+
+	// get padding of the parent container, if any
+	var padding_top = parseInt(window.getComputedStyle(newmenu[0], null).getPropertyValue('padding-top').replace('px', ''));
+	var margin_top = newmenu[0].offsetHeight
+	if (!isNaN(padding_top)){
+		margin_top += padding_top
+	}
+
+	// second - margin-left
+	var padding_left = parseInt(window.getComputedStyle(newmenu.parent()[0], null).getPropertyValue('padding-left').replace('px', ''));
+	var margin_left = 0
+	if (!isNaN(padding_left)){
+		margin_left += padding_left * -1
+	}
+
+	// set style
+	newmenu_items.css('margin-left', margin_left.toString() + 'px')
+	newmenu_items.css('margin-top', margin_top.toString() + 'px')
+
+}
+
+
+
+
+
+
+
+
+
+
+
+/*
+document.querySelectorAll('.lizard_menu').forEach(function(userItem) {
+    lizard_log(userItem);
+    userItem.setAttribute('style', 'display: none;');
+    // userItem.classList.add('lizhide');
+});
+*/
+
+/*
+document.addEventListener('mouseover', event => {
+    // console.log('wtf');
+
+    const pringles = event.target.closest('[lizards_menu]');
+    if (pringles) { lizmenu_pos_fixup(pringles) }
+
+});
+
+
+function lizmenu_pos_fixup(lizmenu)
+{
+	
+	var tgt_menu = lizmenu.querySelector('.lizard_menu');
+	console.log(lizmenu);
+	tgt_menu.style.marginTop = (lizmenu.offsetHeight).toString() + 'px'
+	tgt_menu.style.marginLeft = (-1 * parseInt(window.getComputedStyle(lizmenu, null).getPropertyValue('padding-left').replace('px', ''))).toString() + 'px'
+
+}
+
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -279,6 +637,12 @@ function skyboxer_module_manager(pl)
 		case 'reset':
 			skyboxer_scene_reset()
 			break;
+		case 'upd_work_status':
+			skyboxer_update_wstatus(pl)
+			break;
+		case 'set_sky_name':
+			skybox_set_sky_name(pl)
+			break;
 		default:
 			console.log('The module has been called, but no corresponding action was found')
 			break;
@@ -295,6 +659,28 @@ var	side_def_dict = {
         'up': 'up'
     }
 
+
+// double loading causes issues which ould be easily avoided by NOT performing double loads
+function skyboxer_module_loader()
+{
+	if (window['current_app_module'] != 'skyboxer')
+	{
+		// load this module and then populate skybox sides, if any
+		$('#modules_cont').load('tools/skyboxer.html', function() {
+			for (var skside in side_def_dict){
+				if (window['skyboxer_savedside_' + side_def_dict[skside]] != undefined){
+					$('#sky_' + side_def_dict[skside] + ' .skybox_square').attr('src', window['skyboxer_savedside_' + side_def_dict[skside]]);
+				}
+			}
+		});
+		window['current_app_module'] = 'skyboxer'
+	}else{
+		console.log('skyboxer module is loaded initially')
+	}
+}
+
+
+
 var side_status_def = {
 	'blender': '.blender_icon .icon_indicator_circle',
 	'pfm': '.pfm_icon .icon_indicator_circle',
@@ -306,7 +692,23 @@ var side_status_def = {
 // side_d - string. Side, like "left"
 function skyboxer_sides_filler(side_img, side_d)
 {
-	$('#sky_' + side_def_dict[side_d] + ' .skybox_square')[0].src = 'data:image/png;base64,' + side_img;
+	fetch('data:image/png;base64,' + side_img)
+	.then(function(response) {
+		console.log(response.status);
+		response.blob().then(function(data) {
+			// pgload(data, pgx, response.status)
+
+			// var boobs = new Blob([reader.result], {type: etgt.files[0].type });
+			var urlCreator = window.URL || window.webkitURL;
+			var imageUrl = urlCreator.createObjectURL(data);
+
+			$('#sky_' + side_def_dict[side_d] + ' .skybox_square').attr('src', imageUrl);
+			window['skyboxer_savedside_' + side_def_dict[side_d]] = imageUrl;
+		});
+	});
+
+
+	
 	// $('#sky_' + side_def_dict[side_d])[0].src = '';
 	// $('#sky_' + side_def_dict[side_d])[0].src = side_img + '?' + new Date().getTime();
 }
@@ -328,8 +730,15 @@ function skyboxer_scene_reset()
 }
 
 
+function skyboxer_update_wstatus(stat)
+{
+	$('#sky_compile_status').text(stat['status']);
+}
 
-
+function skybox_set_sky_name(skname)
+{
+	$('#sky_name').text(skname['skyname']);
+}
 
 
 

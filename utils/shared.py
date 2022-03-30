@@ -90,8 +90,9 @@ def get_obj_locrot_v1(eobject, fix90, axis, self, context):
 
 
 
-
-# Send commands to app
+# ==========================================
+#               App bridge
+# ==========================================
 async def appgui_updater(pl):
     try:
         s = socket.socket()  # Create a socket object
@@ -142,5 +143,55 @@ def app_command_send(payload):
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     result = loop.run_until_complete(appgui_updater(payload))
+
+
+
+
+
+
+
+
+
+
+
+
+# ==========================================
+#               Cleanup
+# ==========================================
+
+def blfoil_file_cleanup(flushtemp=False, dmark='blfoil_cleanup_todelete'):
+    import shutil
+    import os
+    from pathlib import Path
+    import bpy
+    
+    addon_root_dir = Path(__file__).absolute().parent.parent
+    # delete all images
+    for cleanup in bpy.data.images:
+        if cleanup.get(str(dmark)) == True:
+            bpy.data.images.remove(cleanup)
+    # delete all materials
+    for cleanup in bpy.data.materials:
+        if cleanup.get(str(dmark)) == True:
+            bpy.data.materials.remove(cleanup)
+    # delete all objects
+    for cleanup in bpy.data.objects:
+        if cleanup.get(str(dmark)) == True:
+            bpy.data.objects.remove(cleanup)
+    # delete all worlds
+    for cleanup in bpy.data.worlds:
+        if cleanup.get(str(dmark)) == True:
+            bpy.data.worlds.remove(cleanup)
+    # delete all meshes
+    for cleanup in bpy.data.meshes:
+        if cleanup.get(str(dmark)) == True:
+            bpy.data.meshes.remove(cleanup)
+    # Flush temp folder
+    if flushtemp == True:
+        shutil.rmtree(str(addon_root_dir / 'tot'), ignore_errors=True)
+        os.makedirs(str(addon_root_dir / 'tot'))
+
+
+
 
 

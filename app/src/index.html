@@ -2,172 +2,70 @@
 <html>
 	<head>
 		<meta charset="UTF-8">
-		<title>pvned</title>
+		<title>Blender Foil</title>
 		<link rel="stylesheet" href="index.css">
 	</head>
 	<body>
 		<script src="./apis/crypto_js/3_1_2/aes.js" integrity="sha256-/H4YS+7aYb9kJ5OKhFYPUjSJdrtV6AeyJOtTkw6X72o=" crossorigin="anonymous"></script>
 
-		<div id="skyboxer_app">
-			<div id="skyboxer_squares">
+		<div id="app_top_toolbar">
+			<div class="app_top_toolbar_category">
+				<div apptoolbarctg="preferences" class="app_top_toolbar_category_entry">
 
-				<!-- Row 1: Up -->
-				<div id="skybox_sq_row_1" class="skybox_sq_row">
-					<div id="sky_up" class="skybox_side_container">
-						<img draggable="false" src="assets/cross_square.png" class="skybox_square"></img>
-						<div class="sky_side_info_box sky_side_info_box_v">
-
-							<div class="sky_info_icon blender_icon" >
-								<img draggable="false" src="assets/blender_icon_512.png">
-								<div class="icon_indicator_circle"></div>
+<!-- 					<div class="lizard_menu">
+						<div class="lizmenu_title">Preferences</div>
+						<div class="lizard_menu_entries">
+							<div class="lizard_menu_entry">
+								<div class="lizard_menu_entry_icon"></div>
+								<div class="lizard_menu_entry_text">Entry</div>
 							</div>
-
-							<div class="sky_info_icon pfm_icon">
-								<img draggable="false" src="assets/exr.png">
-								<div class="icon_indicator_circle"></div>
+							<div class="lizard_menu_entry">
+								<div class="lizard_menu_entry_icon"></div>
+								<div class="lizard_menu_entry_text">Entry</div>
 							</div>
-
-							<div class="sky_info_icon vtf_icon">
-								<img draggable="false" src="assets/vtf_icon.png">
-								<div class="icon_indicator_circle"></div>
+							<div class="lizard_menu_entry">
+								<div class="lizard_menu_entry_icon"></div>
+								<div class="lizard_menu_entry_text">Entry</div>
 							</div>
-
+							<div class="lizard_menu_separator"></div>
+							<div class="lizard_menu_entry">
+								<div class="lizard_menu_entry_icon"></div>
+								<div class="lizard_menu_entry_text">Entry</div>
+							</div>
 						</div>
-					</div>
-				</div>
-
-				<!-- Row 2: Front Left Back Right -->
-				<!-- todo: populate info squares on load. basically, create all of this on load... -->
-				<div id="skybox_sq_row_2" class="skybox_sq_row">
-
-					<div id="sky_front" class="skybox_side_container">
-						<img draggable="false" src="assets/cross_square.png" class="skybox_square"></img>
-						<div class="sky_side_info_box sky_side_info_box_h">
-
-							<div class="sky_info_icon blender_icon" >
-								<img draggable="false" src="assets/blender_icon_512.png">
-								<div class="icon_indicator_circle"></div>
-							</div>
-
-							<div class="sky_info_icon pfm_icon">
-								<img draggable="false" src="assets/exr.png">
-								<div class="icon_indicator_circle"></div>
-							</div>
-
-							<div class="sky_info_icon vtf_icon">
-								<img draggable="false" src="assets/vtf_icon.png">
-								<div class="icon_indicator_circle"></div>
-							</div>
-
-						</div>
-					</div>
-
-
-					<div id="sky_left" class="skybox_side_container">
-						<img draggable="false" src="assets/cross_square.png" class="skybox_square"></img>
-						<div class="sky_side_info_box sky_side_info_box_h">
-
-							<div class="sky_info_icon blender_icon" >
-								<img draggable="false" src="assets/blender_icon_512.png">
-								<div class="icon_indicator_circle"></div>
-							</div>
-
-							<div class="sky_info_icon pfm_icon">
-								<img draggable="false" src="assets/exr.png">
-								<div class="icon_indicator_circle"></div>
-							</div>
-
-							<div class="sky_info_icon vtf_icon">
-								<img draggable="false" src="assets/vtf_icon.png">
-								<div class="icon_indicator_circle"></div>
-							</div>
-
-						</div>
-					</div>
-
-
-					<div id="sky_back" class="skybox_side_container">
-						<img draggable="false" src="assets/cross_square.png" class="skybox_square"></img>
-						<div class="sky_side_info_box sky_side_info_box_h">
-
-							<div class="sky_info_icon blender_icon" >
-								<img draggable="false" src="assets/blender_icon_512.png">
-								<div class="icon_indicator_circle"></div>
-							</div>
-
-							<div class="sky_info_icon pfm_icon">
-								<img draggable="false" src="assets/exr.png">
-								<div class="icon_indicator_circle"></div>
-							</div>
-
-							<div class="sky_info_icon vtf_icon">
-								<img draggable="false" src="assets/vtf_icon.png">
-								<div class="icon_indicator_circle"></div>
-							</div>
-
-						</div>
-					</div>
-
-
-					<div id="sky_right" class="skybox_side_container">
-						<img draggable="false" src="assets/cross_square.png" class="skybox_square"></img>
-						<div class="sky_side_info_box sky_side_info_box_v">
-
-							<div class="sky_info_icon blender_icon" >
-								<img draggable="false" src="assets/blender_icon_512.png">
-								<div class="icon_indicator_circle"></div>
-							</div>
-
-							<div class="sky_info_icon pfm_icon">
-								<img draggable="false" src="assets/exr.png">
-								<div class="icon_indicator_circle"></div>
-							</div>
-
-							<div class="sky_info_icon vtf_icon">
-								<img draggable="false" src="assets/vtf_icon.png">
-								<div class="icon_indicator_circle"></div>
-							</div>
-
-						</div>
-					</div>
-
+					</div> -->
 
 				</div>
-
-
-				<!-- Row 3: Down -->
-				<div id="skybox_sq_row_3" class="skybox_sq_row">
-
-					<div id="sky_down" class="skybox_side_container">
-						<img draggable="false" src="assets/cross_square.png" class="skybox_square"></img>
-						<div class="sky_side_info_box sky_side_info_box_v">
-
-							<div class="sky_info_icon blender_icon" >
-								<img draggable="false" src="assets/blender_icon_512.png">
-								<div class="icon_indicator_circle"></div>
+				<div apptoolbarctg="tools" class="app_top_toolbar_category_entry">
+<!-- 					<div class="lizard_menu">
+						<div class="lizmenu_title">Preferences</div>
+						<div class="lizard_menu_entries">
+							<div class="lizard_menu_entry">
+								<div class="lizard_menu_entry_icon"></div>
+								<div class="lizard_menu_entry_text">Entry</div>
 							</div>
-
-							<div class="sky_info_icon pfm_icon">
-								<img draggable="false" src="assets/exr.png">
-								<div class="icon_indicator_circle"></div>
+							<div class="lizard_menu_entry">
+								<div class="lizard_menu_entry_icon"></div>
+								<div class="lizard_menu_entry_text">Entry</div>
 							</div>
-
-							<div class="sky_info_icon vtf_icon">
-								<img draggable="false" src="assets/vtf_icon.png">
-								<div class="icon_indicator_circle"></div>
+							<div class="lizard_menu_entry">
+								<div class="lizard_menu_entry_icon"></div>
+								<div class="lizard_menu_entry_text">Entry</div>
 							</div>
-
+							<div class="lizard_menu_separator"></div>
+							<div class="lizard_menu_entry">
+								<div class="lizard_menu_entry_icon"></div>
+								<div class="lizard_menu_entry_text">Entry</div>
+							</div>
 						</div>
-					</div>
-
+					</div> -->
 				</div>
-
-
 			</div>
 		</div>
 
-
-
+		<div id="modules_cont">
+			<img style="width: 600px; height: 600px; object-fit: contain; align-self: center; margin-left: 300px;" src="assets/hello.png">
+		</div>
 
 
 	</body>

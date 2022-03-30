@@ -36,7 +36,7 @@ import pathlib
 from math import radians
 from mathutils import Matrix
 
-from ...utils.shared import eval_state, app_command_send
+from ...utils.shared import eval_state, app_command_send, blfoil_file_cleanup
 
 try:
     from bs4 import BeautifulSoup
@@ -57,6 +57,45 @@ addon_root_dir = Path(__file__).absolute().parent.parent.parent
 
 
 
+
+# set back everything
+def blfoil_skybox_cleanup(defdict, sce):
+    tgt_scene = sce
+
+    tgt_scene.render.resolution_x = defdict['res_x']
+    tgt_scene.render.resolution_y = defdict['res_y']
+    tgt_scene.render.resolution_percentage = defdict['res_perc']
+
+    tgt_scene.render.pixel_aspect_x = defdict['aspectx']
+    tgt_scene.render.pixel_aspect_y = defdict['aspecty']
+
+    tgt_scene.render.use_border = defdict['render_region']
+
+    # Colour management
+    tgt_scene.display_settings.display_device = defdict['display_device']
+    tgt_scene.view_settings.view_transform = defdict['view_transform']
+    tgt_scene.view_settings.look = defdict['look']
+    tgt_scene.view_settings.exposure = defdict['exposure']
+    tgt_scene.view_settings.gamma = defdict['gamma']
+
+
+    # Output mode
+    tgt_scene.render.filepath = defdict['render_filepath']
+    tgt_scene.render.use_file_extension = defdict['use_file_extension']
+    tgt_scene.render.use_render_cache = defdict['use_render_cache']
+    tgt_scene.render.image_settings.file_format = defdict['file_format']
+    tgt_scene.render.image_settings.color_mode = defdict['color_mode']
+    tgt_scene.render.use_overwrite = defdict['use_overwrite']
+    tgt_scene.render.use_placeholder = defdict['use_placeholder']
+    tgt_scene.render.image_settings.color_depth = defdict['img_color_depth']
+    tgt_scene.render.image_settings.exr_codec = defdict['exr_codec']
+    tgt_scene.render.image_settings.use_zbuffer = defdict['use_zbuffer']
+    tgt_scene.render.image_settings.use_preview = defdict['use_preview']
+    tgt_scene.render.use_compositing = defdict['use_compositing']
+    tgt_scene.render.use_sequencer = defdict['use_sequencer']
+    tgt_scene.render.dither_intensity = defdict['dither_intensity']
+
+    tgt_scene.camera = defdict['camera']
 
 
 
@@ -102,12 +141,12 @@ def blfoil_skybox_maker(tgt_scene):
     # Check if game path exists. If not - stop script execution and throw a warning
     # but first - check if we use SourceOps Game path and if SourceOps is available at all
     # check if we use source ops
-    # todo: wtf :(
+    # todo: YES, "try:" allows to go straight to the point istead of checking every part of the chain
+    # All that matters is if there's a valid game or not, the presence or abscense of SourceOps doesn't say anything 
     if sk_settings.use_sourceops_gpath == True:
         try:
             sky_foil_gpath = tgt_scene.sourceops.game_items[tgt_scene.sourceops.game_index]['game']
         except:
-            # self.report({'WARNING'}, 'Unable to locate any SourceOps games. Go drink some tea')
             except_raiser('It was requested to use SourceOps game path, but SourceOps could not be located OR game is invalid')
     else:
         sky_foil_gpath = bpy.path.abspath(sk_settings.game_path)
@@ -131,38 +170,8 @@ def blfoil_skybox_maker(tgt_scene):
     # Check the destination folder condition: If exists, but overwrite is False - stop and throw error
     dest_folder = game_path / 'materialsrc' / 'skybox' / sk_settings.sky_name
 
-    if dest_folder.is_file() and sk_settings.overwrite_shit == False:
+    if dest_folder.is_dir() and sk_settings.overwrite_shit == False:
         except_raiser('Skybox destination folder exists, but overwrite is set to False')
-
-
-    # Run cleanup just in case ?
-    # important todo: redo this
-    def docleanup():
-        # delete all images
-        for img in bpy.data.images:
-            if 'liz3bkproc_delme' in img.name:
-                bpy.data.images.remove(bpy.data.images[img.name])
-        # delete all mats
-        for mat in bpy.data.materials:
-            if 'liz3bkproc_delme' in mat.name or 'skybakem_' in mat.name:
-                bpy.data.materials.remove(bpy.data.materials[mat.name])
-        # delete all objects
-        for objc in bpy.data.objects:
-            if 'liz3bkproc_delme' in objc.name:
-                bpy.data.objects.remove(bpy.data.objects[objc.name])
-        # delete all worlds
-        for wrld in bpy.data.worlds:
-            if 'liz3bkproc_delme' in wrld.name:
-                bpy.data.worlds.remove(wrld)
-        # delete local temp_dir
-        try:
-            shutil.rmtree(os.path.join(this_blend_file, 'tmp_folder_liz3bkproc_delme'))
-        except:
-            print('Local tmp folder does not exists. Dont delete')
-        # todo: also delete object data n shit
-
-
-    # docleanup()
 
 
     # delete materialsrc dir if any
@@ -176,7 +185,7 @@ def blfoil_skybox_maker(tgt_scene):
         sk_settings.sky_name + '_tga_src'
     ]
     for ds in destinations:
-        os.makedirs(str(dest_folder / ds))
+        (dest_folder / ds).mkdir(parents=True, exist_ok=True)
 
 
     # Save scene settings
@@ -214,8 +223,9 @@ def blfoil_skybox_maker(tgt_scene):
         'use_preview': tgt_scene.render.image_settings.use_preview,
         'use_compositing': tgt_scene.render.use_compositing,
         'use_sequencer': tgt_scene.render.use_sequencer,
-        'dither_intensity': tgt_scene.render.dither_intensity
-        # TODO: MAKE OLD CAMERA ACTIE AGAIN
+        'dither_intensity': tgt_scene.render.dither_intensity,
+        
+        'camera': tgt_scene.camera
     }
 
     # sidez = ['bk:90:0:-90', 'dn:0:0:-180', 'ft:90:0:90', 'lf:90:0:0', 'rt:90:0:-180', 'up:180:0:180']
@@ -258,7 +268,7 @@ def blfoil_skybox_maker(tgt_scene):
         'up': (sky_dimx, sky_dimx),
         'rt': (sky_dimx, sky_dimy),
         # 8 if nobottom or side is a rect else - defaults
-        'dn': (8 if sk_settings.nobottom or sky_is_rect else sky_dimx, 8 if sk_settings.nobottom or sky_is_rect else sky_dimy)
+        'dn': (8 if sk_settings.nobottom or sky_is_rect else sky_dimx, 8 if sk_settings.nobottom or sky_is_rect else sky_dimx)
     }
 
     # cam shift dict
@@ -290,10 +300,18 @@ def blfoil_skybox_maker(tgt_scene):
     
     sky_camera_object = bpy.data.objects.new('blfoil_skybox_maker_camera', sky_camera_data)
     tgt_scene.collection.objects.link(sky_camera_object)
+    # mark for deleteion, just in case
+    sky_camera_object['blfoil_cleanup_todelete'] = True
 
     # make this camera active
     tgt_scene.camera = sky_camera_object
 
+    # Notify app that blender renders are happening
+    app_command_send({
+        'app_module': 'skyboxer',
+        'mod_action': 'upd_work_status',
+        'status': 'Rendering sides in Blender...'
+    })
 
     # Render each side into .exr OR .tga
     for side in sidez:
@@ -308,7 +326,9 @@ def blfoil_skybox_maker(tgt_scene):
         sky_camera_object.rotation_euler[2] = math.radians(csidez)
 
 
+        #
         # Setup camera and render settings
+        #
 
         # render size
         tgt_scene.render.resolution_x = side_sizes[side][0]
@@ -348,7 +368,8 @@ def blfoil_skybox_maker(tgt_scene):
         bpy.ops.render.render(write_still = 1)
         
         
-        # if HDR then we need stupid LDR fallbacks
+
+        # AFTER done rendering, check if HDR then we need stupid LDR fallbacks
         # fuck them really - downscale them fuckers by a factor of fucking 2
         # simply re-save it with blender
         if sk_settings.hdrldr == 'HDR':
@@ -367,16 +388,23 @@ def blfoil_skybox_maker(tgt_scene):
 
             # load resulting .exr or
             apply_filmic = bpy.data.images.load(str(dest_folder / (sk_settings.sky_name + '_exr_src') / (sk_settings.sky_name + side + '.exr')))
+            apply_filmic['blfoil_cleanup_todelete'] = True
 
             # export exr with filmic applied
             apply_filmic.save_render(str(dest_folder / (sk_settings.sky_name + '_tga_src') / (sk_settings.sky_name + side + '.tga')))
 
+            # unlink rubbish
+            bpy.data.images.remove(apply_filmic)
+
 
         # Use magick to convert tga to png (there's always a tga)
+        (addon_root_dir / 'tot' / 'skyboxer').mkdir(parents=True, exist_ok=True)
         magix_prms = [
             str(magix),
             str(dest_folder / (sk_settings.sky_name + '_tga_src') / (sk_settings.sky_name + side + '.tga')),
-            str(addon_root_dir / 'app' / 'src' / 'tot' / (sk_settings.sky_name + side + '.png'))
+            # str(addon_root_dir / 'app' / 'src' / 'tot' / (sk_settings.sky_name + side + '.png'))
+            # important todo: So, what's the best place to write temp shit to ?
+            str(addon_root_dir / 'tot' / 'skyboxer' / (sk_settings.sky_name + side + '.png'))
         ]
         # exec magick
         subprocess.call(magix_prms)
@@ -420,6 +448,13 @@ def blfoil_skybox_maker(tgt_scene):
     shutil.rmtree(str(vtex_outdir), ignore_errors=True)
 
 
+    # Notify app that VTF conversion is happening
+    app_command_send({
+        'app_module': 'skyboxer',
+        'mod_action': 'upd_work_status',
+        'status': 'Converting to VTF...'
+    })
+
 
     for tside in sidez:
         
@@ -435,7 +470,7 @@ def blfoil_skybox_maker(tgt_scene):
 
 
         # Literally the heart of this exporter: Converting .exr to PROPER .pfms
-        # -endian LSB !!!!!        
+        # -endian LSB !!!!!
         print(magix)
         if sk_settings.hdrldr == 'HDR':
             # convert with image magick 
@@ -465,7 +500,8 @@ def blfoil_skybox_maker(tgt_scene):
         text_file_content = [
             'nolod 1',
             'nomip 1',
-            'nonice 1',
+            # important todo: wtf is actually nonice ???? What EXACTLY does it do ?
+            'nonice 1' if sky_dimx > 256 else '',
             'pfm 1' if sk_settings.hdrldr == 'HDR' else '',
             'pfmscale 1' if sk_settings.hdrldr == 'HDR' else '',
             # Not specifying nocompress 1 automatically means that it will be compressed
@@ -522,7 +558,7 @@ def blfoil_skybox_maker(tgt_scene):
                 # LDR fallback
                 'basetexture': str(vmtbasepath) + tside,
                 # HDR shit
-                'hdrbasetexture': str(vmtbasepath) + '_hdr' + tside,
+                'hdrcompressedtexture' if sk_settings.hdr_compressed else 'hdrbasetexture': str(vmtbasepath) + '_hdr' + tside,
                 # transform. If sky is rectangular and if current side is not down or up
                 'basetexturetransform': 'center 0 0 scale 1 2 rotate 0 translate 0 0' if sky_is_rect and tside != 'up' and tside != 'dn' else None 
             })
@@ -607,11 +643,54 @@ class OBJECT_OT_blfoil_full_skybox_export(Operator, AddObjectHelper):
     # bl_options = {'REGISTER'}
     
     def execute(self, context):
+        # Reset skybox in-app
         app_command_send({
             'app_module': 'skyboxer',
             'mod_action': 'reset'
         })
-        blfoil_skybox_maker(context.scene)
+
+        # Set sky name in-app
+        app_command_send({
+            'app_module': 'skyboxer',
+            'mod_action': 'set_sky_name',
+            'skyname': context.scene.blfoil_skyboxer_settings.sky_name
+        })
+
+        # Switch to skyboxer
+        app_command_send({
+            'app_module': 'load_skyboxer_app'
+        })
+
+        try:
+            # Do export
+            blfoil_skybox_maker(context.scene)
+            # Revert settings back
+            blfoil_skybox_cleanup(context.scene['blfoil_skyboxer_settings_save'], context.scene)
+            del context.scene['blfoil_skyboxer_settings_save']
+
+            # Notify the app that compiling is done
+            app_command_send({
+                'app_module': 'skyboxer',
+                'mod_action': 'upd_work_status',
+                'status': 'Finished. No errors'
+            })
+
+        except Exception as e:
+            self.report({'WARNING'}, str(e))
+
+            # Cleanup
+            blfoil_file_cleanup()
+
+            # Notify the app that compiling is failed
+            app_command_send({
+                'app_module': 'skyboxer',
+                'mod_action': 'upd_work_status',
+                'status': 'Error: ' + str(e)
+            })
+
+
+        # Cleanup the scene regardless
+        blfoil_file_cleanup(flushtemp=True)
 
         return {'FINISHED'}
 
@@ -686,16 +765,16 @@ class blfoil_skyboxer_settings(PropertyGroup):
 
     size : EnumProperty(
         items=[
-        ('8', '8', 'ded2'),
-        ('16', '16', 'ded2'),
-        ('32', '32', 'ded2'),
-        ('64', '64', 'ded2'),
-        ('128', '128', 'ded2'),
-        ('256', '256', 'ded2'),
-        ('512', '512', 'ded2'),
-        ('1024', '1024', 'ded2'),
-        ('2048', '2048', 'ded2'),
-        ('4096', '4096', 'ded2'),
+        ('8', '8', 'lmfao'),
+        ('16', '16', 'wat ??'),
+        ('32', '32', 'rly'),
+        ('64', '64', 'why'),
+        ('128', '128', 'Gaming on consoles be like'),
+        ('256', '256', 'As small as your'),
+        ('512', '512', 'rubbish'),
+        ('1024', '1024', 'Ery noice'),
+        ('2048', '2048', 'Giga Chad'),
+        ('4096', '4096', """Doesn't work (I'm not kidding)""")
         ],
         name='sizes',
         description='I want to kiss a lizard',
@@ -748,11 +827,11 @@ class blfoil_skyboxer_settings(PropertyGroup):
         
     hdrldr : EnumProperty(
         items=[
-        ('HDR', 'HDR', 'ded2'),
-        ('LDR', 'LDR', 'ded2')
+        ('HDR', 'HDR', 'Giga Chad'),
+        ('LDR', 'LDR', 'Rubbish')
         ],
-        name='ldr/hdr',
-        description='I want to kiss a lizard'
+        name='ldr/hdr'
+        # description='I want to kiss a lizard'
         # default = "nil"
         )
         
