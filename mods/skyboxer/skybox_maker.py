@@ -777,7 +777,7 @@ class blfoil_skyboxer_settings(PropertyGroup):
         ('4096', '4096', """Doesn't work (I'm not kidding)""")
         ],
         name='sizes',
-        description='I want to kiss a lizard',
+        description='Pro tip: panorama length / 4 = optimal sky square size',
         default = '2048'
         )
 
@@ -856,7 +856,7 @@ class blfoil_skyboxer_settings(PropertyGroup):
 
     nobottom : BoolProperty(
         name='No bottom',
-        description='Destroy his ass',
+        description='Welcom 2 Bottom Gear mates',
         default = False 
         )
         

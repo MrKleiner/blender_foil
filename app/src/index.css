@@ -50,7 +50,12 @@ h1
 {
 	display: flex;
 	margin-top: 50px;
+	margin-bottom: 150px;
 }
+
+
+
+
 
 
 
@@ -74,9 +79,12 @@ h1
 #app_top_toolbar
 {
 	display: flex;
+	position: fixed;
+	width: 100%;
 	flex-direction: row;
 	color: white;
 	background: rgb(25, 25, 25);
+	z-index: 65535;
 }
 
 .app_top_toolbar_category
@@ -95,7 +103,7 @@ h1
 	align-items: center;
 	height: 30px;
 	/*background: black;*/
-	padding: 0px 5px 0px 5px;
+	padding: 0px 10px 0px 10px;
 }
 
 .app_top_toolbar_category_entry:hover
@@ -109,6 +117,36 @@ h1
 	background: rgb(30, 30, 30);
 }
 */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 /*important todo: Split all these modules into separate css files*/
@@ -246,33 +284,6 @@ h1
 	margin: 1px 0px 0px 0px;
 	/*background: rgb(60, 60, 60);*/
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -504,6 +515,426 @@ h1
 	color: rgb(200, 200, 200);
 	font-size: 20px;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+========================================================================
+------------------------------------------------------------------------
+                                Mod Maker
+------------------------------------------------------------------------
+========================================================================
+*/
+
+/*
+ -----------------------
+   Engine Selector
+ -----------------------
+*/
+
+#newmod_maker_app
+{
+	display: flex;
+	flex-direction: column;
+	flex-grow: 1;
+	width: 100%;
+	justify-content: center;
+	/*padding-left: 100px;*/
+	padding-left: 90px;
+	overflow: hidden;
+}
+
+
+#modmaker_engine_selector
+{
+	display: flex;
+	flex-direction: column;
+	padding-right: 20px;
+}
+
+#modmaker_engine_selector_title
+{
+	font-family: 'Roboto';
+	font-weight: 400;
+	color: white;
+	font-size: 40px;
+	user-select: none;
+}
+
+#modmaker_engine_selector_pool
+{
+	display: flex;
+	flex-direction: column;
+	margin-top: 10px;
+	/*padding: 5px 10px 5px 5px;*/
+	padding: 5px;
+	border: 1px solid rgb(60, 60, 60);
+	background: rgba(0, 0, 0, 0.1);
+}
+
+#modmaker_engine_selector_pool *
+{
+	user-select: none;
+}
+
+.modmaker_engine_item
+{
+	display: -webkit-box;
+	/*flex-direction: row;*/
+	height: 30px;
+	background: rgba(0, 0, 0, 0.1);
+	padding: 1px;
+	overflow: hidden;
+}
+
+.modmaker_engine_item:hover
+{
+	background: rgba(255, 255, 255, 0.1);
+
+}
+
+.modmaker_engine_item:active
+{
+	background: rgb(34, 95, 157);
+}
+
+.modmaker_engine_item_icon
+{
+	display: flex;
+	height: 100%;
+	width: 30px;
+	min-width: 30px;
+	align-items: center;
+	justify-content: center;
+}
+
+.modmaker_engine_item_icon img
+{
+	width: 80%;
+	height: 80%;
+	object-fit: contain;
+	object-position: center;
+}
+
+
+
+
+.modmaker_engine_item_name, .modmaker_engine_item_path
+{
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	height: 100%;
+	font-family: 'Open_Sans';
+	font-weight: 100;
+	font-size: 15px;
+	color: white;
+	user-select: none;
+}
+
+.modmaker_engine_item_name
+{
+	font-weight: 200;
+	white-space: nowrap;
+	min-width: 250px;
+	padding-left: 2px;
+}
+
+.modmaker_engine_item_path
+{
+	color: rgba(255, 255, 255, 0.9);
+	padding: 0px 0px 0px 10px;
+	overflow: hidden;
+	/*white-space: nowrap;*/
+}
+
+
+
+
+#modmaker_add_engine
+{
+	margin-top: 10px;
+	display: flex;
+	flex-direction: row;
+	/*height: 20px;*/
+}
+
+#modmaker_add_engine
+{
+	user-select: none;
+}
+
+#modmaker_add_engine:hover
+{
+	background: rgba(255, 255, 255, 0.1);
+
+}
+
+#modmaker_add_engine:active
+{
+	background: rgb(34, 157, 94);
+}
+
+
+
+#modmaker_add_engine_icon
+{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	/*width: 20px;*/
+}
+
+#modmaker_add_engine_icon img
+{
+	width: 80%;
+	height: 100%;
+	object-fit: contain;
+	object-position: center;
+}
+
+
+#modmaker_add_engine_text
+{
+	font-family: 'Roboto';
+	font-weight: 200;
+	color: white;
+	font-size: 15px;
+	padding: 4px 0px 4px 5px;
+	user-select: none;
+}
+
+
+
+/*
+ -----------------------
+     Engine Details
+ -----------------------
+*/
+
+#modmaker_engine_details
+{
+	display: flex;
+	flex-direction: column;
+	margin-top: 20px;
+    padding-right: 20px;
+    /*margin-left: 20px;*/
+}
+
+
+#modmaker_engine_details_title
+{
+	font-family: 'Roboto';
+	font-weight: 400;
+	color: white;
+	font-size: 27px;
+	user-select: none;
+}
+
+
+#modmaker_engine_details_items
+{
+	display: flex;
+	flex-direction: column;
+	margin-top: 10px;
+	padding: 5px;
+	border: 1px solid rgb(60, 60, 60);
+	background: rgba(0, 0, 0, 0.1);
+}
+
+
+.modmaker_engine_details_item
+{
+	display: flex;
+	flex-direction: row;
+	height: 30px;
+}
+
+
+.modmaker_engine_details_item_list
+{
+	display: flex;
+	flex-direction: column;
+	/*height: 30px;*/
+}
+
+
+.modmaker_engine_details_item:not(:first-child)
+{
+	margin-top: 6px;
+}
+
+
+.modmaker_engine_details_item_title
+{
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	height: 100%;
+	font-family: 'Open_Sans';
+	font-weight: 200;
+	font-size: 15px;
+	color: white;
+	user-select: none;
+	min-width: 100px;
+}
+
+.modmaker_engine_details_item_input
+{
+	all: unset;
+	display: flex;
+	flex-grow: 1;
+	color: white;
+	justify-content: center;
+	font-family: 'Open_Sans';
+	font-weight: 100;
+	font-size: 15px;
+	user-select: none;
+	margin-left: 10px;
+	min-width: 50px;
+
+	padding: 2px 2px 2px 5px;
+	background: rgba(0, 0, 0, 0.3);
+	border-radius: 5px;
+}
+
+
+
+/*
+ -----------------------
+  Engine Details Lists
+ -----------------------
+*/
+
+
+.modmaker_engine_details_list
+{
+	display: flex;
+	flex-direction: column;
+	margin-top: 5px;
+}
+
+.modmaker_engine_details_list_title
+{
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	height: 30px;
+	font-family: 'Open_Sans';
+	font-weight: 200;
+	font-size: 15px;
+	color: white;
+	user-select: none;
+	/*min-width: 100px;*/
+}
+
+.modmaker_engine_details_list_items
+{
+	display: flex;
+	flex-direction: column;
+	margin-left: 40px;
+}
+
+
+.modmaker_engine_details_list_item
+{
+	display: flex;
+	flex-direction: row;
+}
+
+.modmaker_engine_details_list_item_text
+{
+	min-width: 135px;
+	font-family: 'Open_Sans';
+	font-weight: 100;
+	color: rgb(220, 220, 220);
+	font-size: 14px;
+	padding: 1px;
+}
+
+.modmaker_engine_details_list_item_status
+{
+/*	height: 100%;
+	width: 20px;*/
+	display: flex;
+}
+
+.modmaker_engine_details_list_item_status img
+{
+	width: 17px;
+	height: auto;
+	object-fit: contain;
+	object-position: center;
+	user-select: none;
+}
+
+
+
+/*
+ -----------------------
+  	Client Selector
+ -----------------------
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -179,6 +179,9 @@ $(document).ready(function(){
 	// lizmenus_init()
 	main_app_init()
 
+	// TESTING
+	newmodmaker_loader()
+
 });
 
 function main_app_init()
@@ -257,6 +260,14 @@ function main_app_init()
 					'name': 'Soundscape Manager',
 					'action': 'load_sound_manager_app',
 					'icon': 'assets/soundscape_icon.svg'
+				},
+				{
+					'type': 'separator'
+				},
+				{
+					'name': 'Mod Maker',
+					'action': 'load_newmodmaker',
+					'icon': 'assets/mech_icon.svg'
 				}
 			]
 		}
@@ -337,12 +348,13 @@ $(document).ready(function(){
 ============================================================
 */
 
-function apc_send()
+function apc_send(sendpayload)
 {
 	var client = new net.Socket();
 	client.connect(50000, '127.0.0.1', function() {
 		console.log('Connected');
-		client.write('Hello, server! Love, Client.');
+		// client.write('Hello, server! Love, Client.');
+		client.write(JSON.stringify(sendpayload));
 	});
 
 	client.on('data', function(data) {
@@ -366,7 +378,7 @@ function apc_send()
 /*
 ============================================================
 ------------------------------------------------------------
-                          Simple menus
+                    Simple menus START
 ------------------------------------------------------------
 ============================================================
 */
@@ -568,19 +580,13 @@ function lizmenu_pos_fixup(lizmenu)
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+/*
+============================================================
+------------------------------------------------------------
+                      Simple menus END
+------------------------------------------------------------
+============================================================
+*/
 
 
 
@@ -739,6 +745,62 @@ function skybox_set_sky_name(skname)
 {
 	$('#sky_name').text(skname['skyname']);
 }
+
+
+/*
+=====================================================================
+---------------------------------------------------------------------
+                            Skyboxer END
+---------------------------------------------------------------------
+=====================================================================
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+=====================================================================
+---------------------------------------------------------------------
+                             New Mod Maker
+---------------------------------------------------------------------
+=====================================================================
+*/
+
+
+
+function newmodmaker_loader()
+{
+	$('#modules_cont').load('tools/mod_maker.html', function() {
+		console.log('loaded')
+	});
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
