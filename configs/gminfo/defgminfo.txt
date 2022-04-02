@@ -1,0 +1,23 @@
+"GameInfo"
+{
+	"game"		"Alien Swarm: Reactive Drop"
+	"title"		"ASW"	// asw - leave this blank as we have a texture logo
+	"type"		"singleplayer_only"
+	GameData	"reactivedrop.fgd"
+	icon		"resource/icon1"
+	// InstancePath "tilegen/instances/"
+	
+	SupportsDX8     0
+	
+	"FileSystem"
+	{
+		"SteamAppId"	"563560"
+		// "ToolsAppId"	"211"
+		
+		"SearchPaths"
+		{
+			"Game"	"|gameinfo_path|."
+			"Game"	"platform"
+		}
+	}
+}

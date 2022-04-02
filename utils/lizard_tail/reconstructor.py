@@ -106,6 +106,11 @@ def gameinfo_rebuilder(infolizard):
 	# write global game info
 	print([kys for kys in infolizard.inforoot.GameInfo.children][1].name)
 	result_gminfo += write_keyvalues(infolizard.inforoot.GameInfo)
+	# csgo, if any
+	if infolizard.inforoot.GameInfo.hidden_maps != None:
+		result_gminfo += write_keyvalues(infolizard.inforoot.GameInfo.hidden_maps)
+		result_gminfo += '\n'
+		result_gminfo += cl(1)
 	# write filesystem (it's literally empty lmfao)
 	result_gminfo += write_keyvalues(infolizard.inforoot.GameInfo.FileSystem)
 	# write SearchPaths

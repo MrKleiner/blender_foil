@@ -4,7 +4,7 @@ bl_info = {
     'version': (1, 17),
     'blender': (3, 1, 0),
     'location': '3D Viewport > N menu. Image/UV Editor > N menu',
-    'description': 'Aluminium Foil. A set of tools for work with SoS Engeene',
+    'description': 'Aluminium Foil. A set of tools for work with SooS Engeene',
     'warning': 'Fuck 3Dmax. RIP Softimage XSI, you will not be forgotten',
     'doc_url': '',
     'category': '3D View',
@@ -116,13 +116,14 @@ blfoil_check_pypackages()
 
 # super fucking important todo: make it possible to add new menu entries via app gui
 # so that you can add weapon entities for your mod
+# update: It's dynamically generated from the linked library file
 
 
 # important todo: bd script
 
 # important todo: Marmoset Toolbag
 
-# important todo: Discord reaction images indexer
+# todo: Discord reaction images indexer
 
 # important todo: Substance plugin
 

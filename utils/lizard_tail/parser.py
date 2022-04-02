@@ -28,7 +28,7 @@ def gameinfoparser(mlines):
 			try:
 				if '{\n' in maplines[mpindex + 1]:
 					isquoted = 'quoted' if maplines[mpindex].count('"') > 1 else ''
-					rawvmf += (maplinef.replace(maplines[mpindex].strip(), '').replace('\n', '') + '<item kdict ' + isquoted + ' type="' + maplines[mpindex].strip('"').strip() + '">' + '\n')
+					rawvmf += (maplinef.replace(maplines[mpindex].strip(), '').replace('\n', '') + '<item kdict ' + isquoted + ' type="' + maplines[mpindex].replace('"', '').strip() + '">' + '\n')
 					maplines[mpindex] = ''
 					# print(maplines[mpindex])
 			except:
@@ -38,8 +38,8 @@ def gameinfoparser(mlines):
 				rawvmf += (maplinef.replace('}\n', '') + '</item>' + '\n')
 
 			if not '}\n' in maplinef and not '{\n' in maplinef and len(maplines[mpindex].strip()) != 0:
-				# rawvmf += '<kv>' + maplines[mpindex].split('//')[0] + '</kv>'
-				rawvmf += '<kv>' + maplines[mpindex] + '</kv>'
+				rawvmf += '<kv>' + maplines[mpindex].split('//')[0] + '</kv>'
+				# rawvmf += '<kv>' + maplines[mpindex] + '</kv>'
 
 			if not '}\n' in maplinef and not '{\n' in maplinef and len(maplines[mpindex].strip()) == 0:
 				rawvmf += '<entr></entr>'
@@ -51,7 +51,7 @@ def gameinfoparser(mlines):
 
 	print('lizvmf vmf convert took', int(round(time.time() * 1000)) - important_timings, 'msec')
 
-
+	# return rawvmf
 
 	#
 	# refinery
@@ -87,11 +87,16 @@ def gameinfoparser(mlines):
 		print(kv_format)
 		kvt.string = ''
 		keytag = lizard.new_tag('gkey')
-		keytag.string = kv_format[0].strip()
+		if kv_format[0].count('"') > 1:
+			keytag['quoted'] = True
+		keytag.string = kv_format[0].strip().replace('"', '')
+		kvt['keyname'] = kv_format[0].strip().replace('"', '')
 		kvt.append(keytag)
 
 		valuetag = lizard.new_tag('gval')
-		valuetag.string = kv_format[1].strip()
+		if kv_format[1].count('"') > 1:
+			valuetag['quoted'] = True
+		valuetag.string = kv_format[1].strip().replace('"', '')
 		kvt.append(valuetag)
 
 
