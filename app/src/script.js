@@ -12,6 +12,15 @@ window.py_common_opts = {
 const net = require('net');
 
 
+/*
+function u8btoa(st){
+  return btoa(unescape(encodeURIComponent(st)));
+}
+
+function u8atob(st){
+  return atob(unescape(encodeURIComponent(st)));
+}
+*/
 
 // encode
 function u8btoa(st) {
@@ -40,16 +49,17 @@ function shell_end_c(err,code,signal)
 	console.log('finished');
 };
 
+Element.prototype.lizchecked=function() {
+    // if(value===undefined) value=true;
+    // if(this.hasAttribute(attribute)) this.removeAttribute(attribute);
+    // else this.addAttribute(attribute,value);
+    if (this.getAttribute('lizcbox') == 'set'){
+    	return true
+    }else{
+    	return false
+    }
+};
 
-/*
-function u8btoa(st){
-  return btoa(unescape(encodeURIComponent(st)));
-}
-
-function u8atob(st){
-  return atob(unescape(encodeURIComponent(st)));
-}
-*/
 
 function app_reload_refresh(evee)
 {
@@ -71,6 +81,10 @@ document.addEventListener('click', event => {
     const skyboxer_app = event.target.closest('[lizmenu_action="load_skyboxer_app"]');
     if (skyboxer_app) { skyboxer_module_loader() }
 
+
+	// checkboxer
+    const checkboxer = event.target.closest('[lizcbox].lizcbox_container');
+    if (checkboxer) { lizcboxes_switch(checkboxer) }
 
 });
 
@@ -134,6 +148,9 @@ $(document).ready(function(){
 	    socket.on('end', function() {
 	    	// console.log('Total:', window.cstorage)
 	    	// console.log('Total:', cst)
+
+	    	// have better ideas ?
+	    	// comment on github
 	    	console.log('Total:', window['cst_cache' + socket.remotePort.toString()])
 
 	    	console.log('Closing connection with the client');
@@ -156,7 +173,7 @@ $(document).ready(function(){
 					skyboxer_module_loader()
 					break;
 				default:
-					console.log('The transmission from the other world has ended, but requested action is unknown')
+					console.log('The transmission from the other world has ended, but requested action is unknown');
 					break;
 			}
 
@@ -181,7 +198,7 @@ $(document).ready(function(){
 
 	// TESTING
 	newmodmaker_loader()
-
+	
 });
 
 function main_app_init()
@@ -594,11 +611,54 @@ function lizmenu_pos_fixup(lizmenu)
 
 
 
+/*
+============================================================
+------------------------------------------------------------
+                  Simple checkboxes START
+------------------------------------------------------------
+============================================================
+*/
 
+// init all cboxes
+function lizcboxes_init()
+{
+	document.querySelectorAll('[lizcbox_init]').forEach(function(userItem) {
+		console.log(userItem);
 
+		// only if checkbox is not initialized
+		if (userItem.getAttribute('lizcbox_init') == 'set'){
+			// var htm_append = `
+			// 	<div lizcbox class="lizcbox_container">
+			// 		<img draggable="false" src="assets/checkmark.svg">
+			// 	</div>
+			// `
+			var htm_append = `
+				<div lizcbox="set" class="lizcbox_container">
+					<div class="lizcbox_mark"></div>
+				</div>
+			`;
+		}else{
+			var htm_append = `
+				<div lizcbox="unset" class="lizcbox_container">
+					<div class="lizcbox_mark"></div>
+				</div>
+			`;
+		}
+		userItem.innerHTML = htm_append;
+		userItem.removeAttribute('lizcbox_init');
+	});
+}
 
-
-
+// todo: safety measures ?
+function lizcboxes_switch(tgtbox, state)
+{
+	if ($(tgtbox).attr('lizcbox') == 'set'){
+		$(tgtbox).attr('lizcbox', 'unset');
+	}else{
+		$(tgtbox).attr('lizcbox', 'set');
+	}
+	
+}
 
 
 
@@ -781,11 +841,11 @@ function skybox_set_sky_name(skname)
 */
 
 
-
 function newmodmaker_loader()
 {
 	$('#modules_cont').load('tools/mod_maker.html', function() {
-		console.log('loaded')
+		console.log('loaded');
+		lizcboxes_init();
 	});
 }
 

@@ -1,3 +1,6 @@
 ﻿__pycache__
 app/node_modules
 app/src/tot
+tot
+utils/lizard_tail/gameinfo.txt
+utils/lizard_tail/rc.xml

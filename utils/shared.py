@@ -195,3 +195,180 @@ def blfoil_file_cleanup(flushtemp=False, dmark='blfoil_cleanup_todelete'):
 
 
 
+
+
+
+
+
+
+
+# ==========================================
+#              Module downloaders
+# ==========================================
+"""
+with open('downloaded.zip', 'wb') as txtfile:
+    txtfile.write(data)
+"""
+
+def download_mapbase(tmpfolder=None):
+    import requests
+    from pathlib import Path
+    import requests
+    from bs4 import BeautifulSoup, Tag, NavigableString
+    import random
+
+    #
+    # get list of downloadables
+    #
+
+    # get html page. For now BDSM. todo: Later - ask ficool for a more elegant way
+    rq_url = 'https://www.moddb.com/downloads/start/183649/all'
+    url_prms = {
+        'Accept': '*/*'
+    }
+    # YES, headerZ, because I fucking hate it when it's impossible to distinguish which name is built-in into the langauge
+    # and which one is a custom one
+    # LIKE, headers=headers YES, THAT'S VERY NICE
+    headerz = {
+        'Accept': '*/*'
+    }
+    do_request = requests.get(url=rq_url, params=url_prms, headers=headerz)
+    data = do_request.content
+
+    # print(data)
+
+    lizard = BeautifulSoup(data.decode(), 'lxml', multi_valued_attributes=None)
+
+    # get all row links
+    rowlinks = [rl['href'] for rl in lizard.select('.mirrors .row [href*="downloads/mirror"]')]
+
+    for ded in rowlinks:
+        print(ded)
+
+    return 'https://www.moddb.com' + random.choice(rowlinks)
+
+
+
+
+
+
+
+
+
+def blfoil_download_hpp(hppver='2013sp', tmpfolder=None):
+    import requests
+    from pathlib import Path
+    import requests
+    from bs4 import BeautifulSoup, Tag, NavigableString
+    import random
+    import zipfile
+    # import distutils
+    # from distutils import dir_util
+    import os
+
+    """
+    valid entries:
+        csgo
+        tf2
+        2013mp
+        2013sp
+    """
+
+    #
+    # get list of downloadables
+    #
+
+    # get html page. For now BDSM. todo: Later - ask ficool for a more elegant way
+    rq_url = 'https://raw.githubusercontent.com/ficool2/HammerPlusPlus-Website/main/download.html'
+    url_prms = {
+        'Accept': '*/*'
+    }
+    headerz = {
+        'Accept': '*/*'
+    }
+    do_request = requests.get(url=rq_url, params=url_prms, headers=headerz)
+    data = do_request.content
+
+    lizard = BeautifulSoup(data.decode(), 'lxml', multi_valued_attributes=None)
+
+    # full_links = [fl['href'] for fl in lizard.select('[href*="https://github.com/ficool2/HammerPlusPlus-Website/releases/download"]')]
+    full_links = [fl['href'] for fl in lizard.select('[href*="github.com/ficool2/HammerPlusPlus-Website/releases/download"]')]
+    for ded in full_links:
+        print(ded)
+
+
+
+    # get the link for the target engine
+    dl_link = None
+    for tgtlink in full_links:
+        if hppver in tgtlink:
+            # return tgtlink
+            dl_link = tgtlink
+            # just how much of a gentleman one should be to break out of a 5 items array loop
+            break
+
+
+    # create temp dir
+    if tmpfolder != None:
+        dl_to_folder = Path(tmpfolder) / 'hammer_pp_dl_tmp'
+    else:
+        addon_root_dir = Path(__file__).absolute().parent.parent
+        dl_to_folder = addon_root_dir / 'tot' / 'hammer_pp_dl_tmp'
+
+    dl_to_folder.mkdir(parents=True, exist_ok=True)
+
+
+    # do download
+    dl_url = dl_link
+    dl_url_prms = {
+        'Accept': '*/*'
+    }
+    dl_headerz = {
+        'Accept': '*/*'
+    }
+    dl_request = requests.get(url=dl_url, params=dl_url_prms, headers=dl_headerz)
+    dl_data = dl_request.content
+
+    # write downloaded data
+    with open(str(dl_to_folder / 'hammer_pp_downloaded.zip'), 'wb') as mpb_file:
+        mpb_file.write(dl_data)
+
+    # extract archive
+    with zipfile.ZipFile(str(dl_to_folder / 'hammer_pp_downloaded.zip'),'r') as zip_ref:
+        zip_ref.extractall(str(dl_to_folder / 'hammer_pp'))
+
+    # move stuff to target and overwrite when neccessary
+
+    # first - move bin
+    # todo: safety measures
+    # important todo: The whole addon still lacks some safety measures
+    """
+    distutils.dir_util.copy_tree(
+        src=str(dl_to_folder / 'hammer_pp' / os.listdir(dl_to_folder / 'hammer_pp')[0] / 'bin'),
+        dst=r'E:\Gamess\steamapps\common\half-life 2\bin'
+    )
+    """
+
+    return (dl_to_folder / 'hammer_pp' / os.listdir(dl_to_folder / 'hammer_pp')[0])
+
+
+
+
+
+
+
+
+
+
+
+
+print(blfoil_download_hpp(hppver='2013sp'))
+
+
+
+
+
+
+
+
+

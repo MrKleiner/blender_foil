@@ -124,6 +124,8 @@ blfoil_check_pypackages()
 
 # important todo: Discord reaction images indexer
 
+# important todo: Substance plugin
+
 
 # =======================================================
 #                       Register

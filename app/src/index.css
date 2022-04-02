@@ -303,6 +303,146 @@ h1
 
 
 
+/*
+========================================================================
+------------------------------------------------------------------------
+                                Checkboxes
+------------------------------------------------------------------------
+========================================================================
+*/
+
+.lizcbox_container
+{
+	display: flex;
+	flex-grow: 1;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 100%;
+	background-color: rgb(80, 80, 80);
+	border-radius: 15%;
+	outline: 1px solid rgb(45, 45, 45);
+	/*outline: 1px solid rgb(30, 30, 30);*/
+}
+
+[lizcbox="set"].lizcbox_container
+{
+	background-color: rgb(56, 78, 96);
+}
+
+[lizcbox="unset"].lizcbox_container:hover
+{
+	background-color: rgb(110, 110, 110);
+}
+
+.lizcbox_container .lizcbox_mark
+{
+	display: flex;
+	width: 75%;
+	height: 75%;
+	/*background: blue;*/
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: contain;
+}
+
+
+[lizcbox="set"] .lizcbox_mark
+{
+	background-image: url('assets/checkmark.svg');
+}
+
+
+[lizcbox="unset"] .lizcbox_mark
+{
+	background-image: none;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+========================================================================
+------------------------------------------------------------------------
+                             Regular buttons
+------------------------------------------------------------------------
+========================================================================
+*/
+
+
+.app_regular_btn_01
+{
+	background: rgb(35, 35, 35);
+	outline: 1px solid rgb(90, 90, 90);
+	user-select: none;
+	/*border-radius: 10px;*/
+}
+
+.app_regular_btn_01:hover
+{
+	background: rgb(50, 50, 50);
+}
+
+.app_regular_btn_01:active
+{
+	/*background: rgb(34, 95, 157);*/
+	background: #3a5986;
+	border-color: #4772b3;
+	outline-color: #4772b3;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -574,6 +714,174 @@ h1
 }
 
 
+
+
+
+
+
+
+
+/*
+ -----------------------
+   Simple pool styles
+ -----------------------
+*/
+
+.simple_list_v1_pool
+{
+	display: flex;
+	flex-direction: column;
+	margin-top: 10px;
+	/*padding: 5px 10px 5px 5px;*/
+	padding: 5px;
+	border: 1px solid rgb(60, 60, 60);
+	background: rgba(0, 0, 0, 0.1);
+}
+
+.simple_list_v1_pool *
+{
+	user-select: none;
+}
+
+.simple_list_v1_pool_item
+{
+	display: -webkit-box;
+	/*flex-direction: row;*/
+	height: 30px;
+	background: rgba(0, 0, 0, 0.1);
+	padding: 1px;
+	overflow: hidden;
+}
+
+.simple_list_v1_pool_item:hover
+{
+	background: rgba(255, 255, 255, 0.1);
+
+}
+
+.simple_list_v1_pool_item:active
+{
+	background: rgb(34, 95, 157);
+}
+
+.simple_list_v1_pool_item_icon
+{
+	display: flex;
+	height: 100%;
+	width: 30px;
+	min-width: 30px;
+	align-items: center;
+	justify-content: center;
+}
+
+.simple_list_v1_pool_item_icon img
+{
+	width: 80%;
+	height: 80%;
+	object-fit: contain;
+	object-position: center;
+}
+
+.simple_list_v1_pool_item_name, .simple_list_v1_pool_item_descr
+{
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	height: 100%;
+	font-family: 'Open_Sans';
+	font-weight: 100;
+	font-size: 15px;
+	color: white;
+	user-select: none;
+}
+
+.simple_list_v1_pool_item_name
+{
+	font-weight: 200;
+	white-space: nowrap;
+	min-width: 250px;
+	padding-left: 2px;
+}
+
+.simple_list_v1_pool_item_descr
+{
+	color: rgba(255, 255, 255, 0.9);
+	padding: 0px 0px 0px 10px;
+	overflow: hidden;
+	/*white-space: nowrap;*/
+}
+
+.simple_list_v1_pool_add_newitem
+{
+	margin-top: 10px;
+	display: flex;
+	flex-direction: row;
+	/*height: 20px;*/
+}
+
+.simple_list_v1_pool_add_newitem *
+{
+	user-select: none;
+}
+
+.simple_list_v1_pool_add_newitem:hover
+{
+	background: rgba(255, 255, 255, 0.1);
+
+}
+
+.simple_list_v1_pool_add_newitem:active
+{
+	background: rgb(34, 157, 94);
+}
+
+
+.simple_list_v1_pool_add_newitem_icon
+{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	/*width: 20px;*/
+}
+
+.simple_list_v1_pool_add_newitem_icon img
+{
+	width: 80%;
+	height: 100%;
+	object-fit: contain;
+	object-position: center;
+}
+
+
+.simple_list_v1_pool_add_newitem_text
+{
+	font-family: 'Roboto';
+	font-weight: 200;
+	color: white;
+	font-size: 15px;
+	padding: 4px 0px 4px 5px;
+	user-select: none;
+}
+
+/*
+ -----------------------
+   Simple pool styles
+ -----------------------
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #modmaker_engine_selector
 {
 	display: flex;
@@ -590,7 +898,15 @@ h1
 	user-select: none;
 }
 
-#modmaker_engine_selector_pool
+
+
+
+
+
+
+/*-------------------------------------------------------*/
+
+#modmaker_engine_selector_pool-
 {
 	display: flex;
 	flex-direction: column;
@@ -601,12 +917,12 @@ h1
 	background: rgba(0, 0, 0, 0.1);
 }
 
-#modmaker_engine_selector_pool *
+#modmaker_engine_selector_pool- *
 {
 	user-select: none;
 }
 
-.modmaker_engine_item
+.modmaker_engine_item-
 {
 	display: -webkit-box;
 	/*flex-direction: row;*/
@@ -616,18 +932,18 @@ h1
 	overflow: hidden;
 }
 
-.modmaker_engine_item:hover
+.modmaker_engine_item-:hover
 {
 	background: rgba(255, 255, 255, 0.1);
 
 }
 
-.modmaker_engine_item:active
+.modmaker_engine_item-:active
 {
 	background: rgb(34, 95, 157);
 }
 
-.modmaker_engine_item_icon
+.modmaker_engine_item_icon-
 {
 	display: flex;
 	height: 100%;
@@ -637,7 +953,7 @@ h1
 	justify-content: center;
 }
 
-.modmaker_engine_item_icon img
+.modmaker_engine_item_icon- img
 {
 	width: 80%;
 	height: 80%;
@@ -648,7 +964,7 @@ h1
 
 
 
-.modmaker_engine_item_name, .modmaker_engine_item_path
+.modmaker_engine_item_name-, .modmaker_engine_item_path-
 {
 	display: flex;
 	flex-direction: column;
@@ -661,7 +977,7 @@ h1
 	user-select: none;
 }
 
-.modmaker_engine_item_name
+.modmaker_engine_item_name-
 {
 	font-weight: 200;
 	white-space: nowrap;
@@ -669,7 +985,7 @@ h1
 	padding-left: 2px;
 }
 
-.modmaker_engine_item_path
+.modmaker_engine_item_path-
 {
 	color: rgba(255, 255, 255, 0.9);
 	padding: 0px 0px 0px 10px;
@@ -680,7 +996,7 @@ h1
 
 
 
-#modmaker_add_engine
+#modmaker_add_engine-
 {
 	margin-top: 10px;
 	display: flex;
@@ -688,25 +1004,25 @@ h1
 	/*height: 20px;*/
 }
 
-#modmaker_add_engine
+#modmaker_add_engine-
 {
 	user-select: none;
 }
 
-#modmaker_add_engine:hover
+#modmaker_add_engine-:hover
 {
 	background: rgba(255, 255, 255, 0.1);
 
 }
 
-#modmaker_add_engine:active
+#modmaker_add_engine-:active
 {
 	background: rgb(34, 157, 94);
 }
 
 
 
-#modmaker_add_engine_icon
+#modmaker_add_engine_icon-
 {
 	display: flex;
 	align-items: center;
@@ -714,7 +1030,7 @@ h1
 	/*width: 20px;*/
 }
 
-#modmaker_add_engine_icon img
+#modmaker_add_engine_icon- img
 {
 	width: 80%;
 	height: 100%;
@@ -723,7 +1039,7 @@ h1
 }
 
 
-#modmaker_add_engine_text
+#modmaker_add_engine_text-
 {
 	font-family: 'Roboto';
 	font-weight: 200;
@@ -732,6 +1048,10 @@ h1
 	padding: 4px 0px 4px 5px;
 	user-select: none;
 }
+/*-------------------------------------------------------*/
+
+
+
 
 
 
@@ -873,8 +1193,8 @@ h1
 
 .modmaker_engine_details_list_item_text
 {
-	min-width: 135px;
-	font-family: 'Open_Sans';
+	min-width: 150px;
+	font-family: 'blender';
 	font-weight: 100;
 	color: rgb(220, 220, 220);
 	font-size: 14px;
@@ -899,6 +1219,15 @@ h1
 
 
 
+
+
+
+
+
+
+
+
+
 /*
  -----------------------
   	Client Selector
@@ -906,7 +1235,130 @@ h1
 */
 
 
+#modmaker_client_selector
+{
+	margin-top: 20px;
+	padding-right: 20px
+}
 
+
+#modmaker_client_selector_title
+{
+	font-family: 'Roboto';
+	font-weight: 400;
+	color: white;
+	font-size: 40px;
+	user-select: none;
+}
+
+#modmaker_client_selector_details
+{
+	display: flex;
+	flex-direction: column;
+}
+
+
+
+
+#modmaker_client_selector_details
+{
+	display: flex;
+	flex-direction: column;
+}
+
+#modmaker_client_selector_installed
+{
+	display: flex;
+	flex-direction: column;
+	margin-top: 20px;
+}
+
+#modmaker_client_selector_installed_title
+{
+	font-family: 'Roboto';
+	font-weight: 400;
+	color: white;
+	font-size: 27px;
+	user-select: none;
+}
+
+
+#modmaker_new_client_tplate_path, #modmaker_new_client_bins_path
+{
+	display: flex;
+	flex-direction: row;
+	height: 30px;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+#modmaker_new_client_tplate_path input, #modmaker_new_client_bins_path input
+{
+	all: unset;
+	display: flex;
+	flex-grow: 1;
+	color: white;
+	justify-content: center;
+	font-family: 'Open_Sans';
+	font-weight: 100;
+	font-size: 15px;
+	user-select: none;
+	margin-left: 10px;
+	min-width: 50px;
+
+	padding: 2px 2px 2px 5px;
+	background: rgba(0, 0, 0, 0.3);
+	border-radius: 5px;
+}
+
+#modmaker_new_client_tplate_path_text, #modmaker_new_client_bins_path_text
+{
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	height: 100%;
+	font-family: 'Open_Sans';
+	font-weight: 200;
+	font-size: 15px;
+	color: white;
+	user-select: none;
+	min-width: 100px;
+}
+
+.modmaker_mknew_client_btn
+{
+	display: flex;
+	color: white;
+	font-family: 'Open_Sans';
+	font-weight: 200;
+	font-size: 15px;
+	width: 300px;
+	margin: 5px;
+	padding: 10px 5px 10px 5px;
+	align-items: center;
+	justify-content: center;
+	border-radius: 7px;
+}
+
+.modmaker_client_selector_installed_item_isbase
+{
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+}
+
+.modmaker_client_selector_installed_item_isbase_text
+{
+	color: white;
+}
+
+.modmaker_client_selector_installed_item_cbox
+{
+	display: flex;
+	width: 20px;
+	height: 20px;
+}
 
 
 
