@@ -2,39 +2,39 @@
 
 
 <div id="newmod_maker_app">
-	
+
 	<div id="modmaker_engine_selector">
 		<div id="modmaker_engine_selector_title">Select the engine</div>
-		<div id="modmaker_engine_selector_pool">
-			<div class="modmaker_engine_item">
-				<div class="modmaker_engine_item_icon"><img draggable="false" src="assets/hl2.ico"></div>
-				<div class="modmaker_engine_item_name">Source SDK 2013 Base Singleplayer</div>
-				<div class="modmaker_engine_item_path">E:\Gamess\steamapps\common\Source SDK Base 2013 Singleplayer\lmfao.exe</div>
+		<div class="simple_list_v1_pool" id="modmaker_engine_selector_pool">
+			<div class="simple_list_v1_pool_item">
+				<div class="simple_list_v1_pool_item_icon"><img draggable="false" src="assets/hl2.ico"></div>
+				<div class="simple_list_v1_pool_item_name">Source SDK 2013 Base Singleplayer</div>
+				<div class="simple_list_v1_pool_item_descr">E:\Gamess\steamapps\common\Source SDK Base 2013 Singleplayer\lmfao.exe</div>
 			</div>
-			<div class="modmaker_engine_item">
-				<div class="modmaker_engine_item_icon"><img draggable="false" src="assets/hl2_flat.ico"></div>
-				<div class="modmaker_engine_item_name">Source SDK 2013 Base Multiplayer</div>
-				<div class="modmaker_engine_item_path">E:\Gamess\steamapps\common\Source SDK Base 2013 Singleplayer\lmfao.exe</div>
+			<div class="simple_list_v1_pool_item">
+				<div class="simple_list_v1_pool_item_icon"><img draggable="false" src="assets/hl2_flat.ico"></div>
+				<div class="simple_list_v1_pool_item_name">Source SDK 2013 Base Multiplayer</div>
+				<div class="simple_list_v1_pool_item_descr">E:\Gamess\steamapps\common\Source SDK Base 2013 Singleplayer\lmfao.exe</div>
 			</div>
-			<div class="modmaker_engine_item">
-				<div class="modmaker_engine_item_icon"><img draggable="false" src=""></div>
-				<div class="modmaker_engine_item_name">Renegade</div>
-				<div class="modmaker_engine_item_path">E:\!!!!!opforce2\game_build_root\renegade_game\renegade.exe</div>
+			<div class="simple_list_v1_pool_item">
+				<div class="simple_list_v1_pool_item_icon"><img draggable="false" src="E:\!!!!!opforce2\game_build_root\renegade_game\renegade\gamedata\resource\game.ico"></div>
+				<div class="simple_list_v1_pool_item_name">Renegade</div>
+				<div class="simple_list_v1_pool_item_descr">E:\!!!!!opforce2\game_build_root\renegade_game\renegade.exe</div>
 			</div>
-			<div class="modmaker_engine_item">
-				<div class="modmaker_engine_item_icon"><img draggable="false" src="assets/portal2.ico"></div>
-				<div class="modmaker_engine_item_name">Portal 2 Engine</div>
-				<div class="modmaker_engine_item_path">E:\Gamess\steamapps\common\Portal 2\portal2.exe</div>
+			<div class="simple_list_v1_pool_item">
+				<div class="simple_list_v1_pool_item_icon"><img draggable="false" src="assets/portal2.ico"></div>
+				<div class="simple_list_v1_pool_item_name">Portal 2 Engine</div>
+				<div class="simple_list_v1_pool_item_descr">E:\Gamess\steamapps\common\Portal 2\portal2.exe</div>
 			</div>
-			<div class="modmaker_engine_item">
-				<div class="modmaker_engine_item_icon"><img draggable="false" src="assets/reactivedrop.ico"></div>
-				<div class="modmaker_engine_item_name">Alien Swarm Reactive drop</div>
-				<div class="modmaker_engine_item_path">C:\Program Files (x86)\Steam\steamapps\common\Alien Swarm Reactive Drop\sdk_tools</div>
+			<div class="simple_list_v1_pool_item">
+				<div class="simple_list_v1_pool_item_icon"><img draggable="false" src="assets/reactivedrop.ico"></div>
+				<div class="simple_list_v1_pool_item_name">Alien Swarm Reactive drop</div>
+				<div class="simple_list_v1_pool_item_descr">C:\Program Files (x86)\Steam\steamapps\common\Alien Swarm Reactive Drop\sdk_tools</div>
 			</div>
 		</div>
-		<div id="modmaker_add_engine">
-			<div id="modmaker_add_engine_icon"><img draggable="false" src="assets/plus_icon.svg"></div>
-			<div id="modmaker_add_engine_text">Add engine</div>
+		<div class="simple_list_v1_pool_add_newitem">
+			<div class="simple_list_v1_pool_add_newitem_icon"><img draggable="false" src="assets/plus_icon.svg"></div>
+			<div class="simple_list_v1_pool_add_newitem_text">Add engine</div>
 		</div>
 	</div>
 
@@ -52,6 +52,13 @@
 				<div class="modmaker_engine_details_item_title">Name:</div>
 				<input value="Source SDK 2013 Base Singleplayer" type="text" class="modmaker_engine_details_item_input">
 			</div>
+
+			<div class="modmaker_engine_details_item" id="modmaker_engine_details_icon">
+				<div class="modmaker_engine_details_item_title">Icon:</div>
+				<input value="E:\!!!!!opforce2\game_build_root\renegade_game\renegade\gamedata\resource\game.ico" type="text" class="modmaker_engine_details_item_input">
+			</div>
+
+			<!-- <div class="app_regular_btn_01" id="new_engine_installer_btn">Create directory and install SDK 2013 there</div> -->
 
 
 			<div class="modmaker_engine_details_list" id="modmaker_engine_details_essenitalbins">
@@ -191,9 +198,205 @@
 
 
 
-	<div id="modmaker_client_slector">
-		<div id="modmaker_engine_details_title">Engine Details</div>
-		<div id="modmaker_engine_details_items">
+	<div id="modmaker_client_selector">
+		<div id="modmaker_client_selector_title">Client</div>
+		<div id="modmaker_client_selector_details">
+
+			<!-- clients that are already next to the engine -->
+			<div id="modmaker_client_selector_installed">
+				<div id="modmaker_client_selector_installed_title">Installed clients</div>
+				<div class="simple_list_v1_pool" id="modmaker_client_selector_installed_pool">
+
+					<div class="simple_list_v1_pool_item">
+						<div class="simple_list_v1_pool_item_icon"><img draggable="false" src="assets/hl2_flat.ico"></div>
+						<div class="simple_list_v1_pool_item_name">Half-Life 2</div>
+						<div class="simple_list_v1_pool_item_descr">hl2</div>
+<!-- 						<div class="modmaker_client_selector_installed_item_isbase">
+							<div class="modmaker_client_selector_installed_item_isbase_text">Base</div>
+							<div lizcbox_init class="modmaker_client_selector_installed_item_cbox"></div>
+						</div> -->
+					</div>
+
+					<div class="simple_list_v1_pool_item">
+						<div class="simple_list_v1_pool_item_icon"><img draggable="false" src="assets/hl2_flat.ico"></div>
+						<div class="simple_list_v1_pool_item_name">Half-Life 2: Episode 1</div>
+						<div class="simple_list_v1_pool_item_descr">episodic</div>
+<!-- 						<div class="modmaker_client_selector_installed_item_isbase">
+							<div class="modmaker_client_selector_installed_item_isbase_text">Base</div>
+							<div lizcbox_init="set" class="modmaker_client_selector_installed_item_cbox"></div>
+						</div> -->
+					</div>
+
+					<div class="simple_list_v1_pool_item">
+						<div class="simple_list_v1_pool_item_icon"><img draggable="false" src="assets/hl2_flat.ico"></div>
+						<div class="simple_list_v1_pool_item_name">Alien Swarm Reactive Drop</div>
+						<div class="simple_list_v1_pool_item_descr">ep2</div>
+<!-- 						<div class="modmaker_client_selector_installed_item_isbase">
+							<div class="modmaker_client_selector_installed_item_isbase_text">Base</div>
+							<div lizcbox_init class="modmaker_client_selector_installed_item_cbox"></div>
+						</div> -->
+					</div>
+
+				</div>
+			</div>
+			<!-- clients that are already next to the engine -->
+
+
+			<!-- The sweet magic buttons -->
+			<div id="modmaker_new_client_tplate_path">
+				<div id="modmaker_new_client_tplate_path_text">Template:</div>
+				<input placeholder="(Optional) Path to the client" type="text">
+			</div>
+			<div id="modmaker_new_client_bins_path">
+				<div id="modmaker_new_client_bins_path_text">Client/server .dll (relative to the engine)</div>
+				<input placeholder="(Optional)" type="text">
+			</div>
+
+			<div class="modmaker_mknew_client_btn_row">
+				<div class="modmaker_mknew_client_btn app_regular_btn_01" id="modmaker_new_client_from_tplate">
+					New from template
+					<liztooltip liztooltip_prms="right:1:10:100">
+						<div style="display: flex; flex-direction: column;">
+							Create a new client using existing cliend/server .dll from the specified Template path.
+							<br><br>
+							<span>
+								Basically copies the specified client with .dll files, configs 
+								and <a style="color: #DC5953">NOT</a> stuff like .vpk, materials, models, etc...
+							</span>
+							<br>
+							
+							For instance: You have Half-Life 2 engine with hl2, episodic, ep2
+							<a style="color: #808080">(e.g. ...\steamapps\common\Half-Life 2\hl2)</a> 
+							and you want to create a standalone (with custom models only n shit) mod based off ep2.
+							<br>
+							If so - choose ep2 as a base and a new client will be created 
+							which is essentially the same as ep2, but with no maps, models and other content.  
+							<br><br>
+							The content which is being copied is: 
+							<br>
+							<ul style="margin-left: 30px; color: rgb(210, 210, 210);">
+								<li>Gameinfo (links like episodic and hl2 remain)</li>
+								<li>Configs</li>
+								<li>PBR, if any</li>
+								<li>Resources</li>
+							</ul>
+						</div>
+					</liztooltip>
+				</div>
+				<div class="modmaker_mknew_client_btn_cbox_cont">
+					<div class="modmaker_mknew_client_btn_cbox_text">Attempt MP PBR</div>
+					<div lizcbox_init="set" lizcbox_hashitbox class="modmaker_mknew_client_btn_cbox"></div>
+					<liztooltip liztooltip_prms="right:0:15:200">
+						Mount MP PBR .dll and shaders. The result cannot be predicted, because client could be modified.
+					</liztooltip>
+				</div>
+
+				<div class="modmaker_mknew_client_btn_cbox_cont">
+					<div class="modmaker_mknew_client_btn_cbox_text">Attempt SP PBR</div>
+					<div lizcbox_init="set" lizcbox_hashitbox class="modmaker_mknew_client_btn_cbox"></div>
+					<liztooltip liztooltip_prms="right:0:15:200">
+						Mount SP PBR .dll and shaders. The result cannot be predicted, because client could be modified.
+					</liztooltip>
+				</div>
+			</div>
+
+			<div class="modmaker_mknew_client_btn_row">
+				<div class="modmaker_mknew_client_btn app_regular_btn_01" id="modmaker_new_client_newblank">
+					New, blank. Use selected as bases
+					<liztooltip liztooltip_prms="right:1:10:100">
+						<div style="display: flex; flex-direction: column;">
+							Create a completely blank client with minimal configs.
+							<br>
+							Requires the path to client/server .dll specified.
+							<br><br>
+							Selected clients will be used as content bases, which means that the following content is linked via gameinfo:
+							<br>
+							<ul style="margin-left: 30px; color: rgb(210, 210, 210); margin-bottom: 10px;">
+								<li>materials</li>
+								<li>models</li>
+								<li>sounds</li>
+								<li>scripts</li>
+								<li>maps</li>
+								<li>particles</li>
+								<li>VPKs</li>
+							</ul>
+						</div>
+					</liztooltip>
+				</div>
+				<div class="modmaker_mknew_client_btn_cbox_cont">
+					<div class="modmaker_mknew_client_btn_cbox_text">Attempt PBR</div>
+					<div lizcbox_init="set" lizcbox_hashitbox class="modmaker_mknew_client_btn_cbox"></div>
+					<liztooltip liztooltip_prms="right:0:15:200">
+						Include PBR shader.
+					</liztooltip>
+				</div>
+			</div>
+
+			<div class="modmaker_mknew_client_btn_row">
+				<div class="modmaker_mknew_client_btn app_regular_btn_01" id="modmaker_new_client_w_mapbase_deps">
+					New with mapbase dependencies
+					<liztooltip liztooltip_prms="right:1:10:100">
+						<div style="display: flex; flex-direction: column;">
+							Mapbase is a client-side modification and therefore is a little more tricky:
+							<br>
+							It consists out of 3 "objects" which are literally clients just like hl2, ep2 and episodic.
+							<br><br>
+							Those clients are like raw binaries or .dll files: You don't create stuff inside them - 
+							you create your own client and link those 3 "objects" via the gameinfo of your mod (client).
+							<br><br>
+							This button will do everything automatically.
+							<br><br>
+							You can link additional stuff via gameinfo later.
+						</div>
+					</liztooltip>
+				</div>
+				<div class="modmaker_mknew_client_btn_cbox_cont">
+					<div class="modmaker_mknew_client_btn_cbox_text">PBR</div>
+					<div lizcbox_init="set" lizcbox_hashitbox class="modmaker_mknew_client_btn_cbox"></div>
+					<liztooltip liztooltip_prms="right:0:15:200">
+						Include PBR shader.
+					</liztooltip>
+				</div>
+			</div>
+
+			<div class="modmaker_mknew_client_btn_row">
+				<div class="modmaker_mknew_client_btn app_regular_btn_01" id="modmaker_new_client_from_sdk2013sp">
+					New from SDK 2013 SP
+					<liztooltip liztooltip_prms="right:1:10:100">
+						Create a default SDK 2013 mod setup, just like in "sourcetest" example included with SDK 2013
+					</liztooltip>
+				</div>
+				<div class="modmaker_mknew_client_btn_cbox_cont">
+					<div class="modmaker_mknew_client_btn_cbox_text">PBR</div>
+					<div lizcbox_init="set" lizcbox_hashitbox class="modmaker_mknew_client_btn_cbox"></div>
+					<liztooltip liztooltip_prms="right:0:15:200">
+						Include PBR shader.
+					</liztooltip>
+				</div>
+			</div>
+
+			<div class="modmaker_mknew_client_btn_row">
+				<div class="modmaker_mknew_client_btn app_regular_btn_01" id="modmaker_new_client_from_sdk2013mp">
+					New from SDK 2013 MP
+					<liztooltip liztooltip_prms="right:1:10:100">
+						Create a default SDK 2013 mod setup, just like in "sourcetest" example included with SDK 2013
+					</liztooltip>
+				</div>
+				<div class="modmaker_mknew_client_btn_cbox_cont">
+					<div class="modmaker_mknew_client_btn_cbox_text">PBR</div>
+					<div lizcbox_init="set" lizcbox_hashitbox class="modmaker_mknew_client_btn_cbox"></div>
+					<liztooltip liztooltip_prms="right:0:15:200">
+						Include PBR shader.
+					</liztooltip>
+				</div>
+			</div>
+
+			
+			
+			
+			
+
+
 
 		</div>
 	</div>

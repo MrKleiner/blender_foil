@@ -4,12 +4,6 @@
 
 
 
-
-
-
-
-
-
 class lizard_tail:
 	""" super simple gameinfo maker. Takes gameinfo as an input """
 	# anything that is specified becomes defaults. Useful

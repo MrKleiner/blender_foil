@@ -129,7 +129,7 @@ def gameinfo_rebuilder(infolizard):
 	# I boned a lizard hoe
 	# from that bus stop down the road
 	# I drop the baddest bombs
-	# I was born in Poznan
+	# I was born in Poznań
 	# I CAN DO WHAT I WANT
 	# Got them fly ass ниґґа drones
 

@@ -330,7 +330,7 @@ h1
 	background-color: rgb(56, 78, 96);
 }
 
-[lizcbox="unset"].lizcbox_container:hover
+[lizcbox="unset"].lizcbox_container:hover, .lizcbox_hitbox:hover [lizcbox="unset"].lizcbox_container
 {
 	background-color: rgb(110, 110, 110);
 }
@@ -426,9 +426,34 @@ h1
 
 
 
+/*
+========================================================================
+------------------------------------------------------------------------
+                             Tooltips
+------------------------------------------------------------------------
+========================================================================
+*/
 
+liztooltip
+{
+	display: none;
+}
 
-
+[lizards_tooltip_box]
+{
+	position: fixed;
+	display: flex;
+	font-family: 'blender';
+	font-size: 14px;
+	z-index: 655355;
+	max-width: 400px;
+	background: rgb(30, 30, 30);
+	padding: 10px;
+	border: 1px solid rgb(100, 100, 100);
+	color: white;
+	user-select: none;
+	pointer-events: none;
+}
 
 
 
@@ -898,7 +923,20 @@ h1
 	user-select: none;
 }
 
-
+#new_engine_installer_btn
+{
+	display: flex;
+	color: white;
+	font-family: 'Open_Sans';
+	font-weight: 200;
+	font-size: 15px;
+	width: 350px;
+	margin-top: 15px;
+	padding: 10px 5px 10px 5px;
+	align-items: center;
+	justify-content: center;
+	border-radius: 7px;
+}
 
 
 
@@ -1361,12 +1399,41 @@ h1
 }
 
 
+.modmaker_mknew_client_btn_row
+{
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+
+.modmaker_mknew_client_btn_cbox_cont
+{
+	display: flex;
+	flex-direction: row;
+	margin-left: 15px;
+	background: rgba(0, 0, 0, 0.1);
+	padding: 5px;
+	border-radius: 5px;
+}
+.modmaker_mknew_client_btn_cbox_text
+{
+	display: flex;
+	color: white;
+	font-family: 'Open_Sans';
+	font-weight: 200;
+	font-size: 15px;
+	align-items: center;
+	justify-content: center;
+	user-select: none;
+}
 
 
-
-
-
-
+.modmaker_mknew_client_btn_cbox
+{
+	width: 20px;
+	height: 20px;
+	margin-left: 5px;
+}
 
 
 

@@ -84,9 +84,81 @@ document.addEventListener('click', event => {
 
 	// checkboxer
     const checkboxer = event.target.closest('[lizcbox].lizcbox_container');
-    if (checkboxer) { lizcboxes_switch(checkboxer) }
+    const checkboxer_hbox = event.target.closest('.lizcbox_hitbox');
+    if (checkboxer || checkboxer_hbox) { lizcboxes_switch(checkboxer || checkboxer_hbox) }
 
 });
+
+
+document.addEventListener('mouseover', event => {
+    // ===========================
+    //           Tooltips
+    // ===========================
+
+    // important todo: It's a pretty bootleg fix and logic is extremely poor
+    // There should be a better way of determining wether it's on or not
+    // init should also be done separately
+	const cursor_over_tooltip_obj = event.target.closest('[liztooltip]');
+	if (cursor_over_tooltip_obj){
+		var tipbox = document.querySelector('[lizards_tooltip_box]');
+		if (tipbox != null){
+			if (tipbox.style.visibility != 'visible'){
+				if (typeof mrk_ect_timer != 'undefined') { clearTimeout(mrk_ect_timer) }
+				lizshowtooltip(cursor_over_tooltip_obj, event) 
+			}
+		}else{
+			lizshowtooltip(cursor_over_tooltip_obj, event)
+		}
+		
+	}
+
+	const cursor_over_tooltip_obj_leave_soon = event.target.closest('[liztooltip]');
+	if (!cursor_over_tooltip_obj_leave_soon)
+	{
+		// clearTimeout(mrk_ect_timer);
+		// console.log(mrk_ect_timer);
+		if (typeof mrk_ect_timer != 'undefined') { clearTimeout(mrk_ect_timer) }
+		// $('[lizards_tooltip_box]').css('display', 'none');
+		$('[lizards_tooltip_box]').css('visibility', 'hidden');
+		// document.querySelector('[lizards_tooltip_box]').style.visibility = 'hidden';
+	}
+    // ===========================
+    //           Tooltips
+    // ===========================
+});
+
+document.addEventListener('mousemove', event => {
+	window.actualmpos = {
+		'x': event.clientX,
+		'y': event.clientY,
+		'tgt': event.target
+	}
+});
+
+document.addEventListener('mouseout', event => {
+    // ===========================
+    //           Tooltips
+    // ===========================
+/*    
+	const cursor_over_tooltip_obj_leave_soon = event.target.closest('[liztooltip]');
+	if (cursor_over_tooltip_obj_leave_soon)
+	{
+		if (event.target.closest('[liztooltip]') || )
+		{
+			// clearTimeout(mrk_ect_timer);
+			// console.log(mrk_ect_timer);
+			if (typeof mrk_ect_timer != 'undefined') { clearTimeout(mrk_ect_timer) }
+			// $('[lizards_tooltip_box]').css('display', 'none');
+			$('[lizards_tooltip_box]').css('visibility', 'hidden');
+			// document.querySelector('[lizards_tooltip_box]').style.visibility = 'hidden';
+		}
+	}
+*/
+    // ===========================
+    //           Tooltips
+    // ===========================
+});
+
 
 /*
 ============================================================
@@ -625,7 +697,6 @@ function lizcboxes_init()
 	document.querySelectorAll('[lizcbox_init]').forEach(function(userItem) {
 		console.log(userItem);
 
-		// only if checkbox is not initialized
 		if (userItem.getAttribute('lizcbox_init') == 'set'){
 			// var htm_append = `
 			// 	<div lizcbox class="lizcbox_container">
@@ -644,21 +715,268 @@ function lizcboxes_init()
 				</div>
 			`;
 		}
+		// hitbox
+		if (userItem.hasAttribute('lizcbox_hashitbox')){
+			userItem.parentElement.classList.add('lizcbox_hitbox')
+		}
 		userItem.innerHTML = htm_append;
 		userItem.removeAttribute('lizcbox_init');
+		userItem.removeAttribute('lizcbox_hashitbox');
 	});
 }
 
 // todo: safety measures ?
 function lizcboxes_switch(tgtbox, state)
 {
-	if ($(tgtbox).attr('lizcbox') == 'set'){
-		$(tgtbox).attr('lizcbox', 'unset');
+	tbox = tgtbox.querySelector('[lizcbox].lizcbox_container') || tgtbox
+
+	if ($(tbox).attr('lizcbox') == 'set'){
+		$(tbox).attr('lizcbox', 'unset');
 	}else{
-		$(tgtbox).attr('lizcbox', 'set');
+		$(tbox).attr('lizcbox', 'set');
 	}
 	
 }
+
+/*
+============================================================
+------------------------------------------------------------
+                  Simple checkboxes END
+------------------------------------------------------------
+============================================================
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+============================================================
+------------------------------------------------------------
+                  Simple tooltips START
+------------------------------------------------------------
+============================================================
+*/
+
+
+function init_liztooltips()
+{
+	document.querySelectorAll('liztooltip').forEach(function(userItem) {
+		console.log(userItem);
+		userItem.parentElement.setAttribute('liztooltip', userItem.innerHTML);
+		userItem.parentElement.setAttribute('liztooltip_prms', userItem.getAttribute('liztooltip_prms'));
+		userItem.remove();
+	});
+}
+
+//
+// 0: pos: top/left/right/bottom
+// 1: toparent 1/0
+// 2: padding
+//
+
+function lizshowtooltip(tl, evt) {
+	// if no tooltip elem - create one
+	if (document.querySelector('[lizards_tooltip_box]') == null){
+		var liztipbox = document.createElement('div');
+		liztipbox.setAttribute('lizards_tooltip_box', true);
+		liztipbox.style.display = 'none';
+		document.body.appendChild(liztipbox);
+	}
+
+	var lizardbox = document.querySelector('[lizards_tooltip_box]');
+	var splitopts = tl.getAttribute('liztooltip_prms').split(':');
+	var boxopts = {
+		'pos': splitopts[0],
+		'toparent': parseInt(splitopts[1]),
+		'padding': parseInt(splitopts[2]),
+		'delay': parseInt(splitopts[3])
+	}
+	lizardbox.innerHTML = tl.getAttribute('liztooltip');
+
+
+	// construct position
+	mrk_ect_timer = setTimeout(function() {
+		lizardbox.style.display = 'flex';
+		// todo: make it echo into a group
+		// console.log('delayed call');
+		// lizardbox.style.display = 'flex';
+		// because this has to be evaluated right on call
+		
+		var tgt_e_pos = tl.getBoundingClientRect();
+
+		var tgt_e_h = tl.offsetHeight;
+		var tgt_e_w = tl.offsetWidth;
+
+		var tboxh = lizardbox.getBoundingClientRect().height;
+		var tboxw = lizardbox.getBoundingClientRect().width;
+		// console.log(tboxh)
+
+		var page_w = window.innerWidth;
+		var page_h = window.innerHeight;
+		
+		// console.log(evt)
+		var gl_cursor_loc_x = evt.pageX;
+		var gl_cursor_loc_y = evt.pageY;
+		
+		var base_x = 0;
+		var base_y = 0;
+
+		var base_posdict = {
+			'top': {
+				'x': tgt_e_pos.x,
+				'y': (tgt_e_pos.y) - tboxh
+			},
+			'left': {
+				'x': tgt_e_pos.x + tboxw,
+				'y': tgt_e_pos.y
+			},
+			'right': {
+				'x': tgt_e_pos.x + tgt_e_w + boxopts['padding'],
+				'y': tgt_e_pos.y
+			},
+			'right_up': {
+				'x': tgt_e_pos.x + tgt_e_w + boxopts['padding'],
+				'y': (tgt_e_pos.y - tboxh) + tgt_e_h
+			},
+			'bottom':{
+				'x': tgt_e_pos.x,
+				'y': tgt_e_pos.y + tgt_e_h + boxopts['padding']
+			}
+		}
+
+		// console.log(base_posdict[boxopts['pos']]['y'].toString() + 'px')
+
+		// relative to mouse or element
+		if (boxopts['toparent'] == 1){
+			var finalpos_x = base_posdict[boxopts['pos']]['x']
+			var finalpos_y = base_posdict[boxopts['pos']]['y']
+		}else{
+			var finalpos_x = window.actualmpos['x'] + boxopts['padding']
+			var finalpos_y = window.actualmpos['y'] + boxopts['padding']
+		}
+
+
+
+		// fix clipping y
+		// console.log(base_posdict[boxopts['pos']]['y'] + tboxh);
+		if (base_posdict[boxopts['pos']]['y'] + tboxh > page_h){
+			finalpos_y -= ((base_posdict[boxopts['pos']]['y'] + tboxh) - (page_h - 5))
+		}
+		// fix clipping x
+		if (base_posdict[boxopts['pos']]['x'] + tboxw > page_w){
+			finalpos_x -= ((base_posdict[boxopts['pos']]['x'] + tboxw) - (page_w - 5))
+		}
+		
+		lizardbox.style.top = finalpos_y.toString() + 'px';
+		lizardbox.style.left = finalpos_x.toString() + 'px';
+
+		if (window.actualmpos['tgt'].closest('[liztooltip]')){
+			lizardbox.style.visibility = 'visible';
+		}
+		
+
+	}, boxopts['delay']);
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -846,6 +1164,7 @@ function newmodmaker_loader()
 	$('#modules_cont').load('tools/mod_maker.html', function() {
 		console.log('loaded');
 		lizcboxes_init();
+		init_liztooltips();
 	});
 }
 

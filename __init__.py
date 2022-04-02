@@ -1,3 +1,11 @@
+"""
+The license for this rubbish is super simple:
+I'd like to see if there's ONE person on earth who would understand this junk code.
+Also, everything that is not mine is labeled as such.
+ATTENTION: Thank you for your attention.
+"""
+
+
 bl_info = {
     'name': 'Blener Foil',
     'author': 'MrKleiner',
