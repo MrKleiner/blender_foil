@@ -72,6 +72,28 @@ from .mods.skyboxer.skybox_maker import *
 from .installer import blfoil_check_pypackages
 
 from time import sleep
+from .utils.shared import app_command_send
+from .mods.app.modmaker.app_modmaker import fetch_existing_engines, modmaker_load_engine_info
+
+def appconnect_actions(cs):
+    match cs['action']:
+        case 'modmaker_get_preinstalled_engines':
+            app_command_send({
+                'app_module': 'modmaker',
+                'mod_action': 'append_pre_installed',
+                'payload': fetch_existing_engines()
+            })
+            return ''
+        case 'modmaker_get_engine_info':
+            app_command_send({
+                'app_module': 'modmaker',
+                'mod_action': 'set_engine_info',
+                'payload': modmaker_load_engine_info(cs['engine_exe'])
+            })
+            return ''
+        case _:
+            return 'wtf is even this'
+
 
 # The faster we start listening for shit - the better
 # this is a port listener so that it's possible to connect an app with blender
@@ -84,8 +106,11 @@ def blender_foil_guiappconnect():
 
     print('Server listening....')
 
+    # datacollect = b''
+
     while True:
         conn, address = s.accept()  # Establish connection with client.
+        datacollect = b''
         while True:
             try:
                 # get shit
@@ -93,6 +118,7 @@ def blender_foil_guiappconnect():
                 data = conn.recv(1024)
                 if data != b'':
                     print('Server received', data)
+                    datacollect += data
                 else:
                     print('Server received shit, but its fucking empty')
                 # respond to the sender
@@ -103,6 +129,9 @@ def blender_foil_guiappconnect():
             except Exception as e:
                 print(e)
                 print('all good')
+                print(datacollect)
+                data_json = json.loads(datacollect)
+                appconnect_actions(data_json)
                 break
 
     conn.close()
@@ -134,6 +163,9 @@ blfoil_check_pypackages()
 # todo: Discord reaction images indexer
 
 # important todo: Substance plugin
+
+# important todo: blender image datablock exporter
+# downscaled jpegs could be used for previews
 
 
 # =======================================================

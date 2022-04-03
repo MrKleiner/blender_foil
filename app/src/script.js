@@ -2,7 +2,7 @@ window.$ = window.jQuery = require('./apis/jquery/3_6_0/jquery.min.js');
 window.lizards_mouth = 'lizards_tongue';
 const path = require('path');
 const {PythonShell} = require('python-shell');
-const zpypath = 'C:/Program Files (x86)/Steam/steamapps/common/Blender/3.1/python/bin/python.exe'
+const zpypath = 'C:/Program Files (x86)/Steam/steamapps/common/Blender/3.1/python/bin/python.exe';
 window.py_common_opts = {
 		mode: 'text',
 		pythonPath: zpypath,
@@ -75,24 +75,97 @@ document.addEventListener('keydown', kvt => {
 });
 
 document.addEventListener('click', event => {
-    // console.log('click_registered');
+    console.log('click_registered');
+
+    // ===================================
+    //               Toolbar
+    // ===================================
 
 	// load skyboxer
     const skyboxer_app = event.target.closest('[lizmenu_action="load_skyboxer_app"]');
     if (skyboxer_app) { skyboxer_module_loader() }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // ===================================
+    //            Checkbox API
+    // ===================================
+
 	// checkboxer
     const checkboxer = event.target.closest('[lizcbox].lizcbox_container');
     const checkboxer_hbox = event.target.closest('.lizcbox_hitbox');
     if (checkboxer || checkboxer_hbox) { lizcboxes_switch(checkboxer || checkboxer_hbox) }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // ===================================
+    //               Modmaker
+    // ===================================
+
+	// append preinstalled
+    const mdmapreinstalled = event.target.closest('#modmaker_fetch_preinstalled');
+    if (mdmapreinstalled) {
+		apc_send({
+			'action': 'modmaker_get_preinstalled_engines'
+		})
+    }
+
+
+	// load engine info
+    const load_engine_info = event.target.closest('#modmaker_engine_selector .simple_list_v1_pool_item');
+    if (load_engine_info) {
+		apc_send({
+			'action': 'modmaker_get_engine_info',
+			'engine_exe': load_engine_info.getAttribute('engine_path')
+		})
+    }
+
+
+
+
+
 
 });
 
 
 document.addEventListener('mouseover', event => {
     // ===========================
-    //           Tooltips
+    //           Toolstips
     // ===========================
 
     // important todo: It's a pretty bootleg fix and logic is extremely poor
@@ -237,12 +310,17 @@ $(document).ready(function(){
 	    	//
 	    	// Decide what to do
 	    	//
+
+	    	// important todo: this has to be a separate function
 			switch (input_d['app_module']) {
 				case 'skyboxer':
 					skyboxer_module_manager(input_d)
 					break;
 				case 'load_skyboxer_app':
 					skyboxer_module_loader()
+					break;
+				case 'modmaker':
+					modmaker_module_manager(input_d)
 					break;
 				default:
 					console.log('The transmission from the other world has ended, but requested action is unknown');
@@ -448,7 +526,7 @@ function apc_send(sendpayload)
 
 	client.on('data', function(data) {
 		console.log('Received: ' + data);
-		client.destroy(); // kill client after server's response
+		client.destroy()
 	});
 
 	client.on('close', function() {
@@ -1158,6 +1236,23 @@ function skybox_set_sky_name(skname)
 =====================================================================
 */
 
+function modmaker_module_manager(pl)
+{
+
+	switch (pl['mod_action']) {
+		case 'append_pre_installed':
+			newmodmaker_accept_preinstalled(pl['payload'])
+			break;
+		case 'set_engine_info':
+			modmaker_load_engine_info(pl['payload'])
+			break;
+		default:
+			console.log('The modmaker module has been called, but no corresponding action was found')
+			break;
+	}
+
+}
+
 
 function newmodmaker_loader()
 {
@@ -1169,10 +1264,45 @@ function newmodmaker_loader()
 }
 
 
+function newmodmaker_accept_preinstalled(pl)
+{
+	console.log(pl);
+	$('#modmaker_engine_selector_pool').empty();
+	for (var engi of pl){
+		var engine_gui_payload = $('<div class="simple_list_v1_pool_item"></div>')
+
+		var pl_icon = engine_gui_payload.append('<div class="simple_list_v1_pool_item_icon"><img draggable="false" src="' + engi['icon'] + '"></div>');
+		// var pl_icon = $('<div class="simple_list_v1_pool_item_icon"><img draggable="false" src="' + '' + '"></div>');
+		engine_gui_payload.append(pl_icon);
+		var pl_name = $('<div class="simple_list_v1_pool_item_name"></div>');
+		engine_gui_payload.append(pl_name);
+		var pl_descr = $('<div class="simple_list_v1_pool_item_descr"></div>');
+		engine_gui_payload.append(pl_descr);
+
+		engine_gui_payload.attr({
+			'engine_path': engi['engine_path'],
+			'engine_name': engi['engine_name'],
+			'engine_icon': engi['icon']
+		});
+
+		// console.log(engine_gui_payload)
+
+		pl_name.text(engi['engine_name']);
+		pl_descr.text(engi['engine_path']);
+
+		$('#modmaker_engine_selector_pool').append(engine_gui_payload);
+
+	}
+}
 
 
+function modmaker_load_engine_info(pl)
+{
+
+	console.log(pl);
 
 
+}
 
 
 
