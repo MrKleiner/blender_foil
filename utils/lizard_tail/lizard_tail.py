@@ -33,8 +33,8 @@ class lizard_tail:
 	def __init__(self, pootis=None):
 		import io
 		import base64
-		from parser import gameinfoparser
-		from reconstructor import gameinfo_rebuilder
+		from .parser import gameinfoparser
+		from .reconstructor import gameinfo_rebuilder
 
 		self.gameinfo_r = None
 
@@ -57,7 +57,7 @@ class lizard_tail:
 		bad_piggies = {
 			'<': '&lt;',
 			'>': '&gt;',
-			'>': '&amp;'
+			'&': '&amp;'
 		}
 		for pg in bad_piggies:
 			str_toparse = mkinput.replace(pg, bad_piggies[pg])
@@ -91,7 +91,11 @@ class lizard_tail:
 
 	@property
 	def game_icon(self):
-		return self.gameinfo_r.select('GameInfo > kv[keyname="icon"]')[0].gval.string
+		iconselect = self.gameinfo_r.select('GameInfo > kv[keyname="icon"]')
+		if len(iconselect) > 0:
+			return iconselect[0].gval.string
+		else:
+			return ''
 
 	@game_icon.setter
 	def game_icon(self, newicon):
@@ -150,7 +154,7 @@ class lizard_tail:
 
 
 	def tofile(self):
-		from reconstructor import gameinfo_rebuilder
+		from .reconstructor import gameinfo_rebuilder
 		return gameinfo_rebuilder(self.gameinfo_r)
 
 

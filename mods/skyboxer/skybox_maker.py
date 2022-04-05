@@ -249,6 +249,8 @@ def blfoil_skybox_maker(tgt_scene):
     # secondly - if X Y are not the same, check if triangle is proper
     # if sky_dimy > sky_dimx or (sky_dimy != sky_dimx and not sky_is_rect):
     #     except_raiser('Invalid sky size setup!')
+    # Update: Now it cannot be otherwise: There's a set of dimensions you can have on X axis 
+    # and a checkbox whether to half it on Y or not
 
     # better order so that it looks cooler visually in app
     sidez = {

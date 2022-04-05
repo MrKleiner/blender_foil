@@ -6,33 +6,11 @@
 	<div id="modmaker_engine_selector">
 		<div id="modmaker_engine_selector_title">Select the engine</div>
 		<div class="simple_list_v1_pool" id="modmaker_engine_selector_pool">
-			<div class="simple_list_v1_pool_item">
-				<div class="simple_list_v1_pool_item_icon"><img draggable="false" src="assets/hl2.ico"></div>
-				<div class="simple_list_v1_pool_item_name">Source SDK 2013 Base Singleplayer</div>
-				<div class="simple_list_v1_pool_item_descr">E:\Gamess\steamapps\common\Source SDK Base 2013 Singleplayer\lmfao.exe</div>
-			</div>
-			<div class="simple_list_v1_pool_item">
-				<div class="simple_list_v1_pool_item_icon"><img draggable="false" src="assets/hl2_flat.ico"></div>
-				<div class="simple_list_v1_pool_item_name">Source SDK 2013 Base Multiplayer</div>
-				<div class="simple_list_v1_pool_item_descr">E:\Gamess\steamapps\common\Source SDK Base 2013 Singleplayer\lmfao.exe</div>
-			</div>
-			<div class="simple_list_v1_pool_item">
-				<div class="simple_list_v1_pool_item_icon"><img draggable="false" src="E:\!!!!!opforce2\game_build_root\renegade_game\renegade\gamedata\resource\game.ico"></div>
-				<div class="simple_list_v1_pool_item_name">Renegade</div>
-				<div class="simple_list_v1_pool_item_descr">E:\!!!!!opforce2\game_build_root\renegade_game\renegade.exe</div>
-			</div>
-			<div class="simple_list_v1_pool_item">
-				<div class="simple_list_v1_pool_item_icon"><img draggable="false" src="assets/portal2.ico"></div>
-				<div class="simple_list_v1_pool_item_name">Portal 2 Engine</div>
-				<div class="simple_list_v1_pool_item_descr">E:\Gamess\steamapps\common\Portal 2\portal2.exe</div>
-			</div>
-			<div class="simple_list_v1_pool_item">
-				<div class="simple_list_v1_pool_item_icon"><img draggable="false" src="assets/reactivedrop.ico"></div>
-				<div class="simple_list_v1_pool_item_name">Alien Swarm Reactive drop</div>
-				<div class="simple_list_v1_pool_item_descr">C:\Program Files (x86)\Steam\steamapps\common\Alien Swarm Reactive Drop\sdk_tools</div>
-			</div>
+			<!-- list -->
+			<!-- list -->
+			<!-- list -->
 		</div>
-		<div class="simple_list_v1_pool_add_newitem">
+		<div class="simple_list_v1_pool_add_newitem" id="modmaker_add_new_engine">
 			<div class="simple_list_v1_pool_add_newitem_icon"><img draggable="false" src="assets/plus_icon.svg"></div>
 			<div class="simple_list_v1_pool_add_newitem_text">Add engine</div>
 		</div>
@@ -43,24 +21,28 @@
 	</div>
 
 
-	<div id="modmaker_engine_details">
+	<div style="display: none" id="modmaker_engine_details">
 		<div id="modmaker_engine_details_title">Engine Details</div>
 		<div id="modmaker_engine_details_items">
 
 			<div class="modmaker_engine_details_item" id="modmaker_engine_details_exepath">
 				<div class="modmaker_engine_details_item_title">Executable:</div>
-				<input value="C:\Program Files (x86)\Steam\steamapps\common\Alien Swarm Reactive Drop\sdk_tools" type="text" class="modmaker_engine_details_item_input">
-			</div>
-
-			<div class="modmaker_engine_details_item" id="modmaker_engine_details_name">
-				<div class="modmaker_engine_details_item_title">Name:</div>
-				<input value="Source SDK 2013 Base Singleplayer" type="text" class="modmaker_engine_details_item_input">
+				<div class="modmaker_engine_details_item_status"><img draggable="false" src="assets/cross.svg"></div>
+				<input placeholder="smth like ...\Source SDK Base 2013 Singleplayer\hl2.exe" value="E:\source_eng\hl2.exe" type="text" class="modmaker_engine_details_item_input">
 			</div>
 
 			<div class="modmaker_engine_details_item" id="modmaker_engine_details_icon">
 				<div class="modmaker_engine_details_item_title">Icon:</div>
-				<input value="E:\!!!!!opforce2\game_build_root\renegade_game\renegade\gamedata\resource\game.ico" type="text" class="modmaker_engine_details_item_input">
+				<div class="modmaker_engine_details_item_status"><img draggable="false" src=""></div>
+				<input placeholder="Path to a rubbish icon made in MS Paint" value="E:\source_eng\resource\game.ico" type="text" class="modmaker_engine_details_item_input">
 			</div>
+
+			<div class="modmaker_engine_details_item" id="modmaker_engine_details_name">
+				<div class="modmaker_engine_details_item_title">Name:</div>
+				<input placeholder="3km long weird name like HALF-LIFE 3 BETA LOOK RECREATED FROM LEAKED ASSETS 2022 100% NOT CLICKBAIT ??! " value="SDK 2013" type="text" class="modmaker_engine_details_item_input">
+			</div>
+
+
 
 			<!-- <div class="app_regular_btn_01" id="new_engine_installer_btn">Create directory and install SDK 2013 there</div> -->
 
@@ -68,68 +50,9 @@
 			<div class="modmaker_engine_details_list" id="modmaker_engine_details_essenitalbins">
 				<div class="modmaker_engine_details_list_title">Essential binaries:</div>
 				<div class="modmaker_engine_details_list_items">
-
-					<div class="modmaker_engine_details_list_item">
-						<div class="modmaker_engine_details_list_item_text">engine.dll</div>
-						<div class="modmaker_engine_details_list_item_status"><img src="assets/checkmark.svg"></div>
-					</div>
-
-					<div class="modmaker_engine_details_list_item">
-						<div class="modmaker_engine_details_list_item_text">datacache.dll</div>
-						<div class="modmaker_engine_details_list_item_status"><img src="assets/checkmark.svg"></div>
-					</div>
-
-					<div class="modmaker_engine_details_list_item">
-						<div class="modmaker_engine_details_list_item_text">inputsystem.dll</div>
-						<div class="modmaker_engine_details_list_item_status"><img src="assets/checkmark.svg"></div>
-					</div>
-
-					<div class="modmaker_engine_details_list_item">
-						<div class="modmaker_engine_details_list_item_text">launcher.dll</div>
-						<div class="modmaker_engine_details_list_item_status"><img src="assets/checkmark.svg"></div>
-					</div>
-
-					<div class="modmaker_engine_details_list_item">
-						<div class="modmaker_engine_details_list_item_text">mdllib.dll</div>
-						<div class="modmaker_engine_details_list_item_status"><img src="assets/checkmark.svg"></div>
-					</div>
-
-					<div class="modmaker_engine_details_list_item">
-						<div class="modmaker_engine_details_list_item_text">tier0.dll</div>
-						<div class="modmaker_engine_details_list_item_status"><img src="assets/checkmark.svg"></div>
-					</div>
-
-					<div class="modmaker_engine_details_list_item">
-						<div class="modmaker_engine_details_list_item_text">vgui2.dll</div>
-						<div class="modmaker_engine_details_list_item_status"><img src="assets/checkmark.svg"></div>
-					</div>
-
-					<div class="modmaker_engine_details_list_item">
-						<div class="modmaker_engine_details_list_item_text">vphysics.dll</div>
-						<div class="modmaker_engine_details_list_item_status"><img src="assets/checkmark.svg"></div>
-					</div>
-
-					<div class="modmaker_engine_details_list_item">
-						<div class="modmaker_engine_details_list_item_text">vstdlib.dll</div>
-						<div class="modmaker_engine_details_list_item_status"><img src="assets/checkmark.svg"></div>
-					</div>
-
-					<div class="modmaker_engine_details_list_item">
-						<div class="modmaker_engine_details_list_item_text">vguimatsurface.dll</div>
-						<div class="modmaker_engine_details_list_item_status"><img src="assets/checkmark.svg"></div>
-					</div>
-
-					<div class="modmaker_engine_details_list_item">
-						<div class="modmaker_engine_details_list_item_text">unitlib.dll</div>
-						<div class="modmaker_engine_details_list_item_status"><img src="assets/checkmark.svg"></div>
-					</div>
-
-					<div class="modmaker_engine_details_list_item">
-						<div class="modmaker_engine_details_list_item_text">soundsystem.dll</div>
-						<div class="modmaker_engine_details_list_item_status"><img src="assets/checkmark.svg"></div>
-					</div>
-
-
+					<!-- list -->
+					<!-- list -->
+					<!-- list -->
 				</div>
 			</div>
 
@@ -139,60 +62,9 @@
 			<div class="modmaker_engine_details_list" id="modmaker_engine_details_sdkbins">
 				<div class="modmaker_engine_details_list_title">SDK binaries:</div>
 				<div class="modmaker_engine_details_list_items">
-
-					<div class="modmaker_engine_details_list_item">
-						<div class="modmaker_engine_details_list_item_text">vrad exe/dll</div>
-						<div class="modmaker_engine_details_list_item_status"><img src="assets/checkmark.svg"></div>
-					</div>
-
-					<div class="modmaker_engine_details_list_item">
-						<div class="modmaker_engine_details_list_item_text">hammer exe/dll</div>
-						<div class="modmaker_engine_details_list_item_status"><img src="assets/checkmark.svg"></div>
-					</div>
-
-					<div class="modmaker_engine_details_list_item">
-						<div class="modmaker_engine_details_list_item_text">vtex exe/dll</div>
-						<div class="modmaker_engine_details_list_item_status"><img src="assets/checkmark.svg"></div>
-					</div>
-
-					<div class="modmaker_engine_details_list_item">
-						<div class="modmaker_engine_details_list_item_text">vvis exe/dll</div>
-						<div class="modmaker_engine_details_list_item_status"><img src="assets/checkmark.svg"></div>
-					</div>
-
-					<div class="modmaker_engine_details_list_item">
-						<div class="modmaker_engine_details_list_item_text">vrad exe/dll</div>
-						<div class="modmaker_engine_details_list_item_status"><img src="assets/checkmark.svg"></div>
-					</div>
-
-					<div class="modmaker_engine_details_list_item">
-						<div class="modmaker_engine_details_list_item_text">hlmv.exe</div>
-						<div class="modmaker_engine_details_list_item_status"><img src="assets/checkmark.svg"></div>
-					</div>
-
-					<div class="modmaker_engine_details_list_item">
-						<div class="modmaker_engine_details_list_item_text">studiomdl.exe</div>
-						<div class="modmaker_engine_details_list_item_status"><img src="assets/checkmark.svg"></div>
-					</div>
-
-					<div class="modmaker_engine_details_list_item">
-						<div class="modmaker_engine_details_list_item_text">hlfaceposer.exe</div>
-						<div class="modmaker_engine_details_list_item_status"><img src="assets/checkmark.svg"></div>
-					</div>
-
-					<div class="modmaker_engine_details_list_item">
-						<div class="modmaker_engine_details_list_item_text">height2ssbump.exe</div>
-						<div class="modmaker_engine_details_list_item_status"><img src="assets/checkmark.svg"></div>
-					</div>
-
-					<div class="modmaker_engine_details_list_item">
-						<div class="modmaker_engine_details_list_item_text">vpk.exe</div>
-						<div class="modmaker_engine_details_list_item_status"><img src="assets/checkmark.svg"></div>
-					</div>
-
-
-
-
+					<!-- list -->
+					<!-- list -->
+					<!-- list -->
 				</div>
 			</div>
 
@@ -209,7 +81,7 @@
 
 
 
-	<div id="modmaker_client_selector">
+	<div style="display: none" id="modmaker_client_selector">
 		<div id="modmaker_client_selector_title">Client</div>
 		<div id="modmaker_client_selector_details">
 
@@ -217,37 +89,9 @@
 			<div id="modmaker_client_selector_installed">
 				<div id="modmaker_client_selector_installed_title">Installed clients</div>
 				<div class="simple_list_v1_pool" id="modmaker_client_selector_installed_pool">
-
-					<div class="simple_list_v1_pool_item">
-						<div class="simple_list_v1_pool_item_icon"><img draggable="false" src="assets/hl2_flat.ico"></div>
-						<div class="simple_list_v1_pool_item_name">Half-Life 2</div>
-						<div class="simple_list_v1_pool_item_descr">hl2</div>
-<!-- 						<div class="modmaker_client_selector_installed_item_isbase">
-							<div class="modmaker_client_selector_installed_item_isbase_text">Base</div>
-							<div lizcbox_init class="modmaker_client_selector_installed_item_cbox"></div>
-						</div> -->
-					</div>
-
-					<div class="simple_list_v1_pool_item">
-						<div class="simple_list_v1_pool_item_icon"><img draggable="false" src="assets/hl2_flat.ico"></div>
-						<div class="simple_list_v1_pool_item_name">Half-Life 2: Episode 1</div>
-						<div class="simple_list_v1_pool_item_descr">episodic</div>
-<!-- 						<div class="modmaker_client_selector_installed_item_isbase">
-							<div class="modmaker_client_selector_installed_item_isbase_text">Base</div>
-							<div lizcbox_init="set" class="modmaker_client_selector_installed_item_cbox"></div>
-						</div> -->
-					</div>
-
-					<div class="simple_list_v1_pool_item">
-						<div class="simple_list_v1_pool_item_icon"><img draggable="false" src="assets/hl2_flat.ico"></div>
-						<div class="simple_list_v1_pool_item_name">Alien Swarm Reactive Drop</div>
-						<div class="simple_list_v1_pool_item_descr">ep2</div>
-<!-- 						<div class="modmaker_client_selector_installed_item_isbase">
-							<div class="modmaker_client_selector_installed_item_isbase_text">Base</div>
-							<div lizcbox_init class="modmaker_client_selector_installed_item_cbox"></div>
-						</div> -->
-					</div>
-
+					<!-- list -->
+					<!-- list -->
+					<!-- list -->
 				</div>
 			</div>
 			<!-- clients that are already next to the engine -->

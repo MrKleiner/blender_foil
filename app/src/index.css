@@ -767,6 +767,7 @@ liztooltip
 	padding: 5px;
 	border: 1px solid rgb(60, 60, 60);
 	background: rgba(0, 0, 0, 0.1);
+	min-height: 50px;
 }
 
 .simple_list_v1_pool *
@@ -792,7 +793,12 @@ liztooltip
 
 .simple_list_v1_pool_item:active
 {
-	background: rgb(34, 95, 157);
+	/*background: rgb(34, 95, 157);*/
+}
+
+.simple_list_v1_pool_item_const_active
+{
+	background: rgb(34, 95, 157) !important;
 }
 
 .simple_list_v1_pool_item_icon
@@ -830,7 +836,7 @@ liztooltip
 {
 	font-weight: 200;
 	white-space: nowrap;
-	min-width: 250px;
+	min-width: 270px;
 	padding-left: 2px;
 }
 
@@ -1148,6 +1154,23 @@ liztooltip
 	display: flex;
 	flex-direction: row;
 	height: 30px;
+}
+
+.modmaker_engine_details_item_status
+{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 30px;
+}
+
+.modmaker_engine_details_item_status img
+{
+	width: 80%;
+	height: 80%;
+	object-fit: contain;
+	object-position: center;
+	user-select: none;
 }
 
 

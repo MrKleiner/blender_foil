@@ -3,6 +3,7 @@ window.lizards_mouth = 'lizards_tongue';
 const path = require('path');
 const {PythonShell} = require('python-shell');
 const zpypath = 'C:/Program Files (x86)/Steam/steamapps/common/Blender/3.1/python/bin/python.exe';
+const fs = require('fs');
 window.py_common_opts = {
 		mode: 'text',
 		pythonPath: zpypath,
@@ -49,15 +50,25 @@ function shell_end_c(err,code,signal)
 	console.log('finished');
 };
 
-Element.prototype.lizchecked=function() {
+Element.prototype.lizchecked=function(status) {
     // if(value===undefined) value=true;
     // if(this.hasAttribute(attribute)) this.removeAttribute(attribute);
     // else this.addAttribute(attribute,value);
-    if (this.getAttribute('lizcbox') == 'set'){
-    	return true
-    }else{
-    	return false
-    }
+    if (status == undefined)
+    {
+	    if (this.getAttribute('lizcbox') == 'set'){
+	    	return true
+	    }else{
+	    	return false
+	    }
+	}else{
+		if (status == true){
+			this.setAttribute('lizcbox', 'set');
+		}
+		if (status == false){
+			this.setAttribute('lizcbox', 'unset');
+		}
+	}
 };
 
 
@@ -84,6 +95,10 @@ document.addEventListener('click', event => {
 	// load skyboxer
     const skyboxer_app = event.target.closest('[lizmenu_action="load_skyboxer_app"]');
     if (skyboxer_app) { skyboxer_module_loader() }
+
+	// load new modmaker
+    const load_newmodmaker_app = event.target.closest('[lizmenu_action="load_newmodmaker"]');
+    if (load_newmodmaker_app) { newmodmaker_loader() }
 
 
 
@@ -146,13 +161,39 @@ document.addEventListener('click', event => {
     }
 
 
-	// load engine info
+	// set active engine
     const load_engine_info = event.target.closest('#modmaker_engine_selector .simple_list_v1_pool_item');
     if (load_engine_info) {
 		apc_send({
 			'action': 'modmaker_get_engine_info',
 			'engine_exe': load_engine_info.getAttribute('engine_path')
-		})
+		});
+		window.modmaker_active_engine = {
+			'elem': load_engine_info,
+			'engpath': load_engine_info.getAttribute('engine_path')
+		}
+		$('#modmaker_engine_selector .simple_list_v1_pool_item').removeClass('simple_list_v1_pool_item_const_active');
+		$(load_engine_info).addClass('simple_list_v1_pool_item_const_active');
+    }
+
+	// save engine details
+    const save_engine_info = event.target.closest('#new_engine_save_config');
+    if (save_engine_info) { modmaker_save_engine_details() }
+
+	// create new engine
+    const modmaker_mk_new_engine = event.target.closest('#modmaker_add_new_engine');
+    if (modmaker_mk_new_engine) { modmaker_new_engine() }
+
+	// delete new engine
+    const modmaker_del_new_engine = event.target.closest('#new_engine_del_config');
+    if (modmaker_del_new_engine) {
+    	// todo: kinda unreliable
+		apc_send({
+			'action': 'modmaker_delete_engine',
+			'engine': window.modmaker_active_engine['elem'].getAttribute('engine_path')
+		});
+		window.modmaker_active_engine['elem'].remove();
+		$('#modmaker_client_selector, #modmaker_engine_details').css('display', 'none');
     }
 
 
@@ -160,7 +201,47 @@ document.addEventListener('click', event => {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 });
+
+
+
+document.addEventListener('change', event => {
+    const modmaker_check_engine_exe = event.target.closest('#modmaker_engine_details_exepath input');
+    if (modmaker_check_engine_exe) { modmaker_check_engine_exe_exists() }
+
+    const modmaker_check_set_icon = event.target.closest('#modmaker_engine_details_icon input');
+    if (modmaker_check_set_icon) { modmaker_check_icon() }
+
+
+
+
+
+
+});
+
+
+
+
+
+
 
 
 document.addEventListener('mouseover', event => {
@@ -300,7 +381,7 @@ $(document).ready(function(){
 
 	    	console.log('Closing connection with the client');
 
-	    	// Data should always be a json
+	    	// Data has to always be a json
 	    	// input_d = JSON.parse(window.cstorage)
 	    	// input_d = JSON.parse(cst)
 	    	input_d = JSON.parse(window['cst_cache' + socket.remotePort.toString()])
@@ -323,7 +404,7 @@ $(document).ready(function(){
 					modmaker_module_manager(input_d)
 					break;
 				default:
-					console.log('The transmission from the other world has ended, but requested action is unknown');
+					console.log('The transmission from another world has ended, but requested action is unknown');
 					break;
 			}
 
@@ -347,38 +428,13 @@ $(document).ready(function(){
 	main_app_init()
 
 	// TESTING
-	newmodmaker_loader()
+	// newmodmaker_loader()
 	
 });
 
 function main_app_init()
 {
 	// create Preferences menu
-/*	var pr_menu_items = {
-		'menu_name': 'Preferences',
-		'menu_entries': [
-			{
-				'name': 'App Settings',
-				'action': 'open_app_prefs',
-				'icon': 'nen'
-			},
-			{
-				'name': 'Mod Settings',
-				'action': 'open_mod_prefs',
-				'icon': 'nen'
-			},
-			{
-				'type': 'separator'
-			},
-			{
-				'name': 'Exit',
-				'action': 'exit_app',
-				'svg': true,
-				'icon': 'assets/app_exit_icon.svg'
-			}
-		]
-	}
-	*/
 	create_lizmenu(
 			'[apptoolbarctg="preferences"]',
 			{
@@ -439,8 +495,6 @@ function main_app_init()
 			]
 		}
 	)
-
-
 
 
 }
@@ -808,6 +862,8 @@ function lizcboxes_switch(tgtbox, state)
 {
 	tbox = tgtbox.querySelector('[lizcbox].lizcbox_container') || tgtbox
 
+	// todo: getAttribute
+	// will be faster
 	if ($(tbox).attr('lizcbox') == 'set'){
 		$(tbox).attr('lizcbox', 'unset');
 	}else{
@@ -1135,7 +1191,7 @@ function skyboxer_module_loader()
 				}
 			}
 		});
-		window['current_app_module'] = 'skyboxer'
+		window['current_app_module'] = 'skyboxer';
 	}else{
 		console.log('skyboxer module is loaded initially')
 	}
@@ -1241,10 +1297,16 @@ function modmaker_module_manager(pl)
 
 	switch (pl['mod_action']) {
 		case 'append_pre_installed':
-			newmodmaker_accept_preinstalled(pl['payload'])
+			newmodmaker_accept_engines(pl['payload'])
+			break;
+		case 'accept_engines':
+			newmodmaker_accept_engines(pl['payload'])
 			break;
 		case 'set_engine_info':
 			modmaker_load_engine_info(pl['payload'])
+			break;
+		case 'set_engine_info_bins':
+			modmaker_accept_engine_binaries(pl['payload'])
 			break;
 		default:
 			console.log('The modmaker module has been called, but no corresponding action was found')
@@ -1260,11 +1322,15 @@ function newmodmaker_loader()
 		console.log('loaded');
 		lizcboxes_init();
 		init_liztooltips();
+		apc_send({
+			'action': 'modmaker_load_saved_engines'
+		});
+		window['current_app_module'] = 'modmaker';
 	});
 }
 
 
-function newmodmaker_accept_preinstalled(pl)
+function newmodmaker_accept_engines(pl)
 {
 	console.log(pl);
 	$('#modmaker_engine_selector_pool').empty();
@@ -1293,25 +1359,181 @@ function newmodmaker_accept_preinstalled(pl)
 		$('#modmaker_engine_selector_pool').append(engine_gui_payload);
 
 	}
+	// set active engine, if any
+	if (window.modmaker_active_engine != undefined){
+		console.log('[engine_path="' + window.modmaker_active_engine['engpath'] + '"]')
+		$('#modmaker_engine_selector .simple_list_v1_pool_item').removeClass('simple_list_v1_pool_item_const_active');
+		$('[engine_path="' + window.modmaker_active_engine['engpath'].replaceAll('\\', '\\\\') + '"]').addClass('simple_list_v1_pool_item_const_active');
+	}
 }
 
 
+function modmaker_accept_engine_binaries(pl)
+{
+	// fuck
+	var order_dict_essbins = [
+		'engine.dll',
+		'datacache.dll',
+		'inputsystem.dll',
+		'launcher.dll',
+		'mdllib.dll',
+		'tier0.dll',
+		'vgui2.dll',
+		'vphysics.dll',
+		'vstdlib.dll',
+		'vguimatsurface.dll',
+		'unitlib.dll',
+		'soundsystem.dll'
+	]
+
+	var ordered_dict_sdkbins = [
+		'vrad exe/dll',
+		'hammer exe/dll',
+		'vtex exe/dll',
+		'vvis exe/dll',
+		'vrad exe/dll',
+		'hlmv.exe',
+		'studiomdl.exe',
+		'hlfaceposer.exe',
+		'height2ssbump.exe',
+		'vpk.exe'
+	]
+
+	// essential bins
+	var itemlist = $('#modmaker_engine_details_essenitalbins .modmaker_engine_details_list_items');
+	itemlist.empty();
+	for (var esbin of order_dict_essbins)
+	{
+		var b_entry = $('<div class="modmaker_engine_details_list_item"></div>')
+		b_entry.append($('<div class="modmaker_engine_details_list_item_text"></div>').text(esbin));
+		if (pl['ess_bins'][esbin] == true){
+			b_entry.append('<div class="modmaker_engine_details_list_item_status"><img src="assets/checkmark.svg"></div>');
+		}else{
+			b_entry.append('<div class="modmaker_engine_details_list_item_status"><img src="assets/cross.svg"></div>');
+		}
+		itemlist.append(b_entry)
+	}
+
+	// SDK bins
+	var itemlist = $('#modmaker_engine_details_sdkbins .modmaker_engine_details_list_items');
+	itemlist.empty();
+	for (var sdkbin of ordered_dict_sdkbins)
+	{
+		var b_entry = $('<div class="modmaker_engine_details_list_item"></div>')
+		b_entry.append($('<div class="modmaker_engine_details_list_item_text"></div>').text(sdkbin));
+		if (pl['sdk_bins'][sdkbin][0] == true && pl['sdk_bins'][sdkbin][1] == true){
+			b_entry.append('<div class="modmaker_engine_details_list_item_status"><img src="assets/checkmark.svg"></div>');
+		}else{
+			b_entry.append('<div class="modmaker_engine_details_list_item_status"><img src="assets/cross.svg"></div>');
+		}
+		itemlist.append(b_entry);
+	}
+}
+
+
+// set active engine
 function modmaker_load_engine_info(pl)
 {
 
 	console.log(pl);
+	// <div class="modmaker_engine_details_list_item">
+	// 	<div class="modmaker_engine_details_list_item_text">engine.dll</div>
+	// 	<div class="modmaker_engine_details_list_item_status"><img src="assets/checkmark.svg"></div>
+	// </div>
 
+
+	// engine exe
+	$('#modmaker_engine_details_exepath input').attr('value', pl['exe']).val(pl['exe']);
+	// engine name
+	$('#modmaker_engine_details_name input').attr('value', pl['engine_name']).val(pl['engine_name']);
+	// engine icon
+	$('#modmaker_engine_details_icon input').attr('value', pl['icon']).val(pl['icon']);
+	$('#modmaker_engine_details_icon .modmaker_engine_details_item_status img')[0].src = pl['icon']
+
+	modmaker_accept_engine_binaries(pl)
+
+	$('#modmaker_client_selector_installed_pool').empty();
+
+	for (var inc of pl['clients'])
+	{
+		var tgt_pool = $('#modmaker_client_selector_installed_pool');
+		// <div class="simple_list_v1_pool_item">
+		// 	<div class="simple_list_v1_pool_item_icon"><img draggable="false" src="assets/hl2_flat.ico"></div>
+		// 	<div class="simple_list_v1_pool_item_name">Half-Life 2</div>
+		// 	<div class="simple_list_v1_pool_item_descr">hl2</div>
+		// </div>
+
+		var mkitem = $('<div class="simple_list_v1_pool_item"></div>');
+		mkitem.append('<div class="simple_list_v1_pool_item_icon"><img draggable="false" src="' + inc['client_icon'] + '"></div>');
+		mkitem.append('<div class="simple_list_v1_pool_item_name">' + inc['client_name'] + '</div>');
+		mkitem.append('<div class="simple_list_v1_pool_item_descr">' + inc['folder_name'] + '</div>');
+
+		tgt_pool.append(mkitem);
+
+	}
+
+	// unlock engine details
+	$('#modmaker_client_selector, #modmaker_engine_details').removeAttr('style');
+
+	modmaker_check_engine_exe_exists()
 
 }
 
 
 
+async function modmaker_save_engine_details()
+{
+	if (fs.existsSync($('#modmaker_engine_details_exepath input').val())) {
+		await apc_send({
+			'action': 'modmaker_save_engine_info',
+			'engine_exe': document.querySelector('#modmaker_engine_details_exepath input').value,
+			'engine_name': document.querySelector('#modmaker_engine_details_name input').value,
+			'icon': document.querySelector('#modmaker_engine_details_icon input').value
+		})
+
+		// todo: Why reload the whole thing ????
+		apc_send({
+			'action': 'modmaker_load_saved_engines'
+		})
+	}
+}
 
 
+function modmaker_check_engine_exe_exists()
+{
+	if (fs.existsSync($('#modmaker_engine_details_exepath input').val())) {
+		$('#modmaker_engine_details_exepath .modmaker_engine_details_item_status img')[0].src = 'assets/checkmark.svg'
+		apc_send({
+			'action': 'modmaker_check_engine_bins',
+			'engine_exe': $('#modmaker_engine_details_exepath input').val()
+		})
+	} else {
+		$('#modmaker_engine_details_exepath .modmaker_engine_details_item_status img')[0].src = 'assets/cross.svg'
+	}
+
+}
 
 
+function modmaker_check_icon()
+{
+	$('#modmaker_engine_details_icon .modmaker_engine_details_item_status img')[0].src = $('#modmaker_engine_details_icon input').val()
+}
 
 
+function modmaker_new_engine()
+{
+	// engine exe
+	$('#modmaker_engine_details_exepath input').attr('value', 'hl3.eckze').val('hl3.eckze');
+	// engine name
+	$('#modmaker_engine_details_name input').attr('value', 'half-life 3').val('half-life 3');
+	// engine icon
+	$('#modmaker_engine_details_icon input').attr('value', '').val('');
+	$('#modmaker_engine_details_icon .modmaker_engine_details_item_status img')[0].src = '';
+
+	$('#modmaker_engine_details_items .modmaker_engine_details_list .modmaker_engine_details_list_items .modmaker_engine_details_list_item .modmaker_engine_details_list_item_status img').attr('src', '');
+
+	$('#modmaker_client_selector, #modmaker_engine_details').removeAttr('style');
+}
 
 
 

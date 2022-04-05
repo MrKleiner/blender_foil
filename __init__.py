@@ -73,7 +73,7 @@ from .installer import blfoil_check_pypackages
 
 from time import sleep
 from .utils.shared import app_command_send
-from .mods.app.modmaker.app_modmaker import fetch_existing_engines, modmaker_load_engine_info
+from .mods.app.modmaker.app_modmaker import *
 
 def appconnect_actions(cs):
     match cs['action']:
@@ -90,6 +90,26 @@ def appconnect_actions(cs):
                 'mod_action': 'set_engine_info',
                 'payload': modmaker_load_engine_info(cs['engine_exe'])
             })
+            return ''
+        case 'modmaker_save_engine_info':
+            modmaker_save_engine_info(cs)
+            return ''
+        case 'modmaker_load_saved_engines':
+            app_command_send({
+                'app_module': 'modmaker',
+                'mod_action': 'accept_engines',
+                'payload': modmaker_load_saved_engines()
+            })
+            return ''
+        case 'modmaker_check_engine_bins':
+            app_command_send({
+                'app_module': 'modmaker',
+                'mod_action': 'set_engine_info_bins',
+                'payload': modmaker_check_engine_bins(cs['engine_exe'])
+            })
+            return ''
+        case 'modmaker_delete_engine':
+            modmaker_kill_engine(cs['engine'])
             return ''
         case _:
             return 'wtf is even this'
@@ -166,6 +186,18 @@ blfoil_check_pypackages()
 
 # important todo: blender image datablock exporter
 # downscaled jpegs could be used for previews
+
+# important todo: lights.rad
+
+# important todo: game settings editor outside the engine
+
+# important todo: h++ installer for gmod
+
+# important todo: .pop files for tf2 mvm waves
+
+# important todo: vbsp/vvis switcher
+
+# important todo: skybox preview from MR. X
 
 
 # =======================================================
