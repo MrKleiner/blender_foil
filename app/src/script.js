@@ -144,6 +144,58 @@ document.addEventListener('click', event => {
 
 
 
+    // ===================================
+    //            Dropdown API
+    // ===================================
+
+	// open dropdown
+    const dropdown_open = event.target.closest('[haslizdropdown]');
+    if (dropdown_open) {
+    	// should toggle
+    	/*
+    	if (dropdown_open.querySelector('.lizard_dropdown_entries').style.visibility == 'visible'){
+    		dropdown_open.querySelector('.lizard_dropdown_entries').style.visibility = 'hidden';
+    		dropdown_open.querySelector('.lizard_dropdown_entries').classList.add('lizdropdown_active');
+    	}else{
+    		dropdown_open.querySelector('.lizard_dropdown_entries').style.visibility = 'visible';
+    	}
+    	dropdown_open.querySelector('.lizard_dropdown_entries').style.opacity = 1;
+    	*/
+    	dropdown_open.querySelector('.lizard_dropdown_entries').classList.toggle('lizdropdown_entries_shown');
+    	dropdown_open.classList.toggle('lizdropdown_active');
+    	// dropdown_open.querySelector('.lizard_menu').classList.toggle('lizdropdown_active');
+    }else{
+    	// todo: this is actually slow as fuck
+    	$('.lizard_dropdown_entries, .lizard_menu, [haslizdropdown]')
+    	.removeClass('lizdropdown_entries_shown')
+    	.removeClass('lizdropdown_active');
+    }
+
+	// set dropdown active item
+    const dropdown_set = event.target.closest('.lizard_dropdown_entries [dropdown_set]');
+    if (dropdown_set) {
+    	var dropdownroot = dropdown_set.closest('.lizard_menu');
+    	// set title
+    	dropdownroot.querySelector('.lizmenu_title').innerText = dropdown_set.getAttribute('dropdown_set');
+    	dropdownroot.querySelector('.lizard_dropdown_entries').style.visibility = 'hidden';
+    	dropdownroot.setAttribute('liz_active_item', dropdown_set.getAttribute('dropdown_set'))
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -428,7 +480,7 @@ $(document).ready(function(){
 	main_app_init()
 
 	// TESTING
-	// newmodmaker_loader()
+	newmodmaker_loader()
 	
 });
 
@@ -815,6 +867,233 @@ function lizmenu_pos_fixup(lizmenu)
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+============================================================
+------------------------------------------------------------
+                   Simple dropdowns START
+------------------------------------------------------------
+============================================================
+*/
+
+function create_lizdropdown(slct, itemsd)
+{
+	//
+	// Populate menu
+	//
+
+	var domenu = $(slct);
+
+	domenu.empty();
+
+	var gwidth = document.querySelector(slct).clientWidth;
+
+	var menu_plate = $(`
+		<div class="lizard_menu">
+			<div class="lizmenu_title"><span style="color: #BC4141">None</span></div>
+			<div style="width: ` + gwidth.toString() + `px" class="lizard_dropdown_entries">
+			</div>
+		</div>
+	`);
+
+	for (var lzitem of itemsd['menu_entries'])
+	{
+		// .hasOwnProperty('name')
+		if (lzitem['type'] != 'separator')
+		{
+			var entry_plate = $(`
+				<div class="lizard_menu_entry">
+					<div class="lizard_menu_entry_text">FATAL_ERROR</div>
+				</div>
+			`);
+
+			// set icon
+			// entry_plate.find('.lizard_menu_entry_icon img')[0].src = lzitem['icon'];
+			// set entry text
+			entry_plate.find('.lizard_menu_entry_text').text(lzitem['name']);
+			// set item action
+			entry_plate.attr('dropdown_set', lzitem['dropdown_set']);
+			// svg condition
+			// if (lzitem['svg'] != true){entry_plate.find('.lizard_menu_entry_icon img').css('object-fit', 'contain')}
+
+		}else{
+			// dropdowns don't need a separator
+			// var entry_plate = $(`<div class="lizard_menu_separator"></div>`);
+		}
+
+		// append to entries pool
+		menu_plate.find('.lizard_dropdown_entries').append(entry_plate);
+	}
+
+	// set menu title
+	// which is basically an entry with separator
+	// menu_plate.find('.lizmenu_title').text(itemsd['menu_name']);
+
+	menu_plate.find('.lizard_dropdown_entries').append(`<div class="lizard_menu_separator"></div>`);
+	menu_plate.find('.lizard_dropdown_entries').append(`
+		<div style="pointer-events: none" class="lizard_menu_entry">
+			<div class="lizard_dropdown_bottom_title lizard_menu_entry_text">` + itemsd['menu_name'] + `</div>
+		</div>
+	`);
+
+
+
+	// append menu to target
+	domenu.append(menu_plate)
+
+	// select appended menu
+	// todo: .append returns selector?
+	var newmenu = domenu.find('.lizard_menu');
+	// Make parent a hitbox too
+	// todo: make this optional
+	domenu.attr('haslizdropdown', true);
+	// select menu items
+	var newmenu_items = domenu.find('.lizard_dropdown_entries');
+
+
+	//
+	// set menu margins
+	//
+
+	// first - margin-top
+	// margin top is: height of the resulting lizmenu + padding-top of the parent container
+
+	// get padding of the parent container, if any
+	var padding_top = parseInt(window.getComputedStyle(newmenu[0], null).getPropertyValue('padding-top').replace('px', ''));
+	var margin_top = newmenu[0].offsetHeight
+	if (!isNaN(padding_top)){
+		margin_top += padding_top
+	}
+
+	// second - margin-left
+	var padding_left = parseInt(window.getComputedStyle(newmenu.parent()[0], null).getPropertyValue('padding-left').replace('px', ''));
+	var margin_left = 0
+	if (!isNaN(padding_left)){
+		margin_left += padding_left * -1
+	}
+
+	// set style
+	newmenu_items.css('margin-left', margin_left.toString() + 'px')
+	newmenu_items.css('margin-top', (margin_top + 5).toString() + 'px')
+
+}
+
+Element.prototype.lizdropdown=function(set_to) {
+    // if(value===undefined) value=true;
+    // if(this.hasAttribute(attribute)) this.removeAttribute(attribute);
+    // else this.addAttribute(attribute,value);
+    // todo: poor logic. use ||
+    // var tgt_menu_s = this.closest('.haslizdropdown') || this.closest('.lizard_menu')
+	if (this.closest('.haslizdropdown') != null){
+		var tgt_menu_s = this.querySelector('.lizard_menu')
+	}
+	if (this.closest('.lizard_menu') != null){
+		var tgt_menu_s = this.closest('.lizard_menu')
+	}
+
+    if (set_to == undefined){
+	    if (tgt_menu_s != null){
+	    	return tgt_menu_s.getAttribute('liz_active_item')
+	    }else{
+	    	return null
+	    }
+    }
+
+};
+
+
+function lizdropdown_set_active(active_item)
+{
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /*
 ============================================================
 ------------------------------------------------------------
@@ -987,7 +1266,7 @@ function lizshowtooltip(tl, evt) {
 		var base_posdict = {
 			'top': {
 				'x': tgt_e_pos.x,
-				'y': (tgt_e_pos.y) - tboxh
+				'y': (tgt_e_pos.y - boxopts['padding']) - tboxh
 			},
 			'left': {
 				'x': tgt_e_pos.x + tboxw,
@@ -1009,6 +1288,9 @@ function lizshowtooltip(tl, evt) {
 
 		// console.log(base_posdict[boxopts['pos']]['y'].toString() + 'px')
 
+		var non_parent_margin_x = 0
+		var non_parent_margin_y = 0
+
 		// relative to mouse or element
 		if (boxopts['toparent'] == 1){
 			var finalpos_x = base_posdict[boxopts['pos']]['x']
@@ -1016,6 +1298,9 @@ function lizshowtooltip(tl, evt) {
 		}else{
 			var finalpos_x = window.actualmpos['x'] + boxopts['padding']
 			var finalpos_y = window.actualmpos['y'] + boxopts['padding']
+
+			var non_parent_margin_x = boxopts['padding'] + 5
+			var non_parent_margin_y = boxopts['padding'] + 5
 		}
 
 
@@ -1023,11 +1308,11 @@ function lizshowtooltip(tl, evt) {
 		// fix clipping y
 		// console.log(base_posdict[boxopts['pos']]['y'] + tboxh);
 		if (base_posdict[boxopts['pos']]['y'] + tboxh > page_h){
-			finalpos_y -= ((base_posdict[boxopts['pos']]['y'] + tboxh) - (page_h - 5))
+			finalpos_y -= (((base_posdict[boxopts['pos']]['y'] - non_parent_margin_y) + tboxh) - (page_h - 5))
 		}
 		// fix clipping x
 		if (base_posdict[boxopts['pos']]['x'] + tboxw > page_w){
-			finalpos_x -= ((base_posdict[boxopts['pos']]['x'] + tboxw) - (page_w - 5))
+			finalpos_x -= (((base_posdict[boxopts['pos']]['x'] - non_parent_margin_x) + tboxw) - (page_w - 5))
 		}
 		
 		lizardbox.style.top = finalpos_y.toString() + 'px';
@@ -1284,6 +1569,29 @@ function skybox_set_sky_name(skname)
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /*
 =====================================================================
 ---------------------------------------------------------------------
@@ -1454,6 +1762,8 @@ function modmaker_load_engine_info(pl)
 
 	$('#modmaker_client_selector_installed_pool').empty();
 
+	var dropdown_eligible = []
+
 	for (var inc of pl['clients'])
 	{
 		var tgt_pool = $('#modmaker_client_selector_installed_pool');
@@ -1467,6 +1777,32 @@ function modmaker_load_engine_info(pl)
 		mkitem.append('<div class="simple_list_v1_pool_item_icon"><img draggable="false" src="' + inc['client_icon'] + '"></div>');
 		mkitem.append('<div class="simple_list_v1_pool_item_name">' + inc['client_name'] + '</div>');
 		mkitem.append('<div class="simple_list_v1_pool_item_descr">' + inc['folder_name'] + '</div>');
+		mkitem[0].setAttribute('clientpath', inc['folder_name']);
+		if (inc['hasdll'] == true){
+			mkitem[0].setAttribute('hasdll', true)
+			mkitem.append($('<img liztooltip_prms="right:0:15:1000" src="assets/punchcard_bootleg_cut_b.png" class="simple_list_v1_pool_item_descr_icon">')
+				.attr('liztooltip',
+					`<img 
+						style="width: 300px; height: 300px; object-fit: contain; object-position: center;" 
+						src="assets/5mb.webp"
+					 >
+			 		 <div 
+			 		 style="position: absolute; margin-left: 100px; color: white; font-size: 50px; font-family: 'Roboto'; font-weight: 600"
+			 		 >
+		 		 	 5 MB
+			 		 </div>
+					 <img 
+						style="margin-top: 10px; width: 300px; height: 100px; object-fit: contain; object-position: top;" 
+						src="assets/punchcard.png"
+					 >
+			 		 `));
+			
+			// if this entry has dll - append it to the dll dropdown
+			dropdown_eligible.push({
+				'name': inc['folder_name'],
+				'dropdown_set': inc['folder_name']
+			});
+		}
 
 		tgt_pool.append(mkitem);
 
@@ -1476,6 +1812,32 @@ function modmaker_load_engine_info(pl)
 	$('#modmaker_client_selector, #modmaker_engine_details').removeAttr('style');
 
 	modmaker_check_engine_exe_exists()
+/*
+	var dropdown_eligible = []
+
+	// create a dropdown of eligible clients with dlls
+	// todo this creation should happen on item appends
+	// update: Done
+	document.querySelectorAll('#modmaker_client_selector_installed_pool .simple_list_v1_pool_item[hasdll="true"]').forEach(function(userItem) {
+		console.log(userItem);
+
+		var dropdown_st = userItem.querySelector('.simple_list_v1_pool_item_descr').textContent
+
+		dropdown_eligible.push({
+			'name': dropdown_st,
+			'dropdown_set': dropdown_st
+		})
+
+	});
+
+*/
+	create_lizdropdown(
+		'#modmaker_spawn_client_dll_dropdown',
+		{
+			'menu_name': 'Select .dll location',
+			'menu_entries': dropdown_eligible
+		}
+	)
 
 }
 
@@ -1534,6 +1896,52 @@ function modmaker_new_engine()
 
 	$('#modmaker_client_selector, #modmaker_engine_details').removeAttr('style');
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

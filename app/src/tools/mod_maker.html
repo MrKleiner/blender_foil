@@ -98,155 +98,199 @@
 
 
 			<!-- The sweet magic buttons -->
+<!-- 			
 			<div id="modmaker_new_client_tplate_path">
 				<div id="modmaker_new_client_tplate_path_text">Template:</div>
 				<input placeholder="(Optional) Path to the client" type="text">
 			</div>
+ -->
+<!-- 
 			<div id="modmaker_new_client_bins_path">
 				<div id="modmaker_new_client_bins_path_text">Client/server .dll (relative to the engine)</div>
 				<input placeholder="(Optional)" type="text">
 			</div>
+ -->
 
-			<div class="modmaker_mknew_client_btn_row">
-				<div class="modmaker_mknew_client_btn app_regular_btn_01" id="modmaker_new_client_from_tplate">
-					New from template
-					<liztooltip liztooltip_prms="right:1:10:100">
-						<div style="display: flex; flex-direction: column;">
-							Create a new client using existing cliend/server .dll from the specified Template path.
-							<br><br>
-							<span>
-								Basically copies the specified client with .dll files, configs 
-								and <a style="color: #DC5953">NOT</a> stuff like .vpk, materials, models, etc...
-							</span>
-							<br>
-							
-							For instance: You have Half-Life 2 engine with hl2, episodic, ep2
-							<a style="color: #808080">(e.g. ...\steamapps\common\Half-Life 2\hl2)</a> 
-							and you want to create a standalone (with custom models only n shit) mod based off ep2.
-							<br>
-							If so - choose ep2 as a base and a new client will be created 
-							which is essentially the same as ep2, but with no maps, models and other content.  
-							<br><br>
-							The content which is being copied is: 
-							<br>
-							<ul style="margin-left: 30px; color: rgb(210, 210, 210);">
-								<li>Gameinfo (links like episodic and hl2 remain)</li>
-								<li>Configs</li>
-								<li>PBR, if any</li>
-								<li>Resources</li>
-							</ul>
-						</div>
-					</liztooltip>
-				</div>
-				<div class="modmaker_mknew_client_btn_cbox_cont">
-					<div class="modmaker_mknew_client_btn_cbox_text">Attempt MP PBR</div>
-					<div lizcbox_init="set" lizcbox_hashitbox class="modmaker_mknew_client_btn_cbox"></div>
-					<liztooltip liztooltip_prms="right:0:15:500">
-						Mount MP PBR .dll and shaders. The result cannot be predicted, because client could be modified.
-					</liztooltip>
+
+
+
+
+			<div class="modmaker_mknew_client_btn_columns">
+
+
+				<div class="modmaker_mknew_client_btn_column">
+					<div class="modmaker_mknew_client_btn app_regular_btn_01" id="modmaker_new_client_from_tplate">
+						New
+						<liztooltip liztooltip_prms="top:1:10:100">
+							<div style="display: flex; flex-direction: column;">
+								Create a new client using existing cliend/server .dll from the specified Template path.
+								<br><br>
+								<span>
+									Basically copies the specified client with .dll files, configs 
+									and <a style="color: #DC5953">NOT</a> stuff like .vpk, materials, models, etc...
+								</span>
+								<br>
+								
+								For instance: You have Half-Life 2 engine with hl2, episodic, ep2
+								<a style="color: #808080">(e.g. ...\steamapps\common\Half-Life 2\hl2)</a> 
+								and you want to create a standalone (with custom models only n shit) mod based off ep2.
+								<br>
+								If so - choose ep2 as a base and a new client will be created 
+								which is essentially the same as ep2, but with no maps, models and other content.  
+								<br><br>
+								The content which is being copied is: 
+								<br>
+								<ul style="margin-left: 30px; color: rgb(210, 210, 210);">
+									<li>Gameinfo (links like episodic and hl2 remain)</li>
+									<li>Configs</li>
+									<li>PBR, if any</li>
+									<li>Resources</li>
+								</ul>
+							</div>
+						</liztooltip>
+					</div>
+
+					<div id="modmaker_spawn_client_dll_dropdown">
+						
+					</div>
+
+					<div class="modmaker_mknew_client_btn_cbox_cont">
+						<div class="modmaker_mknew_client_btn_cbox_text">Attempt PBR</div>
+						<div lizcbox_init="set" lizcbox_hashitbox class="modmaker_mknew_client_btn_cbox"></div>
+						<liztooltip liztooltip_prms="right:0:15:500">
+							Mount PBR .dll and shaders. The result cannot be predicted, because client could be modified.
+						</liztooltip>
+					</div>
+
+					<div class="modmaker_mknew_client_btn_cbox_cont">
+						<div class="modmaker_mknew_client_btn_cbox_text">Link selected content</div>
+						<div lizcbox_init="set" lizcbox_hashitbox class="modmaker_mknew_client_btn_cbox"></div>
+						<liztooltip liztooltip_prms="right:0:15:500">
+							Link content from selected clients via gameinfo.
+						</liztooltip>
+					</div>
+
+					<div class="modmaker_mknew_client_btn_cbox_cont">
+						<div class="modmaker_mknew_client_btn_cbox_text">Linked binaries</div>
+						<div lizcbox_init="set" lizcbox_hashitbox class="modmaker_mknew_client_btn_cbox"></div>
+						<liztooltip liztooltip_prms="right:0:15:500">
+							Cleint/server .dll will be linked via gameinfo instead of copying.
+						</liztooltip>
+					</div>
+
 				</div>
 
-				<div class="modmaker_mknew_client_btn_cbox_cont">
-					<div class="modmaker_mknew_client_btn_cbox_text">Attempt SP PBR</div>
-					<div lizcbox_init="set" lizcbox_hashitbox class="modmaker_mknew_client_btn_cbox"></div>
-					<liztooltip liztooltip_prms="right:0:15:500">
-						Mount SP PBR .dll and shaders. The result cannot be predicted, because client could be modified.
-					</liztooltip>
+
+				<div class="modmaker_mknew_client_btn_row">
+					<div class="modmaker_mknew_client_btn app_regular_btn_01" id="modmaker_new_client_newblank">
+						New Mapbase
+						<liztooltip liztooltip_prms="top:1:10:100">
+							<div style="display: flex; flex-direction: column;">
+								Create a completely blank client with minimal configs.
+								<br>
+								Requires the path to client/server .dll specified.
+								<br><br>
+								Selected clients will be used as content bases, which means that the following content is linked via gameinfo:
+								<br>
+								<ul style="margin-left: 30px; color: rgb(210, 210, 210); margin-bottom: 10px;">
+									<li>materials</li>
+									<li>models</li>
+									<li>sounds</li>
+									<li>scripts</li>
+									<li>maps</li>
+									<li>particles</li>
+									<li>VPKs</li>
+								</ul>
+							</div>
+						</liztooltip>
+					</div>
+
+					<div class="modmaker_mknew_client_btn_cbox_cont">
+						<div class="modmaker_mknew_client_btn_cbox_text">PBR</div>
+						<div lizcbox_init="set" lizcbox_hashitbox class="modmaker_mknew_client_btn_cbox"></div>
+						<liztooltip liztooltip_prms="right:0:15:500">
+							Include PBR shader.
+						</liztooltip>
+					</div>
+
+					<div class="modmaker_mknew_client_btn_cbox_cont">
+						<div class="modmaker_mknew_client_btn_cbox_text">Link selected content</div>
+						<div lizcbox_init="set" lizcbox_hashitbox class="modmaker_mknew_client_btn_cbox"></div>
+						<liztooltip liztooltip_prms="right:0:15:500">
+							Link content from selected clients via gameinfo.
+						</liztooltip>
+					</div>
+
 				</div>
+
+	<!-- 			<div class="modmaker_mknew_client_btn_row">
+					<div class="modmaker_mknew_client_btn app_regular_btn_01" id="modmaker_new_client_w_mapbase_deps">
+						New with mapbase dependencies
+						<liztooltip liztooltip_prms="right:1:10:100">
+							<div style="display: flex; flex-direction: column;">
+								Mapbase is a client-side modification and therefore is a little more tricky:
+								<br>
+								It consists out of 3 "objects" which are literally clients just like hl2, ep2 and episodic.
+								<br><br>
+								Those clients are like raw binaries or .dll files: You don't create stuff inside them - 
+								you create your own client and link those 3 "objects" via the gameinfo of your mod (client).
+								<br><br>
+								This button will do everything automatically.
+								<br><br>
+								You can link additional stuff via gameinfo later.
+							</div>
+						</liztooltip>
+					</div>
+					<div class="modmaker_mknew_client_btn_cbox_cont">
+						<div class="modmaker_mknew_client_btn_cbox_text">PBR</div>
+						<div lizcbox_init="set" lizcbox_hashitbox class="modmaker_mknew_client_btn_cbox"></div>
+						<liztooltip liztooltip_prms="right:0:15:500">
+							Include PBR shader.
+						</liztooltip>
+					</div>
+
+					<div class="modmaker_mknew_client_btn_cbox_cont">
+						<div class="modmaker_mknew_client_btn_cbox_text">Episodic</div>
+						<div lizcbox_init="set" lizcbox_hashitbox class="modmaker_mknew_client_btn_cbox"></div>
+						<liztooltip liztooltip_prms="right:0:15:500">
+							If unchecked - hl2
+						</liztooltip>
+					</div>
+				</div> -->
+
+	<!-- 			<div class="modmaker_mknew_client_btn_row">
+					<div class="modmaker_mknew_client_btn app_regular_btn_01" id="modmaker_new_client_from_sdk2013sp">
+						New from SDK 2013 SP
+						<liztooltip liztooltip_prms="right:1:10:100">
+							Create a default SDK 2013 mod setup, just like in "sourcetest" example included with SDK 2013
+						</liztooltip>
+					</div>
+					<div class="modmaker_mknew_client_btn_cbox_cont">
+						<div class="modmaker_mknew_client_btn_cbox_text">PBR</div>
+						<div lizcbox_init="set" lizcbox_hashitbox class="modmaker_mknew_client_btn_cbox"></div>
+						<liztooltip liztooltip_prms="right:0:15:500">
+							Include PBR shader.
+						</liztooltip>
+					</div>
+				</div> -->
+	<!-- 
+				<div class="modmaker_mknew_client_btn_row">
+					<div class="modmaker_mknew_client_btn app_regular_btn_01" id="modmaker_new_client_from_sdk2013mp">
+						New from SDK 2013 MP
+						<liztooltip liztooltip_prms="right:1:10:100">
+							Create a default SDK 2013 mod setup, just like in "sourcetest" example included with SDK 2013
+						</liztooltip>
+					</div>
+					<div class="modmaker_mknew_client_btn_cbox_cont">
+						<div class="modmaker_mknew_client_btn_cbox_text">PBR</div>
+						<div lizcbox_init="set" lizcbox_hashitbox class="modmaker_mknew_client_btn_cbox"></div>
+						<liztooltip liztooltip_prms="right:0:15:500">
+							Include PBR shader.
+						</liztooltip>
+					</div>
+				</div>
+	 -->
 			</div>
-
-			<div class="modmaker_mknew_client_btn_row">
-				<div class="modmaker_mknew_client_btn app_regular_btn_01" id="modmaker_new_client_newblank">
-					New, blank. Use selected as bases
-					<liztooltip liztooltip_prms="right:1:10:100">
-						<div style="display: flex; flex-direction: column;">
-							Create a completely blank client with minimal configs.
-							<br>
-							Requires the path to client/server .dll specified.
-							<br><br>
-							Selected clients will be used as content bases, which means that the following content is linked via gameinfo:
-							<br>
-							<ul style="margin-left: 30px; color: rgb(210, 210, 210); margin-bottom: 10px;">
-								<li>materials</li>
-								<li>models</li>
-								<li>sounds</li>
-								<li>scripts</li>
-								<li>maps</li>
-								<li>particles</li>
-								<li>VPKs</li>
-							</ul>
-						</div>
-					</liztooltip>
-				</div>
-				<div class="modmaker_mknew_client_btn_cbox_cont">
-					<div class="modmaker_mknew_client_btn_cbox_text">Attempt PBR</div>
-					<div lizcbox_init="set" lizcbox_hashitbox class="modmaker_mknew_client_btn_cbox"></div>
-					<liztooltip liztooltip_prms="right:0:15:500">
-						Include PBR shader.
-					</liztooltip>
-				</div>
-			</div>
-
-			<div class="modmaker_mknew_client_btn_row">
-				<div class="modmaker_mknew_client_btn app_regular_btn_01" id="modmaker_new_client_w_mapbase_deps">
-					New with mapbase dependencies
-					<liztooltip liztooltip_prms="right:1:10:100">
-						<div style="display: flex; flex-direction: column;">
-							Mapbase is a client-side modification and therefore is a little more tricky:
-							<br>
-							It consists out of 3 "objects" which are literally clients just like hl2, ep2 and episodic.
-							<br><br>
-							Those clients are like raw binaries or .dll files: You don't create stuff inside them - 
-							you create your own client and link those 3 "objects" via the gameinfo of your mod (client).
-							<br><br>
-							This button will do everything automatically.
-							<br><br>
-							You can link additional stuff via gameinfo later.
-						</div>
-					</liztooltip>
-				</div>
-				<div class="modmaker_mknew_client_btn_cbox_cont">
-					<div class="modmaker_mknew_client_btn_cbox_text">PBR</div>
-					<div lizcbox_init="set" lizcbox_hashitbox class="modmaker_mknew_client_btn_cbox"></div>
-					<liztooltip liztooltip_prms="right:0:15:500">
-						Include PBR shader.
-					</liztooltip>
-				</div>
-			</div>
-
-			<div class="modmaker_mknew_client_btn_row">
-				<div class="modmaker_mknew_client_btn app_regular_btn_01" id="modmaker_new_client_from_sdk2013sp">
-					New from SDK 2013 SP
-					<liztooltip liztooltip_prms="right:1:10:100">
-						Create a default SDK 2013 mod setup, just like in "sourcetest" example included with SDK 2013
-					</liztooltip>
-				</div>
-				<div class="modmaker_mknew_client_btn_cbox_cont">
-					<div class="modmaker_mknew_client_btn_cbox_text">PBR</div>
-					<div lizcbox_init="set" lizcbox_hashitbox class="modmaker_mknew_client_btn_cbox"></div>
-					<liztooltip liztooltip_prms="right:0:15:500">
-						Include PBR shader.
-					</liztooltip>
-				</div>
-			</div>
-
-			<div class="modmaker_mknew_client_btn_row">
-				<div class="modmaker_mknew_client_btn app_regular_btn_01" id="modmaker_new_client_from_sdk2013mp">
-					New from SDK 2013 MP
-					<liztooltip liztooltip_prms="right:1:10:100">
-						Create a default SDK 2013 mod setup, just like in "sourcetest" example included with SDK 2013
-					</liztooltip>
-				</div>
-				<div class="modmaker_mknew_client_btn_cbox_cont">
-					<div class="modmaker_mknew_client_btn_cbox_text">PBR</div>
-					<div lizcbox_init="set" lizcbox_hashitbox class="modmaker_mknew_client_btn_cbox"></div>
-					<liztooltip liztooltip_prms="right:0:15:500">
-						Include PBR shader.
-					</liztooltip>
-				</div>
-			</div>
-
-			
 			
 			
 			

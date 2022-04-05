@@ -203,7 +203,14 @@ def modmaker_load_engine_info(engi_exe):
 
 	for gc in os.listdir(engine_dir):
 		tgt_dir = engine_dir / gc
-		if tgt_dir.is_dir() and gc != 'bin':
+		# there are a few folder names that should be omitted, like bin and mapbase binaries
+		noscan = [
+			'bin',
+			'mapbase_shared',
+			'mapbase_episodic',
+			'mapbase_hl2'
+		]
+		if tgt_dir.is_dir() and not gc in noscan:
 			# this chains ensures that an actual client is being tested
 			if set(os.listdir(tgt_dir)) & set(identifier):
 				# allowed_clients.append(gc)
@@ -262,7 +269,7 @@ def modmaker_load_engine_info(engi_exe):
 						'tiff'
 					]
 
-					rdyicon = str(icon_order)
+					rdyicon = 'assets/icon_default.svg'
 
 					# only do conversions if file exists AND it's not in the list of supported formats
 					# todo: Who cares about supported chromium formats when it could appear that
@@ -286,7 +293,8 @@ def modmaker_load_engine_info(engi_exe):
 							with open(str(addon_rootdir / 'tot' / 'tmpico.png'), 'rb') as b6i:
 								rdyicon = 'data:image/png;base64,' + base64.b64encode(b6i.read()).decode('utf-8', errors='ignore')
 					else:
-						rdyicon = 'assets/icon_default.svg'
+						# todo: this logic could be better
+						rdyicon = str(icon_order or 'assets/icon_default.svg')
 					
 					clpl['client_icon'] = rdyicon
 
@@ -434,7 +442,7 @@ def modmaker_kill_engine(eng):
 
 
 def modmaker_spawn_new_engine(einf):
-
+	pass
 
 
 

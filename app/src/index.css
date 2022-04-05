@@ -50,7 +50,7 @@ h1
 {
 	display: flex;
 	margin-top: 50px;
-	margin-bottom: 150px;
+	margin-bottom: 100px;
 }
 
 
@@ -198,7 +198,7 @@ h1
 	justify-content: center;
 }
 
-.lizard_menu_entries
+.lizard_menu_entries, .lizard_dropdown_entries
 {
 	display: flex;
 	flex-direction: column;
@@ -217,7 +217,6 @@ h1
 	margin-top: 32px;
 	visibility: hidden;
 	opacity: 0;
-	
 }
 
 .lizard_menu:hover .lizard_menu_entries, [haslizmenu]:hover .lizard_menu_entries
@@ -236,6 +235,7 @@ h1
 	align-items: center;
 	height: 25px;
 	/*background: gray;*/
+	user-select: none;
 }
 
 .lizard_menu_entry:hover
@@ -285,8 +285,18 @@ h1
 	/*background: rgb(60, 60, 60);*/
 }
 
+.lizdropdown_active
+{
+	background: #3a5986 !important;
+	border-color: #4772b3 !important;
+	outline-color: #4772b3 !important;
+}
 
-
+.lizdropdown_entries_shown
+{
+	opacity: 1 !important;
+	visibility: visible !important;
+}
 
 
 
@@ -449,6 +459,7 @@ liztooltip
 {
 	position: fixed;
 	display: flex;
+	flex-direction: column;
 	font-family: 'blender';
 	font-size: 14px;
 	z-index: 655355;
@@ -742,6 +753,7 @@ liztooltip
 	/*padding-left: 100px;*/
 	padding-left: 90px;
 	overflow: hidden;
+	margin-bottom: 100px;
 }
 
 
@@ -846,6 +858,15 @@ liztooltip
 	padding: 0px 0px 0px 10px;
 	overflow: hidden;
 	/*white-space: nowrap;*/
+}
+
+.simple_list_v1_pool_item_descr_icon
+{
+	height: 100%;
+	width: 40px;
+	object-fit: contain;
+	object-position: center;
+	margin-left: 10px;
 }
 
 .simple_list_v1_pool_add_newitem
@@ -1407,7 +1428,7 @@ liztooltip
 	font-weight: 200;
 	font-size: 15px;
 	width: 300px;
-	margin: 5px;
+	margin: 5px 20px 5px 0px;
 	padding: 10px 5px 10px 5px;
 	align-items: center;
 	justify-content: center;
@@ -1434,23 +1455,70 @@ liztooltip
 	height: 20px;
 }
 
-
-.modmaker_mknew_client_btn_row
+.modmaker_mknew_client_btn_columns
 {
 	display: flex;
 	flex-direction: row;
-	align-items: center;
+	margin-top: 20px;
+}
+
+
+.modmaker_mknew_client_btn_column
+{
+	display: flex;
+	flex-direction: column;
+	/*align-items: center;*/
 }
 
 .modmaker_mknew_client_btn_cbox_cont
 {
 	display: flex;
 	flex-direction: row;
-	margin-left: 15px;
+	flex-grow: 0;
+	margin-top: 10px;
 	background: rgba(0, 0, 0, 0.1);
 	padding: 5px;
 	border-radius: 5px;
+	width: fit-content;
 }
+
+#modmaker_spawn_client_dll_dropdown
+{
+	display: flex;
+	width: 80%;
+	margin-top: 15px;
+	height: 25px;
+	background: rgba(0, 0, 0, 0.25);
+	border-radius: 5px;
+	outline: 1px solid rgba(255, 255, 255, 0.1);
+
+	font-family: 'Open_Sans';
+	font-weight: 100;
+}
+
+#modmaker_spawn_client_dll_dropdown .lizard_dropdown_bottom_title
+{
+	color: rgba(255, 255, 255, 0.5)
+}
+
+#modmaker_spawn_client_dll_dropdown .lizmenu_title
+{
+	color: white;
+	font-family: 'Open_Sans';
+	font-weight: 200;
+	font-size: 15px;
+	align-self: flex-start;
+	/*justify-content: center;*/
+	user-select: none;
+	padding-left: 10px;
+}
+
+
+#modmaker_spawn_client_dll_dropdown:hover
+{
+	background: rgba(0, 0, 0, 0.1);
+}
+
 .modmaker_mknew_client_btn_cbox_text
 {
 	display: flex;
@@ -1470,7 +1538,6 @@ liztooltip
 	height: 20px;
 	margin-left: 5px;
 }
-
 
 
 
