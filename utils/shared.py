@@ -2,6 +2,53 @@ import asyncio
 import socket
 import json
 
+
+# get md5 of a string.
+# is not stepped, intended for use with small strings
+def eval_m5(st):
+    import hashlib
+    text = str(st)
+    hash_object = hashlib.md5(text.encode())
+    md5_hash = hash_object.hexdigest()
+    return md5_hash
+
+
+
+
+# takes path to the file as an input
+# is stepped. Can process huge files
+# returns md5 string
+def getfilemd5(filepath):
+    import hashlib
+    file = str(filepath) # Location of the file (can be set a different way)
+    
+    # The size of each read from the file
+    # BLOCK_SIZE = 65535
+    # 23 million
+    # BLOCK_SIZE = 23000000
+    # 167 million
+    BLOCK_SIZE = 167856784
+    
+    # Create the hash object, can use something other than `.sha256()` if you wish
+    # file_hash = hashlib.md5()
+    file_hash = hashlib.md5()
+    with open(file, 'rb') as f: # Open the file to read it's bytes
+        fb = f.read(BLOCK_SIZE) # Read from the file. Take in the amount declared above
+        while len(fb) > 0: # While there is still data being read from the file
+            file_hash.update(fb) # Update the hash
+            fb = f.read(BLOCK_SIZE) # Read the next block from the file
+
+    return(file_hash.hexdigest()) # Get the hexadecimal digest of the hash
+
+
+
+
+
+
+
+
+
+
 # Returns True or False from either a string or int 1/0
 def eval_state(state):
 
@@ -93,6 +140,7 @@ def get_obj_locrot_v1(eobject, fix90, axis, self, context):
 # ==========================================
 #               App bridge
 # ==========================================
+# todo: is async really needed ?
 async def appgui_updater(pl):
     try:
         s = socket.socket()  # Create a socket object
@@ -143,10 +191,6 @@ def app_command_send(payload):
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     result = loop.run_until_complete(appgui_updater(payload))
-
-
-
-
 
 
 
@@ -210,12 +254,19 @@ with open('downloaded.zip', 'wb') as txtfile:
     txtfile.write(data)
 """
 
-def download_mapbase(tmpfolder=None):
+# important todo: this function is unfinished
+# set beta to True to make it download beta version
+def download_mapbase(tmpfolder=None, beta=False):
+    # Normally, this should download to tot and extract to bins/mapbase/release OR beta
     import requests
     from pathlib import Path
     import requests
     from bs4 import BeautifulSoup, Tag, NavigableString
     import random
+    import zipfile
+    import shutil
+
+    addon_root_dir = Path(__file__).absolute().parent.parent
 
     #
     # get list of downloadables
@@ -226,13 +277,13 @@ def download_mapbase(tmpfolder=None):
     url_prms = {
         'Accept': '*/*'
     }
-    # YES, headerZ, because I fucking hate it when it's impossible to distinguish which name is built-in into the langauge
+    # YES, headerx, because I fucking hate it when it's impossible to distinguish which name is built-in into the langauge
     # and which one is a custom one
     # LIKE, headers=headers YES, THAT'S VERY NICE
-    headerz = {
+    headerx = {
         'Accept': '*/*'
     }
-    do_request = requests.get(url=rq_url, params=url_prms, headers=headerz)
+    do_request = requests.get(url=rq_url, params=url_prms, headers=headerx)
     data = do_request.content
 
     # print(data)
@@ -245,7 +296,66 @@ def download_mapbase(tmpfolder=None):
     for ded in rowlinks:
         print(ded)
 
-    return 'https://www.moddb.com' + random.choice(rowlinks)
+    # set dl link
+    mb_dl_link = 'https://www.moddb.com' + random.choice(rowlinks)
+
+
+
+    #
+    # Do download
+    #
+
+    mapbase_ver = 'beta' if beta == True else 'release'
+
+    ziptmp = 'mapbase_dl_tmp'
+
+    # create temp dir
+    # for zip only
+    # because why not to take extra safety margins
+    dl_to_folder = (Path(tmpfolder) / ziptmp) if tmpfolder != None else (addon_root_dir / 'bins' / 'mapbase' / mapbase_ver / ziptmp)
+
+    # quite a risky operation, but fine... be it...
+    dl_to_folder.mkdir(parents=True, exist_ok=True)
+
+    dl_url_prms = {
+        'Accept': '*/*'
+    }
+    dl_headerx = {
+        'Accept': '*/*'
+    }
+    dl_request = requests.get(url=mb_dl_link, params=dl_url_prms, headers=dl_headerx)
+    dl_data = dl_request.content
+
+    # write downloaded zip data to a temp folder
+    with open(str(dl_to_folder / 'mapbase_downloaded.zip'), 'wb') as arc_file:
+        arc_file.write(dl_data)
+
+    # write md5 hash because it's the only way to tell whether the download was interrupted or not
+    with open(str(dl_to_folder / 'mapbase_downloaded.m5hash'), 'w') as hash_file:
+        hash_file.write(getfilemd5((dl_to_folder / 'mapbase_downloaded.zip')))
+
+    # create tmp folder
+    extracted_loc = dl_to_folder.parent / 'mapbase_extracted'
+    # delete target folder because pineapple
+    if extracted_loc.is_dir():
+        shutil.rmtree(str(extracted_loc))
+    # spawn it back
+    extracted_loc.mkdir(parents=True, exist_ok=True)
+
+    # extract archive either to beta or release in the bins folder
+    with zipfile.ZipFile(str(dl_to_folder / 'mapbase_downloaded.zip'),'r') as zip_ref:
+        zip_ref.extractall(str(extracted_loc))
+
+
+    return extracted_loc
+
+
+
+
+
+
+
+
 
 
 
@@ -312,13 +422,14 @@ def blfoil_download_hpp(hppver='2013sp', tmpfolder=None):
     if tmpfolder != None:
         dl_to_folder = Path(tmpfolder) / 'hammer_pp_dl_tmp'
     else:
-        addon_root_dir = Path(__file__).absolute().parent.parent
+        addon_root_dir = Path(__file__).absolute().parent.parent.parent
         dl_to_folder = addon_root_dir / 'tot' / 'hammer_pp_dl_tmp'
 
     dl_to_folder.mkdir(parents=True, exist_ok=True)
 
-
+    #
     # do download
+    #
     dl_url = dl_link
     dl_url_prms = {
         'Accept': '*/*'
@@ -362,13 +473,14 @@ def blfoil_download_hpp(hppver='2013sp', tmpfolder=None):
 
 
 
-print(blfoil_download_hpp(hppver='2013sp'))
+# print(blfoil_download_hpp(hppver='2013sp'))
 
 
 
+def shared_drinker():
+    print(download_mapbase())
 
 
 
-
-
+# shared_drinker()
 

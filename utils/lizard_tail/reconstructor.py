@@ -12,7 +12,7 @@ def wapr(itr, ob, brk, tabs):
 def addv(tg, nt):
 	# return mktabs + wap(tg.name) + ' ' + wap(tg.string) + '\n'
 	# return mktabs + wap(tg.string)
-	return ''.join(['\t' for tb in range(int(nt))]) + tg.string
+	return ''.join(['\t' for tb in range(int(nt))]) + wap(tg.string)
 
 # open block with tabs and opening bracket
 def op(tgname, ntc):
@@ -54,14 +54,17 @@ def write_keyvalues(keyd):
 			# spaces
 			target_st += getspaces(keyv.gkey.string)
 			# value
-			target_st += keyv.gval.string
-
+			target_st += wap(keyv.gval.string)
+		
+		# fuck comments
+		"""
 		if keyv.name == 'ign':
 			#drop
 			target_st += '\n'
 			# comment
 			keyv.string = keyv.string.strip()
 			target_st += addv(keyv.string, keydepth + 1)
+		"""
 
 	return target_st
 

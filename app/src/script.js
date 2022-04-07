@@ -79,11 +79,50 @@ function app_reload_refresh(evee)
 	}
 }
 
+// returns true if an array contains any element which is not present in another array
+function array_elem_check(what, inwhat) {
+    var magix = what.filter(f => !inwhat.includes(f));
+    return magix.length > 0
+}
+
 
 document.addEventListener('keydown', kvt => {
+    // ===================================
+    //               App
+    // ===================================
     console.log('keypress');
     app_reload_refresh(kvt)
+
+
 });
+
+
+
+
+
+document.addEventListener('keyup', kvt => {
+
+    // ===================================
+    //               modmaker
+    // ===================================
+    const validate_modmaker_opts_1 = event.target.closest('#modmaker_new_client_cl_name input');
+    const validate_modmaker_opts_2 = event.target.closest('#modmaker_new_client_game_name input');
+    if (validate_modmaker_opts_1 || validate_modmaker_opts_2){
+    	modmaker_validate_required_options()
+    }
+
+
+
+
+
+
+
+
+});
+
+
+
+
 
 document.addEventListener('click', event => {
     console.log('click_registered');
@@ -176,10 +215,15 @@ document.addEventListener('click', event => {
     if (dropdown_set) {
     	var dropdownroot = dropdown_set.closest('.lizard_menu');
     	// set title
-    	dropdownroot.querySelector('.lizmenu_title').innerText = dropdown_set.getAttribute('dropdown_set');
+    	// dropdownroot.querySelector('.lizmenu_title').innerText = dropdown_set.getAttribute('dropdown_set');
+    	// console.log(dropdown_set.querySelector('.lizard_menu_entry_text').textContent);
+    	dropdownroot.querySelector('.lizmenu_title').innerText = dropdown_set.querySelector('.lizard_menu_entry_text').textContent;
     	dropdownroot.querySelector('.lizard_dropdown_entries').style.visibility = 'hidden';
     	dropdownroot.setAttribute('liz_active_item', dropdown_set.getAttribute('dropdown_set'))
     }
+
+
+
 
 
 
@@ -249,10 +293,35 @@ document.addEventListener('click', event => {
     }
 
 
+	// set active client
+    const set_active_client = event.target.closest('#modmaker_client_selector_installed_pool .simple_list_v1_pool_item');
+    if (set_active_client) {
+		// $(set_active_client).addClass('simple_list_v1_pool_item_const_active');
+		set_active_client.toggleAttribute('selected_client');
+		set_active_client.classList.toggle('simple_list_v1_pool_item_const_active');
+    }
 
 
+    // validator modmaker_validate_required_options()
+    // todo: use comma in selector ?
+    const validate_modmaker_opts_1 = event.target.closest('#modmaker_spawn_client_mpsp2013dlls');
+    const validate_modmaker_opts_2 = event.target.closest('#modmaker_spawn_client_dll_dropdown');
+    if (validate_modmaker_opts_1 || validate_modmaker_opts_2){
+    	// console.log('validator')
+    	modmaker_validate_required_options()
+    }
 
+    // create mod from raw
+    const modmaker_mkmod_raw = event.target.closest('#modmaker_new_client_from_tplate');
+    if (modmaker_mkmod_raw){
+    	modmaker_spawn_mod(false)
+    }
 
+    // create mod from mapbase
+    const modmaker_mkmod_mapbase = event.target.closest('#modmaker_new_client_newblank');
+    if (modmaker_mkmod_mapbase){
+    	modmaker_spawn_mod(true)
+    }
 
 
 
@@ -276,6 +345,10 @@ document.addEventListener('click', event => {
 
 
 document.addEventListener('change', event => {
+    // ===================================
+    //               modmaker
+    // ===================================
+    // console.log('changed')
     const modmaker_check_engine_exe = event.target.closest('#modmaker_engine_details_exepath input');
     if (modmaker_check_engine_exe) { modmaker_check_engine_exe_exists() }
 
@@ -283,6 +356,12 @@ document.addEventListener('change', event => {
     if (modmaker_check_set_icon) { modmaker_check_icon() }
 
 
+	// game options validator
+    const validate_modmaker_opts_1 = event.target.closest('#modmaker_new_client_cl_name input');
+    const validate_modmaker_opts_2 = event.target.closest('#modmaker_new_client_game_name input');
+    if (validate_modmaker_opts_1 || validate_modmaker_opts_2){
+    	modmaker_validate_required_options()
+    }
 
 
 
@@ -914,6 +993,9 @@ function create_lizdropdown(slct, itemsd)
 	var menu_plate = $(`
 		<div class="lizard_menu">
 			<div class="lizmenu_title"><span style="color: #BC4141">None</span></div>
+			<div class="lizard_dropdown_arrow_icon">
+				<img src="assets/arrow_down.svg">
+			</div>
 			<div style="width: ` + gwidth.toString() + `px" class="lizard_dropdown_entries">
 			</div>
 		</div>
@@ -1007,7 +1089,7 @@ Element.prototype.lizdropdown=function(set_to) {
     // else this.addAttribute(attribute,value);
     // todo: poor logic. use ||
     // var tgt_menu_s = this.closest('.haslizdropdown') || this.closest('.lizard_menu')
-	if (this.closest('.haslizdropdown') != null){
+	if (this.closest('[haslizdropdown]') != null){
 		var tgt_menu_s = this.querySelector('.lizard_menu')
 	}
 	if (this.closest('.lizard_menu') != null){
@@ -1764,6 +1846,8 @@ function modmaker_load_engine_info(pl)
 
 	var dropdown_eligible = []
 
+	window.modmaker_clients_list = []
+
 	for (var inc of pl['clients'])
 	{
 		var tgt_pool = $('#modmaker_client_selector_installed_pool');
@@ -1778,9 +1862,10 @@ function modmaker_load_engine_info(pl)
 		mkitem.append('<div class="simple_list_v1_pool_item_name">' + inc['client_name'] + '</div>');
 		mkitem.append('<div class="simple_list_v1_pool_item_descr">' + inc['folder_name'] + '</div>');
 		mkitem[0].setAttribute('clientpath', inc['folder_name']);
+		window.modmaker_clients_list.push(inc['folder_name']);
 		if (inc['hasdll'] == true){
 			mkitem[0].setAttribute('hasdll', true)
-			mkitem.append($('<img liztooltip_prms="right:0:15:1000" src="assets/punchcard_bootleg_cut_b.png" class="simple_list_v1_pool_item_descr_icon">')
+			mkitem.append($('<img liztooltip_prms="right:0:15:2000" src="assets/punchcard_bootleg_cut_b.png" class="simple_list_v1_pool_item_descr_icon">')
 				.attr('liztooltip',
 					`<img 
 						style="width: 300px; height: 300px; object-fit: contain; object-position: center;" 
@@ -1795,7 +1880,7 @@ function modmaker_load_engine_info(pl)
 						style="margin-top: 10px; width: 300px; height: 100px; object-fit: contain; object-position: top;" 
 						src="assets/punchcard.png"
 					 >
-			 		 `));
+		 		 `));
 			
 			// if this entry has dll - append it to the dll dropdown
 			dropdown_eligible.push({
@@ -1831,13 +1916,41 @@ function modmaker_load_engine_info(pl)
 	});
 
 */
+	// applicable cl/sv .dll locations
 	create_lizdropdown(
 		'#modmaker_spawn_client_dll_dropdown',
 		{
 			'menu_name': 'Select .dll location',
 			'menu_entries': dropdown_eligible
 		}
-	)
+	);
+
+	// SDK 2013 SP dlls, SDK 2013 MP dlls
+	
+	create_lizdropdown(
+		'#modmaker_spawn_client_mpsp2013dlls',
+		{
+			'menu_name': 'Default SDK binaries',
+			'menu_entries': [
+				{
+					'name': 'Do not include',
+					'dropdown_set': 'dont'
+				},
+				{
+					'name': 'SDK Base 2013 SP episodic',
+					'dropdown_set': '2013_sp_episodic'
+				},
+				{
+					'name': 'SDK Base 2013 SP hl2',
+					'dropdown_set': '2013_sp_hl2'
+				},
+				{
+					'name': 'SDK Base 2013 MP',
+					'dropdown_set': '2013_mp'
+				}
+			]
+		}
+	);
 
 }
 
@@ -1885,20 +1998,102 @@ function modmaker_check_icon()
 function modmaker_new_engine()
 {
 	// engine exe
-	$('#modmaker_engine_details_exepath input').attr('value', 'hl3.eckze').val('hl3.eckze');
+	$('#modmaker_engine_details_exepath input').attr('value', '').val('');
 	// engine name
-	$('#modmaker_engine_details_name input').attr('value', 'half-life 3').val('half-life 3');
+	$('#modmaker_engine_details_name input').attr('value', '').val('');
 	// engine icon
 	$('#modmaker_engine_details_icon input').attr('value', '').val('');
+	// engine not valid
+	$('#modmaker_engine_details_exepath .modmaker_engine_details_item_status img')[0].src = 'assets/cross.svg'
+
 	$('#modmaker_engine_details_icon .modmaker_engine_details_item_status img')[0].src = '';
 
 	$('#modmaker_engine_details_items .modmaker_engine_details_list .modmaker_engine_details_list_items .modmaker_engine_details_list_item .modmaker_engine_details_list_item_status img').attr('src', '');
 
 	$('#modmaker_client_selector, #modmaker_engine_details').removeAttr('style');
+	$('#modmaker_client_selector').css('display', 'none');
 }
 
 
 
+function modmaker_validate_required_options()
+{
+	// important todo: game name cannot be empty (for now)
+	// while it actually can (like ASW)
+	var def_dll_dropdown = document.querySelector('#modmaker_spawn_client_mpsp2013dlls');
+	var present_dll_dropdown = document.querySelector('#modmaker_spawn_client_dll_dropdown');
+	// because even if it's reused twice - it's bad
+	var clname = document.querySelector('#modmaker_new_client_cl_name input');
+	var allowed_fname = 'qwertyuiopasdfghjklzxcvbnm'.split('');
+	gm_conds = [
+		document.querySelector('#modmaker_new_client_game_name input').value != '',
+		clname.value != '',
+		(def_dll_dropdown.lizdropdown() != null && def_dll_dropdown.lizdropdown() != 'dont') || present_dll_dropdown.lizdropdown() != null,
+		// client name should not be present in the clients list
+		!window.modmaker_clients_list.includes(clname.value),
+		// name can only contain certain characters
+		!array_elem_check(clname.value.toLowerCase().trim().split(''), 'qwertyuiopasdfghjklzxcvbnm_-1234567890'.split(''))
+	]
+	// if all conditions are met
+	// important todo: visual feedback on what's wrong
+	var lockunlock = document.querySelectorAll('#modmaker_new_client_from_tplate, #modmaker_new_client_newblank');
+	if (gm_conds[0] && gm_conds[1] && gm_conds[2] && gm_conds[3] && gm_conds[4]){
+		lockunlock.forEach(function(userItem) {
+			userItem.classList.remove('app_regular_btn_blocked');
+		});
+	}else{
+		lockunlock.forEach(function(userItem) {
+			userItem.classList.add('app_regular_btn_blocked');
+		});
+	}
+
+}
+
+
+
+
+// yeet
+function modmaker_spawn_mod(ismapbase)
+{
+
+	// if (ismapbase == true)
+	// {
+		link_clients = [];
+		if (document.querySelector('#modmaker_new_mapbase_link_selected [lizcbox]').lizchecked()){
+			document.querySelectorAll('#modmaker_client_selector_installed_pool .simple_list_v1_pool_item').forEach(function(userItem) {
+				if (userItem.hasAttribute('selected_client')){
+					link_clients.push(userItem.getAttribute('clientpath'));
+				}
+			});
+		}
+		do_mod_payload = {
+			'mapbase': ismapbase,
+			'pbr': document.querySelector('#modmaker_new_mapbase_dopbr [lizcbox]').lizchecked(),
+			'cl_name': document.querySelector('#modmaker_new_client_cl_name input').value,
+			'game_name': document.querySelector('#modmaker_new_client_game_name input').value,
+			'engine_exe': window.modmaker_active_engine.engpath,
+			'link_content': link_clients,
+			'default_dll': document.querySelector('#modmaker_spawn_client_mpsp2013dlls').lizdropdown(),
+			'link_binaries': document.querySelector('#modmaker_mknew_raw_linked_binaries_cbox [lizcbox]').lizchecked()
+		}
+
+		apc_send({
+			'action': 'modmaker_do_spawn_mod',
+			'payload': do_mod_payload
+		})
+
+	// }
+
+
+
+
+
+
+
+
+
+
+}
 
 
 

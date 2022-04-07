@@ -48,7 +48,7 @@
 
 
 			<div class="modmaker_engine_details_list" id="modmaker_engine_details_essenitalbins">
-				<div class="modmaker_engine_details_list_title">Essential binaries:</div>
+				<div class="modmaker_engine_details_list_title">Engine binaries:</div>
 				<div class="modmaker_engine_details_list_items">
 					<!-- list -->
 					<!-- list -->
@@ -71,7 +71,7 @@
 
 			<!-- <div class="app_regular_btn_01" id="new_engine_hpp_installer_btn">Install hammer++</div> -->
 			<div class="app_regular_btn_01" id="new_engine_save_config">Save</div>
-			<div class="app_regular_btn_02" id="new_engine_del_config">Delete</div>
+			<div class="app_regular_btn_02" id="new_engine_del_config">Unlink</div>
 
 
 
@@ -98,18 +98,18 @@
 
 
 			<!-- The sweet magic buttons -->
-<!-- 			
-			<div id="modmaker_new_client_tplate_path">
-				<div id="modmaker_new_client_tplate_path_text">Template:</div>
-				<input placeholder="(Optional) Path to the client" type="text">
+
+			<div id="modmaker_new_client_game_name">
+				<div id="modmaker_new_client_game_name_text">Game name:</div>
+				<input placeholder="(required) smth like Half-Life 2: Episode 3" type="text">
 			</div>
- -->
-<!-- 
-			<div id="modmaker_new_client_bins_path">
-				<div id="modmaker_new_client_bins_path_text">Client/server .dll (relative to the engine)</div>
-				<input placeholder="(Optional)" type="text">
+
+
+			<div id="modmaker_new_client_cl_name">
+				<div id="modmaker_new_client_cl_name_text">Client name (folder name)</div>
+				<input placeholder="(required) e.g. episodic, ep2, hl2 ..." type="text">
 			</div>
- -->
+
 
 
 
@@ -119,7 +119,7 @@
 
 
 				<div class="modmaker_mknew_client_btn_column">
-					<div class="modmaker_mknew_client_btn app_regular_btn_01" id="modmaker_new_client_from_tplate">
+					<div class="modmaker_mknew_client_btn app_regular_btn_01 app_regular_btn_blocked" id="modmaker_new_client_from_tplate">
 						New
 						<liztooltip liztooltip_prms="top:1:10:100">
 							<div style="display: flex; flex-direction: column;">
@@ -150,11 +150,9 @@
 						</liztooltip>
 					</div>
 
-					<div id="modmaker_spawn_client_dll_dropdown">
-						
-					</div>
+					<div id="modmaker_spawn_client_dll_dropdown"></div>
 
-					<div class="modmaker_mknew_client_btn_cbox_cont">
+					<div id="modmaker_new_nonmapbase_dopbr" class="modmaker_mknew_client_btn_cbox_cont">
 						<div class="modmaker_mknew_client_btn_cbox_text">Attempt PBR</div>
 						<div lizcbox_init="set" lizcbox_hashitbox class="modmaker_mknew_client_btn_cbox"></div>
 						<liztooltip liztooltip_prms="right:0:15:500">
@@ -162,7 +160,7 @@
 						</liztooltip>
 					</div>
 
-					<div class="modmaker_mknew_client_btn_cbox_cont">
+					<div id="modmaker_new_nonmapbase_link_selected" class="modmaker_mknew_client_btn_cbox_cont">
 						<div class="modmaker_mknew_client_btn_cbox_text">Link selected content</div>
 						<div lizcbox_init="set" lizcbox_hashitbox class="modmaker_mknew_client_btn_cbox"></div>
 						<liztooltip liztooltip_prms="right:0:15:500">
@@ -170,19 +168,21 @@
 						</liztooltip>
 					</div>
 
-					<div class="modmaker_mknew_client_btn_cbox_cont">
+					<div id ="modmaker_mknew_raw_linked_binaries_cbox" class="modmaker_mknew_client_btn_cbox_cont">
 						<div class="modmaker_mknew_client_btn_cbox_text">Linked binaries</div>
-						<div lizcbox_init="set" lizcbox_hashitbox class="modmaker_mknew_client_btn_cbox"></div>
+						<div lizcbox_init="unset" lizcbox_hashitbox class="modmaker_mknew_client_btn_cbox"></div>
 						<liztooltip liztooltip_prms="right:0:15:500">
 							Cleint/server .dll will be linked via gameinfo instead of copying.
 						</liztooltip>
 					</div>
 
+					<div id="modmaker_spawn_client_mpsp2013dlls"></div>
+
 				</div>
 
 
 				<div class="modmaker_mknew_client_btn_row">
-					<div class="modmaker_mknew_client_btn app_regular_btn_01" id="modmaker_new_client_newblank">
+					<div class="modmaker_mknew_client_btn app_regular_btn_01 app_regular_btn_blocked" id="modmaker_new_client_newblank">
 						New Mapbase
 						<liztooltip liztooltip_prms="top:1:10:100">
 							<div style="display: flex; flex-direction: column;">
@@ -205,7 +205,7 @@
 						</liztooltip>
 					</div>
 
-					<div class="modmaker_mknew_client_btn_cbox_cont">
+					<div id="modmaker_new_mapbase_dopbr" class="modmaker_mknew_client_btn_cbox_cont">
 						<div class="modmaker_mknew_client_btn_cbox_text">PBR</div>
 						<div lizcbox_init="set" lizcbox_hashitbox class="modmaker_mknew_client_btn_cbox"></div>
 						<liztooltip liztooltip_prms="right:0:15:500">
@@ -213,7 +213,7 @@
 						</liztooltip>
 					</div>
 
-					<div class="modmaker_mknew_client_btn_cbox_cont">
+					<div id="modmaker_new_mapbase_link_selected" class="modmaker_mknew_client_btn_cbox_cont">
 						<div class="modmaker_mknew_client_btn_cbox_text">Link selected content</div>
 						<div lizcbox_init="set" lizcbox_hashitbox class="modmaker_mknew_client_btn_cbox"></div>
 						<liztooltip liztooltip_prms="right:0:15:500">
@@ -222,6 +222,13 @@
 					</div>
 
 				</div>
+
+
+
+
+
+
+
 
 	<!-- 			<div class="modmaker_mknew_client_btn_row">
 					<div class="modmaker_mknew_client_btn app_regular_btn_01" id="modmaker_new_client_w_mapbase_deps">

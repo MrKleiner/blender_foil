@@ -397,6 +397,7 @@ def modmaker_load_saved_engines():
 	from os import path
 	import json
 
+
 	config_loc = Path(__file__).absolute().parent.parent.parent.parent / 'configs' / 'app' / 'engines' / 'engines_info.json'
 	with open(str(config_loc), 'r') as jsonfile:
 		jfile = json.loads(jsonfile.read())
@@ -433,16 +434,375 @@ def modmaker_kill_engine(eng):
 
 
 
+
+
+
+
+
 #
 # Spawns a new engine. The final step when creating a mod.
 #
 
 # takes a dict, where:
 
+# mapbase: true/false - whether it's mapbase or not
+# pbr: true/false - include PBR or not
+# link_content: an array of folder names to link in gameinfo
+# link_binaries: true/false - link or copy client/server .dll
+# binpath: path to client/server .dll folder (relative to engine)
+# cl_name: folder name of the client
+# game_name: name of the game (any)
+# engine_exe: path to engine .exe
+# default_dll: 2013_mp/2013_sp_hl2/2013_sp_episodic/dont
 
 
-def modmaker_spawn_new_engine(einf):
-	pass
+# important todo: each engine HAS to have a platform folder
+# todo: just in case, strip all " from key/values
+def modmaker_spawn_new_client(einf):
+	import os
+	from pathlib import Path
+	import shutil
+	import os.path
+	from os import path
+	import json
+	from ....utils.shared import download_mapbase
+	from ....utils.lizard_tail.lizard_tail import lizard_tail
+
+	addon_rootdir = Path(__file__).absolute().parent.parent.parent.parent
+
+	# if mapbase then check if mapbase is present and download it if necessary
+
+	# Have 3 pre-defined mapbase folders
+	# create empty folder next to engine.exe
+	# create gameinfo, which should at least:
+	# 	point to cl/sv .dll (could be linked or copied)
+	#	point to content source
+	#	have game name
+	#	have game title
+	#	have SteamAppId
+
+	# setup some paths
+	engine_exe = Path(einf['engine_exe'])
+	engine_folder = engine_exe.parent
+	client_folder = engine_folder / einf['cl_name']
+
+
+	#
+	# First - create the target client folder and some default folders
+	#
+
+	# delete dest folder, if any
+	if client_folder.is_dir():
+		shutil.rmtree(str(client_folder))
+
+	# create target client folder
+	client_folder.mkdir(parents=True, exist_ok=True)
+
+	# create some default folders
+	st_folders = [
+		'bin',
+		'cfg',
+		'custom',
+		'maps',
+		'scripts',
+		'materials',
+		'models',
+		'resource',
+		'sound'
+	]
+	for dff in st_folders:
+		(client_folder / dff).mkdir(parents=True, exist_ok=True)
+
+
+	# then, create gameinfo
+	cl_gameinfo = lizard_tail(True)
+	# set appid
+	cl_gameinfo.steam_id = 243730
+	# set game name
+	cl_gameinfo.game_name = einf['game_name']
+
+
+
+
+	#
+	# Mapbase
+	#
+	if (einf['mapbase'] == True):
+		# important todo: for now - always download mapbase
+		# later - check if downloaded and hash matches and simply re-extract if ok
+		mapbase_dl = download_mapbase()
+		# print(mapbase_dl)
+
+		#
+		# set search paths for gameinfo
+		#
+
+		# Essential shit like binaries and game root
+		info_search_paths = [
+			{
+				'key': 'Game+Mod+Default_Write_Path',
+				'value': '|GameInfo_Path|.'
+			},
+			{
+				'key': 'GameBin',
+				'value': '|gameinfo_path|bin'
+			},
+
+
+			# Mapbase
+			{
+				'key': 'GameBin',
+				'value': '|gameinfo_path|../mapbase_episodic/bin'
+			},
+			{
+				'key': 'game+mod',
+				'value': '|gameinfo_path|../mapbase_episodic'
+			},
+			{
+				'key': 'game+mod',
+				'value': '|gameinfo_path|../mapbase_episodic/content/*'
+			},
+			{
+				'key': 'game+mod',
+				'value': '|gameinfo_path|../mapbase_hl2'
+			},
+			{
+				'key': 'game+mod',
+				'value': '|gameinfo_path|../mapbase_hl2/content/*'
+			},
+			{
+				'key': 'game+mod',
+				'value': '|gameinfo_path|../mapbase_shared/*'
+			},
+			{
+				'key': 'GameBin',
+				'value': '|gameinfo_path|../mapbase_shared/shared_misc/bin'
+			},
+			# d
+
+			# There's always platform
+			# {
+			# 	'key': 'platform',
+			# 	'value': '|All_Source_Engine_Paths|platform'
+			# }
+		]
+
+		
+		#
+		# add mounted content
+		#
+
+		# important: vpks have to be mounted fucking one by one
+		# FIRST, mount vpks and THEN, add directory as "game"
+		# weird af
+
+		# mount vpks
+		# important todo: ensure there's platform
+		for mount in einf['link_content']:
+			for mvpk in os.listdir(str(engine_folder / mount)):
+				if '_dir.vpk' in mvpk:
+					info_search_paths.append({
+						'key': 'platform' if mount == 'platform' else 'Game',
+						'value': '|All_Source_Engine_Paths|' + mount + '/' + mvpk.replace('_dir.vpk', '.vpk')
+					})
+
+		# THEN mount folders
+		for mount in einf['link_content']:
+			info_search_paths.append({
+				'key': 'platform' if mount == 'platform' else 'Game',
+				'value': '|All_Source_Engine_Paths|' + mount
+			})
+
+
+		#
+		# gameinfo done, now copy mapbase binaries to engine folder (enforce, ensure)
+		#
+		mapbase_copier = [
+			'mapbase_episodic',
+			'mapbase_hl2',
+			'mapbase_shared'
+		]
+		# todo: for now - don't bother verifying integrity n shit
+		# simply overwrite this rubbish
+		for mp_bin in mapbase_copier:
+			copy_tgt = (engine_folder / mp_bin)
+			if copy_tgt.is_dir():
+				# important todo: own shutil, but better
+				# fileman
+				shutil.rmtree(str(copy_tgt))
+			# copy_tgt.mkdir(parents=True, exist_ok=True)
+			# copy tree reuires the directory to be absent
+			shutil.copytree(mapbase_dl / mp_bin, engine_folder / mp_bin)
+
+		#
+		# Mapbase bins are there, populate client with some defaults
+		#
+		
+		# funny todo: if game name field blank - pick random name
+
+		# copy chapters script and discord rpc
+		populate_defaults = {
+			'chapters.txt': 'scripts',
+			'discord-rpc.dll': 'bin',
+			'mapbase_rpc.txt': 'scripts',
+			'mapbase_demo02.bsp': 'maps'
+		}
+		for pd in populate_defaults:
+			# todo: are brackets actually needed ?
+			shutil.copy((addon_rootdir / 'bins' / 'mapbase' / 'common' / pd), (client_folder / populate_defaults[pd]))
+
+		# copy common things
+		populate_common = {
+			'chapter1.cfg': 'cfg',
+			'config.cfg': 'cfg'
+		}
+		for pc in populate_common:
+			# todo: are brackets actually needed ?
+			shutil.copy((addon_rootdir / 'bins' / 'source_sdk' / 'common' / pc), (client_folder / populate_common[pc]))
+
+
+
+
+
+	#
+	# Other/SDK
+	#
+	if einf['mapbase'] != True:
+
+
+		#
+		# set search paths for gameinfo
+		#
+
+		# Essential shit like binaries and game root
+		info_search_paths = [
+			{
+				'key': 'Game+Mod+Default_Write_Path',
+				'value': '|GameInfo_Path|.'
+			},
+			{
+				'key': 'GameBin',
+				'value': '|gameinfo_path|bin' if einf['link_binaries'] == False else '|All_Source_Engine_Paths|' + str(einf['binpath'])
+			}
+
+			# There's always platform
+			# {
+			# 	'key': 'platform',
+			# 	'value': '|All_Source_Engine_Paths|platform'
+			# }
+		]
+
+
+		#
+		# add mounted content
+		#
+
+		# important: vpks have to be mounted fucking one by one
+		# FIRST, mount vpks and THEN, add directory as "game"
+		# weird af
+
+		# mount vpks
+		# important todo: ensure there's platform
+		for mount in einf['link_content']:
+			for mvpk in os.listdir(str(engine_folder / mount)):
+				if '_dir.vpk' in mvpk:
+					info_search_paths.append({
+						'key': 'platform' if mount == 'platform' else 'Game',
+						'value': '|All_Source_Engine_Paths|' + mount + '/' + mvpk.replace('_dir.vpk', '.vpk')
+					})
+
+		# THEN mount folders
+		for mount in einf['link_content']:
+			info_search_paths.append({
+				'key': 'platform' if mount == 'platform' else 'Game',
+				'value': '|All_Source_Engine_Paths|' + mount
+			})
+
+		#
+		# Do predefined SDk 2013 binaries, if asked
+		#
+
+		# todo: those are precompiled, compile own or even better - compile on a go
+		if einf['default_dll'] != None and einf['default_dll'] != 'dont':
+			sdk_bins_paths = {
+				'2013_mp': 'mp_bin',
+				'2013_sp_hl2': 'sp_bin_hl2',
+				'2013_sp_episodic': 'sp_bin'
+			}
+
+			# copy cl/sv dlls
+			# todo: copytree instead ?
+			# todo: overengineering is nice: 'client.dll' is a predefined word, bad ?
+			# todo: as could be observed - this logic is not the best
+			shutil.copy((addon_rootdir / 'bins' / 'source_sdk' / sdk_bins_paths[einf['default_dll']] / 'client.dll'), (client_folder / 'bin' / 'client.dll'))
+			shutil.copy((addon_rootdir / 'bins' / 'source_sdk' / sdk_bins_paths[einf['default_dll']] / 'server.dll'), (client_folder / 'bin' / 'server.dll'))
+		else:
+			# else - there have to be predefined place to link/copy bins from 
+			# important todo: safety measures
+			if einf['link_binaries'] != True:
+				shutil.copy((engine_folder / einf['binpath'] / 'bin' / 'client.dll'), (client_folder / 'bin' / 'client.dll'))
+				shutil.copy((engine_folder / einf['binpath'] / 'bin' / 'server.dll'), (client_folder / 'bin' / 'server.dll'))
+
+
+	#
+	# include PBR, if asked to
+	#
+
+	# todo: this is a shared action
+	if einf['pbr'] == True:
+		pbr_bins = [
+			'game_shader_dx9.dll',
+			'game_shader_dx9.pdb'
+		]
+		for pb in pbr_bins:
+			shutil.copy((addon_rootdir / 'bins' / 'pbr_sh' / 'bin' / pb), (client_folder / 'bin' / pb))
+		shutil.copytree((addon_rootdir / 'bins' / 'pbr_sh' / 'shaders'), (client_folder / 'shaders'))
+
+
+	#
+	# Write gameinfo
+	#
+
+	# set paths back to lizard class
+	cl_gameinfo.search_paths = info_search_paths
+
+	# write gameinfo to the client folder
+	with open(str(client_folder / 'gameinfo.txt'), 'w') as infofile:
+		infofile.write(cl_gameinfo.tofile())
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -458,7 +818,8 @@ def modmaker_spawn_new_engine(einf):
 
 
 def mdma_multImetr():
-	print(fetch_existing_engines())
+	# print(fetch_existing_engines())
+	modmaker_spawn_new_engine({'mapbase': True})
 
 
 

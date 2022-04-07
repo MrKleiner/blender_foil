@@ -187,7 +187,8 @@ h1
 	display: flex;
 	flex-grow: 1;
 	height: 100%;
-	flex-direction: column;
+	/*important todo: column ? row ? */
+	/*flex-direction: column;*/
 }
 
 .lizmenu_title
@@ -226,6 +227,27 @@ h1
 	/*transform: translateY(0px);*/
 	display: flex;
 	opacity: 1;
+}
+
+.lizard_dropdown_arrow_icon
+{
+	display: flex;
+	flex-direction: row;
+	height: 100%;
+	/*width: 100%;*/
+	flex-grow: 1;
+	justify-content: flex-end;
+}
+
+.lizard_dropdown_arrow_icon img
+{
+	height: 100%;
+	width: 12px;
+	object-fit: contain;
+	object-position: center;
+	margin-right: 5px;
+	opacity: 0.9;
+	user-select: none;
 }
 
 
@@ -430,6 +452,14 @@ h1
 	background: #662C2C;
 	border-color: #F6496A;
 	outline-color: #F6496A;
+}
+
+/*todo: a better way of blocking the button*/
+.app_regular_btn_blocked
+{
+	pointer-events: none !important;
+	user-select: none !important;
+	color: #AE3731 !important;
 }
 
 
@@ -754,6 +784,7 @@ liztooltip
 	padding-left: 90px;
 	overflow: hidden;
 	margin-bottom: 100px;
+	padding-bottom: 10px;
 }
 
 
@@ -1378,7 +1409,7 @@ liztooltip
 }
 
 
-#modmaker_new_client_tplate_path, #modmaker_new_client_bins_path
+#modmaker_new_client_game_name, #modmaker_new_client_cl_name
 {
 	display: flex;
 	flex-direction: row;
@@ -1387,7 +1418,7 @@ liztooltip
 	margin-bottom: 10px;
 }
 
-#modmaker_new_client_tplate_path input, #modmaker_new_client_bins_path input
+#modmaker_new_client_game_name input, #modmaker_new_client_cl_name input
 {
 	all: unset;
 	display: flex;
@@ -1406,7 +1437,7 @@ liztooltip
 	border-radius: 5px;
 }
 
-#modmaker_new_client_tplate_path_text, #modmaker_new_client_bins_path_text
+#modmaker_new_client_game_name_text, #modmaker_new_client_cl_name_text
 {
 	display: flex;
 	flex-direction: column;
@@ -1482,7 +1513,7 @@ liztooltip
 	width: fit-content;
 }
 
-#modmaker_spawn_client_dll_dropdown
+#modmaker_spawn_client_dll_dropdown, #modmaker_spawn_client_mpsp2013dlls
 {
 	display: flex;
 	width: 80%;
@@ -1496,12 +1527,12 @@ liztooltip
 	font-weight: 100;
 }
 
-#modmaker_spawn_client_dll_dropdown .lizard_dropdown_bottom_title
+#modmaker_spawn_client_dll_dropdown .lizard_dropdown_bottom_title, #modmaker_spawn_client_mpsp2013dlls .lizard_dropdown_bottom_title
 {
 	color: rgba(255, 255, 255, 0.5)
 }
 
-#modmaker_spawn_client_dll_dropdown .lizmenu_title
+#modmaker_spawn_client_dll_dropdown .lizmenu_title, #modmaker_spawn_client_mpsp2013dlls .lizmenu_title
 {
 	color: white;
 	font-family: 'Open_Sans';
@@ -1514,7 +1545,7 @@ liztooltip
 }
 
 
-#modmaker_spawn_client_dll_dropdown:hover
+#modmaker_spawn_client_dll_dropdown:hover, #modmaker_spawn_client_mpsp2013dlls:hover
 {
 	background: rgba(0, 0, 0, 0.1);
 }

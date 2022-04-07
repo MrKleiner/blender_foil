@@ -111,6 +111,9 @@ def appconnect_actions(cs):
         case 'modmaker_delete_engine':
             modmaker_kill_engine(cs['engine'])
             return ''
+        case 'modmaker_do_spawn_mod':
+            modmaker_spawn_new_client(cs['payload'])
+            return ''
         case _:
             return 'wtf is even this'
 
