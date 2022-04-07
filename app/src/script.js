@@ -559,7 +559,7 @@ $(document).ready(function(){
 	main_app_init()
 
 	// TESTING
-	newmodmaker_loader()
+	// newmodmaker_loader()
 	
 });
 
@@ -601,6 +601,16 @@ function main_app_init()
 			'menu_name': 'Tools',
 			'menu_entries': [
 				{
+					'name': 'Project Selector',
+					'action': 'load_app_project_selector',
+					'icon': 'assets/scene_icon.svg'
+				},
+				{
+					'name': 'Mod Dashboard',
+					'action': 'load_main_dashboard',
+					'icon': 'assets/dashboard_icon.svg'
+				},
+/*				{
 					'name': 'Skyboxer',
 					'action': 'load_skyboxer_app',
 					'icon': 'assets/world_sky_icon.svg'
@@ -614,6 +624,14 @@ function main_app_init()
 					'name': 'Soundscape Manager',
 					'action': 'load_sound_manager_app',
 					'icon': 'assets/soundscape_icon.svg'
+				},*/
+				{
+					'type': 'separator'
+				},
+				{
+					'name': `Garry's Mod Tools`,
+					'action': 'load_sound_manager_app',
+					'icon': 'assets/gmod_icon.ico'
 				},
 				{
 					'type': 'separator'
@@ -1674,6 +1692,17 @@ function skybox_set_sky_name(skname)
 
 
 
+
+
+
+
+
+
+
+
+
+
+
 /*
 =====================================================================
 ---------------------------------------------------------------------
@@ -2050,9 +2079,9 @@ function modmaker_validate_required_options()
 }
 
 
-
-
+//
 // yeet
+//
 function modmaker_spawn_mod(ismapbase)
 {
 
@@ -2084,15 +2113,6 @@ function modmaker_spawn_mod(ismapbase)
 
 	// }
 
-
-
-
-
-
-
-
-
-
 }
 
 
@@ -2107,6 +2127,74 @@ function modmaker_spawn_mod(ismapbase)
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+=====================================================================
+---------------------------------------------------------------------
+                             New Mod Maker
+---------------------------------------------------------------------
+=====================================================================
+*/
+
+
+function dashboard_module_manager(pl)
+{
+
+	switch (pl['mod_action']) {
+		case 'append_pre_installed':
+			newmodmaker_accept_engines(pl['payload'])
+			break;
+		default:
+			console.log('The modmaker module has been called, but no corresponding action was found')
+			break;
+	}
+
+}
+
+// soundscape manager
+// soundscript manager
+// vtf maker
+// skyboxer
+// substance painter connect
+// chapter manager
+// particle manifest generator
+// gameinfo editor
+// Pack mod as sourcemod/executable/zip
+// hammer++ manager
+// compilers switch
+
+
+
+function dashboard_app_loader()
+{
+	$('#modules_cont').load('tools/mod_maker.html', function() {
+		console.log('loaded');
+		lizcboxes_init();
+		init_liztooltips();
+		apc_send({
+			'action': 'modmaker_load_saved_engines'
+		});
+		window['current_app_module'] = 'modmaker';
+	});
+}
 
 
 

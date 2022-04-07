@@ -682,7 +682,7 @@ def modmaker_spawn_new_client(einf):
 			},
 			{
 				'key': 'GameBin',
-				'value': '|gameinfo_path|bin' if einf['link_binaries'] == False else '|All_Source_Engine_Paths|' + str(einf['binpath'])
+				'value': '|gameinfo_path|bin' if einf['link_binaries'] == False or (einf['default_dll'] != None and einf['default_dll'] != 'dont') else '|All_Source_Engine_Paths|' + str(einf['binpath'])
 			}
 
 			# There's always platform

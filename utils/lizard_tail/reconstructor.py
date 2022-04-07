@@ -43,8 +43,11 @@ def write_keyvalues(keyd):
 	for keyv in keyd.children:
 		# print(keyv.name == 'kv')
 		# if not isinstance(keyv, NavigableString):
+		"""
+		# fuck enters too
 		if keyv.name == 'entr':
 			target_st += '\n'
+		"""
 
 		if keyv.name == 'kv':
 			#drop

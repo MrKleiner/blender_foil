@@ -123,39 +123,47 @@
 						New
 						<liztooltip liztooltip_prms="top:1:10:100">
 							<div style="display: flex; flex-direction: column;">
-								Create a new client using existing cliend/server .dll from the specified Template path.
-								<br><br>
+								<span>Create a regular source engine mod.</span>
+								<br>
 								<span>
-									Basically copies the specified client with .dll files, configs 
-									and <a style="color: #DC5953">NOT</a> stuff like .vpk, materials, models, etc...
+									A mod should always have client/server .dll either in its "bin" folder 
+									or linked via gameinfo from somewhere else, like "episodic/bin".
 								</span>
 								<br>
-								
-								For instance: You have Half-Life 2 engine with hl2, episodic, ep2
-								<a style="color: #808080">(e.g. ...\steamapps\common\Half-Life 2\hl2)</a> 
-								and you want to create a standalone (with custom models only n shit) mod based off ep2.
+								<span>Linking is handy when you're creating a mod based off Black Mesa, for example.</span>
 								<br>
-								If so - choose ep2 as a base and a new client will be created 
-								which is essentially the same as ep2, but with no maps, models and other content.  
-								<br><br>
-								The content which is being copied is: 
-								<br>
-								<ul style="margin-left: 30px; color: rgb(210, 210, 210);">
-									<li>Gameinfo (links like episodic and hl2 remain)</li>
-									<li>Configs</li>
-									<li>PBR, if any</li>
-									<li>Resources</li>
-								</ul>
+								<span>
+									By default, Source SDK Base 2013 doesn't come with any usable clients 
+									with working client/server .dll, so if you're basing your mod off SDK 2013 there are two options: 
+									<ul style="margin-left: 30px; color: rgb(220, 220, 220); margin-bottom: 10px;">
+										<li>Compile your own client/server .dll </li>
+										<li>Use the precompiled ones from the dropdown in the very bottom of this column. </li>
+									</ul>
+									<br>
+									"Precompiled" doesn't mean anything special at all: 
+									They come from public github repository hosted by Valve specifically 
+									for the purpose of compiling clients for SDK 2013. (This is literally how a regular sourcemod works)
+								</span>
 							</div>
 						</liztooltip>
 					</div>
 
 					<div id="modmaker_spawn_client_dll_dropdown"></div>
 
+					<div id ="modmaker_mknew_raw_linked_binaries_cbox" class="modmaker_mknew_client_btn_cbox_cont">
+						<div class="modmaker_mknew_client_btn_cbox_text">Linked binaries</div>
+						<div lizcbox_init="unset" lizcbox_hashitbox class="modmaker_mknew_client_btn_cbox"></div>
+						<liztooltip liztooltip_prms="right:0:15:200">
+							Cleint/server .dll will be linked via gameinfo instead of copying.
+							<br>
+							This option will be ignored if you're using precompiled clients for SDk 2013.
+						</liztooltip>
+					</div>
+
 					<div id="modmaker_new_nonmapbase_dopbr" class="modmaker_mknew_client_btn_cbox_cont">
 						<div class="modmaker_mknew_client_btn_cbox_text">Attempt PBR</div>
 						<div lizcbox_init="set" lizcbox_hashitbox class="modmaker_mknew_client_btn_cbox"></div>
-						<liztooltip liztooltip_prms="right:0:15:500">
+						<liztooltip liztooltip_prms="right:0:15:200">
 							Mount PBR .dll and shaders. The result cannot be predicted, because client could be modified.
 						</liztooltip>
 					</div>
@@ -163,16 +171,12 @@
 					<div id="modmaker_new_nonmapbase_link_selected" class="modmaker_mknew_client_btn_cbox_cont">
 						<div class="modmaker_mknew_client_btn_cbox_text">Link selected content</div>
 						<div lizcbox_init="set" lizcbox_hashitbox class="modmaker_mknew_client_btn_cbox"></div>
-						<liztooltip liztooltip_prms="right:0:15:500">
+						<liztooltip liztooltip_prms="right:0:15:200">
 							Link content from selected clients via gameinfo.
-						</liztooltip>
-					</div>
-
-					<div id ="modmaker_mknew_raw_linked_binaries_cbox" class="modmaker_mknew_client_btn_cbox_cont">
-						<div class="modmaker_mknew_client_btn_cbox_text">Linked binaries</div>
-						<div lizcbox_init="unset" lizcbox_hashitbox class="modmaker_mknew_client_btn_cbox"></div>
-						<liztooltip liztooltip_prms="right:0:15:500">
-							Cleint/server .dll will be linked via gameinfo instead of copying.
+							<br>
+							<a style="color: #B54944">Platform should always be selected.</a>
+							<br>
+							In addition, if you're basing your mod off SDK 2013 - ep2, episodic and hl2 should also be selected.
 						</liztooltip>
 					</div>
 
@@ -183,7 +187,7 @@
 
 				<div class="modmaker_mknew_client_btn_row">
 					<div class="modmaker_mknew_client_btn app_regular_btn_01 app_regular_btn_blocked" id="modmaker_new_client_newblank">
-						New Mapbase
+						New Mapbase<!-- 
 						<liztooltip liztooltip_prms="top:1:10:100">
 							<div style="display: flex; flex-direction: column;">
 								Create a completely blank client with minimal configs.
@@ -202,7 +206,7 @@
 									<li>VPKs</li>
 								</ul>
 							</div>
-						</liztooltip>
+						</liztooltip> -->
 					</div>
 
 					<div id="modmaker_new_mapbase_dopbr" class="modmaker_mknew_client_btn_cbox_cont">
@@ -225,84 +229,9 @@
 
 
 
-
-
-
-
-
-	<!-- 			<div class="modmaker_mknew_client_btn_row">
-					<div class="modmaker_mknew_client_btn app_regular_btn_01" id="modmaker_new_client_w_mapbase_deps">
-						New with mapbase dependencies
-						<liztooltip liztooltip_prms="right:1:10:100">
-							<div style="display: flex; flex-direction: column;">
-								Mapbase is a client-side modification and therefore is a little more tricky:
-								<br>
-								It consists out of 3 "objects" which are literally clients just like hl2, ep2 and episodic.
-								<br><br>
-								Those clients are like raw binaries or .dll files: You don't create stuff inside them - 
-								you create your own client and link those 3 "objects" via the gameinfo of your mod (client).
-								<br><br>
-								This button will do everything automatically.
-								<br><br>
-								You can link additional stuff via gameinfo later.
-							</div>
-						</liztooltip>
-					</div>
-					<div class="modmaker_mknew_client_btn_cbox_cont">
-						<div class="modmaker_mknew_client_btn_cbox_text">PBR</div>
-						<div lizcbox_init="set" lizcbox_hashitbox class="modmaker_mknew_client_btn_cbox"></div>
-						<liztooltip liztooltip_prms="right:0:15:500">
-							Include PBR shader.
-						</liztooltip>
-					</div>
-
-					<div class="modmaker_mknew_client_btn_cbox_cont">
-						<div class="modmaker_mknew_client_btn_cbox_text">Episodic</div>
-						<div lizcbox_init="set" lizcbox_hashitbox class="modmaker_mknew_client_btn_cbox"></div>
-						<liztooltip liztooltip_prms="right:0:15:500">
-							If unchecked - hl2
-						</liztooltip>
-					</div>
-				</div> -->
-
-	<!-- 			<div class="modmaker_mknew_client_btn_row">
-					<div class="modmaker_mknew_client_btn app_regular_btn_01" id="modmaker_new_client_from_sdk2013sp">
-						New from SDK 2013 SP
-						<liztooltip liztooltip_prms="right:1:10:100">
-							Create a default SDK 2013 mod setup, just like in "sourcetest" example included with SDK 2013
-						</liztooltip>
-					</div>
-					<div class="modmaker_mknew_client_btn_cbox_cont">
-						<div class="modmaker_mknew_client_btn_cbox_text">PBR</div>
-						<div lizcbox_init="set" lizcbox_hashitbox class="modmaker_mknew_client_btn_cbox"></div>
-						<liztooltip liztooltip_prms="right:0:15:500">
-							Include PBR shader.
-						</liztooltip>
-					</div>
-				</div> -->
-	<!-- 
-				<div class="modmaker_mknew_client_btn_row">
-					<div class="modmaker_mknew_client_btn app_regular_btn_01" id="modmaker_new_client_from_sdk2013mp">
-						New from SDK 2013 MP
-						<liztooltip liztooltip_prms="right:1:10:100">
-							Create a default SDK 2013 mod setup, just like in "sourcetest" example included with SDK 2013
-						</liztooltip>
-					</div>
-					<div class="modmaker_mknew_client_btn_cbox_cont">
-						<div class="modmaker_mknew_client_btn_cbox_text">PBR</div>
-						<div lizcbox_init="set" lizcbox_hashitbox class="modmaker_mknew_client_btn_cbox"></div>
-						<liztooltip liztooltip_prms="right:0:15:500">
-							Include PBR shader.
-						</liztooltip>
-					</div>
-				</div>
-	 -->
 			</div>
 			
 			
-			
-
-
 
 		</div>
 	</div>
