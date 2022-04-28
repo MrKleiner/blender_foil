@@ -2,16 +2,217 @@
 
 
 
+
+
+
+
 <div id="main_dashboard_app">
+
 	<div id="main_dashboard_left">
-		
+		<div id="main_dashboard_left_title">Utilities</div>
+		<div id="main_dashboard_left_utils">
+
+
+		<!-- // soundscape manager
+		// soundscript manager
+		// vtf maker
+		// skyboxer
+		// substance painter connect
+		// chapter manager (with backgrounds)
+		// particle manifest generator
+		// gameinfo editor
+		// Pack mod as sourcemod/executable/zip
+		// hammer++ manager
+		// compilers switch
+		// propdata manager both predefined and prop-specific
+		// vehicle scripts maker
+		// actbusy script maker
+		// actremap script maker
+		// decal maker
+		// speech system script maker
+		// soundmixer script maker
+		// weapon script maker
+		// surfaceproperties manager -->
+
+
+			<div class="main_dashboard_util">
+				<div class="main_dashboard_util_icon">
+					<img draggable="false" src="assets/sound_studio_icon.png">
+				</div>
+				<div class="main_dashboard_util_title">Sound Studio</div>
+			</div>
+
+			<div class="main_dashboard_util">
+				<div class="main_dashboard_util_icon">
+					<img draggable="false" src="assets/gameinfo_icon.svg">
+				</div>
+				<div class="main_dashboard_util_title">Game Config</div>
+			</div>
+
+			<div dashboard_action="load_skyboxer" class="main_dashboard_util">
+				<div class="main_dashboard_util_icon">
+					<img draggable="false" src="assets/world_sky_icon.svg">
+				</div>
+				<div class="main_dashboard_util_title">Skyboxer</div>
+			</div>
+
+			<div class="main_dashboard_util">
+				<div class="main_dashboard_util_icon">
+					<img draggable="false" src="assets/vtficon.svg">
+				</div>
+				<div class="main_dashboard_util_title">Material Maker</div>
+			</div>
+
+			<div class="main_dashboard_util">
+				<div class="main_dashboard_util_icon">
+					<img draggable="false" src="assets/chapter_icon.svg">
+				</div>
+				<div class="main_dashboard_util_title">Chapter Manager</div>
+			</div>
+
+			<div class="main_dashboard_util">
+				<div class="main_dashboard_util_icon">
+					<img draggable="false" src="assets/gamer_packer_icon.svg">
+				</div>
+				<div class="main_dashboard_util_title">Game Packer</div>
+			</div>
+
+			<div class="main_dashboard_util">
+				<div class="main_dashboard_util_icon">
+					<img draggable="false" src="assets/propdata_icon.svg">
+				</div>
+				<div class="main_dashboard_util_title">Prop Data Manager</div>
+			</div>
+
+			<div class="main_dashboard_util">
+				<div class="main_dashboard_util_icon">
+					<img draggable="false" src="assets/lightsrad.svg">
+				</div>
+				<div class="main_dashboard_util_title">Radiosity Lights Definition</div>
+			</div>
+
+			<div class="main_dashboard_util">
+				<div class="main_dashboard_util_icon">
+					<img draggable="false" src="assets/compilers_switch.svg">
+				</div>
+				<div class="main_dashboard_util_title">Compilers Switch</div>
+			</div>
+
+			<div class="main_dashboard_util">
+				<div class="main_dashboard_util_icon">
+					<img draggable="false" src="assets/bottom_gear.png">
+				</div>
+				<div class="main_dashboard_util_title">Vehicle Garage</div>
+			</div>
+
+			<div class="main_dashboard_util">
+				<div class="main_dashboard_util_icon">
+					<img draggable="false" src="assets/surface_props.jpg">
+				</div>
+				<div class="main_dashboard_util_title">Surface Properties</div>
+			</div>
+
+
+
+		</div>
 	</div>
+
+
+
+
 	<div id="main_dashboard_right">
-		
+		<div id="main_dashboard_right_title">Control Panel</div>
+		<div id="main_dashboard_right_ctrl">
+			<div class="dboard_mod_prmrow" id="dboard_mod_minititle">Lizard Sex Mod</div>
+			<div class="dboard_mod_prmrow" id="dboard_mod_modfolderpath">E:\Gamess\steamapps\common\Source SDK Base 2013 Singleplayer\pootis</div>
+			<div class="dboard_mod_prmrow" id="dboard_mod_preview_lauchprms">-windowed -tools -novid -w 1920 -h 1000 -map d1_transtation_01a</div>
+
+			<!-- Launch Mod and Kill Mod Huge buttons -->
+			<div class="dboard_mod_prmrow" id="dboard_mod_startnkill">
+
+				<div id="dboard_mod_launchgame" class="app_regular_btn_01">
+					<div class="startnkill_btn_icon">
+						<appendsvg svgsrc="assets/triangle_play.svg"></appendsvg>
+					</div>
+					<div class="startnkill_btn_title">Launch Mod</div>
+				</div>
+
+				<div id="dboard_mod_killgame" class="app_regular_btn_01">
+					<div class="startnkill_btn_icon">
+						<appendsvg svgsrc="assets/circle_cross.svg"></appendsvg>
+					</div>
+					<div class="startnkill_btn_title">Kill Mod</div>
+				</div>
+
+			</div>
+
+
+			<!-- Checkboxes  -->
+			<!-- important todo: make such checkmark blocks a standard and simply append entire blocks at once -->
+			<div class="dboard_mod_prmrow">
+				<div class="dboard_mod_prmrow_cbox">
+					<div class="dboard_mod_prmrow_cbox_title">Fullscreen</div>
+					<div lizcbox_init="unset" lizcbox_hashitbox class="dboard_mod_prmrow_cbox_mark"></div>
+				</div>
+			</div>
+
+			<div class="dboard_mod_prmrow">
+				<div class="dboard_mod_prmrow_cbox">
+					<div class="dboard_mod_prmrow_cbox_title">Tools</div>
+					<div lizcbox_init="unset" lizcbox_hashitbox class="dboard_mod_prmrow_cbox_mark"></div>
+				</div>
+			</div>
+
+			<div class="dboard_mod_prmrow">
+				<div class="dboard_mod_prmrow_cbox">
+					<div class="dboard_mod_prmrow_cbox_title">Intro video</div>
+					<div lizcbox_init="unset" lizcbox_hashitbox class="dboard_mod_prmrow_cbox_mark"></div>
+				</div>
+			</div>
+
+			<div class="dboard_mod_prmrow">
+				<div class="dboard_mod_prmrow_cbox">
+					<div class="dboard_mod_prmrow_cbox_title">Use Additional Options</div>
+					<div lizcbox_init="unset" lizcbox_hashitbox class="dboard_mod_prmrow_cbox_mark"></div>
+				</div>
+			</div>
+
+			<div class="dboard_mod_prmrow dboard_mod_prmrow_textfield">
+				<input type="text" placeholder="smth like -w 1280 -h 720">
+			</div>
+
+			<div class="dboard_mod_prmrow">
+				<div class="dboard_mod_prmrow_cbox">
+					<div class="dboard_mod_prmrow_cbox_title">Start from a map</div>
+					<div lizcbox_init="unset" lizcbox_hashitbox class="dboard_mod_prmrow_cbox_mark"></div>
+				</div>
+			</div>
+
+			<div class="dboard_mod_prmrow">
+				<div class="dboard_mod_prmrow_cbox">
+					<div class="dboard_mod_prmrow_cbox_title">Suggest maps from linked</div>
+					<div lizcbox_init="set" lizcbox_hashitbox class="dboard_mod_prmrow_cbox_mark"></div>
+				</div>
+			</div>
+
+			<div class="dboard_mod_prmrow dboard_mod_prmrow_textfield">
+				<!-- example: windowlist="suggested_maps" = window['suggested_maps']  -->
+				<uilist windowlist="suggested_maps"></uilist>
+			</div>
+
+
+
+		</div>
+
+
 	</div>
-
-
 
 
 
 </div>
+
+
+
+
+
+

@@ -401,6 +401,68 @@ h1
 
 
 
+/*
+========================================================================
+------------------------------------------------------------------------
+                                UILists
+------------------------------------------------------------------------
+========================================================================
+*/
+
+.simple_uilist_suggest
+{
+	position: absolute;
+	display: flex;
+	flex-direction: column;
+	/*width: 200px;*/
+	/*height: 200px;*/
+	background: black;
+	/*overflow-y: scroll;*/
+	max-width: 500px;
+}
+
+.simple_uilist_suggestion_entry
+{
+	/*display: flex;*/
+	display: block;
+	padding: 3px;
+	padding-left: 6px;
+	font-size: 15px;
+	/*width: 500px;*/
+	user-select: none;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.simple_uilist_suggestion_entry_active
+{
+	background: red;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -429,22 +491,22 @@ h1
 .app_regular_btn_01, .app_regular_btn_02
 {
 	background: rgb(35, 35, 35);
-	outline: 1px solid rgb(90, 90, 90);
+	outline: inherit solid rgb(90, 90, 90);
 	user-select: none;
 	/*border-radius: 10px;*/
 }
 
 .app_regular_btn_01:hover, .app_regular_btn_02:hover
 {
-	background: rgb(50, 50, 50);
+	background: rgb(50, 50, 50) !important;
 }
 
 .app_regular_btn_01:active
 {
 	/*background: rgb(34, 95, 157);*/
-	background: #3a5986;
-	border-color: #4772b3;
-	outline-color: #4772b3;
+	background: #3a5986 !important;
+	border-color: #4772b3 !important;
+	outline-color: #4772b3 !important;
 }
 
 .app_regular_btn_02:active
@@ -1569,6 +1631,347 @@ liztooltip
 	height: 20px;
 	margin-left: 5px;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*Dashboard*/
+
+#main_dashboard_app
+{
+	display: flex;
+	flex-direction: row;
+	width: 100%;
+}
+
+
+#main_dashboard_left
+{
+	display: flex;
+	flex-direction: column;
+	width: 49%;
+}
+
+#main_dashboard_left_title, #main_dashboard_right_title
+{
+	display: flex;
+	font-family: 'Roboto';
+	font-weight: 500;
+	color: white;
+	font-size: 35px;
+	/*dont pretend that you dont know the margin*/
+	padding-left: 15px;
+	user-select: none;
+}
+
+#main_dashboard_left_utils
+{
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+}
+
+.main_dashboard_util
+{
+	margin: 10px;
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+	justify-content: space-between;
+	flex-shrink: 0;
+	width: 150px;
+	height: 150px;
+	border: 1px solid rgba(241, 246, 252, 0.37);
+	background: rgba(255, 255, 255, 0.03);
+	user-select: none;
+}
+
+.main_dashboard_util:hover
+{
+	background: rgba(255, 255, 255, 0.07);
+}
+
+.main_dashboard_util:active
+{
+	background: rgb(34, 95, 157);
+}
+
+.main_dashboard_util *
+{
+	user-select: none;
+}
+
+.main_dashboard_util_icon
+{
+	height: 50%;
+	display: flex;
+	padding: 15px;
+}
+
+.main_dashboard_util_icon img
+{
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+	object-position: center;
+}
+
+.main_dashboard_util_title
+{
+	display: flex;
+	align-self: flex-end;
+	padding: 6px 0px 6px 0px;
+	color: white;
+	font-family: 'Roboto';
+	font-weight: 200;
+	background: rgba(0, 0, 0, 0.15);
+	text-align: center;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	min-height: 30px;
+
+}
+
+
+
+
+#main_dashboard_right
+{
+	display: flex;
+	flex-direction: column;
+	width: 50%;
+	margin-right: 20px;
+	position: fixed;
+	right: 0px;
+}
+
+#main_dashboard_right_ctrl
+{
+	background: rgba(0, 0, 0, 0.03);
+	border: 1px solid rgba(255, 255, 255, 0.35);
+	flex-direction: column;
+}
+
+.dboard_mod_prmrow
+{
+	display: flex;
+	width: 100%;
+	flex-direction: row;
+	margin: 5px 0px 5px 15px;
+	color: white;
+	font-family: 'Roboto';
+}
+
+#dboard_mod_minititle
+{
+	color: #D7D7D7;
+	font-size: 18px;
+	font-weight: 200;
+	user-select: none;
+}
+
+
+#dboard_mod_modfolderpath, #dboard_mod_preview_lauchprms
+{
+	font-size: 15px;
+	font-weight: 100;
+	color: #A1A1A1;
+	user-select: none;
+}
+
+
+
+
+#dboard_mod_launchgame, #dboard_mod_killgame
+{
+	display: flex;
+	flex-direction: row;
+	width: 146px;
+	height: 44px;
+	background: #292929;
+	border: 1px solid #484848;
+	border-radius: 11px;
+}
+
+#dboard_mod_launchgame svg
+{
+	fill: #62D07A;
+	transform: scaleX(-1);
+}
+
+#dboard_mod_killgame svg
+{
+	fill: #AC4B4B;
+}
+
+#dboard_mod_killgame
+{
+	margin-left: 15px;
+}
+
+.startnkill_btn_icon
+{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	width: 35px;
+	/*padding: 10px;*/
+}
+
+.startnkill_btn_icon svg
+{
+	width: 60%;
+	height: 60%;
+	object-position: center;
+	object-fit: contain;
+}
+
+.startnkill_btn_title
+{
+	display: flex;
+	flex-grow: 1;
+	align-items: center;
+	/*justify-content: center;*/
+	/*width: 100%;*/
+	user-select: none;
+	text-align: center;
+	padding-left: 5px;
+}
+
+
+.dboard_mod_prmrow_cbox_mark
+{
+	width: 17px;
+	height: 17px;
+	margin-left: 5px;
+}
+
+.dboard_mod_prmrow_cbox
+{
+	display: flex;
+    flex-direction: row;
+    flex-grow: 0;
+    margin-top: 10px;
+    background: rgba(0, 0, 0, 0.1);
+    padding: 6px;
+    border-radius: 5px;
+    /*width: fit-content;*/
+    user-select: none;
+}
+
+
+.dboard_mod_prmrow_textfield input
+{
+	all: unset;
+	background: rgba(0, 0, 0, 0.45);
+	color: white;
+	font-family: 'Roboto';
+	font-weight: 200;
+	height: 24px;
+	width: 90%;
+	border-radius: 4px;
+	padding: 2px 0px 2px 10px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

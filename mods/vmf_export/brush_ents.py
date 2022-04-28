@@ -38,6 +38,8 @@ def get_islands(bm, verts=[]):
 #
 # Better iterator
 #
+
+# important todo: Make it counts verts of a final mesh (after modifiers)
 import bpy
 import bmesh
 

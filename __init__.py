@@ -164,7 +164,7 @@ blender_foil_appgui_thread = threading.Thread(target=blender_foil_guiappconnect,
 blender_foil_appgui_thread.start()
 
 # now - check libraries
-# it does it on every startup, but it should never take too long even when installing
+# it does it on every startup, but it should never take too long even when installing.
 # the drive the Blender is installed on should be responsive enough by the time this script is called...
 # therefore, checking paths for existance shouldnt take too long
 blfoil_check_pypackages()
@@ -202,6 +202,32 @@ blfoil_check_pypackages()
 
 # important todo: skybox preview from MR. X
 
+# important todo: propdata maker and other scripts
+
+# important todo: audio waveform generation is easy
+
+# important todo: Easy phong constructor for non-pbr source
+
+# important todo: library maker: unpack vpks, convert mdl to smd, import as asset
+
+# important todo: skybox namer changer. On name change - try to replace all occurances in vmfs
+
+# important todo: Image magick can most likely output data into std
+
+# important todo: would it make any sense to the HDR skybox name habe no _hdr and LDR have _ldr ?
+
+# important todo: Displacement filters!
+# custon ones are probably possible
+
+# smart exporter: Soundscape Volume: Create soundscape trigger and soundscape entity from soundscape model
+
+# mapbase 
+# https://www.moddb.com/mods/mapbase/downloads
+
+# visual waves
+# https://wavesurfer-js.org/
+
+# wallworm4blender/waveforma/audiowaveform-win64/wv.html
 
 # =======================================================
 #                       Register

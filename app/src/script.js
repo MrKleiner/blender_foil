@@ -93,6 +93,9 @@ document.addEventListener('keydown', kvt => {
     console.log('keypress');
     app_reload_refresh(kvt)
 
+    const buildsuggestions = event.target.closest('.simple_uilist_text_input');
+    if (buildsuggestions) { uilist_scroller(buildsuggestions.parentElement.querySelector('.simple_uilist_suggest'), kvt) }
+    
 
 });
 
@@ -112,9 +115,44 @@ document.addEventListener('keyup', kvt => {
     }
 
 
+    // simple_ui_list_buildsuggest(tgtsug)
+	// load new modmaker
+    const buildsuggestions = event.target.closest('.simple_uilist_text_input');
+    if (buildsuggestions) { simple_ui_list_buildsuggest(buildsuggestions.parentElement, kvt) }
 
 
 
+
+
+});
+
+
+
+
+document.addEventListener('focusout', kvt => {
+
+	console.log('asdasdasdasdasdasd')
+
+    // ===================================
+    //               uilists
+    // ===================================
+    const ulist_text_focus = event.target.closest('.simple_uilist_text_input');
+    if (ulist_text_focus){uilist_showhide(ulist_text_focus.parentElement.querySelector('.simple_uilist_suggest'), false)}
+
+
+
+});
+
+
+document.addEventListener('focusin', kvt => {
+
+	console.log('asdasdasdasdasdasd')
+
+    // ===================================
+    //               uilists
+    // ===================================
+    const ulist_text_focus = event.target.closest('.simple_uilist_text_input');
+    if (ulist_text_focus){uilist_showhide(ulist_text_focus.parentElement.querySelector('.simple_uilist_suggest'), true)}
 
 
 
@@ -132,12 +170,16 @@ document.addEventListener('click', event => {
     // ===================================
 
 	// load skyboxer
-    const skyboxer_app = event.target.closest('[lizmenu_action="load_skyboxer_app"]');
+    const skyboxer_app = event.target.closest('[dashboard_action="load_skyboxer"]');
     if (skyboxer_app) { skyboxer_module_loader() }
 
 	// load new modmaker
     const load_newmodmaker_app = event.target.closest('[lizmenu_action="load_newmodmaker"]');
     if (load_newmodmaker_app) { newmodmaker_loader() }
+
+	// load dashboard
+    const load_dashboard_app = event.target.closest('[lizmenu_action="load_main_dashboard"]');
+    if (load_dashboard_app) { dashboard_app_loader() }
 
 
 
@@ -348,7 +390,7 @@ document.addEventListener('change', event => {
     // ===================================
     //               modmaker
     // ===================================
-    // console.log('changed')
+    console.log('changed')
     const modmaker_check_engine_exe = event.target.closest('#modmaker_engine_details_exepath input');
     if (modmaker_check_engine_exe) { modmaker_check_engine_exe_exists() }
 
@@ -362,8 +404,6 @@ document.addEventListener('change', event => {
     if (validate_modmaker_opts_1 || validate_modmaker_opts_2){
     	modmaker_validate_required_options()
     }
-
-
 
 
 });
@@ -560,6 +600,7 @@ $(document).ready(function(){
 
 	// TESTING
 	// newmodmaker_loader()
+	dashboard_app_loader()
 	
 });
 
@@ -572,9 +613,9 @@ function main_app_init()
 			'menu_name': 'Preferences',
 			'menu_entries': [
 				{
-					'name': 'Mod Settings',
-					'action': 'open_mod_prefs',
-					'icon': 'assets/wrench_icon.svg'
+					'name': 'Toggle Heartbeat',
+					'action': 'app_toggle_heartbeat',
+					'icon': 'assets/heartbeat_icon.svg'
 				},
 				{
 					'name': 'App Settings',
@@ -634,12 +675,27 @@ function main_app_init()
 					'icon': 'assets/gmod_icon.ico'
 				},
 				{
+					'name': `Punchcard Generator`,
+					'action': 'load_punchcard_generator',
+					'icon': 'assets/punchcard_icon.svg'
+				},
+				{
+					'name': `Library Maker`,
+					'action': 'load_library_maker',
+					'icon': 'assets/library_icon.svg'
+				},
+				{
 					'type': 'separator'
 				},
 				{
 					'name': 'Mod Maker',
 					'action': 'load_newmodmaker',
 					'icon': 'assets/mech_icon.svg'
+				},
+				{
+					'name': 'Entity Definition File',
+					'action': 'load_entity_definition_manager',
+					'icon': 'assets/dna_icon.svg'
 				}
 			]
 		}
@@ -957,6 +1013,287 @@ function lizmenu_pos_fixup(lizmenu)
 ------------------------------------------------------------
 ============================================================
 */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+============================================================
+------------------------------------------------------------
+                      svg append
+------------------------------------------------------------
+============================================================
+*/
+
+
+function svgappender()
+{
+	document.querySelectorAll('appendsvg').forEach(function(userItem) {
+		// .replaceWith()
+		fetch(userItem.getAttribute('svgsrc'), {
+			'headers': {
+				'accept': '*/*',
+				'cache-control': 'no-cache',
+				'pragma': 'no-cache'
+			}
+		})
+		.then(function(response) {
+			console.log(response.status);
+			response.text().then(function(data) {
+				$(userItem).replaceWith(data)
+			});
+		});
+		// userItem.parentNode.replaceChild(newItem, listItem);
+	});
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+=====================================================================
+---------------------------------------------------------------------
+                             Simple UILists
+---------------------------------------------------------------------
+=====================================================================
+*/
+
+function init_simple_ui_lists()
+{
+	document.querySelectorAll('uilist').forEach(function(userItem) {
+		// todo: safety fallbacks ?
+		var listcallback = userItem.getAttribute('windowlist');
+		var mainparent = userItem.parentElement;
+		var appender = 
+		`
+			<input type="text" class="simple_uilist_text_input">
+			<div uilist_suggestfrom="` + listcallback + `" class="simple_uilist_suggest"></div>
+		`;
+		$(userItem.parentElement).append(appender);
+		// todo: a mess ??
+		var ulist = userItem.parentElement.querySelector('div.simple_uilist_suggest');
+		// console.log('Uilist', ulist)
+		userItem.remove();
+
+
+		//
+		// Do margins for a dropdown
+		//
+
+		// first - margin-top
+		// margin top is: height of the resulting lizmenu + padding-top of the parent container
+
+		// get padding of the parent container, if any
+
+		var padding_top = parseInt(window.getComputedStyle(mainparent, null).getPropertyValue('padding-top').replace('px', ''));
+		var margin_top = mainparent.offsetHeight;
+		if (!isNaN(padding_top)){
+			margin_top += padding_top
+		}
+
+		// second - margin-left
+		var padding_left = parseInt(window.getComputedStyle(mainparent, null).getPropertyValue('padding-left').replace('px', ''));
+		var margin_left = 0
+		if (!isNaN(padding_left)){
+			margin_left += padding_left * -1
+		}
+
+
+		// set style
+		// todo: get rid of jquery
+		$(ulist).css('margin-left', margin_left.toString() + 'px');
+		$(ulist).css('margin-top', (margin_top + 5).toString() + 'px');
+
+
+	});
+}
+
+
+// dont append to html tree. Keep as a reference in memory
+// takes container containing text input and the list container
+// expects a referenced window object to be an array or strings
+// important todo: rewrite. This is an extremely edgy way of displaying matches...
+// store matched results in the same window object and then cycle through them.
+function simple_ui_list_buildsuggest(tgtsug, keyvt)
+{
+	var prohibited_codes = [38, 40, 17, 18, 16, 20, 9, 91, 37, 39, 93, 92, 13, 27];
+
+	if (prohibited_codes.includes(keyvt.keyCode)){
+		return
+	}
+
+	var txt_inp = tgtsug.querySelector('input.simple_uilist_text_input');
+	var ulist = tgtsug.querySelector('div.simple_uilist_suggest');
+	// todo: slow ???
+	var wincont = window[ulist.getAttribute('uilist_suggestfrom')];
+	var querytext = txt_inp.value;
+	ulist.innerHTML = '';
+
+	var append_linit = 0;
+
+	// todo: allow custom configs
+
+	for (var centry of wincont){
+		if (centry.toLowerCase().includes(querytext.toLowerCase()) && append_linit <= 300){
+			append_linit++
+			var bdsm = document.createElement('div');
+			bdsm.setAttribute('class', 'simple_uilist_suggestion_entry');
+			bdsm.textContent = centry
+			if (append_linit >= 12){bdsm.style.display = 'none'}
+			ulist.appendChild(bdsm);
+		}
+	}
+
+}
+
+
+function uilist_scroller(ulist, keyact)
+{
+
+	var get_indexed = ulist.querySelector('[ulist_active_item]');
+	var children_arrayed = Array.from(ulist.children);
+
+	if (get_indexed == null){
+		var uindex = -1
+	}else{
+		var uindex = children_arrayed.indexOf(get_indexed);
+	}
+
+	// todo: duplicates avoid
+
+	// next element
+	if (keyact.keyCode == 40 || keyact.keyCode == 9){
+		keyact.preventDefault();
+		// only if next element exists
+		if (children_arrayed[uindex + 1] != undefined){
+
+			// remove styles and remove active
+			for (var rm of children_arrayed){
+				rm.removeAttribute('ulist_active_item');
+				rm.classList.remove('simple_uilist_suggestion_entry_active');
+			}
+
+			// hide previous
+			var previous_last = children_arrayed[uindex - 10]
+			// todo: also check if it's a valid node ?
+			if (previous_last != undefined){
+				previous_last.style.display = 'none';
+				previous_last.setAttribute('ulist_visible', 'false');
+			}
+
+			// unhide next
+			var enext = children_arrayed[uindex + 1]
+			if (enext != undefined){
+				enext.removeAttribute('style');
+				enext.classList.add('simple_uilist_suggestion_entry_active');
+				enext.setAttribute('ulist_visible', true);
+				enext.setAttribute('ulist_active_item', true);
+			}
+
+			ulist.parentElement.querySelector('input.simple_uilist_text_input').value = children_arrayed[uindex + 1].textContent
+		}
+	}
+
+	// previous
+	if (keyact.keyCode == 38){
+		keyact.preventDefault();
+		// only if next element exists
+		if (children_arrayed[uindex - 1] != undefined){
+
+			// remove styles and remove active
+			for (var rm of children_arrayed){
+				rm.removeAttribute('ulist_active_item');
+				rm.classList.remove('simple_uilist_suggestion_entry_active');
+			}
+
+			// hide previous
+			var previous_last = children_arrayed[uindex + 10]
+			// todo: also check if it's a valid node ?
+			if (previous_last != undefined){
+				previous_last.style.display = 'none';
+				previous_last.setAttribute('ulist_visible', false);
+			}
+
+			// unhide next
+			var enext = children_arrayed[uindex - 1]
+			if (enext != undefined){
+				enext.removeAttribute('style');
+				enext.setAttribute('ulist_visible', true);
+				enext.setAttribute('ulist_active_item', 'true');
+				enext.classList.add('simple_uilist_suggestion_entry_active');
+			}
+
+			ulist.parentElement.querySelector('input.simple_uilist_text_input').value = children_arrayed[uindex - 1].textContent
+		}
+	}
+
+	// apply
+	if (keyact.keyCode == 13 && uindex != -1){
+		keyact.preventDefault();
+		ulist.parentElement.querySelector('input.simple_uilist_text_input').value = children_arrayed[uindex].textContent;
+		uilist_showhide(ulist, false)
+	}
+
+}
+
+// true = show
+// false == hide
+function uilist_showhide(thelist, ustate)
+{
+	if (ustate == true){
+		simple_ui_list_buildsuggest(thelist.parentElement, false)
+		thelist.style.display = null;
+	}
+
+	if (ustate == false){
+		thelist.innerHTML = '';
+		thelist.style.display = 'none';
+	}
+}
+
+
+
 
 
 
@@ -2149,7 +2486,7 @@ function modmaker_spawn_mod(ismapbase)
 /*
 =====================================================================
 ---------------------------------------------------------------------
-                             New Mod Maker
+                             Dashboard
 ---------------------------------------------------------------------
 =====================================================================
 */
@@ -2163,7 +2500,7 @@ function dashboard_module_manager(pl)
 			newmodmaker_accept_engines(pl['payload'])
 			break;
 		default:
-			console.log('The modmaker module has been called, but no corresponding action was found')
+			console.log('The dashboard module has been called, but no corresponding action was found')
 			break;
 	}
 
@@ -2174,25 +2511,51 @@ function dashboard_module_manager(pl)
 // vtf maker
 // skyboxer
 // substance painter connect
-// chapter manager
+// chapter manager (with backgrounds)
 // particle manifest generator
 // gameinfo editor
 // Pack mod as sourcemod/executable/zip
 // hammer++ manager
 // compilers switch
-
+// propdata manager both predefined and prop-specific
+// vehicle scripts maker
+// actbusy script maker
+// actremap script maker
+// decal maker
+// speech system script maker
+// soundmixer script maker
+// weapon script maker
+// surfaceproperties manager
 
 
 function dashboard_app_loader()
 {
-	$('#modules_cont').load('tools/mod_maker.html', function() {
-		console.log('loaded');
+	// important todo: make this a pre-defined function
+	$('#modules_cont').load('tools/main_dashboard.html', function() {
+		console.log('loaded dashboard');
 		lizcboxes_init();
 		init_liztooltips();
-		apc_send({
-			'action': 'modmaker_load_saved_engines'
+		svgappender();
+		init_simple_ui_lists();
+		// apc_send({
+		// 	'action': 'modmaker_load_saved_engines'
+		// });
+		window['current_app_module'] = 'main_dashboard';
+		// window.suggested_maps = 
+		fetch('assets/sizetest.txt', {
+			'headers': {
+				'accept': '*/*',
+				'cache-control': 'no-cache',
+				'pragma': 'no-cache'
+			}
+		})
+		.then(function(response) {
+			console.log(response.status);
+			response.text().then(function(data) {
+				window.suggested_maps = JSON.parse(data)
+			});
 		});
-		window['current_app_module'] = 'modmaker';
+
 	});
 }
 
