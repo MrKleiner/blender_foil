@@ -2,7 +2,7 @@
   "name": "pvned",
   "productName": "pvned",
   "version": "1.0.0",
-  "description": "Lizard's video manager",
+  "description": "BlenderFoil app",
   "main": "src/index.js",
   "scripts": {
     "start": "electron-forge start",

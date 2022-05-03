@@ -4,6 +4,14 @@
 		"selected_items":
 		[
 			[
+				"si",
+				"sides_payload"
+			],
+			[
+				"def",
+				"def\tFunction"
+			],
+			[
 				"ex",
 				"except"
 			],
@@ -128,10 +136,6 @@
 				"try\tTry/Except"
 			],
 			[
-				"def",
-				"defs\tMethod"
-			],
-			[
 				"is",
 				"isinstance"
 			],
@@ -211,17 +215,25 @@
 			"file": "/C/Users/DrHax/AppData/Roaming/Blender Foundation/Blender/3.1/scripts/addons/blender_foil/__init__.py",
 			"settings":
 			{
-				"buffer_size": 6784,
+				"buffer_size": 10030,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "/C/Users/DrHax/AppData/Roaming/Blender Foundation/Blender/3.1/scripts/addons/blender_foil/ui.py",
+			"file": "/C/Users/DrHax/AppData/Roaming/Blender Foundation/Blender/3.1/scripts/addons/blender_foil/mods/skyboxer/skybox_maker.py",
 			"settings":
 			{
-				"buffer_size": 0,
+				"buffer_size": 32161,
 				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "/E/!!Blend_Projects/scripts/sockets/socket_client.py",
+			"settings":
+			{
+				"buffer_size": 486,
 				"line_ending": "Windows"
 			}
 		},
@@ -229,7 +241,7 @@
 			"file": "/C/Users/DrHax/AppData/Roaming/Blender Foundation/Blender/3.1/scripts/addons/blender_foil/mods/vmf_export/vmf_exporter.py",
 			"settings":
 			{
-				"buffer_size": 74237,
+				"buffer_size": 81970,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -238,7 +250,7 @@
 			"file": "/C/Users/DrHax/AppData/Roaming/Blender Foundation/Blender/3.1/scripts/addons/blender_foil/mods/vmf_export/do_export.py",
 			"settings":
 			{
-				"buffer_size": 15049,
+				"buffer_size": 13476,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -247,7 +259,7 @@
 			"file": "/C/Users/DrHax/AppData/Roaming/Blender Foundation/Blender/3.1/scripts/addons/blender_foil/mods/vmf_export/brush_ents.py",
 			"settings":
 			{
-				"buffer_size": 6562,
+				"buffer_size": 7529,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -256,7 +268,7 @@
 			"file": "/C/Users/DrHax/AppData/Roaming/Blender Foundation/Blender/3.1/scripts/addons/blender_foil/mods/vmf_export/entity_maker.py",
 			"settings":
 			{
-				"buffer_size": 4112,
+				"buffer_size": 4239,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -265,7 +277,7 @@
 			"file": "/C/Users/DrHax/AppData/Roaming/Blender Foundation/Blender/3.1/scripts/addons/blender_foil/utils/lizard_vmf/lizardvmf.py",
 			"settings":
 			{
-				"buffer_size": 56615,
+				"buffer_size": 56868,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -283,19 +295,25 @@
 			"file": "/C/Users/DrHax/AppData/Roaming/Blender Foundation/Blender/3.1/scripts/addons/blender_foil/utils/shared.py",
 			"settings":
 			{
-				"buffer_size": 2671,
+				"buffer_size": 12860,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"contents": "bl_info = {\n    'name': 'Blender Foil VTF',\n    'author': 'MrKleiner',\n    'version': (1, 17),\n    'blender': (3, 0, 0),\n    'location': 'N menu',\n    'description': 'vtf edit gui in blender',\n    'warning': '',\n    'doc_url': '',\n    'category': 'Add Mesh',\n}\n\nimport bpy\nfrom bpy.types import Operator\nfrom bpy.props import FloatVectorProperty\nfrom bpy_extras.object_utils import AddObjectHelper, object_data_add\nfrom mathutils import Vector\nimport re\nfrom shutil import copyfile\nimport os\nimport json\nfrom re import search\nimport math\nfrom bpy.props import (StringProperty,\n                       BoolProperty,\n                       IntProperty,\n                       FloatProperty,\n                       FloatVectorProperty,\n                       EnumProperty,\n                       PointerProperty,\n                       )\nfrom bpy.types import (Panel,\n                       Operator,\n                       AddonPreferences,\n                       PropertyGroup,\n                       )\nimport hashlib\nimport random\nimport bmesh\nimport mathutils\nimport os.path, time\nfrom pathlib import Path\nimport sys\nimport shutil\nimport subprocess\nimport datetime\nimport pathlib\nfrom math import radians\nfrom mathutils import Matrix\n\n# todo: use Image Magick to support the fuckton of image formats\n# todo: Smarter batch export\n# todo: finally figure out how to parse vtf headers\n# todo: add \"open in vtf edit button\"\n# todo: batch export from blender data blocks\n# todo: \"append name from image datablock\" button/checkbox\n# todo: automatically unpack on export\n# todo: animated things support\n# todo: embed selected image into alpha channel\n# todo: some user if statements: if .tga then use DXT...\n# todo: add an ability for manipulating existing vtf files\n# todo: a button to create material paths based on selected objects according to given path or Source Ops one.\n\n\naddon_root_dir = Path(__file__).absolute().parent\n\n# vp_radpath = pathlib.Path(bpy.context.scene.blents.dn_str)\nvtfcmd_path = pathlib.Path('E:\\\\!webdesign\\\\vtf_flags\\\\vtflib132-bin (1)\\\\bin\\\\x64\\\\VTFCmd.exe')\n\n\n\n\n# =======================================================\n#                   Actual exporter\n# =======================================================\n\ndef do_export(self, context):\n    print('export vtf')\n    print(context.scene.blfoilvtf.blfoil_vtf_batch_export)\n    if context.scene.blfoilvtf.blfoil_vtf_batch_export == True:\n        input_img = bpy.path.abspath(context.scene.blfoilvtf.blfoil_vtf_batch_folder_input)\n        print(input_img)\n        output_img = bpy.path.abspath(context.scene.blfoilvtf.blfoil_vtf_batch_folder_output)\n        print(output_img)\n        inpmethod = '-folder'\n    else:\n        try:\n            input_img = pathlib.Path(bpy.path.abspath(context.space_data.image.filepath))\n        except:\n            self.report({'ERROR'}, 'Error: No image loaded')\n            return\n        print(input_img)\n\n        \n        if context.scene.blfoilvtf.blfoil_vtf_is_name_export == True:\n            get_outp_path = pathlib.Path(bpy.path.abspath(context.scene.blfoilvtf.blfoil_vtf_export_path)) / context.scene.blfoilvtf.blfoil_vtf_new_name\n            output_img = get_outp_path.parent\n        else:\n            get_outp_path = pathlib.Path(bpy.path.abspath(context.scene.blfoilvtf.blfoil_vtf_export_path))\n            output_img = get_outp_path\n        print(output_img)\n        inpmethod = '-file'\n\n    outp_ver = context.scene.blfoilvtf.blfoil_vtf_tversion\n    print(outp_ver)\n    outp_format = context.scene.blfoilvtf.blfoil_vtf_formats\n    outp_alpha_format = context.scene.blfoilvtf.blfoil_vtf_formats_alph\n    print(outp_format, outp_alpha_format)\n    resize_dict = {\n        'Nearest Power Of 2': 'NEAREST',\n        'Biggest Power of 2': 'BIGGEST',\n        'Smallest Power of 2': 'SMALLEST'\n    }\n    # todo: better name\n    resize_filter_dict = {\n\n        'Point': 'POINT',\n        'Box': 'BOX',\n        'Triangle': 'TRIANGLE',\n        'Quadratic': 'QUADRATIC',\n        'Cubic': 'CUBIC',\n        'Catrom': 'CATROM',\n        'Mitchell': 'MITCHELL',\n        'Gaussian': 'GAUSSIAN',\n        'Sinc': 'SINC',\n        'Bessel': 'BESSEL',\n        'Hanning': 'HANNING',\n        'Hamming': 'HAMMING',\n        'Blackman': 'BLACKMAN',\n        'Kaiser': 'KAISER'\n\n    }\n\n    sharpen_f_dict = {\n\n        'None': 'NONE',\n        'Negative': 'NEGATIVE',\n        'Lighter': 'LIGHTER',\n        'Darker': 'DARKER',\n        'Contrast More': 'CONTRASTMORE',\n        'Contrast Less': 'CONTRASTLESS',\n        'Smoothen': 'SMOOTHEN',\n        'Sharpen Soft': 'SHARPENSOFT',\n        'Sharpen Medium': 'SHARPENMEDIUM',\n        'Sharpen Strong': 'SHARPENSTRONG',\n        'Find Edges': 'FINDEDGES',\n        'Contour': 'CONTOUR',\n        'Edge Detect': 'EDGEDETECT',\n        'Edge Detect Soft': 'EDGEDETECTSOFT',\n        'Emboss': 'EMBOSS',\n        'Mean Removal': 'MEANREMOVAL',\n        'Unsharpen Mask': 'UNSHARP',\n        'XSharpen': 'XSHARPEN',\n        'Warp Sharp': 'WARPSHARP'\n    }\n\n    flag_dict = [\n        'POINTSAMPLE', \n        'TRILINEAR', \n        'CLAMPS', \n        'CLAMPT', \n        'ANISOTROPIC', \n        'HINT_DXT5', \n        'NORMAL', \n        'NOMIP', \n        'NOLOD', \n        'MINMIP', \n        'PROCEDURAL', \n        'RENDERTARGET', \n        'DEPTHRENDERTARGET', \n        'NODEBUGOVERRIDE', \n        'SINGLECOPY', \n        'NODEPTHBUFFER', \n        'CLAMPU', \n        'VERTEXTEXTURE', \n        'SSBUMP', \n        'BORDER'\n    ]\n\n    do_flags = []\n\n    # get flags\n    for fl in flag_dict:\n        try:\n            if context.scene.blfoilvtf['blfoil_vtf_flag_' + fl] == True:\n                do_flags.append(fl)\n        except:\n            pass\n\n\n    magic_args = [str(vtfcmd_path), inpmethod, input_img]\n    \n    if context.scene.blfoilvtf.blfoil_vtf_enable_resize == True:\n        magic_args.extend(['-resize', '-rmethod', resize_dict[context.scene.blfoilvtf.blfoil_vtf_resize_method], '-rfilter', resize_filter_dict[context.scene.blfoilvtf.blfoil_vtf_resize_filter], '-rsharpen', sharpen_f_dict[context.scene.blfoilvtf.blfoil_vtf_resize_sharpen_filter]])\n\n    # todo: wtf you don't have to do == True for bools\n    if context.scene.blfoilvtf.blfoil_vtf_resize_clamp == True:\n        magic_args.extend(['-rclampwidth', context.scene.blfoilvtf.blfoil_vtf_resize_clamp_maxwidth, '-rclampheight', context.scene.blfoilvtf.blfoil_vtf_resize_clamp_maxheight])\n\n    magic_args.extend(['-format', context.scene.blfoilvtf.blfoil_vtf_formats, '-alphaformat', context.scene.blfoilvtf.blfoil_vtf_formats_alph])\n\n\n    if context.scene.blfoilvtf.blfoil_vtf_mipmaps_enable == True:\n        magic_args.extend(['-mfilter', resize_filter_dict[context.scene.blfoilvtf.blfoil_vtf_mipmap_filter], '-msharpen', sharpen_f_dict[context.scene.blfoilvtf.blfoil_vtf_mipmap_sharpen_filter]])\n    else:\n        magic_args.append('-nomipmaps')\n    magic_args.extend(['-version', outp_ver])\n\n    if context.scene.blfoilvtf.blfoil_vtf_compute_refl == False:\n        magic_args.append('-noreflectivity')\n\n    if context.scene.blfoilvtf.blfoil_vtf_generate_thumb == False:\n        magic_args.append('-nothumbnail')\n\n    # add flags if any\n    if len(do_flags) > 0:\n        for df in do_flags:\n            magic_args.extend(['-flag', df])\n\n    magic_args.extend(['-output', output_img])  \n    \n\n    print(magic_args)\n    subprocess.call(magic_args)\n\n    # rename if we were told to\n    if context.scene.blfoilvtf.blfoil_vtf_batch_export == False and context.scene.blfoilvtf.blfoil_vtf_is_name_export == True:\n        print('get vtf: ', str(get_outp_path.parent / input_img.stem) + '.vtf')\n        print('rename to: ', str(get_outp_path.parent / get_outp_path.name) + '.vtf')\n\n        try:\n            os.replace(str(get_outp_path.parent / input_img.stem) + '.vtf', str(get_outp_path.parent / get_outp_path.name) + '.vtf')\n        except:\n            print('no file found')\n\n\n\n\n\n\n\n\n# =======================================================\n#                   The config class\n# =======================================================\n\n# make this image datablock level. Or not ??\n\nclass blender_foil_vtf(PropertyGroup):\n\n    blfoil_vtf_formats : EnumProperty(\n        items=[\n        ('RGBA8888', 'RGBA8888', 'ded2'),\n        ('ABGR8888', 'ABGR8888', 'ded2'),\n        ('RGB888', 'RGB888', 'ded2'),\n        ('BGR888', 'BGR888', 'ded2'),\n        ('RGB565', 'RGB565', 'ded2'),\n        ('I8', 'I8', 'ded2'),\n        ('IA88', 'IA88', 'ded2'),\n        ('A8', 'A8', 'ded2'),\n        ('RGB888_BLUESCREEN', 'RGB888_BLUESCREEN', 'ded2'),\n        ('BGR888_BLUESCREEN', 'BGR888_BLUESCREEN', 'ded2'),\n        ('ARGB8888', 'ARGB8888', 'ded2'),\n        ('BGRA8888', 'BGRA8888', 'ded2'),\n        ('DXT1', 'DXT1', 'ded2'),\n        ('DXT3', 'DXT3', 'ded2'),\n        ('DXT5', 'DXT5', 'ded2'),\n        ('BGRX8888', 'BGRX8888', 'ded2'),\n        ('BGR565', 'BGR565', 'ded2'),\n        ('BGRX5551', 'BGRX5551', 'ded2'),\n        ('BGRA4444', 'BGRA4444', 'ded2'),\n        ('DXT1_ONEBITALPHA', 'DXT1_ONEBITALPHA', 'ded2'),\n        ('BGRA5551', 'BGRA5551', 'ded2'),\n        ('UV88', 'UV88', 'ded2'),\n        ('UVWQ8888', 'UVWQ8888', 'ded2'),\n        ('RGBA16161616F', 'RGBA16161616F', 'ded2'),\n        ('RGBA16161616', 'RGBA16161616', 'ded2'),\n        ('UVLX8888', 'UVLX8888', 'ded2')\n        ],\n        name='Normal Format',\n        description='I want to fuck a lizard'\n        # default = \"nil\"\n        )\n    \n    # get the reference? ALF? lol\n    blfoil_vtf_formats_alph : EnumProperty(\n        items=[\n        ('RGBA8888', 'RGBA8888', 'ded2'),\n        ('ABGR8888', 'ABGR8888', 'ded2'),\n        ('RGB888', 'RGB888', 'ded2'),\n        ('BGR888', 'BGR888', 'ded2'),\n        ('RGB565', 'RGB565', 'ded2'),\n        ('I8', 'I8', 'ded2'),\n        ('IA88', 'IA88', 'ded2'),\n        ('A8', 'A8', 'ded2'),\n        ('RGB888_BLUESCREEN', 'RGB888_BLUESCREEN', 'ded2'),\n        ('BGR888_BLUESCREEN', 'BGR888_BLUESCREEN', 'ded2'),\n        ('ARGB8888', 'ARGB8888', 'ded2'),\n        ('BGRA8888', 'BGRA8888', 'ded2'),\n        ('DXT1', 'DXT1', 'ded2'),\n        ('DXT3', 'DXT3', 'ded2'),\n        ('DXT5', 'DXT5', 'ded2'),\n        ('BGRX8888', 'BGRX8888', 'ded2'),\n        ('BGR565', 'BGR565', 'ded2'),\n        ('BGRX5551', 'BGRX5551', 'ded2'),\n        ('BGRA4444', 'BGRA4444', 'ded2'),\n        ('DXT1_ONEBITALPHA', 'DXT1_ONEBITALPHA', 'ded2'),\n        ('BGRA5551', 'BGRA5551', 'ded2'),\n        ('UV88', 'UV88', 'ded2'),\n        ('UVWQ8888', 'UVWQ8888', 'ded2'),\n        ('RGBA16161616F', 'RGBA16161616F', 'ded2'),\n        ('RGBA16161616', 'RGBA16161616', 'ded2'),\n        ('UVLX8888', 'UVLX8888', 'ded2')\n        ],\n        name='Alpha Format',\n        description='I want to fuck a lizard'\n        # default = \"nil\"\n        )\n\n\n\n    # -------\n    # Resize\n    # -------\n\n\n    blfoil_vtf_enable_resize : BoolProperty(\n        name='Resize',\n        description='Scale down or align the image size',\n        default = False\n        )\n\n    blfoil_vtf_resize_method : EnumProperty(\n        items=[\n        ('Nearest Power Of 2', 'Nearest Power Of 2', 'ded2'),\n        ('Biggest Power of 2', 'Biggest Power of 2', 'ded2'),\n        ('Smallest Power of 2', 'Smallest Power of 2', 'ded2')\n        ],\n        name='Resize Method',\n        description='I want to fuck a lizard'\n        # default = \"nil\"\n        )\n\n    blfoil_vtf_resize_filter : EnumProperty(\n        items=[\n        ('Point', 'Point', 'ded2'),\n        ('Box', 'Box', 'ded2'),\n        ('Triangle', 'Triangle', 'ded2'),\n        ('Quadratic', 'Quadratic', 'ded2'),\n        ('Cubic', 'Cubic', 'ded2'),\n        ('Catrom', 'Catrom', 'ded2'),\n        ('Mitchell', 'Mitchell', 'ded2'),\n        ('Gaussian', 'Gaussian', 'ded2'),\n        ('Sinc', 'Sinc', 'ded2'),\n        ('Bessel', 'Bessel', 'ded2'),\n        ('Hanning', 'Hanning', 'ded2'),\n        ('Hamming', 'Hamming', 'ded2'),\n        ('Blackman', 'Blackman', 'ded2'),\n        ('Kaiser', 'Kaiser', 'ded2')\n        ],\n        name='Resize Filter',\n        description='I want to suck lizards pussy'\n        # default = \"nil\"\n        )\n\n    blfoil_vtf_resize_sharpen_filter : EnumProperty(\n        items=[\n        ('None', 'None', 'ded2'),\n        ('Negative', 'Negative', 'ded2'),\n        ('Lighter', 'Lighter', 'ded2'),\n        ('Darker', 'Darker', 'ded2'),\n        ('Contrast More', 'Contrast More', 'ded2'),\n        ('Contrast Less', 'Contrast Less', 'ded2'),\n        ('Smoothen', 'Smoothen', 'ded2'),\n        ('Sharpen Soft', 'Sharpen Soft', 'ded2'),\n        ('Sharpen Medium', 'Sharpen Medium', 'ded2'),\n        ('Sharpen Strong', 'Sharpen Strong', 'ded2'),\n        ('Find Edges', 'Find Edges', 'ded2'),\n        ('Contour', 'Contour', 'ded2'),\n        ('Edge Detect', 'Edge Detect', 'ded2'),\n        ('Edge Detect Soft', 'Edge Detect Soft', 'ded2'),\n        ('Emboss', 'Emboss', 'ded2'),\n        ('Mean Removal', 'Mean Removal', 'ded2'),\n        ('Unsharpen Mask', 'Unsharpen Mask', 'ded2'),\n        ('XSharpen', 'XSharpen', 'ded2'),\n        ('Warp Sharp', 'Warp Sharp', 'ded2'),\n        ],\n        name='Sharpen Filter',\n        description='I want to suck lizards pussy'\n        # default = \"nil\"\n        )\n\n    blfoil_vtf_resize_clamp : BoolProperty(\n        name='Resize Clamp',\n        description='Clamp image dimensions',\n        default = False\n        )\n\n    \n    blfoil_vtf_resize_clamp_maxwidth : EnumProperty(\n        items=[\n        ('4096', '4096', 'ded2'),\n        ('2048', '2048', 'ded2'),\n        ('1024', '1024', 'ded2'),\n        ('512', '512', 'ded2'),\n        ('256', '256', 'ded2'),\n        ('128', '128', 'ded2'),\n        ('64', '64', 'ded2'),\n        ('32', '32', 'ded2'),\n        ('16', '16', 'ded2'),\n        ('8', '8', 'ded2'),\n        ('4', '4', 'ded2'),\n        ('2', '2', 'ded2'),\n        ('1', '1', 'ded2'),\n        ],\n        name='Maximum Width',\n        description='I want a blowjob from a lizard'\n        # default = \"nil\"\n        )\n\n    blfoil_vtf_resize_clamp_maxheight : EnumProperty(\n        items=[\n        ('4096', '4096', 'ded2'),\n        ('2048', '2048', 'ded2'),\n        ('1024', '1024', 'ded2'),\n        ('512', '512', 'ded2'),\n        ('256', '256', 'ded2'),\n        ('128', '128', 'ded2'),\n        ('64', '64', 'ded2'),\n        ('32', '32', 'ded2'),\n        ('16', '16', 'ded2'),\n        ('8', '8', 'ded2'),\n        ('4', '4', 'ded2'),\n        ('2', '2', 'ded2'),\n        ('1', '1', 'ded2'),\n        ],\n        name='Maximum Height',\n        description='I want a blowjob from a lizard'\n        # default = \"nil\"\n        )\n\n    # -------\n    # Mipmaps\n    # -------\n\n    blfoil_vtf_mipmaps_enable : BoolProperty(\n        name='Generate Mipmaps',\n        description='Whether to generate the mipamps or not',\n        default = True\n        )\n\n    blfoil_vtf_mipmap_filter : EnumProperty(\n        items=[\n        ('Point', 'Point', 'ded2'),\n        ('Box', 'Box', 'ded2'),\n        ('Triangle', 'Triangle', 'ded2'),\n        ('Quadratic', 'Quadratic', 'ded2'),\n        ('Cubic', 'Cubic', 'ded2'),\n        ('Catrom', 'Catrom', 'ded2'),\n        ('Mitchell', 'Mitchell', 'ded2'),\n        ('Gaussian', 'Gaussian', 'ded2'),\n        ('Sinc', 'Sinc', 'ded2'),\n        ('Bessel', 'Bessel', 'ded2'),\n        ('Hanning', 'Hanning', 'ded2'),\n        ('Hamming', 'Hamming', 'ded2'),\n        ('Blackman', 'Blackman', 'ded2'),\n        ('Kaiser', 'Kaiser', 'ded2')\n        ],\n        name='Mipmap Filter',\n        description='I want a handjob from a lizard'\n        # default = \"nil\"\n        )\n\n    blfoil_vtf_mipmap_sharpen_filter : EnumProperty(\n        items=[\n        ('None', 'None', 'ded2'),\n        ('Negative', 'Negative', 'ded2'),\n        ('Lighter', 'Lighter', 'ded2'),\n        ('Darker', 'Darker', 'ded2'),\n        ('Contrast More', 'Contrast More', 'ded2'),\n        ('Contrast Less', 'Contrast Less', 'ded2'),\n        ('Smoothen', 'Smoothen', 'ded2'),\n        ('Sharpen Soft', 'Sharpen Soft', 'ded2'),\n        ('Sharpen Medium', 'Sharpen Medium', 'ded2'),\n        ('Sharpen Strong', 'Sharpen Strong', 'ded2'),\n        ('Find Edges', 'Find Edges', 'ded2'),\n        ('Contour', 'Contour', 'ded2'),\n        ('Edge Detect', 'Edge Detect', 'ded2'),\n        ('Edge Detect Soft', 'Edge Detect Soft', 'ded2'),\n        ('Emboss', 'Emboss', 'ded2'),\n        ('Mean Removal', 'Mean Removal', 'ded2'),\n        ('Unsharpen Mask', 'Unsharpen Mask', 'ded2'),\n        ('XSharpen', 'XSharpen', 'ded2'),\n        ('Warp Sharp', 'Warp Sharp', 'ded2'),\n        ],\n        name='Sharpen Filter',\n        description='I want to play with lizards tail'\n        # default = \"nil\"\n        )\n\n        # todo: Normal Map\n\n    # -------\n    # vtf version\n    # -------\n\n    blfoil_vtf_tversion : EnumProperty(\n        items=[\n        ('7.5', '7.5', 'ded2'),\n        ('7.4', '7.4', 'ded2'),\n        ('7.3', '7.3', 'ded2'),\n        ('7.2', '7.2', 'ded2'),\n        ('7.1', '7.1', 'ded2'),\n        ],\n        name='VTF Version',\n        description='I want 69 with a lizard',\n        default = '7.4'\n        )\n\n    # -------\n    # Misc\n    # -------\n\n    blfoil_vtf_compute_refl : BoolProperty(\n        name='Compute Reflectivity',\n        description='Compute Reflectivity',\n        default = True\n        )\n\n    blfoil_vtf_generate_thumb : BoolProperty(\n        name='Generate Thumbnail',\n        description='Generate Thumbnail',\n        default = True\n        )\n\n\n\n    # -------\n    # Flags\n    # -------\n\n    blfoil_vtf_flags : EnumProperty(\n        items=[\n        ('Point Sample', 'Point Sample', 'ded2'),\n        ('Trilinear', 'Trilinear', 'ded2'),\n        ('Clamp S', 'Clamp S', 'ded2'),\n        ('Clamp T', 'Clamp T', 'ded2'),\n        ('Anisotropic', 'Anisotropic', 'ded2'),\n        ('Hint DXT5', 'Hint DXT5', 'ded2'),\n        ('Normal Map', 'Normal Map', 'ded2'),\n        ('No Mipmap', 'No Mipmap', 'ded2'),\n        ('No Level Of Detail', 'No Level Of Detail', 'ded2'),\n        ('No Minimum Mipmap', 'No Minimum Mipmap', 'ded2'),\n        ('Procedural', 'Procedural', 'ded2'),\n        ('Rendertarget', 'Rendertarget', 'ded2'),\n        ('Depth Render Target', 'Depth Render Target', 'ded2'),\n        ('No Debug Override', 'No Debug Override', 'ded2'),\n        ('Single Copy', 'Single Copy', 'ded2'),\n        ('No Depth Buffer', 'No Depth Buffer', 'ded2'),\n        ('Clamp U', 'Clamp U', 'ded2'),\n        ('Vertex Texture', 'Vertex Texture', 'ded2'),\n        ('SSBump', 'SSBump', 'ded2'),\n        ('Clamp All', 'Clamp All', 'ded2'),\n        ],\n        name='Flags',\n        description='I want 69 with a lizard'\n        # default = \"nil\"\n        )\n\n\n    blfoil_vtf_flag_POINTSAMPLE : BoolProperty(\n        name='Point Sample',\n        description='Point Sample',\n        default = False\n        )\n    blfoil_vtf_flag_TRILINEAR : BoolProperty(\n        name='Trilinear',\n        description='Point Sample',\n        default = False\n        )\n    blfoil_vtf_flag_CLAMPS : BoolProperty(\n        name='Clamp S',\n        description='Point Sample',\n        default = False\n        )\n    blfoil_vtf_flag_CLAMPT : BoolProperty(\n        name='Clamp T',\n        description='Point Sample',\n        default = False\n        )\n    blfoil_vtf_flag_ANISOTROPIC : BoolProperty(\n        name='Anisotropic',\n        description='Point Sample',\n        default = False\n        )\n    blfoil_vtf_flag_HINT_DXT5 : BoolProperty(\n        name='Hint DXT5',\n        description='Hint DXT5',\n        default = False\n        )\n    blfoil_vtf_flag_NORMAL : BoolProperty(\n        name='Normal Map',\n        description='Normal Map',\n        default = False\n        )\n    blfoil_vtf_flag_NOMIP : BoolProperty(\n        name='No Mipmap',\n        description='No Mipmap',\n        default = False\n        )\n    blfoil_vtf_flag_NOLOD : BoolProperty(\n        name='No Level Of Detail',\n        description='No Level Of Detail',\n        default = False\n        )\n    blfoil_vtf_flag_MINMIP : BoolProperty(\n        name='No Minimum Mipmap',\n        description='No Minimum Mipmap',\n        default = False\n        )\n    blfoil_vtf_flag_PROCEDURAL : BoolProperty(\n        name='Procedural',\n        description='Procedural',\n        default = False\n        )\n    blfoil_vtf_flag_RENDERTARGET : BoolProperty(\n        name='Rendertarget',\n        description='Rendertarget',\n        default = False\n        )\n    blfoil_vtf_flag_DEPTHRENDERTARGET: BoolProperty(\n        name='Depth Render Target',\n        description='Depth Render Target',\n        default = False\n        )\n    blfoil_vtf_flag_NODEBUGOVERRIDE: BoolProperty(\n        name='No Debug Override',\n        description='No Debug Override',\n        default = False\n        )\n    blfoil_vtf_flag_SINGLECOPY: BoolProperty(\n        name='Single Copy',\n        description='Single Copy',\n        default = False\n        )\n    blfoil_vtf_flag_NODEPTHBUFFER: BoolProperty(\n        name='No Depth Buffer',\n        description='No Depth Buffer',\n        default = False\n        )\n    blfoil_vtf_flag_CLAMPU: BoolProperty(\n        name='Clamp U',\n        description='Clamp U',\n        default = False\n        )\n    blfoil_vtf_flag_VERTEXTEXTURE: BoolProperty(\n        name='Vertex Texture',\n        description='Vertex Texture',\n        default = False\n        )\n    blfoil_vtf_flag_SSBUMP: BoolProperty(\n        name='SSBump',\n        description='SSBump',\n        default = False\n        )\n    blfoil_vtf_flag_BORDER: BoolProperty(\n        name='Clamp All',\n        description='Clamp All',\n        default = False\n        )\n\n\n\n    blfoil_vtf_export_path : StringProperty(\n        name='Export here',\n        description='Export the fucking shit',\n        default = 'nil',\n        subtype='FILE_PATH'\n        )\n\n\n\n\n    #\n    # batch export\n    #\n\n\n    blfoil_vtf_batch_folder_input : StringProperty(\n        name='Convert items inside this folder',\n        description='Supports wildcards (lizard*.png)',\n        default = 'nil',\n        subtype='FILE_PATH'\n        )\n\n    blfoil_vtf_batch_folder_output : StringProperty(\n        name='Place batch output here',\n        description='sexy lizard',\n        default = 'nil',\n        subtype='FILE_PATH'\n        )\n\n    # because I'm too lasy to make a separate button logic\n    blfoil_vtf_batch_export: BoolProperty(\n        name='Batch Export',\n        description='Batch Export',\n        default = False\n        )\n\n\n    #\n    # other\n    #\n\n    # todo: this is stupid\n    blfoil_vtf_is_name_export: BoolProperty(\n        name='Is name',\n        description='Rename resulting vtf to a following name. Else - use image datablock name',\n        default = False\n        )\n\n    blfoil_vtf_new_name : StringProperty(\n        name='New name for the vtf',\n        description='doctor sex',\n        default = 'nil'\n        )\n\n\n\"\"\"\n\nclass blender_foil(PropertyGroup):\n\n    all_lights : BoolProperty(\n        name=\"Enable or Disable\",\n        description=\"A bool property\",\n        default = False\n        )\n        \n    scene_vmf_path : StringProperty(\n        name=\"Path to vmf\",\n        description=\"lizards are sexy\",\n        default = \"nil\",\n        subtype=\"FILE_PATH\",\n        update=append_vmf_vgroups\n        )\n        \n    lightsradcsum : StringProperty(\n        name=\"checksum\",\n        description=\"I want a lizard to put her tongue in my urethra\",\n        default = \"nil\",\n        )\n\n    foil_export_area_lights : BoolProperty(\n        name=\"Enable or Disable\",\n        description=\"A bool property\",\n        default = False\n        )\n\n    foil_export_props : BoolProperty(\n        name=\"Enable or Disable\",\n        description=\"A bool property\",\n        default = False\n        )\n        \n        # EnumProperty(items=test_rad_list, name=\"Rads\", default='nil', update=setrad_col)\n        \n    scene_radlights_path : StringProperty(\n        name=\"Path to .rad\",\n        description=\"I like bread\",\n        default = \"nil\",\n        subtype=\"FILE_PATH\"\n        )\n        \n    scene_vmf_visgroups : EnumProperty(\n        items=scene_vmf_vgroups,\n        name=\"all visgroups\",\n        description=\"I like bread\"\n        # default = \"nil\"\n        )\n        \n        \n        \n        # --------\n        # Skyboxer\n        # --------\n    blfoil_sky_game_path : StringProperty(\n        name='Path to the game dir. half-life 2/ep2',\n        description='Has to point to a valid source engine game setup. half-life 2/ep2, where half-life 2/bin contains stuff like vtex.exe',\n        default = 'blfoil_game_path - nil',\n        subtype='DIR_PATH'\n        )\n        \n    blfoil_sky_use_sourceops_gpath: BoolProperty(\n        name='Use SourceOps game path',\n        description='My dick so big so really big, black holes move towards my huge dick',\n        default = False \n        )\n        \n    blfoil_sky_boxname : StringProperty(\n        name='The name of the baked skybox',\n        description='doctor sex',\n        default = 'blfoil_sky_boxname - nil'\n        )\n        \n    blfoil_sky_size_x : IntProperty(\n        name='Skybox X size',\n        description='Size of each skybox square on X axis',\n        default=1024,\n        min=8,\n        max=8192,\n        soft_max=4096,\n        soft_min=128,\n        subtype='UNSIGNED'\n        )\n        \n    blfoil_sky_size_y : IntProperty(\n        name='Skybox X size',\n        description='Size of each skybox square on X axis',\n        default=1024,\n        min=8,\n        max=8192,\n        soft_max=4096,\n        soft_min=128,\n        subtype='UNSIGNED'\n        )\n\n    blfoil_sky_keep_src_f_exr : BoolProperty(\n        name='Whether to keep the src exr files or not',\n        description='Disabling this will result into .exr files being deleted',\n        default = True\n        )\n        \n    blfoil_sky_keep_src_f_pfm : BoolProperty(\n        name='Whether to keep the src .pfm files or not',\n        description='Disabling this will result into .pfm files being deleted',\n        default = True\n        )\n        \n    blfoil_sky_moveto_afterb_path : StringProperty(\n        name='Copy compiled stuff here',\n        description='Should point to the \"materials\" folder. Will write to materials/skybox if present and overwrite any existing stuff. This description is redundant',\n        default = 'nil',\n        subtype='FILE_PATH'\n        )\n        \n    blfoil_sky_moveto_afterb_movecopy : BoolProperty(\n        name='asddw',\n        description='Move. Otherwise - copy',\n        default = False\n        )\n        \n    blfoil_sky_hdrldr : EnumProperty(\n        items=[\n        ('HDR', 'HDR', 'ded2'),\n        ('LDR', 'LDR', 'ded2')\n        ],\n        name='ldr/hdr',\n        description='I want to kiss a lizard'\n        # default = \"nil\"\n        )\n        \n    blfoil_sky_hdr_compressed : BoolProperty(\n        name='Compress into 8 bit + alpha',\n        # description='Compress the shit like juicy tits',\n        description='Lmfao are you serious? Your shit will look rubbish af',\n        default = False\n        )\n        \n    blfoil_sky_projectonly : BoolProperty(\n        name='Simple projection',\n        description='If set - seimply project whatever is plugged into the world on a cube, avoiding any renders',\n        default = False\n        )\n        \n    blfoil_sky_overwrite_shit : BoolProperty(\n        name='Overwrite',\n        description='oral',\n        default = False \n        )\n        \n    # blfoil_sky_maxsize : BoolProperty(\n        # name='Molest source engine',\n        # description='Insert a 1 cm silicone rod into his urethra',\n        # default = False \n        # )\n        \n    blfoil_sky_nobottom : BoolProperty(\n        name='No bottom',\n        description='Destroy his ass',\n        default = False \n        )\n        \n    blfoil_sky_mkenvmap : BoolProperty(\n        name='Make envmap',\n        description='Pootis',\n        default = False \n        )\n        \n    blfoil_sky_mkenvmap_only : BoolProperty(\n        name='Only envmap',\n        description='Pootis',\n        default = False \n        )\n\n\n\"\"\"\n\n\n# =======================================================\n#                Class linker for function\n# =======================================================\n\nclass OBJECT_OT_vmf_export_foil(Operator, AddObjectHelper):\n    bl_idname = 'mesh.exportvtf'\n    bl_label = 'export vtf'\n    bl_options = {'REGISTER'}\n\n    def execute(self, context):\n        do_export(self, context)\n        return {'FINISHED'}\n\n\n\n\n\n\n\n\n# =======================================================\n#                       Viewpanel\n# =======================================================\n\n#\n# General\n#\nclass IMAGE_EDITOR_PT_blender_foil_dn_enum(bpy.types.Panel):\n    bl_space_type = 'IMAGE_EDITOR'\n    bl_region_type = 'UI'\n    bl_category = 'shitfuck'\n    bl_label = 'Sexy Iguana'\n    # https://youtu.be/sT3joXENOb0\n    \n    def draw(self, context):\n        layout = self.layout\n        \n        dumpster = layout.column(align=False)\n        dumpster.use_property_split = True\n        dumpster.use_property_decorate = False\n        \n        # dumpster.prop(bpy.context.scene.blents, 'dnenum')\n        \n\n        dumpster.operator('mesh.exportvtf',\n            text='Export VTF'\n        )\n        precautions = dumpster.column()\n        \n        if context.scene.blfoilvtf.blfoil_vtf_batch_export == True:\n            precautions.enabled = False\n        else:\n            precautions.enabled = True\n        precautions.prop(context.scene.blfoilvtf, 'blfoil_vtf_is_name_export')\n        newname_field = precautions.row()\n        if context.scene.blfoilvtf.blfoil_vtf_is_name_export == True:\n            newname_field.enabled = True\n        else:\n            newname_field.enabled = False\n        newname_field.prop(context.scene.blfoilvtf, 'blfoil_vtf_new_name')\n        dumpster.prop(context.scene.blfoilvtf, 'blfoil_vtf_export_path')\n        dumpster.prop(context.scene.blfoilvtf, 'blfoil_vtf_formats')\n        dumpster.prop(context.scene.blfoilvtf, 'blfoil_vtf_formats_alph')\n        # sima\n        # dumpster.label(text=context.space_data.image.name)\n\n#\n# Resize\n#\nclass IMAGE_EDITOR_PT_blender_foil_vtf_resize(bpy.types.Panel):\n    bl_space_type = 'IMAGE_EDITOR'\n    bl_region_type = 'UI'\n    bl_category = 'shitfuck'\n    bl_label = 'Resize'\n    # https://youtu.be/sT3joXENOb0\n    \n    def draw(self, context):\n        layout = self.layout\n        \n        dumpster = layout.column(align=False)\n        dumpster.use_property_split = True\n        dumpster.use_property_decorate = False\n\n        dumpster.prop(context.scene.blfoilvtf, 'blfoil_vtf_enable_resize')\n\n        resize_all = dumpster.column()\n\n        if bpy.context.scene.blfoilvtf.blfoil_vtf_enable_resize == True:\n            resize_all.enabled = True\n        else:\n            resize_all.enabled = False\n\n        \n        resize_all.prop(context.scene.blfoilvtf, 'blfoil_vtf_resize_method')\n        resize_all.prop(context.scene.blfoilvtf, 'blfoil_vtf_resize_filter')\n        resize_all.prop(context.scene.blfoilvtf, 'blfoil_vtf_resize_sharpen_filter')\n        resize_all.prop(context.scene.blfoilvtf, 'blfoil_vtf_resize_clamp')\n\n        resize_clamp_col = resize_all.column()\n\n        if bpy.context.scene.blfoilvtf.blfoil_vtf_resize_clamp == True:\n            resize_clamp_col.enabled = True\n        else:\n            resize_clamp_col.enabled = False\n\n        resize_clamp_col.prop(context.scene.blfoilvtf, 'blfoil_vtf_resize_clamp_maxwidth')\n        resize_clamp_col.prop(context.scene.blfoilvtf, 'blfoil_vtf_resize_clamp_maxheight')\n\n\n#\n# Mipmaps\n#\nclass IMAGE_EDITOR_PT_blender_foil_vtf_mipmaps(bpy.types.Panel):\n    bl_space_type = 'IMAGE_EDITOR'\n    bl_region_type = 'UI'\n    bl_category = 'shitfuck'\n    bl_label = 'Mipmaps'\n    # https://youtu.be/sT3joXENOb0\n    \n    def draw(self, context):\n        layout = self.layout\n        \n        dumpster = layout.column(align=False)\n        dumpster.use_property_split = True\n        dumpster.use_property_decorate = False\n\n        dumpster.prop(context.scene.blfoilvtf, 'blfoil_vtf_mipmaps_enable')\n\n        mipmaps_all = dumpster.column()\n\n        if bpy.context.scene.blfoilvtf.blfoil_vtf_mipmaps_enable == True:\n            mipmaps_all.enabled = True\n        else:\n            mipmaps_all.enabled = False\n\n        mipmaps_all.prop(context.scene.blfoilvtf, 'blfoil_vtf_mipmap_filter')\n        mipmaps_all.prop(context.scene.blfoilvtf, 'blfoil_vtf_mipmap_sharpen_filter')\n\n\n\n#\n# vtf version\n#\nclass IMAGE_EDITOR_PT_blender_foil_vtf_version(bpy.types.Panel):\n    bl_space_type = 'IMAGE_EDITOR'\n    bl_region_type = 'UI'\n    bl_category = 'shitfuck'\n    bl_label = 'Vtf Version'\n    # https://youtu.be/sT3joXENOb0\n    \n    def draw(self, context):\n        layout = self.layout\n        \n        dumpster = layout.column(align=False)\n        dumpster.use_property_split = True\n        dumpster.use_property_decorate = False\n\n        dumpster.prop(context.scene.blfoilvtf, 'blfoil_vtf_tversion')\n\n\n#\n# vtf misc\n#\nclass IMAGE_EDITOR_PT_blender_foil_vtf_misc(bpy.types.Panel):\n    bl_space_type = 'IMAGE_EDITOR'\n    bl_region_type = 'UI'\n    bl_category = 'shitfuck'\n    bl_label = 'Misc'\n    # https://youtu.be/sT3joXENOb0\n    \n    def draw(self, context):\n        layout = self.layout\n        \n        dumpster = layout.column(align=False)\n        dumpster.use_property_split = True\n        dumpster.use_property_decorate = False\n\n        dumpster.prop(context.scene.blfoilvtf, 'blfoil_vtf_compute_refl')\n        dumpster.prop(context.scene.blfoilvtf, 'blfoil_vtf_generate_thumb')\n\n\n\n#\n# vtf flags\n#\nclass IMAGE_EDITOR_PT_blender_foil_vtf_flags(bpy.types.Panel):\n    bl_space_type = 'IMAGE_EDITOR'\n    bl_region_type = 'UI'\n    bl_category = 'shitfuck'\n    bl_label = 'Flags'\n    # https://youtu.be/sT3joXENOb0\n    \n    def draw(self, context):\n        layout = self.layout\n        \n        dumpster = layout.column(align=False)\n        dumpster.use_property_split = True\n        dumpster.use_property_decorate = False\n\n        dumpster.prop(context.scene.blfoilvtf, 'blfoil_vtf_flag_POINTSAMPLE')\n        dumpster.prop(context.scene.blfoilvtf, 'blfoil_vtf_flag_TRILINEAR')\n        dumpster.prop(context.scene.blfoilvtf, 'blfoil_vtf_flag_CLAMPS')\n        dumpster.prop(context.scene.blfoilvtf, 'blfoil_vtf_flag_CLAMPT')\n        dumpster.prop(context.scene.blfoilvtf, 'blfoil_vtf_flag_ANISOTROPIC')\n        dumpster.prop(context.scene.blfoilvtf, 'blfoil_vtf_flag_HINT_DXT5')\n        dumpster.prop(context.scene.blfoilvtf, 'blfoil_vtf_flag_NORMAL')\n        dumpster.prop(context.scene.blfoilvtf, 'blfoil_vtf_flag_NOMIP')\n        dumpster.prop(context.scene.blfoilvtf, 'blfoil_vtf_flag_NOLOD')\n        dumpster.prop(context.scene.blfoilvtf, 'blfoil_vtf_flag_MINMIP')\n        dumpster.prop(context.scene.blfoilvtf, 'blfoil_vtf_flag_PROCEDURAL')\n        dumpster.prop(context.scene.blfoilvtf, 'blfoil_vtf_flag_RENDERTARGET')\n        dumpster.prop(context.scene.blfoilvtf, 'blfoil_vtf_flag_DEPTHRENDERTARGET')\n        dumpster.prop(context.scene.blfoilvtf, 'blfoil_vtf_flag_NODEBUGOVERRIDE')\n        dumpster.prop(context.scene.blfoilvtf, 'blfoil_vtf_flag_SINGLECOPY')\n        dumpster.prop(context.scene.blfoilvtf, 'blfoil_vtf_flag_NODEPTHBUFFER')\n        dumpster.prop(context.scene.blfoilvtf, 'blfoil_vtf_flag_CLAMPU')\n        dumpster.prop(context.scene.blfoilvtf, 'blfoil_vtf_flag_VERTEXTEXTURE')\n        dumpster.prop(context.scene.blfoilvtf, 'blfoil_vtf_flag_SSBUMP')\n        dumpster.prop(context.scene.blfoilvtf, 'blfoil_vtf_flag_BORDER')\n\n\n#\n# batch shit\n#\nclass IMAGE_EDITOR_PT_blender_foil_vtf_batch_e(bpy.types.Panel):\n    bl_space_type = 'IMAGE_EDITOR'\n    bl_region_type = 'UI'\n    bl_category = 'shitfuck'\n    bl_label = 'Folder Covnert'\n    # https://youtu.be/sT3joXENOb0\n    \n    def draw(self, context):\n        layout = self.layout\n        \n        dumpster = layout.column(align=False)\n        dumpster.use_property_split = True\n        dumpster.use_property_decorate = False\n\n        dumpster.prop(context.scene.blfoilvtf, 'blfoil_vtf_batch_export')\n\n        paths = dumpster.column()\n\n\n        if context.scene.blfoilvtf.blfoil_vtf_batch_export == True:\n            paths.enabled = True\n        else:\n            paths.enabled = False\n        paths.prop(context.scene.blfoilvtf, 'blfoil_vtf_batch_folder_input')\n        paths.prop(context.scene.blfoilvtf, 'blfoil_vtf_batch_folder_output')\n\n\n\n\n\n\n\n\n\n\n\n# =======================================================\n#                       Register\n# =======================================================\n\nrclasses = (\n    IMAGE_EDITOR_PT_blender_foil_dn_enum,\n    IMAGE_EDITOR_PT_blender_foil_vtf_resize,\n    IMAGE_EDITOR_PT_blender_foil_vtf_mipmaps,\n    IMAGE_EDITOR_PT_blender_foil_vtf_version,\n    IMAGE_EDITOR_PT_blender_foil_vtf_misc,\n    IMAGE_EDITOR_PT_blender_foil_vtf_flags,\n    IMAGE_EDITOR_PT_blender_foil_vtf_batch_e,\n    OBJECT_OT_vmf_export_foil,\n    blender_foil_vtf,\n\n)\n\nregister_, unregister_ = bpy.utils.register_classes_factory(rclasses)\n\n\n\n\ndef register():\n    register_()\n    bpy.types.Scene.blfoilvtf = PointerProperty(type=blender_foil_vtf)\n    \n\n\ndef unregister():\n    unregister_()\n    bpy.utils.unregister_class(blfoilvtf)\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n",
-			"file": "/E/!!Blend_Projects/scripts/wallworm4blender/blender_foil/blender_foil/vtfimge.py",
-			"file_size": 38041,
-			"file_write_time": 132920247678746609,
+			"file": "/C/Users/DrHax/AppData/Roaming/Blender Foundation/Blender/3.1/scripts/addons/blender_foil/utils/lizard_tail/lizard_tail.py",
 			"settings":
 			{
-				"buffer_size": 36822,
+				"buffer_size": 6106,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "/C/Users/DrHax/AppData/Roaming/Blender Foundation/Blender/3.1/scripts/addons/blender_foil/utils/lizard_tail/reconstructor.py",
+			"settings":
+			{
+				"buffer_size": 3815,
+				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
 		}
@@ -341,15 +359,30 @@
 	"expanded_folders":
 	[
 		"/C/Users/DrHax/AppData/Roaming/Blender Foundation/Blender/3.1/scripts/addons/blender_foil",
-		"/C/Users/DrHax/AppData/Roaming/Blender Foundation/Blender/3.1/scripts/addons/blender_foil/utils"
+		"/C/Users/DrHax/AppData/Roaming/Blender Foundation/Blender/3.1/scripts/addons/blender_foil/app",
+		"/C/Users/DrHax/AppData/Roaming/Blender Foundation/Blender/3.1/scripts/addons/blender_foil/app/src",
+		"/C/Users/DrHax/AppData/Roaming/Blender Foundation/Blender/3.1/scripts/addons/blender_foil/app/src/app",
+		"/C/Users/DrHax/AppData/Roaming/Blender Foundation/Blender/3.1/scripts/addons/blender_foil/bins",
+		"/C/Users/DrHax/AppData/Roaming/Blender Foundation/Blender/3.1/scripts/addons/blender_foil/mods",
+		"/C/Users/DrHax/AppData/Roaming/Blender Foundation/Blender/3.1/scripts/addons/blender_foil/mods/app",
+		"/C/Users/DrHax/AppData/Roaming/Blender Foundation/Blender/3.1/scripts/addons/blender_foil/utils",
+		"/C/Users/DrHax/AppData/Roaming/Blender Foundation/Blender/3.1/scripts/addons/blender_foil/utils/lizard_tail",
+		"/C/Users/DrHax/AppData/Roaming/Blender Foundation/Blender/3.1/scripts/addons/blender_foil/utils/lizard_vmf",
+		"/E/!!Blend_Projects/scripts/wallworm4blender/blender_foil"
 	],
 	"file_history":
 	[
+		"/C/Users/DrHax/AppData/Roaming/Blender Foundation/Blender/3.1/scripts/addons/blender_foil/utils/lizard_scales/lizard_scales.py",
+		"/E/!!Blend_Projects/scripts/wallworm4blender/blender_foil/dev/blpe_maker.py",
+		"/C/Users/DrHax/AppData/Roaming/Blender Foundation/Blender/3.1/scripts/addons/blender_foil/app/src/app/foil_utils.py",
+		"/C/Users/DrHax/AppData/Roaming/Blender Foundation/Blender/3.1/scripts/addons/blender_foil/ui.py",
+		"/E/!!Blend_Projects/scripts/sockets/socket_client.py",
+		"/C/Users/DrHax/AppData/Roaming/Blender Foundation/Blender/3.1/scripts/addons/blender_foil/utils/lizard_vmf/reconstructor.py",
+		"/C/Users/DrHax/AppData/Roaming/Blender Foundation/Blender/3.1/scripts/addons/blender_foil/utils/lizard_vmf/parser.py",
+		"/E/!!Blend_Projects/scripts/wallworm4blender/blender_foil/blender_foil/vtfimge.py",
 		"/C/Users/DrHax/AppData/Roaming/Blender Foundation/Blender/3.1/scripts/addons/blender_foil/subproj/blfoil_addon.sublime-project",
 		"/C/Users/DrHax/AppData/Roaming/Blender Foundation/Blender/3.1/scripts/addons/blender_foil/utils/lizard_vmf/lizardvmf.py",
-		"/C/Users/DrHax/AppData/Roaming/Blender Foundation/Blender/3.1/scripts/addons/blender_foil/utils/lizard_vmf/parser.py",
 		"/C/Users/DrHax/AppData/Roaming/Blender Foundation/Blender/3.1/scripts/addons/blender_foil_old/logic.py",
-		"/C/Users/DrHax/AppData/Roaming/Blender Foundation/Blender/3.1/scripts/addons/blender_foil/utils/lizard_vmf/reconstructor.py",
 		"/E/!!Blend_Projects/scripts/wallworm4blender/blender_foil/other/dev/lizardvmf.py",
 		"/E/!webdesign/source_tricks/source_tricks/assets/tmp/style.css",
 		"/E/!webdesign/source_tricks/source_tricks/assets/tmp/script.js",
@@ -362,7 +395,6 @@
 		"/C/Users/DrHax/AppData/Roaming/Blender Foundation/Blender/3.1/scripts/addons/blender_foil/configs/lol.json",
 		"/C/Users/DrHax/AppData/Roaming/Blender Foundation/Blender/3.1/scripts/addons/blender_foil/installer.py",
 		"/C/Users/DrHax/AppData/Roaming/Blender Foundation/Blender/3.1/scripts/addons/img_to_clp/__init__.py",
-		"/C/Users/DrHax/AppData/Roaming/Blender Foundation/Blender/3.1/scripts/addons/blender_foil/ui.py",
 		"/C/Users/DrHax/AppData/Roaming/Blender Foundation/Blender/2.93/scripts/addons/audacity_tools_for_blender-main/startup_handler.py",
 		"/C/Users/DrHax/AppData/Roaming/Blender Foundation/Blender/2.93/scripts/addons/audacity_tools_for_blender-main/pipe_utilities.py",
 		"/C/Users/DrHax/AppData/Roaming/Blender Foundation/Blender/2.93/scripts/addons/audacity_tools_for_blender-main/__init__.py",
@@ -400,7 +432,7 @@
 	],
 	"find":
 	{
-		"height": 44.0
+		"height": 31.0
 	},
 	"find_in_files":
 	{
@@ -414,6 +446,36 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"copytree",
+			".mk",
+			"mkdir",
+			"dirs",
+			"rmtree",
+			", ignore_errors=True",
+			"dirs",
+			"ignore",
+			"dir",
+			"tot",
+			"fuck",
+			"keep_src_f_exr",
+			"['blfo",
+			"sky_dim",
+			"size_",
+			"print",
+			"/",
+			"boxname",
+			"foil_sky_d",
+			"write_vmt_content",
+			"write_text_file_content",
+			"blfoil_sky",
+			"viewsettings",
+			"eval_spawnflags(",
+			"eval_spawnflags",
+			"\"",
+			"blfoil_etype_selector_list_index",
+			"blfoil_ents_dedicated_params",
+			"blents",
+			"blender_ents",
 			"BeautifulSoup(",
 			"from bs4 import BeautifulSoup",
 			"blender_foil_dn_enum",
@@ -482,6 +544,9 @@
 		"regex": false,
 		"replace_history":
 		[
+			"vmt_content",
+			"text_file_content",
+			"'",
 			"eval_spawnflags_auto",
 			"'"
 		],
@@ -494,7 +559,7 @@
 	"groups":
 	[
 		{
-			"selected": 3,
+			"selected": 0,
 			"sheets":
 			[
 				{
@@ -503,15 +568,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 6784,
+						"buffer_size": 10030,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								5011,
-								5011
+								6305,
+								6305
 							]
 						],
 						"settings":
@@ -534,6 +599,11 @@
 							},
 							"bracket_highlighter.regions":
 							[
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
 								"bh_default",
 								"bh_default_center",
 								"bh_default_open",
@@ -544,31 +614,11 @@
 								"bh_square_open",
 								"bh_square_close",
 								"bh_square_content",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_regex_content",
 								"bh_double_quote",
 								"bh_double_quote_center",
 								"bh_double_quote_open",
 								"bh_double_quote_close",
 								"bh_double_quote_content",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content",
 								"bh_angle",
 								"bh_angle_center",
 								"bh_angle_open",
@@ -579,229 +629,138 @@
 								"bh_c_define_open",
 								"bh_c_define_close",
 								"bh_c_define_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content"
-							],
-							"incomplete_sync": null,
-							"remote_loading": false,
-							"synced": false,
-							"syntax": "Packages/Python/Python.sublime-syntax",
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 1166.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 9,
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "/C/Users/DrHax/AppData/Roaming/Blender Foundation/Blender/3.1/scripts/addons/blender_foil/ui.py",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 0,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"bracket_highlighter.busy": false,
-							"bracket_highlighter.locations":
-							{
-								"close":
-								{
-								},
-								"icon":
-								{
-								},
-								"open":
-								{
-								},
-								"unmatched":
-								{
-								}
-							},
-							"bracket_highlighter.regions":
-							[
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_single_quote_content",
 								"bh_curly",
 								"bh_curly_center",
 								"bh_curly_open",
 								"bh_curly_close",
 								"bh_curly_content",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_regex_content",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_double_quote_content",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_angle_content",
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content"
-							],
-							"incomplete_sync": null,
-							"remote_loading": false,
-							"synced": false,
-							"syntax": "Packages/Python/Python.sublime-syntax",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 8,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "/C/Users/DrHax/AppData/Roaming/Blender Foundation/Blender/3.1/scripts/addons/blender_foil/mods/vmf_export/vmf_exporter.py",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 74237,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								32357,
-								32357
-							]
-						],
-						"settings":
-						{
-							"bracket_highlighter.busy": false,
-							"bracket_highlighter.locations":
-							{
-								"close":
-								{
-								},
-								"icon":
-								{
-								},
-								"open":
-								{
-								},
-								"unmatched":
-								{
-								}
-							},
-							"bracket_highlighter.regions":
-							[
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_angle_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_regex_content",
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content",
 								"bh_round",
 								"bh_round_center",
 								"bh_round_open",
 								"bh_round_close",
 								"bh_round_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content"
+							],
+							"incomplete_sync": null,
+							"remote_loading": false,
+							"synced": false,
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 367.0,
+						"translation.y": 2684.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "/C/Users/DrHax/AppData/Roaming/Blender Foundation/Blender/3.1/scripts/addons/blender_foil/mods/skyboxer/skybox_maker.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 32161,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								15815,
+								15815
+							]
+						],
+						"settings":
+						{
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+								},
+								"icon":
+								{
+								},
+								"open":
+								{
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
 								"bh_double_quote",
 								"bh_double_quote_center",
 								"bh_double_quote_open",
 								"bh_double_quote_close",
-								"bh_double_quote_content"
+								"bh_double_quote_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content"
 							],
 							"incomplete_sync": null,
 							"remote_loading": false,
@@ -811,27 +770,452 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 2178.0,
+						"translation.y": 9042.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 7,
+					"stack_index": 3,
 					"type": "text"
 				},
 				{
-					"buffer": 3,
-					"file": "/C/Users/DrHax/AppData/Roaming/Blender Foundation/Blender/3.1/scripts/addons/blender_foil/mods/vmf_export/do_export.py",
+					"buffer": 2,
+					"file": "/E/!!Blend_Projects/scripts/sockets/socket_client.py",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 15049,
+						"buffer_size": 486,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1315,
-								1315
+								302,
+								302
+							]
+						],
+						"settings":
+						{
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+								},
+								"icon":
+								{
+								},
+								"open":
+								{
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content"
+							],
+							"incomplete_sync": null,
+							"remote_loading": false,
+							"synced": false,
+							"syntax": "Packages/Python/Python.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 10,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "/C/Users/DrHax/AppData/Roaming/Blender Foundation/Blender/3.1/scripts/addons/blender_foil/mods/vmf_export/vmf_exporter.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 81970,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2368,
+								2368
+							]
+						],
+						"settings":
+						{
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+								},
+								"icon":
+								{
+								},
+								"open":
+								{
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content"
+							],
+							"incomplete_sync": null,
+							"remote_loading": false,
+							"synced": false,
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 990.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "/C/Users/DrHax/AppData/Roaming/Blender Foundation/Blender/3.1/scripts/addons/blender_foil/mods/vmf_export/do_export.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 13476,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								6883,
+								6883
+							]
+						],
+						"settings":
+						{
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+								},
+								"icon":
+								{
+								},
+								"open":
+								{
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content"
+							],
+							"incomplete_sync": null,
+							"remote_loading": false,
+							"synced": false,
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 2012.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "/C/Users/DrHax/AppData/Roaming/Blender Foundation/Blender/3.1/scripts/addons/blender_foil/mods/vmf_export/brush_ents.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 7529,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								782,
+								782
+							]
+						],
+						"settings":
+						{
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+								},
+								"icon":
+								{
+								},
+								"open":
+								{
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content"
+							],
+							"incomplete_sync": null,
+							"remote_loading": false,
+							"synced": false,
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 264.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "/C/Users/DrHax/AppData/Roaming/Blender Foundation/Blender/3.1/scripts/addons/blender_foil/mods/vmf_export/entity_maker.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 4239,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1091,
+								1091
 							]
 						],
 						"settings":
@@ -843,8 +1227,8 @@
 								{
 									"1":
 									[
-										1314,
-										1315
+										1090,
+										1091
 									]
 								},
 								"icon":
@@ -859,8 +1243,8 @@
 								{
 									"1":
 									[
-										1313,
-										1314
+										1062,
+										1063
 									]
 								},
 								"unmatched":
@@ -869,56 +1253,56 @@
 							},
 							"bracket_highlighter.regions":
 							[
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_angle_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_single_quote_content",
 								"bh_regex",
 								"bh_regex_center",
 								"bh_regex_open",
 								"bh_regex_close",
 								"bh_regex_content",
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
 								"bh_default",
 								"bh_default_center",
 								"bh_default_open",
 								"bh_default_close",
 								"bh_default_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
 								"bh_double_quote",
 								"bh_double_quote_center",
 								"bh_double_quote_open",
 								"bh_double_quote_close",
 								"bh_double_quote_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
 								"bh_tag",
 								"bh_tag_center",
 								"bh_tag_open",
@@ -936,233 +1320,24 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 5,
 					"type": "text"
 				},
 				{
-					"buffer": 4,
-					"file": "/C/Users/DrHax/AppData/Roaming/Blender Foundation/Blender/3.1/scripts/addons/blender_foil/mods/vmf_export/brush_ents.py",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 6562,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								5276,
-								5276
-							]
-						],
-						"settings":
-						{
-							"bracket_highlighter.busy": false,
-							"bracket_highlighter.locations":
-							{
-								"close":
-								{
-								},
-								"icon":
-								{
-								},
-								"open":
-								{
-								},
-								"unmatched":
-								{
-								}
-							},
-							"bracket_highlighter.regions":
-							[
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_regex_content",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_double_quote_content",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_angle_content",
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content"
-							],
-							"incomplete_sync": null,
-							"syntax": "Packages/Python/Python.sublime-syntax",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 2456.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "/C/Users/DrHax/AppData/Roaming/Blender Foundation/Blender/3.1/scripts/addons/blender_foil/mods/vmf_export/entity_maker.py",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 4112,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								3988,
-								3988
-							]
-						],
-						"settings":
-						{
-							"bracket_highlighter.busy": false,
-							"bracket_highlighter.locations":
-							{
-								"close":
-								{
-								},
-								"icon":
-								{
-								},
-								"open":
-								{
-								},
-								"unmatched":
-								{
-								}
-							},
-							"bracket_highlighter.regions":
-							[
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_regex_content",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_double_quote_content",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_angle_content",
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content"
-							],
-							"incomplete_sync": null,
-							"syntax": "Packages/Python/Python.sublime-syntax",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 601.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 6,
-					"type": "text"
-				},
-				{
-					"buffer": 6,
+					"buffer": 7,
 					"file": "/C/Users/DrHax/AppData/Roaming/Blender Foundation/Blender/3.1/scripts/addons/blender_foil/utils/lizard_vmf/lizardvmf.py",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 56615,
+						"buffer_size": 56868,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								29677,
-								29677
+								11918,
+								10782
 							]
 						],
 						"settings":
@@ -1190,21 +1365,6 @@
 								"bh_default_open",
 								"bh_default_close",
 								"bh_default_content",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
 								"bh_regex",
 								"bh_regex_center",
 								"bh_regex_open",
@@ -1215,31 +1375,46 @@
 								"bh_double_quote_open",
 								"bh_double_quote_close",
 								"bh_double_quote_content",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
 								"bh_angle",
 								"bh_angle_center",
 								"bh_angle_open",
 								"bh_angle_close",
 								"bh_angle_content",
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
 								"bh_unmatched",
 								"bh_unmatched_center",
 								"bh_unmatched_open",
 								"bh_unmatched_close",
 								"bh_unmatched_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
 								"bh_round",
 								"bh_round_center",
 								"bh_round_open",
 								"bh_round_close",
-								"bh_round_content"
+								"bh_round_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content"
 							],
 							"incomplete_sync": null,
 							"remote_loading": false,
@@ -1248,14 +1423,14 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 220.0,
+						"translation.y": 1914.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 5,
+					"stack_index": 11,
 					"type": "text"
 				},
 				{
-					"buffer": 7,
+					"buffer": 8,
 					"file": "/C/Users/DrHax/AppData/Roaming/Blender Foundation/Blender/3.1/scripts/addons/blender_foil/installer.py",
 					"semi_transient": false,
 					"settings":
@@ -1267,8 +1442,8 @@
 						"selection":
 						[
 							[
-								554,
-								554
+								1062,
+								953
 							]
 						],
 						"settings":
@@ -1296,21 +1471,6 @@
 								"bh_default_open",
 								"bh_default_close",
 								"bh_default_content",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
 								"bh_regex",
 								"bh_regex_center",
 								"bh_regex_open",
@@ -1321,31 +1481,46 @@
 								"bh_double_quote_open",
 								"bh_double_quote_close",
 								"bh_double_quote_content",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
 								"bh_angle",
 								"bh_angle_center",
 								"bh_angle_open",
 								"bh_angle_close",
 								"bh_angle_content",
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
 								"bh_unmatched",
 								"bh_unmatched_center",
 								"bh_unmatched_open",
 								"bh_unmatched_close",
 								"bh_unmatched_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
 								"bh_round",
 								"bh_round_center",
 								"bh_round_open",
 								"bh_round_close",
-								"bh_round_content"
+								"bh_round_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content"
 							],
 							"incomplete_sync": null,
 							"remote_loading": false,
@@ -1355,134 +1530,27 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 194.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 4,
-					"type": "text"
-				},
-				{
-					"buffer": 8,
-					"file": "/C/Users/DrHax/AppData/Roaming/Blender Foundation/Blender/3.1/scripts/addons/blender_foil/utils/shared.py",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 2671,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1877,
-								1877
-							]
-						],
-						"settings":
-						{
-							"bracket_highlighter.busy": false,
-							"bracket_highlighter.locations":
-							{
-								"close":
-								{
-								},
-								"icon":
-								{
-								},
-								"open":
-								{
-								},
-								"unmatched":
-								{
-								}
-							},
-							"bracket_highlighter.regions":
-							[
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_angle_content",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_regex_content",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_double_quote_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content"
-							],
-							"incomplete_sync": null,
-							"remote_loading": false,
-							"synced": false,
-							"syntax": "Packages/Python/Python.sublime-syntax",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 63.0,
-						"translation.y": 66.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 3,
+					"stack_index": 9,
 					"type": "text"
 				},
 				{
 					"buffer": 9,
-					"file": "/E/!!Blend_Projects/scripts/wallworm4blender/blender_foil/blender_foil/vtfimge.py",
+					"file": "/C/Users/DrHax/AppData/Roaming/Blender Foundation/Blender/3.1/scripts/addons/blender_foil/utils/shared.py",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 36822,
+						"buffer_size": 12860,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								5070,
-								5070
+								9588,
+								9588
 							]
 						],
 						"settings":
@@ -1510,21 +1578,6 @@
 								"bh_default_open",
 								"bh_default_close",
 								"bh_default_content",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
 								"bh_regex",
 								"bh_regex_center",
 								"bh_regex_open",
@@ -1535,11 +1588,118 @@
 								"bh_double_quote_open",
 								"bh_double_quote_close",
 								"bh_double_quote_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
 								"bh_tag",
 								"bh_tag_center",
 								"bh_tag_open",
 								"bh_tag_close",
 								"bh_tag_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content"
+							],
+							"incomplete_sync": null,
+							"remote_loading": false,
+							"synced": false,
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 5280.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 8,
+					"type": "text"
+				},
+				{
+					"buffer": 10,
+					"file": "/C/Users/DrHax/AppData/Roaming/Blender Foundation/Blender/3.1/scripts/addons/blender_foil/utils/lizard_tail/lizard_tail.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 6106,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2597,
+								2597
+							]
+						],
+						"settings":
+						{
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+								},
+								"icon":
+								{
+								},
+								"open":
+								{
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
 								"bh_angle",
 								"bh_angle_center",
 								"bh_angle_open",
@@ -1550,29 +1710,149 @@
 								"bh_c_define_open",
 								"bh_c_define_close",
 								"bh_c_define_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
 								"bh_unmatched",
 								"bh_unmatched_center",
 								"bh_unmatched_open",
 								"bh_unmatched_close",
 								"bh_unmatched_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content"
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content"
 							],
 							"incomplete_sync": null,
 							"remote_loading": false,
 							"synced": false,
 							"syntax": "Packages/Python/Python.sublime-syntax",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 66.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 7,
+					"type": "text"
+				},
+				{
+					"buffer": 11,
+					"file": "/C/Users/DrHax/AppData/Roaming/Blender Foundation/Blender/3.1/scripts/addons/blender_foil/utils/lizard_tail/reconstructor.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3815,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1732,
+								1732
+							]
+						],
+						"settings":
+						{
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+								},
+								"icon":
+								{
+								},
+								"open":
+								{
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content"
+							],
+							"incomplete_sync": null,
+							"remote_loading": false,
+							"synced": false,
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
+					"stack_index": 6,
 					"type": "text"
 				}
 			]
@@ -1580,7 +1860,7 @@
 	],
 	"incremental_find":
 	{
-		"height": 37.0
+		"height": 31.0
 	},
 	"input":
 	{
@@ -1621,7 +1901,7 @@
 	"project": "blfoil_addon.sublime-project",
 	"replace":
 	{
-		"height": 79.0
+		"height": 58.0
 	},
 	"save_all_on_build": true,
 	"select_file":

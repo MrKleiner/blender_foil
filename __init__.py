@@ -74,7 +74,10 @@ from .installer import blfoil_check_pypackages
 from time import sleep
 from .utils.shared import app_command_send
 from .mods.app.modmaker.app_modmaker import *
+from .blfoil_appconnect import *
+from pathlib import Path
 
+"""
 def appconnect_actions(cs):
     match cs['action']:
         case 'modmaker_get_preinstalled_engines':
@@ -84,6 +87,7 @@ def appconnect_actions(cs):
                 'payload': fetch_existing_engines()
             })
             return ''
+
         case 'modmaker_get_engine_info':
             app_command_send({
                 'app_module': 'modmaker',
@@ -91,9 +95,11 @@ def appconnect_actions(cs):
                 'payload': modmaker_load_engine_info(cs['engine_exe'])
             })
             return ''
+
         case 'modmaker_save_engine_info':
             modmaker_save_engine_info(cs)
             return ''
+
         case 'modmaker_load_saved_engines':
             app_command_send({
                 'app_module': 'modmaker',
@@ -101,6 +107,7 @@ def appconnect_actions(cs):
                 'payload': modmaker_load_saved_engines()
             })
             return ''
+
         case 'modmaker_check_engine_bins':
             app_command_send({
                 'app_module': 'modmaker',
@@ -108,14 +115,18 @@ def appconnect_actions(cs):
                 'payload': modmaker_check_engine_bins(cs['engine_exe'])
             })
             return ''
+
         case 'modmaker_delete_engine':
             modmaker_kill_engine(cs['engine'])
             return ''
+
         case 'modmaker_do_spawn_mod':
             modmaker_spawn_new_client(cs['payload'])
             return ''
+
         case _:
             return 'wtf is even this'
+"""
 
 
 # The faster we start listening for shit - the better
@@ -124,8 +135,12 @@ def blender_foil_guiappconnect():
     port = 50000  # Reserve a port for your service every new transfer wants a new port or you must wait.
     s = socket.socket()  # Create a socket object
     host = ''  # Get local machine name
-    s.bind(('localhost', port))  # Bind to the port
+    # s.bind(('localhost', port))  # Bind to the port
+    s.bind(('localhost', 0))  # Bind to the port
+    print(s.getsockname()[1])
     s.listen(5)  # Now wait for client connection.
+    with open((Path(__file__).parent / 'bdsmbind.sex'), 'w') as txtfile:
+        funcdef = txtfile.write(str(s.getsockname()[1]))
 
     print('Server listening....')
 
