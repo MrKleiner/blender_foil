@@ -24,6 +24,7 @@ function modmaker_module_manager(pl)
 }
 
 
+// important todo: return Promise, promise.resolve() for post-load actions
 function newmodmaker_loader()
 {
 	$('#modules_cont').load('tools/mod_maker.html', function() {
@@ -404,3 +405,40 @@ function modmaker_spawn_mod(ismapbase)
 
 }
 
+
+
+
+function modmaker_set_active_engine(engine)
+{
+	apc_send({
+		'action': 'modmaker_get_engine_info',
+		'engine_exe': engine.getAttribute('engine_path')
+	});
+	window.modmaker_active_engine = {
+		'elem': engine,
+		'engpath': engine.getAttribute('engine_path')
+	}
+	$('#modmaker_engine_selector .simple_list_v1_pool_item').removeClass('simple_list_v1_pool_item_const_active');
+	$(engine).addClass('simple_list_v1_pool_item_const_active');
+}
+
+
+// delete new engine
+function modmaker_newengine_del_config()
+{
+	// todo: kinda unreliable
+	apc_send({
+		'action': 'modmaker_delete_engine',
+		'engine': window.modmaker_active_engine['elem'].getAttribute('engine_path')
+	});
+	window.modmaker_active_engine['elem'].remove();
+	$('#modmaker_client_selector, #modmaker_engine_details').css('display', 'none');
+}
+
+
+function modmaker_set_active_client(cl)
+{
+	// $(set_active_client).addClass('simple_list_v1_pool_item_const_active');
+	cl.toggleAttribute('selected_client');
+	cl.classList.toggle('simple_list_v1_pool_item_const_active');
+}

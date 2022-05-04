@@ -55,13 +55,61 @@ function shell_end_c(err,code,signal)
 	console.log('finished');
 }
 
-// reload app (f5 implementation)
+
+// ===================================================
+//             reload app (f5 implementation)
+// ===================================================
+
+// todo: this doubles the keydown event binds
+document.addEventListener('keydown', kvt => {
+    console.log('keypress');
+    app_reload_refresh(kvt)
+});
 function app_reload_refresh(evee)
 {
 	if (  evee.ctrlKey  &&  evee.keyCode == 82  ){
 		location.reload()
 	}
 }
+
+
+/*
+===================================================
+                    svg append
+===================================================
+*/
+
+// load specified svg as an element so that it's possible to re-colour it
+function svgappender()
+{
+	document.querySelectorAll('appendsvg').forEach(function(userItem) {
+		// .replaceWith()
+		fetch(userItem.getAttribute('svgsrc'), {
+			'headers': {
+				'accept': '*/*',
+				'cache-control': 'no-cache',
+				'pragma': 'no-cache'
+			}
+		})
+		.then(function(response) {
+			console.log(response.status);
+			response.text().then(function(data) {
+				$(userItem).replaceWith(data)
+			});
+		});
+		// userItem.parentNode.replaceChild(newItem, listItem);
+	});
+}
+
+
+// actual mouse pos before any events
+document.addEventListener('mousemove', event => {
+	window.actualmpos = {
+		'x': event.clientX,
+		'y': event.clientY,
+		'tgt': event.target
+	}
+});
 
 
 
@@ -244,7 +292,6 @@ function apc_send(sendpayload)
 	});
 
 }
-
 
 
 

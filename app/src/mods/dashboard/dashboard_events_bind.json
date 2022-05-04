@@ -1,0 +1,11 @@
+{
+	"click": [
+		{
+			"selector": "[dashboard_action=\"load_skyboxer\"]",
+			"function": "skyboxer_module_loader",
+			"pass_event": false,
+			"pass_element": false,
+			"pass_params": ""
+		}
+	]
+}

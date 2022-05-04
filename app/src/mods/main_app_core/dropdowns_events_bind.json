@@ -1,0 +1,19 @@
+{
+	"click": [
+		{
+			"selector": ".lizard_dropdown_entries [dropdown_set]",
+			"function": "lizdropdown_set_active",
+			"pass_event": false,
+			"pass_element": true,
+			"pass_params": ""
+		},
+		{
+			"selector": "[haslizdropdown]",
+			"function": "dropdown_showhide",
+			"pass_event": false,
+			"pass_element": true,
+			"pass_params": "",
+			"else": "dropdown_showhide"
+		}
+	]
+}
