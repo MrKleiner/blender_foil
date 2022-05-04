@@ -46,18 +46,8 @@ function dashboard_module_manager(pl)
 
 function dashboard_app_loader()
 {
-	// important todo: make this a pre-defined function
-	$('#modules_cont').load('tools/main_dashboard.html', function() {
-		console.log('loaded dashboard');
-		lizcboxes_init();
-		init_liztooltips();
-		svgappender();
-		init_simple_ui_lists();
-		// apc_send({
-		// 	'action': 'modmaker_load_saved_engines'
-		// });
-		window['current_app_module'] = 'main_dashboard';
-		// window.suggested_maps = 
+	base_module_loader('main_dashboard.html')
+	.then(function(resolved) {
 		fetch('assets/sizetest.txt', {
 			'headers': {
 				'accept': '*/*',
@@ -66,11 +56,10 @@ function dashboard_app_loader()
 			}
 		})
 		.then(function(response) {
-			console.log(response.status);
+			console.log(response.status, 'loaded test example UIList content placeholder for dashbaord maps UIList');
 			response.text().then(function(data) {
 				window.suggested_maps = JSON.parse(data)
 			});
 		});
-
 	});
 }

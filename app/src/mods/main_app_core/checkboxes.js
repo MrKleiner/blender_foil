@@ -24,7 +24,9 @@ Element.prototype.lizchecked=function(status) {
 // init all cboxes
 function lizcboxes_init()
 {
+	console.groupCollapsed('Checkboxes Init');
 	document.querySelectorAll('[lizcbox_init]').forEach(function(userItem) {
+
 		console.log(userItem);
 
 		if (userItem.getAttribute('lizcbox_init') == 'set'){
@@ -53,6 +55,7 @@ function lizcboxes_init()
 		userItem.removeAttribute('lizcbox_init');
 		userItem.removeAttribute('lizcbox_hashitbox');
 	});
+	console.groupEnd('Checkboxes Init');
 }
 
 // todo: safety measures ?

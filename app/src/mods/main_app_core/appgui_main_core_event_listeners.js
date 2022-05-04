@@ -44,7 +44,7 @@ document.addEventListener('click', tr_event => {
 	// ==========================================
 
 	if (event.target.closest('#modmaker_fetch_preinstalled')) { apc_send({'action': 'modmaker_get_preinstalled_engines'}) }
-	if (event.target.closest('#modmaker_engine_selector .simple_list_v1_pool_item')) { load_engine_info(event.target.closest('#modmaker_engine_selector .simple_list_v1_pool_item')) }
+	if (event.target.closest('#modmaker_engine_selector .simple_list_v1_pool_item')) { modmaker_set_active_engine(event.target.closest('#modmaker_engine_selector .simple_list_v1_pool_item')) }
 	if (event.target.closest('#new_engine_save_config')) { modmaker_save_engine_details() }
 	if (event.target.closest('#modmaker_add_new_engine')) { modmaker_new_engine() }
 	if (event.target.closest('#new_engine_del_config')) { modmaker_newengine_del_config() }

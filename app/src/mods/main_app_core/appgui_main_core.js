@@ -62,7 +62,7 @@ function shell_end_c(err,code,signal)
 
 // todo: this doubles the keydown event binds
 document.addEventListener('keydown', kvt => {
-    console.log('keypress');
+    // console.log('keypress');
     app_reload_refresh(kvt)
 });
 function app_reload_refresh(evee)
@@ -82,6 +82,8 @@ function app_reload_refresh(evee)
 // load specified svg as an element so that it's possible to re-colour it
 function svgappender()
 {
+	// console.group('Svg Append');
+	// var ctable = []
 	document.querySelectorAll('appendsvg').forEach(function(userItem) {
 		// .replaceWith()
 		fetch(userItem.getAttribute('svgsrc'), {
@@ -92,13 +94,15 @@ function svgappender()
 			}
 		})
 		.then(function(response) {
-			console.log(response.status);
+			// console.log(response.status);
 			response.text().then(function(data) {
-				$(userItem).replaceWith(data)
+				$(userItem).replaceWith(data);
 			});
 		});
 		// userItem.parentNode.replaceChild(newItem, listItem);
 	});
+	console.log('Svg Appender No Errors');
+	
 }
 
 
@@ -145,16 +149,20 @@ $(document).ready(function(){
 	// The server listens to a socket for a client to make a connection request.
 	// Think of a socket as an end point.
 	server.listen(port, function() {
-	    console.log('Server listening for connection requests on socket localhost:', port);
+	    console.info('Initialized Server listening for connection requests on socket localhost:', port);
+
 	});
 
 	// When a client requests a connection with the server, the server creates a new
 	// socket dedicated to that client.
 	// A new session has been created, everything inside is in the context of that session
 	server.on('connection', function(socket) {
-		console.log(socket)
-		window['cst_cache' + socket.remotePort.toString()] = ''
-	    console.log('A new connection has been established.');
+		console.group('Server Connection');
+			console.log('Got connection to the following socket:', socket.remotePort.toString());
+			// create cache storage
+			window['cst_cache' + socket.remotePort.toString()] = '';
+		    console.log('Cache assigned to', window['cst_cache' + socket.remotePort.toString()]);
+	    
 
 	    // Now that a TCP connection has been established, the server can send data to
 	    // the client by writing to its socket.
@@ -166,7 +174,7 @@ $(document).ready(function(){
 	    // todo: define storage as let ?
 	    
 	    socket.on('data', function(chunk) {
-	        console.log('Data received from client:', chunk.toString());
+	        console.log('Data received from client:', {'len': chunk.length, 'data': chunk.toString()});
 	        // window.cstorage += chunk.toString()
 	        // cst += chunk.toString()
 	        window['cst_cache' + socket.remotePort.toString()] += chunk.toString()
@@ -185,13 +193,17 @@ $(document).ready(function(){
 
 	    	// have better ideas ?
 	    	// comment on github
-	    	console.log('Total:', window['cst_cache' + socket.remotePort.toString()])
-
-	    	console.log('Closing connection with the client');
+	    	console.log('Connection closed. Collected data:', {
+		    		'len': window['cst_cache' + socket.remotePort.toString()].length,
+		    		'data': window['cst_cache' + socket.remotePort.toString()]
+	    		}
+	    	);
 
 	    	// Data has to always be a json
 	    	input_d = JSON.parse(window['cst_cache' + socket.remotePort.toString()])
 
+	    	// connection is closed now
+	    	console.groupEnd('Server Connection');
 
 	    	//
 	    	// Decide what to do
@@ -214,12 +226,14 @@ $(document).ready(function(){
 			}
 
 			// flush the storage
+			// todo: do this before switch ?
 	        delete window['cst_cache' + socket.remotePort.toString()]
+	        
 	    });
 
 	    // Don't forget to catch error, for your own sake.
 	    socket.on('error', function(err) {
-	        console.log('App server Error:', err);
+	        console.error('JS Server Error:', err);
 	    });
 
 	});
@@ -256,6 +270,15 @@ $(document).ready(function(){
 // this sends commands to Blender's python
 function apc_send(sendpayload)
 {
+	// a payload has to always have a payload, even if it's empty
+	
+	if (sendpayload.hasOwnProperty('payload')){
+		var topayload = sendpayload;
+	}else{
+		var topayload = sendpayload;
+		topayload['payload'] = '';
+	}
+
 	// it's impossible to have pre-defined ports
 	// when blender server starts - a file with dynamically assigned port is generated
 	// read its content and then send data to that port
@@ -276,7 +299,7 @@ function apc_send(sendpayload)
 			client.connect(parseInt(window.gui_pot_connect), '127.0.0.1', function() {
 				console.log('Connected');
 				// client.write('Hello, server! Love, Client.');
-				client.write(JSON.stringify(sendpayload));
+				client.write(JSON.stringify(topayload));
 			});
 
 			client.on('data', function(data) {
@@ -292,6 +315,62 @@ function apc_send(sendpayload)
 	});
 
 }
+
+
+
+
+
+/*
+============================================================
+------------------------------------------------------------
+                Module loader
+------------------------------------------------------------
+============================================================
+*/
+
+function base_module_loader(mdl)
+{
+	var realname = mdl;
+	if (!mdl.endsWith('.html')){
+		var realname = mdl + '.html';
+	}
+
+	return new Promise(function(resolve, reject){
+
+		const loadmod = $('#modules_cont').load('tools/' + mdl, function() {
+			// checkboxes
+			lizcboxes_init();
+			// tooltips
+			init_liztooltips();
+			// append svg to html tree
+			svgappender();
+			// UILists init
+			init_simple_ui_lists();
+
+			window['current_app_module'] = mdl.replace('.html', '');
+			console.log('Loaded Module', window['current_app_module'], 'from', 'tools/' + realname);
+			resolve(true);
+		});
+
+		// if (loadmod) {
+		// 	resolve(true);
+		// } else {
+		// 	reject('Error while loading module');
+		// }
+	});
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

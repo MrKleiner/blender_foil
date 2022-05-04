@@ -12,6 +12,13 @@
 		"python_function": "fetch_existing_engines"
 	},
 	{
+		"add_imports": [
+			"from .utils.shared import app_command_send",
+			"from .mods.app.modmaker.app_modmaker import *",
+			"from .blfoil_appconnect import *"
+		]
+	},
+	{
 		"incoming_case": "modmaker_get_engine_info",
 		"js_module": "modmaker",
 		"js_module_action": "set_engine_info",

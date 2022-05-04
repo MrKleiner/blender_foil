@@ -25,17 +25,14 @@ function modmaker_module_manager(pl)
 
 
 // important todo: return Promise, promise.resolve() for post-load actions
-function newmodmaker_loader()
+function newmodmaker_loader(mdl)
 {
-	$('#modules_cont').load('tools/mod_maker.html', function() {
-		console.log('loaded');
-		lizcboxes_init();
-		init_liztooltips();
-		apc_send({
-			'action': 'modmaker_load_saved_engines'
+	base_module_loader('mod_maker.html')
+		.then(function(resolved) {
+			apc_send({
+				'action': 'modmaker_load_saved_engines'
+			});
 		});
-		window['current_app_module'] = 'modmaker';
-	});
 }
 
 
@@ -280,9 +277,11 @@ async function modmaker_save_engine_details()
 	if (fs.existsSync($('#modmaker_engine_details_exepath input').val())) {
 		await apc_send({
 			'action': 'modmaker_save_engine_info',
-			'engine_exe': document.querySelector('#modmaker_engine_details_exepath input').value,
-			'engine_name': document.querySelector('#modmaker_engine_details_name input').value,
-			'icon': document.querySelector('#modmaker_engine_details_icon input').value
+			'payload': {
+				'engine_exe': document.querySelector('#modmaker_engine_details_exepath input').value,
+				'engine_name': document.querySelector('#modmaker_engine_details_name input').value,
+				'icon': document.querySelector('#modmaker_engine_details_icon input').value
+			}
 		})
 
 		// todo: Why reload the whole thing ????
@@ -407,12 +406,15 @@ function modmaker_spawn_mod(ismapbase)
 
 
 
-
+// and also load engine info
 function modmaker_set_active_engine(engine)
 {
 	apc_send({
 		'action': 'modmaker_get_engine_info',
-		'engine_exe': engine.getAttribute('engine_path')
+		'payload': {
+			'engine_exe': engine.getAttribute('engine_path')
+		}
+		
 	});
 	window.modmaker_active_engine = {
 		'elem': engine,
@@ -429,7 +431,10 @@ function modmaker_newengine_del_config()
 	// todo: kinda unreliable
 	apc_send({
 		'action': 'modmaker_delete_engine',
-		'engine': window.modmaker_active_engine['elem'].getAttribute('engine_path')
+		'payload': {
+			'engine': window.modmaker_active_engine['elem'].getAttribute('engine_path')
+		}
+		
 	});
 	window.modmaker_active_engine['elem'].remove();
 	$('#modmaker_client_selector, #modmaker_engine_details').css('display', 'none');

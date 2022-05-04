@@ -8,6 +8,7 @@
 
 function init_simple_ui_lists()
 {
+	console.groupCollapsed('Init UILists');
 	document.querySelectorAll('uilist').forEach(function(userItem) {
 		// todo: safety fallbacks ?
 		var listcallback = userItem.getAttribute('windowlist');
@@ -51,9 +52,14 @@ function init_simple_ui_lists()
 		// todo: get rid of jquery
 		$(ulist).css('margin-left', margin_left.toString() + 'px');
 		$(ulist).css('margin-top', (margin_top + 5).toString() + 'px');
-
+		console.log({
+			'top': margin_top,
+			'left': margin_left,
+			'ref': listcallback
+		});
 
 	});
+	console.groupEnd('Init UILists');
 }
 
 
@@ -62,10 +68,10 @@ function init_simple_ui_lists()
 // expects a referenced window object to be an array or strings
 // important todo: rewrite. This is an extremely edgy way of displaying matches...
 // store matched results in the same window object and then cycle through them.
-function simple_ui_list_buildsuggest(tgtsug, keyvt)
+function simple_ui_list_buildsuggest(keyvt, tgtsugest)
 {
 
-	var tgtsug = tgtsug.parentElement;
+	var tgtsug = tgtsugest.parentElement;
 
 	var prohibited_codes = [38, 40, 17, 18, 16, 20, 9, 91, 37, 39, 93, 92, 13, 27];
 
@@ -98,7 +104,7 @@ function simple_ui_list_buildsuggest(tgtsug, keyvt)
 }
 
 
-function uilist_scroller(ulist, keyact)
+function uilist_scroller(keyact, ulist)
 {
 	var ulist = ulist.parentElement.querySelector('.simple_uilist_suggest');
 
@@ -190,13 +196,13 @@ function uilist_scroller(ulist, keyact)
 
 // true = show
 // false = hide
-function uilist_showhide(thelist, ustate)
+function uilist_showhide(thelisted, ustate)
 {
-
-	var thelist = thelist.parentElement.querySelector('.simple_uilist_suggest');
+	var thelist = thelisted.parentElement.querySelector('.simple_uilist_suggest');
 
 	if (ustate == true){
-		simple_ui_list_buildsuggest(thelist.parentElement, false)
+		// console.log('LISTFFS', thelisted.parentElement)
+		simple_ui_list_buildsuggest(false, thelisted.parentElement)
 		thelist.style.display = null;
 	}
 

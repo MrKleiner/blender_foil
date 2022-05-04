@@ -26,6 +26,8 @@ with open('funcdef.py', 'r') as txtfile:
 
 result_cases = ''
 
+result_imports = ''
+
 for ind, ln in enumerate(funcdef):
     if '#' in ln:
         funcdef[ind] = ''
@@ -33,6 +35,13 @@ for ind, ln in enumerate(funcdef):
 loadjson = json.loads(''.join(funcdef))
 
 for connect_entry in loadjson:
+
+    if connect_entry.get('add_imports') != None:
+        for addimport in connect_entry['add_imports']:
+            result_imports += addimport + '\n'
+        continue
+
+
     priority = {
         'js_module': 'echo_status' if connect_entry.get('js_module') == None else connect_entry.get('js_module'),
         'js_module_action': 'echo_status' if connect_entry.get('js_module_action') == None else connect_entry.get('js_module_action'),
@@ -41,7 +50,7 @@ for connect_entry in loadjson:
 
 
 with open((Path(__file__).parent.parent / 'blfoil_appconnect.py'), 'w') as txtfile:
-    funcdef = txtfile.write(globl.replace('CASESREPLACE', result_cases))
+    funcdef = txtfile.write(result_imports + '\n' + globl.replace('CASESREPLACE', result_cases))
 
 
 

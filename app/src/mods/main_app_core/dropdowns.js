@@ -139,11 +139,11 @@ function lizdropdown_set_active(toitem)
 {
 	var dropdownroot = toitem.closest('.lizard_menu');
 	// set title
-	// dropdownroot.querySelector('.lizmenu_title').innerText = dropdown_set.getAttribute('dropdown_set');
-	// console.log(dropdown_set.querySelector('.lizard_menu_entry_text').textContent);
-	dropdownroot.querySelector('.lizmenu_title').innerText = dropdown_set.querySelector('.lizard_menu_entry_text').textContent;
+	// dropdownroot.querySelector('.lizmenu_title').innerText = toitem.getAttribute('dropdown_set');
+	// console.log(toitem.querySelector('.lizard_menu_entry_text').textContent);
+	dropdownroot.querySelector('.lizmenu_title').innerText = toitem.querySelector('.lizard_menu_entry_text').textContent;
 	dropdownroot.querySelector('.lizard_dropdown_entries').style.visibility = 'hidden';
-	dropdownroot.setAttribute('liz_active_item', dropdown_set.getAttribute('dropdown_set'))
+	dropdownroot.setAttribute('liz_active_item', toitem.getAttribute('dropdown_set'))
 }
 
 

@@ -48,7 +48,7 @@
 		},
 		{
 			"selector": "#modmaker_engine_selector .simple_list_v1_pool_item",
-			"function": "load_engine_info",
+			"function": "modmaker_set_active_engine",
 			"pass_event": false,
 			"pass_element": true,
 			"pass_params": ""

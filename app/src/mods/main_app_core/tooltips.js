@@ -10,12 +10,14 @@
 
 function init_liztooltips()
 {
+	console.groupCollapsed('Init Tooltips');
 	document.querySelectorAll('liztooltip').forEach(function(userItem) {
 		console.log(userItem);
 		userItem.parentElement.setAttribute('liztooltip', userItem.innerHTML);
 		userItem.parentElement.setAttribute('liztooltip_prms', userItem.getAttribute('liztooltip_prms'));
 		userItem.remove();
 	});
+	console.groupEnd('Init Tooltips');
 }
 
 //

@@ -1,0 +1,813 @@
+
+
+
+/*
+ -----------------------
+   Engine Selector
+ -----------------------
+*/
+
+#newmod_maker_app
+{
+	display: flex;
+	flex-direction: column;
+	flex-grow: 1;
+	width: 100%;
+	justify-content: center;
+	/*padding-left: 100px;*/
+	padding-left: 90px;
+	overflow: hidden;
+	margin-bottom: 100px;
+	padding-bottom: 10px;
+}
+
+
+
+
+
+
+
+
+
+/*
+ -----------------------
+   Simple pool styles
+ -----------------------
+*/
+
+.simple_list_v1_pool
+{
+	display: flex;
+	flex-direction: column;
+	margin-top: 10px;
+	/*padding: 5px 10px 5px 5px;*/
+	padding: 5px;
+	border: 1px solid rgb(60, 60, 60);
+	background: rgba(0, 0, 0, 0.1);
+	min-height: 50px;
+}
+
+.simple_list_v1_pool *
+{
+	user-select: none;
+}
+
+.simple_list_v1_pool_item
+{
+	display: -webkit-box;
+	/*flex-direction: row;*/
+	height: 30px;
+	background: rgba(0, 0, 0, 0.1);
+	padding: 1px;
+	overflow: hidden;
+}
+
+.simple_list_v1_pool_item:hover
+{
+	background: rgba(255, 255, 255, 0.1);
+
+}
+
+.simple_list_v1_pool_item:active
+{
+	/*background: rgb(34, 95, 157);*/
+}
+
+.simple_list_v1_pool_item_const_active
+{
+	background: rgb(34, 95, 157) !important;
+}
+
+.simple_list_v1_pool_item_icon
+{
+	display: flex;
+	height: 100%;
+	width: 30px;
+	min-width: 30px;
+	align-items: center;
+	justify-content: center;
+}
+
+.simple_list_v1_pool_item_icon img
+{
+	width: 80%;
+	height: 80%;
+	object-fit: contain;
+	object-position: center;
+}
+
+.simple_list_v1_pool_item_name, .simple_list_v1_pool_item_descr
+{
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	height: 100%;
+	font-family: 'Open_Sans';
+	font-weight: 100;
+	font-size: 15px;
+	color: white;
+	user-select: none;
+}
+
+.simple_list_v1_pool_item_name
+{
+	font-weight: 200;
+	white-space: nowrap;
+	min-width: 270px;
+	padding-left: 2px;
+}
+
+.simple_list_v1_pool_item_descr
+{
+	color: rgba(255, 255, 255, 0.9);
+	padding: 0px 0px 0px 10px;
+	overflow: hidden;
+	/*white-space: nowrap;*/
+}
+
+.simple_list_v1_pool_item_descr_icon
+{
+	height: 100%;
+	width: 40px;
+	object-fit: contain;
+	object-position: center;
+	margin-left: 10px;
+}
+
+.simple_list_v1_pool_add_newitem
+{
+	margin-top: 10px;
+	display: flex;
+	flex-direction: row;
+	/*height: 20px;*/
+}
+
+.simple_list_v1_pool_add_newitem *
+{
+	user-select: none;
+}
+
+.simple_list_v1_pool_add_newitem:hover
+{
+	background: rgba(255, 255, 255, 0.1);
+
+}
+
+.simple_list_v1_pool_add_newitem:active
+{
+	background: rgb(34, 157, 94);
+}
+
+
+.simple_list_v1_pool_add_newitem_icon
+{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	/*width: 20px;*/
+}
+
+.simple_list_v1_pool_add_newitem_icon img
+{
+	width: 80%;
+	height: 100%;
+	object-fit: contain;
+	object-position: center;
+}
+
+
+.simple_list_v1_pool_add_newitem_text
+{
+	font-family: 'Roboto';
+	font-weight: 200;
+	color: white;
+	font-size: 15px;
+	padding: 4px 0px 4px 5px;
+	user-select: none;
+}
+
+/*
+ -----------------------
+   Simple pool styles
+ -----------------------
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#modmaker_engine_selector
+{
+	display: flex;
+	flex-direction: column;
+	padding-right: 20px;
+}
+
+#modmaker_engine_selector_title
+{
+	font-family: 'Roboto';
+	font-weight: 400;
+	color: white;
+	font-size: 40px;
+	user-select: none;
+}
+
+#new_engine_save_config, #new_engine_del_config
+{
+	display: flex;
+	color: white;
+	font-family: 'Open_Sans';
+	font-weight: 200;
+	font-size: 15px;
+	width: 100px;
+	margin-top: 15px;
+	padding: 10px 5px 10px 5px;
+	align-items: center;
+	justify-content: center;
+	border-radius: 7px;
+	margin-top: 20px;
+}
+
+#new_engine_del_config
+{
+	align-self: flex-end;
+	color: #F46363;
+}
+
+
+
+
+
+/*-------------------------------------------------------*/
+
+#modmaker_engine_selector_pool-
+{
+	display: flex;
+	flex-direction: column;
+	margin-top: 10px;
+	/*padding: 5px 10px 5px 5px;*/
+	padding: 5px;
+	border: 1px solid rgb(60, 60, 60);
+	background: rgba(0, 0, 0, 0.1);
+}
+
+#modmaker_engine_selector_pool- *
+{
+	user-select: none;
+}
+
+.modmaker_engine_item-
+{
+	display: -webkit-box;
+	/*flex-direction: row;*/
+	height: 30px;
+	background: rgba(0, 0, 0, 0.1);
+	padding: 1px;
+	overflow: hidden;
+}
+
+.modmaker_engine_item-:hover
+{
+	background: rgba(255, 255, 255, 0.1);
+
+}
+
+.modmaker_engine_item-:active
+{
+	background: rgb(34, 95, 157);
+}
+
+.modmaker_engine_item_icon-
+{
+	display: flex;
+	height: 100%;
+	width: 30px;
+	min-width: 30px;
+	align-items: center;
+	justify-content: center;
+}
+
+.modmaker_engine_item_icon- img
+{
+	width: 80%;
+	height: 80%;
+	object-fit: contain;
+	object-position: center;
+}
+
+
+
+
+.modmaker_engine_item_name-, .modmaker_engine_item_path-
+{
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	height: 100%;
+	font-family: 'Open_Sans';
+	font-weight: 100;
+	font-size: 15px;
+	color: white;
+	user-select: none;
+}
+
+.modmaker_engine_item_name-
+{
+	font-weight: 200;
+	white-space: nowrap;
+	min-width: 250px;
+	padding-left: 2px;
+}
+
+.modmaker_engine_item_path-
+{
+	color: rgba(255, 255, 255, 0.9);
+	padding: 0px 0px 0px 10px;
+	overflow: hidden;
+	/*white-space: nowrap;*/
+}
+
+
+
+
+#modmaker_add_engine-
+{
+	margin-top: 10px;
+	display: flex;
+	flex-direction: row;
+	/*height: 20px;*/
+}
+
+#modmaker_add_engine-
+{
+	user-select: none;
+}
+
+#modmaker_add_engine-:hover
+{
+	background: rgba(255, 255, 255, 0.1);
+
+}
+
+#modmaker_add_engine-:active
+{
+	background: rgb(34, 157, 94);
+}
+
+
+
+#modmaker_add_engine_icon-
+{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	/*width: 20px;*/
+}
+
+#modmaker_add_engine_icon- img
+{
+	width: 80%;
+	height: 100%;
+	object-fit: contain;
+	object-position: center;
+}
+
+
+#modmaker_add_engine_text-
+{
+	font-family: 'Roboto';
+	font-weight: 200;
+	color: white;
+	font-size: 15px;
+	padding: 4px 0px 4px 5px;
+	user-select: none;
+}
+/*-------------------------------------------------------*/
+
+
+
+
+
+
+/*
+ -----------------------
+     Engine Details
+ -----------------------
+*/
+
+#modmaker_engine_details
+{
+	display: flex;
+	flex-direction: column;
+	margin-top: 20px;
+    padding-right: 20px;
+    /*margin-left: 20px;*/
+}
+
+
+#modmaker_engine_details_title
+{
+	font-family: 'Roboto';
+	font-weight: 400;
+	color: white;
+	font-size: 27px;
+	user-select: none;
+}
+
+
+#modmaker_engine_details_items
+{
+	display: flex;
+	flex-direction: column;
+	margin-top: 10px;
+	padding: 5px;
+	border: 1px solid rgb(60, 60, 60);
+	background: rgba(0, 0, 0, 0.1);
+}
+
+
+.modmaker_engine_details_item
+{
+	display: flex;
+	flex-direction: row;
+	height: 30px;
+}
+
+.modmaker_engine_details_item_status
+{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 30px;
+}
+
+.modmaker_engine_details_item_status img
+{
+	width: 80%;
+	height: 80%;
+	object-fit: contain;
+	object-position: center;
+	user-select: none;
+}
+
+
+.modmaker_engine_details_item_list
+{
+	display: flex;
+	flex-direction: column;
+	/*height: 30px;*/
+}
+
+
+.modmaker_engine_details_item:not(:first-child)
+{
+	margin-top: 6px;
+}
+
+
+.modmaker_engine_details_item_title
+{
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	height: 100%;
+	font-family: 'Open_Sans';
+	font-weight: 200;
+	font-size: 15px;
+	color: white;
+	user-select: none;
+	min-width: 100px;
+}
+
+.modmaker_engine_details_item_input
+{
+	all: unset;
+	display: flex;
+	flex-grow: 1;
+	color: white;
+	justify-content: center;
+	font-family: 'Open_Sans';
+	font-weight: 100;
+	font-size: 15px;
+	user-select: none;
+	margin-left: 10px;
+	min-width: 50px;
+
+	padding: 2px 2px 2px 5px;
+	background: rgba(0, 0, 0, 0.3);
+	border-radius: 5px;
+}
+
+
+
+/*
+ -----------------------
+  Engine Details Lists
+ -----------------------
+*/
+
+
+.modmaker_engine_details_list
+{
+	display: flex;
+	flex-direction: column;
+	margin-top: 5px;
+}
+
+.modmaker_engine_details_list_title
+{
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	height: 30px;
+	font-family: 'Open_Sans';
+	font-weight: 200;
+	font-size: 15px;
+	color: white;
+	user-select: none;
+	/*min-width: 100px;*/
+}
+
+.modmaker_engine_details_list_items
+{
+	display: flex;
+	flex-direction: column;
+	margin-left: 40px;
+}
+
+
+.modmaker_engine_details_list_item
+{
+	display: flex;
+	flex-direction: row;
+}
+
+.modmaker_engine_details_list_item_text
+{
+	min-width: 150px;
+	font-family: 'blender';
+	font-weight: 100;
+	color: rgb(220, 220, 220);
+	font-size: 14px;
+	padding: 1px;
+}
+
+.modmaker_engine_details_list_item_status
+{
+/*	height: 100%;
+	width: 20px;*/
+	display: flex;
+}
+
+.modmaker_engine_details_list_item_status img
+{
+	width: 17px;
+	height: auto;
+	object-fit: contain;
+	object-position: center;
+	user-select: none;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+ -----------------------
+  	Client Selector
+ -----------------------
+*/
+
+
+#modmaker_client_selector
+{
+	margin-top: 20px;
+	padding-right: 20px
+}
+
+
+#modmaker_client_selector_title
+{
+	font-family: 'Roboto';
+	font-weight: 400;
+	color: white;
+	font-size: 40px;
+	user-select: none;
+}
+
+#modmaker_client_selector_details
+{
+	display: flex;
+	flex-direction: column;
+}
+
+
+
+
+#modmaker_client_selector_details
+{
+	display: flex;
+	flex-direction: column;
+}
+
+#modmaker_client_selector_installed
+{
+	display: flex;
+	flex-direction: column;
+	margin-top: 20px;
+}
+
+#modmaker_client_selector_installed_title
+{
+	font-family: 'Roboto';
+	font-weight: 400;
+	color: white;
+	font-size: 27px;
+	user-select: none;
+}
+
+
+#modmaker_new_client_game_name, #modmaker_new_client_cl_name
+{
+	display: flex;
+	flex-direction: row;
+	height: 30px;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+#modmaker_new_client_game_name input, #modmaker_new_client_cl_name input
+{
+	all: unset;
+	display: flex;
+	flex-grow: 1;
+	color: white;
+	justify-content: center;
+	font-family: 'Open_Sans';
+	font-weight: 100;
+	font-size: 15px;
+	user-select: none;
+	margin-left: 10px;
+	min-width: 50px;
+
+	padding: 2px 2px 2px 5px;
+	background: rgba(0, 0, 0, 0.3);
+	border-radius: 5px;
+}
+
+#modmaker_new_client_game_name_text, #modmaker_new_client_cl_name_text
+{
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	height: 100%;
+	font-family: 'Open_Sans';
+	font-weight: 200;
+	font-size: 15px;
+	color: white;
+	user-select: none;
+	min-width: 100px;
+}
+
+.modmaker_mknew_client_btn
+{
+	display: flex;
+	color: white;
+	font-family: 'Open_Sans';
+	font-weight: 200;
+	font-size: 15px;
+	width: 300px;
+	margin: 5px 20px 5px 0px;
+	padding: 10px 5px 10px 5px;
+	align-items: center;
+	justify-content: center;
+	border-radius: 7px;
+}
+
+.modmaker_client_selector_installed_item_isbase
+{
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+}
+
+.modmaker_client_selector_installed_item_isbase_text
+{
+	color: white;
+}
+
+.modmaker_client_selector_installed_item_cbox
+{
+	display: flex;
+	width: 20px;
+	height: 20px;
+}
+
+.modmaker_mknew_client_btn_columns
+{
+	display: flex;
+	flex-direction: row;
+	margin-top: 20px;
+}
+
+
+.modmaker_mknew_client_btn_column
+{
+	display: flex;
+	flex-direction: column;
+	/*align-items: center;*/
+}
+
+.modmaker_mknew_client_btn_cbox_cont
+{
+	display: flex;
+	flex-direction: row;
+	flex-grow: 0;
+	margin-top: 10px;
+	background: rgba(0, 0, 0, 0.1);
+	padding: 5px;
+	border-radius: 5px;
+	width: fit-content;
+}
+
+#modmaker_spawn_client_dll_dropdown, #modmaker_spawn_client_mpsp2013dlls
+{
+	display: flex;
+	width: 80%;
+	margin-top: 15px;
+	height: 25px;
+	background: rgba(0, 0, 0, 0.25);
+	border-radius: 5px;
+	outline: 1px solid rgba(255, 255, 255, 0.1);
+
+	font-family: 'Open_Sans';
+	font-weight: 100;
+}
+
+#modmaker_spawn_client_dll_dropdown .lizard_dropdown_bottom_title, #modmaker_spawn_client_mpsp2013dlls .lizard_dropdown_bottom_title
+{
+	color: rgba(255, 255, 255, 0.5)
+}
+
+#modmaker_spawn_client_dll_dropdown .lizmenu_title, #modmaker_spawn_client_mpsp2013dlls .lizmenu_title
+{
+	color: white;
+	font-family: 'Open_Sans';
+	font-weight: 200;
+	font-size: 15px;
+	align-self: flex-start;
+	/*justify-content: center;*/
+	user-select: none;
+	padding-left: 10px;
+}
+
+
+#modmaker_spawn_client_dll_dropdown:hover, #modmaker_spawn_client_mpsp2013dlls:hover
+{
+	background: rgba(0, 0, 0, 0.1);
+}
+
+.modmaker_mknew_client_btn_cbox_text
+{
+	display: flex;
+	color: white;
+	font-family: 'Open_Sans';
+	font-weight: 200;
+	font-size: 15px;
+	align-items: center;
+	justify-content: center;
+	user-select: none;
+}
+
+
+.modmaker_mknew_client_btn_cbox
+{
+	width: 20px;
+	height: 20px;
+	margin-left: 5px;
+}
+
+
+
+
+
+
+
+

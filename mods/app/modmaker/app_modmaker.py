@@ -1,8 +1,8 @@
 
 
+# important: function has to always accept a payload
 
-
-def fetch_existing_engines():
+def fetch_existing_engines(pl):
 	""" this should be only done once """
 	import numpy as np
 	import os
@@ -128,7 +128,7 @@ def fetch_existing_engines():
 
 
 # MDMA
-def modmaker_load_engine_info(engi_exe):
+def modmaker_load_engine_info(pl):
 	# import numpy as np
 	import os
 	import math
@@ -140,6 +140,8 @@ def modmaker_load_engine_info(engi_exe):
 	import subprocess
 	import json
 	from ....utils.lizard_tail.lizard_tail import lizard_tail
+
+	engi_exe = pl['engine_exe']
 
 	engine_dir = Path(engi_exe).parent
 
@@ -363,7 +365,7 @@ def modmaker_check_engine_bins(engi_exe):
 
 
 
-def modmaker_save_engine_info(eng_info):
+def modmaker_save_engine_info(pl):
 	# import numpy as np
 	import os
 	# import math
@@ -387,7 +389,7 @@ def modmaker_save_engine_info(eng_info):
 		jsonfile.write(json.dumps(jfile, indent=4, sort_keys=False))
 
 
-def modmaker_load_saved_engines():
+def modmaker_load_saved_engines(pl):
 	# import numpy as np
 	import os
 	# import math
@@ -414,9 +416,11 @@ def modmaker_load_saved_engines():
 
 
 # delete engine from config
-def modmaker_kill_engine(eng):
+def modmaker_kill_engine(pl):
 	from pathlib import Path
 	import json
+
+	eng = pl['engine']
 
 	config_loc = Path(__file__).absolute().parent.parent.parent.parent / 'configs' / 'app' / 'engines' / 'engines_info.json'
 	with open(str(config_loc), 'r') as jsonfile:
@@ -469,6 +473,7 @@ def modmaker_spawn_new_client(einf):
 	from ....utils.lizard_tail.lizard_tail import lizard_tail
 
 	addon_rootdir = Path(__file__).absolute().parent.parent.parent.parent
+
 
 	# if mapbase then check if mapbase is present and download it if necessary
 
