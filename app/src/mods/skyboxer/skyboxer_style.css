@@ -39,7 +39,7 @@
 {
 	width: 200px;
 	height: 200px;
-	background: url('assets/sq_tmp.png');
+	background: url('../../assets/sq_tmp.png');
 	background-size: contain;
 	object-fit: contain;
 	object-position: bottom;

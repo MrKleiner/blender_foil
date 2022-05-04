@@ -157,7 +157,7 @@ $(document).ready(function(){
 	// socket dedicated to that client.
 	// A new session has been created, everything inside is in the context of that session
 	server.on('connection', function(socket) {
-		console.group('Server Connection');
+		console.groupCollapsed('Server Connection');
 			console.log('Got connection to the following socket:', socket.remotePort.toString());
 			// create cache storage
 			window['cst_cache' + socket.remotePort.toString()] = '';
@@ -328,35 +328,44 @@ function apc_send(sendpayload)
 ============================================================
 */
 
-function base_module_loader(mdl)
+function base_module_loader(mdl, force=true)
 {
+
+	// todo: better logic
 	var realname = mdl;
 	if (!mdl.endsWith('.html')){
 		var realname = mdl + '.html';
 	}
 
+
+
 	return new Promise(function(resolve, reject){
 
-		const loadmod = $('#modules_cont').load('tools/' + mdl, function() {
-			// checkboxes
-			lizcboxes_init();
-			// tooltips
-			init_liztooltips();
-			// append svg to html tree
-			svgappender();
-			// UILists init
-			init_simple_ui_lists();
-
-			window['current_app_module'] = mdl.replace('.html', '');
-			console.log('Loaded Module', window['current_app_module'], 'from', 'tools/' + realname);
+		// do not load module if it's already active
+		if (force != true && realname.replace('.html', '') == window['current_app_module']){
 			resolve(true);
-		});
+		}else{
+			const loadmod = $('#modules_cont').load('tools/' + realname, function() {
+				// checkboxes
+				lizcboxes_init();
+				// tooltips
+				init_liztooltips();
+				// append svg to html tree
+				svgappender();
+				// UILists init
+				init_simple_ui_lists();
 
-		// if (loadmod) {
-		// 	resolve(true);
-		// } else {
-		// 	reject('Error while loading module');
-		// }
+				window['current_app_module'] = realname.replace('.html', '');
+				console.log('Loaded Module', window['current_app_module'], 'from', 'tools/' + realname);
+				resolve(true);
+			});
+
+			// if (loadmod) {
+			// 	resolve(true);
+			// } else {
+			// 	reject('Error while loading module');
+			// }
+		}
 	});
 }
 

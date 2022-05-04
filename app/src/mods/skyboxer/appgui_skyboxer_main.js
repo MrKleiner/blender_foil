@@ -37,20 +37,19 @@ var	side_def_dict = {
 // double loading causes issues which ould be easily avoided by NOT performing double loads
 function skyboxer_module_loader()
 {
-	if (window['current_app_module'] != 'skyboxer')
-	{
-		// load this module and then populate skybox sides, if any
-		$('#modules_cont').load('tools/skyboxer.html', function() {
-			for (var skside in side_def_dict){
-				if (window['skyboxer_savedside_' + side_def_dict[skside]] != undefined){
-					$('#sky_' + side_def_dict[skside] + ' .skybox_square').attr('src', window['skyboxer_savedside_' + side_def_dict[skside]]);
-				}
+	base_module_loader('skyboxer', false)
+	.then(function(resolved) {
+		// load previously loaded sky sides and name, if any
+		console.log('skyboxer load existing sides');
+		if (window['skyboxer_sky_name'] != undefined){
+			$('#sky_name').text(window['skyboxer_sky_name']);
+		}
+		for (var skside in side_def_dict){
+			if (window['skyboxer_savedside_' + side_def_dict[skside]] != undefined){
+				$('#sky_' + side_def_dict[skside] + ' .skybox_square').attr('src', window['skyboxer_savedside_' + side_def_dict[skside]]);
 			}
-		});
-		window['current_app_module'] = 'skyboxer';
-	}else{
-		console.log('skyboxer module is loaded initially')
-	}
+		}
+	});
 }
 
 
@@ -68,7 +67,7 @@ function skyboxer_sides_filler(side_img, side_d)
 {
 	fetch('data:image/png;base64,' + side_img)
 	.then(function(response) {
-		console.log(response.status);
+		console.log('skybox side b64 to img conversion status (has to be 200)', response.status);
 		response.blob().then(function(data) {
 			// pgload(data, pgx, response.status)
 
@@ -99,6 +98,12 @@ function skyboxer_status_updater(wside, elem, status)
 
 function skyboxer_scene_reset()
 {
+	console.log('reset skyboxer scene');
+	// painful do see it gone, but this has to be done
+	delete window['skyboxer_sky_name'];
+	for (var skside in side_def_dict){
+		delete window['skyboxer_savedside_' + side_def_dict[skside]];
+	}
 	$('.icon_indicator_circle').css('background', 'red');
 	$('.skybox_side_container .skybox_square').attr('src', 'assets/cross_square.png');
 }
@@ -112,5 +117,6 @@ function skyboxer_update_wstatus(stat)
 function skybox_set_sky_name(skname)
 {
 	$('#sky_name').text(skname['skyname']);
+	window['skyboxer_sky_name'] = skname['skyname'];
 }
 

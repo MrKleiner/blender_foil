@@ -447,3 +447,6 @@ function modmaker_set_active_client(cl)
 	cl.toggleAttribute('selected_client');
 	cl.classList.toggle('simple_list_v1_pool_item_const_active');
 }
+
+
+
