@@ -482,6 +482,11 @@ function main_app_init()
 					'icon': 'assets/gmod_icon.ico'
 				},
 				{
+					'name': `BINK Rubbish`,
+					'action': 'load_bink_videomaker',
+					'icon': 'assets/bink_logo_tr_empty.png'
+				},
+				{
 					'name': `Punchcard Generator`,
 					'action': 'load_punchcard_generator',
 					'icon': 'assets/punchcard_icon.svg'

@@ -63,7 +63,7 @@ function init_simple_ui_lists()
 }
 
 
-// dont append to html tree. Keep as a reference in memory
+// important todo: dont append to html tree. Keep as a reference in memory
 // takes container containing text input and the list container
 // expects a referenced window object to be an array or strings
 // important todo: rewrite. This is an extremely edgy way of displaying matches...
@@ -72,15 +72,18 @@ function simple_ui_list_buildsuggest(keyvt, tgtsugest)
 {
 
 	var tgtsug = tgtsugest.parentElement;
-
 	var prohibited_codes = [38, 40, 17, 18, 16, 20, 9, 91, 37, 39, 93, 92, 13, 27];
 
 	if (prohibited_codes.includes(keyvt.keyCode)){
 		return
 	}
 
+
 	var txt_inp = tgtsug.querySelector('input.simple_uilist_text_input');
 	var ulist = tgtsug.querySelector('div.simple_uilist_suggest');
+	// unhide thesuggestion list on every allowed keypress
+	// so that it's easier to change shit after pressing enter
+	ulist.style.display = null;
 	// todo: slow ???
 	var wincont = window[ulist.getAttribute('uilist_suggestfrom')];
 	var querytext = txt_inp.value;
@@ -196,10 +199,10 @@ function uilist_scroller(keyact, ulist)
 
 // true = show
 // false = hide
+// takes suggest as an input
 function uilist_showhide(thelisted, ustate)
 {
 	var thelist = thelisted.parentElement.querySelector('.simple_uilist_suggest');
-
 	if (ustate == true){
 		// console.log('LISTFFS', thelisted.parentElement)
 		simple_ui_list_buildsuggest(false, thelisted.parentElement)

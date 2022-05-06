@@ -236,6 +236,12 @@ blfoil_check_pypackages()
 
 # smart exporter: Soundscape Volume: Create soundscape trigger and soundscape entity from soundscape model
 
+# subprocess.Popen([r'C:\custom\blender_def_otput\bik\ffs.cmd'])
+# cd "C:\custom\blender_def_otput\bik"
+# radvideo64.exe" bink ... /v100 /d90 /m3.0 /o /l0 /p16 /#
+
+
+
 # mapbase 
 # https://www.moddb.com/mods/mapbase/downloads
 
