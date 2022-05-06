@@ -6,6 +6,13 @@
 			"pass_event": false,
 			"pass_element": false,
 			"pass_params": ""
+		},
+		{
+			"selector": ".main_dashboard_util[dboardload]",
+			"function": "dashboard_tool_loader",
+			"pass_event": false,
+			"pass_element": true,
+			"pass_params": ""
 		}
 	]
 }

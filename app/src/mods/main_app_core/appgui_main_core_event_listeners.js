@@ -6,6 +6,16 @@ document.addEventListener('click', tr_event => {
 	// ==========================================
 
 	if (event.target.closest('[dashboard_action="load_skyboxer"]')) { skyboxer_module_loader() }
+	if (event.target.closest('.main_dashboard_util[dboardload]')) { dashboard_tool_loader(event.target.closest('.main_dashboard_util[dboardload]')) }
+
+
+
+
+	// ==========================================
+	// 	game_config_gameinfo gameinfo
+	// ==========================================
+
+	if (event.target.closest('#gminfo_appid_dropdown [dropdown_set]')) { set_steam_appid_from_dropdown(event.target.closest('#gminfo_appid_dropdown [dropdown_set]')) }
 
 
 

@@ -19,7 +19,7 @@ function create_lizdropdown(slct, itemsd)
 	var gwidth = document.querySelector(slct).clientWidth;
 
 	var menu_plate = $(`
-		<div class="lizard_menu">
+		<div class="lizard_menu lizard_menu_dropdown">
 			<div class="lizmenu_title"><span style="color: #BC4141">None</span></div>
 			<div class="lizard_dropdown_arrow_icon">
 				<img src="assets/arrow_down.svg">
@@ -70,7 +70,6 @@ function create_lizdropdown(slct, itemsd)
 	`);
 
 
-
 	// append menu to target
 	domenu.append(menu_plate)
 
@@ -83,6 +82,14 @@ function create_lizdropdown(slct, itemsd)
 	// select menu items
 	var newmenu_items = domenu.find('.lizard_dropdown_entries');
 
+
+	// set default, if any
+	// todo: this is pretty retarded
+	if (itemsd['default'] != undefined){
+		if (newmenu[0].querySelector('[dropdown_set="' + itemsd['default'] + '"]') != null){
+			lizdropdown_set_active(newmenu[0].querySelector('[dropdown_set="' + itemsd['default'] + '"]'))
+		}
+	}
 
 	//
 	// set menu margins
@@ -147,9 +154,10 @@ function lizdropdown_set_active(toitem)
 }
 
 
-
+// important todo: wtf
 function dropdown_showhide(anydrop)
 {
+
 	if (anydrop != null) {
 		// should toggle
 		/*
@@ -161,9 +169,22 @@ function dropdown_showhide(anydrop)
 		}
 		dropdown_open.querySelector('.lizard_dropdown_entries').style.opacity = 1;
 		*/
+
 		anydrop.querySelector('.lizard_dropdown_entries').classList.toggle('lizdropdown_entries_shown');
 		anydrop.classList.toggle('lizdropdown_active');
 		// dropdown_open.querySelector('.lizard_menu').classList.toggle('lizdropdown_active');
+
+		document.querySelectorAll('[haslizdropdown]').forEach(function(userItem) {
+			if (userItem != anydrop){
+				userItem.querySelectorAll('.lizard_dropdown_entries, .lizard_menu, [haslizdropdown]').forEach(function(sel) {
+					sel.classList.remove('lizdropdown_entries_shown');
+					sel.classList.remove('lizdropdown_active');
+				});
+				userItem.classList.remove('lizdropdown_entries_shown');
+				userItem.classList.remove('lizdropdown_active');
+			}
+		});
+
 	} else {
     	// todo: jquery is actually slow as fuck
     	$('.lizard_dropdown_entries, .lizard_menu, [haslizdropdown]')

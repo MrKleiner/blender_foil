@@ -1,0 +1,192 @@
+
+
+
+#game_config_gameinfo_app
+{
+	display: flex;
+	flex-direction: row;
+	width: 100%;
+}
+
+
+#gameinfo_ctrl
+{
+	width: 80%;
+	display: flex;
+	background: rgba(0, 0, 0, 0.05);
+	border: 1px solid rgba(255, 255, 255, 0.35);
+	flex-direction: column;
+	padding-right: 15px;
+	margin-left: 20px;
+}
+
+
+.gameinfo_prmrow
+{
+	display: flex;
+	/*width: 100%;*/
+	flex-direction: row;
+	margin: 5px 0px 5px 15px;
+	/*padding-left: 15px;*/
+	color: white;
+	font-family: 'Roboto';
+	align-items: center;
+}
+
+
+.gameinfo_prmrow_textfield input
+{
+	display: flex;
+	flex-grow: 1;
+	all: unset;
+	background: rgba(0, 0, 0, 0.45);
+	color: white;
+	font-family: 'Roboto';
+	font-weight: 200;
+	height: 24px;
+	width: 93%;
+	border-radius: 4px;
+	padding: 2px 0px 2px 10px;
+}
+.gameinfo_prmrow_textfield_short input
+{
+	display: flex;
+	flex-grow: 1;
+	all: unset;
+	background: rgba(0, 0, 0, 0.45);
+	color: white;
+	font-family: 'Roboto';
+	font-weight: 200;
+	height: 24px;
+	width: 90px;
+	border-radius: 4px;
+	padding: 2px 0px 2px 10px;
+}
+
+.gaminfo_prmrow_input_wrapper
+{
+	display: flex;
+	flex-grow: 1;
+}
+
+.gameinfo_prmrow_textfield_short .gaminfo_prmrow_input_wrapper
+{
+	flex-grow: 0;
+}
+
+#gameinfo_mod_minititle
+{
+	color: #D7D7D7;
+	font-size: 18px;
+	font-weight: 200;
+	user-select: none;
+}
+
+#gameinfo_mod_modfolderpath
+{
+	margin-bottom: 15px;
+	font-size: 15px;
+	font-weight: 100;
+	color: #A1A1A1;
+	user-select: none;
+}
+
+.gameinfo_text_input_field_label
+{
+	display: flex;
+	align-items: center;
+	margin-right: 15px;
+	width: 100px;
+	user-select: none;
+}
+
+
+#gameinfo_icon_preview
+{
+	display: flex;
+	flex-direction: row;
+	align-items: flex-end;
+	margin-bottom: 20px;
+	user-select: none;
+}
+
+#gameinfo_icon_preview img
+{
+	user-select: none;
+	align-self: flex-end;
+}
+
+#gameinfo_icon_preview div
+{
+	height: 100%;
+	display: flex;
+	margin-left: 10px;
+}
+
+#gameinfo_icon_preview_big
+{
+	width: 100px;
+	height: 100px;
+}
+
+#gameinfo_icon_preview_desktop
+{
+	width: 45px;
+	height: 45px;
+}
+
+#gameinfo_icon_preview_steam
+{
+	width: 20px;
+	height: 20px;
+}
+
+
+.gameinfo_prmrow_cbox_mark
+{
+	width: 17px;
+	height: 17px;
+	margin-left: 5px;
+}
+
+.gameinfo_prmrow_cbox
+{
+	display: flex;
+    flex-direction: row;
+    flex-grow: 0;
+    margin-top: 5px;
+    background: rgba(0, 0, 0, 0.1);
+    padding: 6px;
+    border-radius: 5px;
+    /*width: fit-content;*/
+    user-select: none;
+}
+
+.gameinfo_prmrow_cbox_title
+{
+	font-family: 'Roboto';
+	font-weight: 200;
+}
+
+
+#gminfo_appid_dropdown, #gminfo_gametype_dropdown
+{
+	display: flex;
+	width: 250px;
+	margin-left: 10px;
+	height: 25px;
+	
+}
+
+
+
+
+
+
+
+
+
+
+
+
+

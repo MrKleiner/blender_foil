@@ -24,6 +24,7 @@ function init_liztooltips()
 // 0: pos: top/left/right/bottom
 // 1: toparent 1/0
 // 2: padding
+// 3: delay
 //
 
 function lizshowtooltip(tl, evt) {

@@ -4,7 +4,7 @@
 /* fonts */
 @import url('mods/main_app_core/fonts_link.css');
 
-/* app */
+/* app core */
 @import url('mods/main_app_core/base_style.css');
 
 /* menus */
@@ -24,6 +24,9 @@
 
 /* Dashboard */
 @import url('mods/dashboard/dashboard_style.css');
+
+/* Gameinfo */
+@import url('mods/game_config_gameinfo/gameinfo_style.css');
 
 
 

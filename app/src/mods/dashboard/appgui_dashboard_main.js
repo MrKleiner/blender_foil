@@ -63,3 +63,45 @@ function dashboard_app_loader()
 		});
 	});
 }
+
+// takes either an element or a string
+function dashboard_tool_loader(tool='none')
+{
+	// downside of auto-system: tool.getAttribute('dboardload') 
+	// :(
+	if (tool == undefined || tool == null){return}
+	// if (tool.nodeType != 1 && !(tool instanceof String)){return}
+	var sw = 'nil';
+	if (tool.nodeType == 1){
+		var sw = tool.getAttribute('dboardload');
+	}
+
+	switch (sw) {
+		case 'skyboxer':
+			skyboxer_module_loader()
+			break;
+		case 'gameinfo':
+			gameinfoman_app_loader()
+			break;
+		default:
+			console.log('Dashboard tried loading unknown module');
+			break;
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

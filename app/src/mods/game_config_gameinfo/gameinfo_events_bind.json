@@ -1,0 +1,11 @@
+{
+	"click": [
+		{
+			"selector": "#gminfo_appid_dropdown [dropdown_set]",
+			"function": "set_steam_appid_from_dropdown",
+			"pass_event": false,
+			"pass_element": true,
+			"pass_params": ""
+		}
+	]
+}

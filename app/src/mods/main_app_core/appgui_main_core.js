@@ -243,7 +243,8 @@ $(document).ready(function(){
 
 	// TESTING
 	// newmodmaker_loader()
-	dashboard_app_loader()
+	// dashboard_app_loader()
+	gameinfoman_app_loader()
 	
 });
 
@@ -337,15 +338,14 @@ function base_module_loader(mdl, force=true)
 		var realname = mdl + '.html';
 	}
 
-
-
 	return new Promise(function(resolve, reject){
 
 		// do not load module if it's already active
 		if (force != true && realname.replace('.html', '') == window['current_app_module']){
 			resolve(true);
 		}else{
-			const loadmod = $('#modules_cont').load('tools/' + realname, function() {
+			// $('#modules_cont').empty();
+			$('#modules_cont').load('tools/' + realname, function() {
 				// checkboxes
 				lizcboxes_init();
 				// tooltips
