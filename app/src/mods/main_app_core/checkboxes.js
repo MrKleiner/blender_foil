@@ -2,7 +2,8 @@ Element.prototype.lizchecked=function(status) {
     // if(value===undefined) value=true;
     // if(this.hasAttribute(attribute)) this.removeAttribute(attribute);
     // else this.addAttribute(attribute,value);
-    if (status == undefined)
+    if (!this.hasAttribute('lizcbox')){ return null }
+    if (status == undefined || status == null)
     {
 	    if (this.getAttribute('lizcbox') == 'set'){
 	    	return true
@@ -12,12 +13,35 @@ Element.prototype.lizchecked=function(status) {
 	}else{
 		if (status == true){
 			this.setAttribute('lizcbox', 'set');
+			// return true
 		}
 		if (status == false){
 			this.setAttribute('lizcbox', 'unset');
+			// return false
 		}
 	}
 }
+
+// todo: this looks weird
+class lizcboxes_shortcuts
+{
+	constructor() {
+		// this.height = height;
+		// this.width = width;
+	}
+	// returns all cboxes on a page
+	get pool()
+	{
+		var pooled = {}
+		document.querySelectorAll('[lizcbox]').forEach(function(userItem) {
+			// pooled.push(userItem);
+			pooled[userItem.parentElement.getAttribute('lizcbox_id')] = userItem.lizchecked()
+		});
+		return pooled
+	}
+}
+
+window.lizcboxes = new lizcboxes_shortcuts()
 
 
 
@@ -73,3 +97,14 @@ function lizcboxes_switch(tgtbox, state)
 	
 }
 
+
+// takes lizcbox id and status as an input
+// if no stat specified - checkbox state returned
+function lizcbox_stat(sel, stat=null)
+{
+	var ss = document.querySelector('[lizcbox_id="' + sel + '"]');
+	if (ss != null){
+		return ss.querySelector('[lizcbox]').lizchecked()
+	}
+	
+}
