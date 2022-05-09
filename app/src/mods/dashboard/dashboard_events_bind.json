@@ -13,6 +13,38 @@
 			"pass_event": false,
 			"pass_element": true,
 			"pass_params": ""
+		},
+		{
+			"selector": "#main_dashboard_right_ctrl .lizcbox_hitbox",
+			"function": "dboard_update_panel_vis",
+			"pass_event": false,
+			"pass_element": false,
+			"pass_params": ""
+		},
+
+
+		{
+			"selector": "#dboard_mod_launchgame",
+			"function": "dboard_launch_mod",
+			"pass_event": false,
+			"pass_element": false,
+			"pass_params": ""
+		},
+		{
+			"selector": "#dboard_mod_killgame",
+			"function": "dboard_kill_mod",
+			"pass_event": false,
+			"pass_element": false,
+			"pass_params": ""
+		}
+	],
+	"focusout": [
+		{
+			"selector": "#dboard_mod_add_opts_input, #dboard_start_from_map_inp input",
+			"function": "dboard_update_panel_vis",
+			"pass_event": false,
+			"pass_element": false,
+			"pass_params": ""
 		}
 	]
 }

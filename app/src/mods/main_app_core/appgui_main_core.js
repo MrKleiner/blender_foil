@@ -9,6 +9,8 @@ window.$ = window.jQuery = require('./apis/jquery/3_6_0/jquery.min.js');
 window.lizards_mouth = 'lizards_tongue';
 const path = require('path');
 const {PythonShell} = require('python-shell');
+// window.e_remote = require('electron');
+window.foil_context = {}
 const zpypath = 'C:/Program Files (x86)/Steam/steamapps/common/Blender/3.1/python/bin/python.exe';
 const fs = require('fs');
 window.py_common_opts = {
@@ -18,7 +20,6 @@ window.py_common_opts = {
 		scriptPath: path.join(__dirname, '/app/')
 	  };
 const net = require('net');
-
 
 // Smart base64 encode
 function u8btoa(st) {
@@ -115,6 +116,16 @@ document.addEventListener('mousemove', event => {
 	}
 });
 
+
+/*
+===================================================
+                    Close/Exit app
+===================================================
+*/
+function blfoil_exit_app()
+{
+	window.close()
+}
 
 
 
@@ -220,6 +231,9 @@ $(document).ready(function(){
 				case 'modmaker':
 					modmaker_module_manager(input_d)
 					break;
+				case 'set_context':
+					foil_last_context_call_response(input_d)
+					break;
 				default:
 					console.log('The transmission from another world has ended, but requested action is unknown');
 					break;
@@ -244,7 +258,7 @@ $(document).ready(function(){
 	// TESTING
 	// newmodmaker_loader()
 	// dashboard_app_loader()
-	gameinfoman_app_loader()
+	// gameinfoman_app_loader()
 	
 });
 
@@ -283,6 +297,7 @@ function apc_send(sendpayload)
 	// it's impossible to have pre-defined ports
 	// when blender server starts - a file with dynamically assigned port is generated
 	// read its content and then send data to that port
+	// important todo: simply try to pass location on app load ?
 	fetch('C:\\Users\\DrHax\\AppData\\Roaming\\Blender Foundation\\Blender\\3.1\\scripts\\addons\\blender_foil\\bdsmbind.sex', {
 		'headers': {
 			'accept': '*/*',
@@ -378,6 +393,52 @@ function base_module_loader(mdl, force=true)
 
 
 
+
+/*
+============================================================
+------------------------------------------------------------
+                		Context
+------------------------------------------------------------
+============================================================
+*/
+
+
+
+function foil_call_last_context()
+{
+	apc_send({
+		'action': 'load_last_app_context',
+		'payload': {
+			'cont': ''
+		}
+	});
+}
+
+function foil_last_context_call_response(ct)
+{
+	var things = ct['payload'];
+
+	if (things != false){
+		// set index
+		window.foil_context['mod_context'] = things['project_index'];
+		// set useless meta name
+		window.foil_context['mod_meta_name'] = things['project_name'];
+		// dump everything because why not
+		window.foil_context['full'] = things;
+
+		dashboard_app_loader()
+	}
+
+}
+
+
+function foil_save_last_context(ct)
+{
+	apc_send({
+		'action': 'save_last_app_context',
+		'payload': ct
+	});
+}
 
 
 
@@ -514,9 +575,12 @@ function main_app_init()
 	)
 
 
+	//
+	// Set context
+	//
+	foil_call_last_context()
+
 }
-
-
 
 
 

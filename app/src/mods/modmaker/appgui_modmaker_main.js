@@ -16,6 +16,9 @@ function modmaker_module_manager(pl)
 		case 'set_engine_info_bins':
 			modmaker_accept_engine_binaries(pl['payload'])
 			break;
+		case 'load_resulting_engine':
+			modmaker_load_mod(pl['payload'])
+			break;
 		default:
 			console.log('The modmaker module has been called, but no corresponding action was found')
 			break;
@@ -447,6 +450,32 @@ function modmaker_set_active_client(cl)
 	cl.toggleAttribute('selected_client');
 	cl.classList.toggle('simple_list_v1_pool_item_const_active');
 }
+
+
+// takes mod info as an input
+// actually, index is more like an id...
+// todo: should mod loader be a part of modmaker ?
+function modmaker_load_mod(md_info)
+{
+	// set index
+	window.foil_context['mod_context'] = md_info['project_index'];
+	// set useless meta name
+	window.foil_context['mod_meta_name'] = md_info['project_name'];
+	// dump everything because why not
+	window.foil_context['full'] = md_info;
+
+	dashboard_app_loader()
+	// save context
+	foil_save_last_context(window.foil_context.full)
+
+}
+
+
+
+
+
+
+
 
 
 

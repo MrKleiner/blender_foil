@@ -564,7 +564,8 @@ def blfoil_entity_classnames_resync(scen, blpe):
         scen.blfoil_etype_selector_list[-1].name = ent
         # print(bpy.data.scenes[0].blfoil_etype_selector_list[-1].name)
         d += 1
-        print(d, len(blpe))
+        # print(d, len(blpe))
+    print('done rebuilding entity classnames, len:', d, len(blpe))
 
 
 def blfoil_suggested_mats_builder():
@@ -601,7 +602,8 @@ def blfoil_suggested_mats_builder():
                     allsc.blfoil_common_brush_materials.add()
                     allsc.blfoil_common_brush_materials[-1].name = sg_mat
                     d += 1
-                    print(d, len(dev_textures_json))
+                    # print(d, len(dev_textures_json))
+    print('done rebuilding entity classnames, len:', d, len(dev_textures_json))
 
     return
 

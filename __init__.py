@@ -128,6 +128,8 @@ def appconnect_actions(cs):
             return 'wtf is even this'
 """
 
+global engine_ref
+engine_ref = None
 
 # The faster we start listening for shit - the better
 # this is a port listener so that it's possible to connect an app with blender
@@ -240,6 +242,10 @@ blfoil_check_pypackages()
 # cd "C:\custom\blender_def_otput\bik"
 # radvideo64.exe" bink ... /v100 /d90 /m3.0 /o /l0 /p16 /#
 
+"""
+p = subprocess.Popen(cmd)
+p.kill()
+"""
 
 
 # mapbase 

@@ -199,10 +199,26 @@ function dropdown_showhide(anydrop)
 
 
 
+// todo: this looks weird
+class lizdropdowns_shortcuts
+{
+	constructor() {
+		// this.height = height;
+		// this.width = width;
+	}
+	// returns all cboxes on a page
+	get pool()
+	{
+		var pooled = {}
+		document.querySelectorAll('[haslizdropdown]').forEach(function(userItem) {
+			// pooled.push(userItem);
+			pooled[userItem.getAttribute('id')] = userItem.lizdropdown()
+		});
+		return pooled
+	}
+}
 
-
-
-
+window.lizdropdowns = new lizdropdowns_shortcuts()
 
 
 

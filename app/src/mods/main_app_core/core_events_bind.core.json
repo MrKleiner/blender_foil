@@ -13,6 +13,13 @@
 			"pass_event": false,
 			"pass_element": false,
 			"pass_params": ""
+		},
+		{
+			"selector": "[apptoolbarctg=\"preferences\"] [lizmenu_action=\"exit_app\"]",
+			"function": "blfoil_exit_app",
+			"pass_event": false,
+			"pass_element": false,
+			"pass_params": ""
 		}
 	]
 

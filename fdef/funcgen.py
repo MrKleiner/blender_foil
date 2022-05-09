@@ -83,6 +83,17 @@ basepath = Path(thispath.parent.parent / 'app' / 'src' / 'mods')
 
 collected = []
 
+# core events like checkboxes shouldalways happen before anything else
+for gmod in os.listdir(basepath):
+    # print(gmod)
+    gmodpath = Path(basepath / gmod)
+    for findbind in os.listdir(gmodpath):
+        # print(findbind)
+        if findbind.endswith('events_bind.core.json'):
+            print(findbind)
+            collected.append(gmodpath / findbind)
+
+
 for gmod in os.listdir(basepath):
     # print(gmod)
     gmodpath = Path(basepath / gmod)
@@ -91,6 +102,8 @@ for gmod in os.listdir(basepath):
         if findbind.endswith('events_bind.json'):
             print(findbind)
             collected.append(gmodpath / findbind)
+
+
 
 
 # cycle trough found modules and collect events on per-module basis

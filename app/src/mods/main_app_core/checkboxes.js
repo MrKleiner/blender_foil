@@ -33,6 +33,7 @@ class lizcboxes_shortcuts
 	get pool()
 	{
 		var pooled = {}
+		// console.log('get pool')
 		document.querySelectorAll('[lizcbox]').forEach(function(userItem) {
 			// pooled.push(userItem);
 			pooled[userItem.parentElement.getAttribute('lizcbox_id')] = userItem.lizchecked()
@@ -86,7 +87,7 @@ function lizcboxes_init()
 function lizcboxes_switch(tgtbox, state)
 {
 	tbox = tgtbox.querySelector('[lizcbox].lizcbox_container') || tgtbox
-
+	// console.log('set status')
 	// todo: getAttribute
 	// will be faster
 	if ($(tbox).attr('lizcbox') == 'set'){
@@ -102,9 +103,10 @@ function lizcboxes_switch(tgtbox, state)
 // if no stat specified - checkbox state returned
 function lizcbox_stat(sel, stat=null)
 {
+	
 	var ss = document.querySelector('[lizcbox_id="' + sel + '"]');
 	if (ss != null){
-		return ss.querySelector('[lizcbox]').lizchecked()
+		return ss.querySelector('[lizcbox]').lizchecked(stat)
 	}
 	
 }

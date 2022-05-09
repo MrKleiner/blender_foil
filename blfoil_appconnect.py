@@ -1,6 +1,7 @@
 from .utils.shared import app_command_send
 from .mods.app.modmaker.app_modmaker import *
 from .blfoil_appconnect import *
+from .mods.app.dashboard.app_dashboard import *
 
 def appconnect_actions(cs):
     match cs['action']:
@@ -45,6 +46,34 @@ def appconnect_actions(cs):
                 'app_module': 'echo_status',
                 'mod_action': 'echo_status',
                 'payload': modmaker_spawn_new_client(cs['payload'])
+            })
+            return ''
+        case 'dboard_launch_mod':
+            app_command_send({
+                'app_module': 'dashboard',
+                'mod_action': 'dashboard_launched_mod_echo',
+                'payload': dboard_launch_mod(cs['payload'])
+            })
+            return ''
+        case 'dboard_kill_mod':
+            app_command_send({
+                'app_module': 'dashboard',
+                'mod_action': 'dashboard_killed_mod_echo',
+                'payload': dboard_kill_mod(cs['payload'])
+            })
+            return ''
+        case 'save_last_app_context':
+            app_command_send({
+                'app_module': 'echo_status',
+                'mod_action': 'echo_status',
+                'payload': save_last_app_context(cs['payload'])
+            })
+            return ''
+        case 'load_last_app_context':
+            app_command_send({
+                'app_module': 'set_context',
+                'mod_action': 'set_context',
+                'payload': load_last_app_context(cs['payload'])
             })
             return ''
             

@@ -1,5 +1,6 @@
 
 
+
 # important: function has to always accept a payload
 
 def fetch_existing_engines(pl):
@@ -262,7 +263,7 @@ def modmaker_load_engine_info(pl):
 						'pjp',
 						'png',
 						'svg',
-						# it appears that the webp rubbish is "performant"
+						# it appears that the webp rubbish is "performant" and "recommended" for use in web rubbish
 						'webp',
 						'bmp',
 						'ico',
@@ -469,7 +470,7 @@ def modmaker_spawn_new_client(einf):
 	import os.path
 	from os import path
 	import json
-	from ....utils.shared import download_mapbase
+	from ....utils.shared import download_mapbase, app_command_send
 	from ....utils.lizard_tail.lizard_tail import lizard_tail
 
 	addon_rootdir = Path(__file__).absolute().parent.parent.parent.parent
@@ -486,9 +487,18 @@ def modmaker_spawn_new_client(einf):
 	#	have game title
 	#	have SteamAppId
 
+
+	#
 	# setup some paths
+	#
+
+	# engine executable, like Team Fortress 2\hl2.exe
 	engine_exe = Path(einf['engine_exe'])
+	# folder in which the engine executable is
 	engine_folder = engine_exe.parent
+	# Client folder is where gameinfo, materials, models go
+	# Like, Team Fortress 2\tf(client folder)\materials
+	# (should not exist at first)
 	client_folder = engine_folder / einf['cl_name']
 
 
@@ -501,6 +511,8 @@ def modmaker_spawn_new_client(einf):
 		shutil.rmtree(str(client_folder))
 
 	# create target client folder
+	# this is where gameinfo, materials, models go
+	# Like, Team Fortress 2\tf(client folder)\materials
 	client_folder.mkdir(parents=True, exist_ok=True)
 
 	# create some default folders
@@ -778,15 +790,53 @@ def modmaker_spawn_new_client(einf):
 
 
 
+	#
+	# Create game config dir and write defaults there
+	#
 
+	# get free folder name
+	taken_names = []
+	for fn in os.listdir(addon_rootdir / 'configs' / 'app' / 'projects'):
+		try:
+			taken_names.append(int(fn))
+		except:
+			pass
 
+	# available name
+	av_name = str(max(taken_names if len(taken_names) > 0 else [0]) + 1)
+	pr_folder = addon_rootdir / 'configs' / 'app' / 'projects' / av_name
 
+	# create project folder
+	pr_folder.mkdir()
 
+	# write default json
+	default_settings = {
+		'fullscreen': False,
+		'intro_vid': False,
+		'loadtools': False,
+		'maps_from_linked_gminfo': True,
+		'start_from_map': False,
+		'use_add_options': True,
+		'starting_map': '',
+		'add_start_opts': '',
+		'project_index': str(av_name),
+		'project_name': 'My Rubbish Mod Which I Will Never Finish',
+		'client_folder_path': str(client_folder),
+		'client_folder_name': str(client_folder.name),
+		'full_game_name': str(cl_gameinfo.game_name),
+		'engine_executable': str(engine_exe)
+	}
 
+	with open(str(pr_folder / 'fast_config.json'), 'w') as project_quick_settings:
+		# todo: does it really has to be human readable ?
+		project_quick_settings.write(json.dumps(default_settings, indent=4, sort_keys=True))
 
-
-
-
+	# trigger engine load
+	app_command_send({
+		'app_module': 'modmaker',
+		'mod_action': 'load_resulting_engine',
+		'payload': default_settings
+	})
 
 
 

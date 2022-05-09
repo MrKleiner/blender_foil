@@ -62,6 +62,23 @@ function init_simple_ui_lists()
 	console.groupEnd('Init UILists');
 }
 
+function createSelection(field, start, end) {
+	if( field.createTextRange ) {
+		var selRange = field.createTextRange();
+		selRange.collapse(true);
+		selRange.moveStart('character', start);
+		selRange.moveEnd('character', end);
+		selRange.select();
+		field.focus();
+	} else if( field.setSelectionRange ) {
+		field.focus();
+		field.setSelectionRange(start, end);
+	} else if( typeof field.selectionStart != 'undefined' ) {
+		field.selectionStart = start;
+		field.selectionEnd = end;
+		field.focus();
+	}
+}
 
 // important todo: dont append to html tree. Keep as a reference in memory
 // takes container containing text input and the list container
@@ -91,10 +108,26 @@ function simple_ui_list_buildsuggest(keyvt, tgtsugest)
 
 	var append_linit = 0;
 
+	var included = []
+
 	// todo: allow custom configs
 
+	// first - find starting matches
 	for (var centry of wincont){
-		if (centry.toLowerCase().includes(querytext.toLowerCase()) && append_linit <= 300){
+		if (centry.toLowerCase().startsWith(querytext.toLowerCase()) && append_linit <= 300){
+			append_linit++
+			var bdsm = document.createElement('div');
+			bdsm.setAttribute('class', 'simple_uilist_suggestion_entry');
+			bdsm.textContent = centry
+			if (append_linit >= 12){bdsm.style.display = 'none'}
+			ulist.appendChild(bdsm);
+			included.push(centry);
+		}
+	}
+
+	// then - find the rest
+	for (var centry of wincont){
+		if (centry.toLowerCase().includes(querytext.toLowerCase()) && append_linit <= 300 && !included.includes(centry)){
 			append_linit++
 			var bdsm = document.createElement('div');
 			bdsm.setAttribute('class', 'simple_uilist_suggestion_entry');
@@ -103,6 +136,10 @@ function simple_ui_list_buildsuggest(keyvt, tgtsugest)
 			ulist.appendChild(bdsm);
 		}
 	}
+
+	txt_inp.removeAttribute('selrangeindex');
+
+	// then - find partial matches
 
 }
 
@@ -151,7 +188,11 @@ function uilist_scroller(keyact, ulist)
 				enext.setAttribute('ulist_active_item', true);
 			}
 
-			ulist.parentElement.querySelector('input.simple_uilist_text_input').value = children_arrayed[uindex + 1].textContent
+			var tgt_inpt = ulist.parentElement.querySelector('input.simple_uilist_text_input');
+			var pre_suggest_len = tgt_inpt.getAttribute('selrangeindex') || tgt_inpt.value.length;
+			tgt_inpt.value = children_arrayed[uindex + 1].textContent
+			createSelection(tgt_inpt, parseInt(pre_suggest_len), 999)
+			tgt_inpt.setAttribute('selrangeindex', tgt_inpt.value.length - window.getSelection().toString().length);
 		}
 	}
 
@@ -183,8 +224,11 @@ function uilist_scroller(keyact, ulist)
 				enext.setAttribute('ulist_active_item', 'true');
 				enext.classList.add('simple_uilist_suggestion_entry_active');
 			}
-
-			ulist.parentElement.querySelector('input.simple_uilist_text_input').value = children_arrayed[uindex - 1].textContent
+			var tgt_inpt = ulist.parentElement.querySelector('input.simple_uilist_text_input');
+			var pre_suggest_len = tgt_inpt.getAttribute('selrangeindex') || tgt_inpt.value.length;
+			tgt_inpt.value = children_arrayed[uindex - 1].textContent
+			createSelection(tgt_inpt, parseInt(pre_suggest_len), 999)
+			tgt_inpt.setAttribute('selrangeindex', tgt_inpt.value.length - window.getSelection().toString().length);
 		}
 	}
 
@@ -212,5 +256,6 @@ function uilist_showhide(thelisted, ustate)
 	if (ustate == false){
 		thelist.innerHTML = '';
 		thelist.style.display = 'none';
-	}
+		thelist.parentElement.querySelector('input.simple_uilist_text_input').removeAttribute('selrangeindex');
+	}	
 }
