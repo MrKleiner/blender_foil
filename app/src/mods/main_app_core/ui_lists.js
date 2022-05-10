@@ -235,8 +235,11 @@ function uilist_scroller(keyact, ulist)
 	// apply
 	if (keyact.keyCode == 13 && uindex != -1){
 		keyact.preventDefault();
-		ulist.parentElement.querySelector('input.simple_uilist_text_input').value = children_arrayed[uindex].textContent;
+		var tgt_in = ulist.parentElement.querySelector('input.simple_uilist_text_input')
+		tgt_in.value = children_arrayed[uindex].textContent;
 		uilist_showhide(ulist, false)
+		// todo: fuck jquery
+		$(tgt_in).blur();
 	}
 
 }

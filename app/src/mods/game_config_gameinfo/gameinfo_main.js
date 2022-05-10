@@ -1,3 +1,17 @@
+function gameinfo_module_manager(pl)
+{
+
+	switch (pl['mod_action']) {
+		case 'gameinfo_set_info':
+			gameinfo_set_info(pl['payload'])
+			break;
+		default:
+			console.log('The gameinfo module has been called, but no corresponding action was found');
+			break;
+	}
+
+}
+
 
 function gameinfoman_app_loader()
 {
@@ -65,6 +79,15 @@ function gameinfoman_app_loader()
 				]
 			}
 		);
+
+		// read gameinfo of the mod and set settings
+		apc_send({
+			'action': 'gameinfoman_load_info',
+			'payload': {
+				'client_path': window.foil_context.full.client_folder_path
+			}
+		});
+
 	});
 }
 
@@ -75,5 +98,17 @@ function set_steam_appid_from_dropdown(dr_item)
 {
 	document.querySelector('#gminfo_appid_input').value = dr_item.getAttribute('dropdown_set');
 }
+
+
+function gameinfo_set_info(inf)
+{
+	console.log(inf)
+}
+
+
+
+
+
+
 
 

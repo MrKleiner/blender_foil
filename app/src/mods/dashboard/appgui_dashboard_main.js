@@ -1,22 +1,22 @@
 
-/*
-=====================================================================
----------------------------------------------------------------------
-                             Dashboard
----------------------------------------------------------------------
-=====================================================================
-*/
+
+// =====================================================================
+// ---------------------------------------------------------------------
+//                              module name: dashboard
+// ---------------------------------------------------------------------
+// =====================================================================
+
 
 
 function dashboard_module_manager(pl)
 {
 
 	switch (pl['mod_action']) {
-		case 'append_pre_installed':
-			newmodmaker_accept_engines(pl['payload'])
+		case 'dboard_set_applicable_maps':
+			dboard_set_applicable_maps(pl['payload'])
 			break;
 		default:
-			console.log('The dashboard module has been called, but no corresponding action was found')
+			console.log('The dashboard module has been called, but no corresponding action was found:', pl['mod_action'])
 			break;
 	}
 
@@ -67,6 +67,9 @@ function dashboard_app_loader()
 			// load the rest of the info
 			dashboard_set_ctrl_panel_from_context()
 
+			// get applicable maps
+			dboard_call_applicable_maps()
+
 		});
 	}
 
@@ -88,13 +91,29 @@ function dashboard_set_ctrl_panel_from_context()
 	lizcbox_stat('start_from_map', mcontext.start_from_map)
 	lizcbox_stat('use_add_options', mcontext.add_start_opts)
 	$('#dboard_mod_preview_lauchprms').text(eval_launch_opts()['string'])
+	$('#dboard_start_from_map_inp input').val(mcontext.starting_map);
 }
 
 // update the control panel when something has changed, like checkbox or smth
+// and also context
 function dboard_update_panel_vis()
 {
-	console.log(eval_launch_opts())
+	console.log(eval_launch_opts());
 	$('#dboard_mod_preview_lauchprms').text(eval_launch_opts()['string']);
+
+	// save context
+	var mcontext = window.foil_context.full;
+	mcontext.fullscreen = lizcbox_stat('fullscreen')
+	mcontext.intro_vid = lizcbox_stat('intro_vid')
+	mcontext.loadtools = lizcbox_stat('loadtools')
+	mcontext.maps_from_linked_gminfo = lizcbox_stat('maps_from_linked_gminfo')
+	mcontext.start_from_map = lizcbox_stat('start_from_map')
+	mcontext.add_start_opts = lizcbox_stat('use_add_options')
+	mcontext.starting_map = $('#dboard_start_from_map_inp input').val().trim();
+
+	// also save quick config
+	foil_save_quick_config()
+
 }
 
 
@@ -137,7 +156,7 @@ function eval_launch_opts()
 	if (cbpool['loadtools']) { separated['tools'] = [] }
 	if (!cbpool['intro_vid']) { separated['novid'] = [] }
 	// if (cbpool['start_from_map'] && $('#dboard_start_from_map_inp').find('input').val().trim() != '') { separated['map'] = [$('#dboard_start_from_map_inp').find('input').val().trim()] }
-	if (cbpool['start_from_map'] && $('#dboard_start_from_map_inp').find('input').val().trim() != '') { ev['map'] = $('#dboard_start_from_map_inp').find('input').val().trim() }
+	if (cbpool['start_from_map'] && $('#dboard_start_from_map_inp').find('input').val().trim() != '') { ev['map'] = $('#dboard_start_from_map_inp').find('input').val().trim().split('/').at(-1) }
 	var parsed_opts = {};
 	if (cbpool['use_add_options'] && $('#dboard_mod_add_opts_input').val().trim() != '') {
 		var prepare_opts = $('#dboard_mod_add_opts_input').val().split(' ');
@@ -194,6 +213,43 @@ function dboard_kill_mod()
 			'client_name': window.foil_context.full.client_folder_path
 		}
 	});
+}
+
+
+
+
+
+// save quick config from control panel
+function foil_save_quick_config()
+{
+	apc_send({
+		'action': 'save_app_quick_config',
+		'payload': {
+			'project_index': window.foil_context.full.project_index,
+			'quick_config': window.foil_context.full
+		}
+	});
+}
+
+
+
+// ask Blender for applicable maps
+function dboard_call_applicable_maps()
+{
+	// suggested_maps
+	apc_send({
+		'action': 'dboard_get_suggested_maps',
+		'payload': {
+			'gminfo_path': window.foil_context.full.gameinfo_path
+		}
+	});
+}
+
+// the response from applicable maps call goes here
+function dboard_set_applicable_maps(pl)
+{
+	console.log('got applicable maps:', pl);
+	window.suggested_maps = pl;
 }
 
 

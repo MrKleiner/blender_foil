@@ -818,6 +818,7 @@ def modmaker_spawn_new_client(einf):
 		'start_from_map': False,
 		'use_add_options': True,
 		'starting_map': '',
+		'gameinfo_path': str(client_folder / 'gameinfo.txt'),
 		'add_start_opts': '',
 		'project_index': str(av_name),
 		'project_name': 'My Rubbish Mod Which I Will Never Finish',

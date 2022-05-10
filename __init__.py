@@ -133,6 +133,8 @@ engine_ref = None
 
 # The faster we start listening for shit - the better
 # this is a port listener so that it's possible to connect an app with blender
+# todo: new port for every connection even though it'll never run out of ports is kinda bad ?
+
 def blender_foil_guiappconnect():
     port = 50000  # Reserve a port for your service every new transfer wants a new port or you must wait.
     s = socket.socket()  # Create a socket object

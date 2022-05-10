@@ -1,4 +1,9 @@
 # incoming_case:js_module:js_module_action:python_function
+
+#
+# Incoming case rerouter
+#
+
 [
 	# =========================================
 	# 			   MOD MAKER MODULE
@@ -76,8 +81,43 @@
 	# load app context on app reload
 	{
 		"incoming_case": "load_last_app_context",
+		"python_function": "load_last_app_context",
 		"js_module": "set_context",
-		"js_module_action": "set_context",
-		"python_function": "load_last_app_context"
+		"js_module_action": "set_context"
+		
+	},
+	# Save quick config from dashboard panel
+	{
+		"incoming_case": "save_app_quick_config",
+		"python_function": "save_app_quick_config"
+	},
+	# get maps to suggest
+	{
+		"incoming_case": "dboard_get_suggested_maps",
+		"python_function": "dboard_get_suggested_maps",
+		"js_module": "dashboard",
+		"js_module_action": "dboard_set_applicable_maps"
+	},
+
+
+
+
+	# =========================================
+	# 			   GAMEINFO MODULE
+	# =========================================
+	# load gameinfo from the mod
+	{
+		"add_imports": [
+			"from .mods.app.gameinfoman.gameinfoman import *"
+		]
+	},
+	{
+		"incoming_case": "gameinfoman_load_info",
+		"python_function": "gameinfoman_load_gminfo",
+		"js_module": "gameinfo",
+		"js_module_action": "gameinfo_set_info"
+		
 	}
+
+
 ]

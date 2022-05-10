@@ -10,7 +10,7 @@ window.lizards_mouth = 'lizards_tongue';
 const path = require('path');
 const {PythonShell} = require('python-shell');
 // window.e_remote = require('electron');
-window.foil_context = {}
+window.foil_context = {};
 const zpypath = 'C:/Program Files (x86)/Steam/steamapps/common/Blender/3.1/python/bin/python.exe';
 const fs = require('fs');
 window.py_common_opts = {
@@ -60,6 +60,8 @@ function shell_end_c(err,code,signal)
 // ===================================================
 //             reload app (f5 implementation)
 // ===================================================
+
+// keybind: ctrl+r
 
 // todo: this doubles the keydown event binds
 document.addEventListener('keydown', kvt => {
@@ -231,11 +233,20 @@ $(document).ready(function(){
 				case 'modmaker':
 					modmaker_module_manager(input_d)
 					break;
+				case 'gameinfo':
+					gameinfo_module_manager(input_d)
+					break;
 				case 'set_context':
-					foil_last_context_call_response(input_d)
+					foil_set_context(input_d)
+					break;
+				case 'echo_status':
+					blender_echo_status(input_d)
+					break;
+				case 'dashboard':
+					dashboard_module_manager(input_d)
 					break;
 				default:
-					console.log('The transmission from another world has ended, but requested action is unknown');
+					console.log('The transmission from another world has ended, but requested action is unknown:', input_d['app_module']);
 					break;
 			}
 
@@ -259,6 +270,7 @@ $(document).ready(function(){
 	// newmodmaker_loader()
 	// dashboard_app_loader()
 	// gameinfoman_app_loader()
+
 	
 });
 
@@ -306,25 +318,25 @@ function apc_send(sendpayload)
 		}
 	})
 	.then(function(response) {
-		console.log(response.status);
+		console.log('[Sender] Requested port on which Blender server is running. Fetch response status:', response.status, '(Has to be 200)');
 		response.text().then(function(data) {
 			window.gui_pot_connect = data.trim()
-
+			console.log('[Sender] Acquired (constant) port from fetch:', window.gui_pot_connect);
 
 			var client = new net.Socket();
 			client.connect(parseInt(window.gui_pot_connect), '127.0.0.1', function() {
-				console.log('Connected');
+				console.log('[Sender] Connected to Blender server, port:', client.localPort);
 				// client.write('Hello, server! Love, Client.');
 				client.write(JSON.stringify(topayload));
 			});
 
 			client.on('data', function(data) {
-				console.log('Received: ' + data);
+				console.log('[Sender] Receiving data during connection from port', client.localPort, ':' ,data.toString());
 				client.destroy()
 			});
 
 			client.on('close', function() {
-				console.log('Connection closed');
+				console.log('[Sender] Closed connection with port', client.localPort);
 			});
 			
 		});
@@ -360,6 +372,8 @@ function base_module_loader(mdl, force=true)
 			resolve(true);
 		}else{
 			// $('#modules_cont').empty();
+			// todo: why use jquery ...
+			console.log('Trying to load module', realname.replace('.html', ''), 'from', 'tools/' + realname);
 			$('#modules_cont').load('tools/' + realname, function() {
 				// checkboxes
 				lizcboxes_init();
@@ -371,18 +385,46 @@ function base_module_loader(mdl, force=true)
 				init_simple_ui_lists();
 
 				window['current_app_module'] = realname.replace('.html', '');
-				console.log('Loaded Module', window['current_app_module'], 'from', 'tools/' + realname);
+				console.log('Loaded Module', window['current_app_module'], 'from', 'tools/' + realname, 'Base inits done');
 				resolve(true);
 			});
-
-			// if (loadmod) {
-			// 	resolve(true);
-			// } else {
-			// 	reject('Error while loading module');
-			// }
 		}
 	});
 }
+
+
+
+
+
+
+
+
+
+
+/*
+============================================================
+------------------------------------------------------------
+                		Status echo
+------------------------------------------------------------
+============================================================
+*/
+
+
+function blender_echo_status(echo)
+{
+
+	try {
+		// console.log('%c Blender says:', 'background: rgba(0, 0, 0, 0); color: #EB9C4E; font-weigth: bold;', echo['payload']);
+		console.log('%c Blender says:', 'background: rgba(0, 0, 0, 0); color: #AA551D; font-weight: bold;', echo['payload']);
+		// console.log(echo['payload']);
+	} catch (error) {
+
+	}
+
+}
+
+
+
 
 
 
@@ -403,19 +445,24 @@ function base_module_loader(mdl, force=true)
 */
 
 
-
+// This is only useful on startup (reload)
 function foil_call_last_context()
 {
+	console.log('Asked Blender to give last used context');
 	apc_send({
 		'action': 'load_last_app_context',
 		'payload': {
-			'cont': ''
+			'last_used': true
 		}
 	});
 }
 
-function foil_last_context_call_response(ct)
+// this kinda belongs to the dashboard module, but really, it'd better be here
+// expects a quick config payload and will set context from it
+// when the context is being overwritten - the dashboard module always has to be loaded
+function foil_set_context(ct)
 {
+	console.log('Startup last context response from Blender:', ct['payload']);
 	var things = ct['payload'];
 
 	if (things != false){
@@ -426,12 +473,15 @@ function foil_last_context_call_response(ct)
 		// dump everything because why not
 		window.foil_context['full'] = things;
 
+		console.log('App context set:', {'Index Id': things['project_index'], 'Project Name': things['project_name']})
+
 		dashboard_app_loader()
 	}
 
 }
 
 
+// save last project index (save context)
 function foil_save_last_context(ct)
 {
 	apc_send({
@@ -439,12 +489,6 @@ function foil_save_last_context(ct)
 		'payload': ct
 	});
 }
-
-
-
-
-
-
 
 
 

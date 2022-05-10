@@ -2,6 +2,7 @@ from .utils.shared import app_command_send
 from .mods.app.modmaker.app_modmaker import *
 from .blfoil_appconnect import *
 from .mods.app.dashboard.app_dashboard import *
+from .mods.app.gameinfoman.gameinfoman import *
 
 def appconnect_actions(cs):
     match cs['action']:
@@ -74,6 +75,27 @@ def appconnect_actions(cs):
                 'app_module': 'set_context',
                 'mod_action': 'set_context',
                 'payload': load_last_app_context(cs['payload'])
+            })
+            return ''
+        case 'save_app_quick_config':
+            app_command_send({
+                'app_module': 'echo_status',
+                'mod_action': 'echo_status',
+                'payload': save_app_quick_config(cs['payload'])
+            })
+            return ''
+        case 'dboard_get_suggested_maps':
+            app_command_send({
+                'app_module': 'dashboard',
+                'mod_action': 'dboard_set_applicable_maps',
+                'payload': dboard_get_suggested_maps(cs['payload'])
+            })
+            return ''
+        case 'gameinfoman_load_info':
+            app_command_send({
+                'app_module': 'gameinfo',
+                'mod_action': 'gameinfo_set_info',
+                'payload': gameinfoman_load_gminfo(cs['payload'])
             })
             return ''
             

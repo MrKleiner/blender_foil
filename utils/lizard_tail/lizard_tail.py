@@ -3,7 +3,8 @@
 
 
 
-
+# pass True to make a new gameinfo
+# pass gameinfo string to parse existing gameinfo
 class lizard_tail:
 	""" super simple gameinfo maker. Takes gameinfo as an input """
 	# anything that is specified becomes defaults. Useful
@@ -30,7 +31,7 @@ class lizard_tail:
 
 
 
-	def __init__(self, pootis=None):
+	def __init__(self, pootis=True):
 		import io
 		import base64
 		from .parser import gameinfoparser
@@ -41,12 +42,13 @@ class lizard_tail:
 		# It should be possible to create blank gameinfo
 		if pootis == True:
 			defblank = """
-			IkdhbWVJbmZvIgp7CgkiZ2FtZSIJCSJBbGllbiBTd2FybTogUmVhY3RpdmUgRHJvcCIKCSJ0aXRsZSIJCSJBU1ciCS8vIGFzdyAtIGx
-			lYXZlIHRoaXMgYmxhbmsgYXMgd2UgaGF2ZSBhIHRleHR1cmUgbG9nbwoJInR5cGUiCQkic2luZ2xlcGxheWVyX29ubHkiCglHYW1lRG
-			F0YQkicmVhY3RpdmVkcm9wLmZnZCIKCWljb24JCSJyZXNvdXJjZS9pY29uMSIKCS8vIEluc3RhbmNlUGF0aCAidGlsZWdlbi9pbnN0Y
-			W5jZXMvIgoJCglTdXBwb3J0c0RYOCAgICAgMAoJCgkiRmlsZVN5c3RlbSIKCXsKCQkiU3RlYW1BcHBJZCIJIjU2MzU2MCIKCQkvLyAi
-			VG9vbHNBcHBJZCIJIjIxMSIKCQkKCQkiU2VhcmNoUGF0aHMiCgkJewoJCQkiR2FtZSIJInxnYW1laW5mb19wYXRofC4iCgkJCSJHYW1
-			lIgkicGxhdGZvcm0iCgkJfQoJfQp9Cg==
+			IkdhbWVJbmZvIgp7CgkiZ2FtZSIJCSJBbGllbiBTd2FybTogUmVhY3RpdmUgRHJvcCIKCSJ0aXRsZSIJCSJBU1ciCS8vIGFzdyAtIGxl
+			YXZlIHRoaXMgYmxhbmsgYXMgd2UgaGF2ZSBhIHRleHR1cmUgbG9nbwoJInR5cGUiCQkic2luZ2xlcGxheWVyX29ubHkiCglHYW1lRGF0
+			YQkicmVhY3RpdmVkcm9wLmZnZCIKCWljb24JCSJyZXNvdXJjZS9pY29uMSIKCS8vIEluc3RhbmNlUGF0aCAidGlsZWdlbi9pbnN0YW5j
+			ZXMvIgoJIlN1cHBvcnRzVlIiICIxIgoJIk5vTW9kZWxzIiAiMSIKCSJOb0hJTW9kZWwiICIxIgoJIkhhc1BvcnRhbHMiICIwIgoJIkFk
+			dkNyb3NzaGFpciIgIjAiCgkiTm9EaWZmaWN1bHR5IiAiMCIKCQoJU3VwcG9ydHNEWDggICAgIDAKCQoJIkZpbGVTeXN0ZW0iCgl7CgkJ
+			IlN0ZWFtQXBwSWQiCSI1NjM1NjAiCgkJLy8gIlRvb2xzQXBwSWQiCSIyMTEiCgkJCgkJIlNlYXJjaFBhdGhzIgoJCXsKCQkJIkdhbWUi
+			CSJ8Z2FtZWluZm9fcGF0aHwuIgoJCQkiR2FtZSIJInBsYXRmb3JtIgoJCX0KCX0KfQo=
 			"""
 			mkinput = base64.b64decode(defblank.replace('\n', '').replace(' ', '').encode('utf-8')).decode('utf-8')
 		else:
@@ -61,6 +63,7 @@ class lizard_tail:
 		}
 		for pg in bad_piggies:
 			str_toparse = mkinput.replace(pg, bad_piggies[pg])
+			mkinput = mkinput.replace(pg, bad_piggies[pg])
 
 		inpstr = io.StringIO(str_toparse).readlines()
 
@@ -87,6 +90,17 @@ class lizard_tail:
 	@game_title.setter
 	def game_title(self, newtitle):
 		self.gameinfo_r.select('GameInfo > kv[keyname="title"]')[0].gval.string = str(newtitle)
+
+
+	# get a dict of all the base keys
+	@property
+	def base_keys(self):
+		basekeys = {}
+		for bkey in self.gameinfo_r.select('GameInfo > kv'):
+			if bkey['keyname'].lower() != 'filesystem':
+				basekeys[bkey['keyname']] = bkey.gval.string
+
+		return basekeys
 
 
 	@property
@@ -119,8 +133,8 @@ class lizard_tail:
 		spaths = []
 		for sp in self.gameinfo_r.select('GameInfo > FileSystem > SearchPaths > kv'):
 			path_payload = {}
-			path_payload['key'] = sp.gkey
-			path_payload['value'] = sp.gval
+			path_payload['key'] = sp.gkey.string
+			path_payload['value'] = sp.gval.string
 			spaths.append(path_payload)
 		return spaths
 
