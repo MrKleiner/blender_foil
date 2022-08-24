@@ -103,7 +103,7 @@
 
 
 	# =========================================
-	# 			   GAMEINFO MODULE
+	# 		GAMEINFO MODULE :: gameinfo
 	# =========================================
 	# load gameinfo from the mod
 	{
@@ -116,8 +116,17 @@
 		"python_function": "gameinfoman_load_gminfo",
 		"js_module": "gameinfo",
 		"js_module_action": "gameinfo_set_info"
-		
+	},
+	{
+		"incoming_case": "gameinfo_save_back",
+		"python_function": "gameinfo_save_back"
+	},
+	# get icon
+	{
+		"incoming_case": "gameinfoman_get_mod_icon",
+		"python_function": "gminfo_icon_vis_feedback",
+		"js_module": "gameinfo",
+		"js_module_action": "gminfo_icon_manager"
 	}
-
 
 ]

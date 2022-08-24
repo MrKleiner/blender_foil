@@ -32,7 +32,7 @@ import sys
 import shutil
 import subprocess
 import datetime
-import pathlib
+# import pathlib
 from math import radians
 from mathutils import Matrix
 
@@ -253,6 +253,7 @@ def blfoil_skybox_maker(tgt_scene):
     # and a checkbox whether to half it on Y or not
 
     # better order so that it looks cooler visually in app
+    # (the sides are being rendered and processed in this order)
     sidez = {
         'ft': (90, 0, 90),
         'lf': (90, 0, 0),
@@ -296,7 +297,7 @@ def blfoil_skybox_maker(tgt_scene):
     sky_camera_data.type = 'PERSP'
     sky_camera_data.clip_end = 100000.0
     
-    # Sweet magic numbers
+    # Magic numbers
     sky_camera_data.lens = 64
     sky_camera_data.sensor_width = 128.5
     
@@ -308,7 +309,7 @@ def blfoil_skybox_maker(tgt_scene):
     # make this camera active
     tgt_scene.camera = sky_camera_object
 
-    # Notify app that blender renders are happening
+    # Notify the app that blender renders are happening
     app_command_send({
         'app_module': 'skyboxer',
         'mod_action': 'upd_work_status',
@@ -367,13 +368,14 @@ def blfoil_skybox_maker(tgt_scene):
 
 
         # Do Render
-        bpy.ops.render.render(write_still = 1)
+        bpy.ops.render.render(write_still=1)
         
         
 
         # AFTER done rendering, check if HDR then we need stupid LDR fallbacks
         # fuck them really - downscale them fuckers by a factor of fucking 2
         # simply re-save it with blender
+        # important todo: it seems like the image is not being downscaled when saving as render
         if sk_settings.hdrldr == 'HDR':
 
             # Set export settings to .png
@@ -400,6 +402,8 @@ def blfoil_skybox_maker(tgt_scene):
 
 
         # Use magick to convert tga to png (there's always a tga)
+        # important todo: magick can output to stdout. Don't litter with temp files and send bytes right away
+        # one advantage of temp files is that they can be accessed...
         (addon_root_dir / 'tot' / 'skyboxer').mkdir(parents=True, exist_ok=True)
         magix_prms = [
             str(magix),

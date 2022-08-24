@@ -114,6 +114,8 @@
 {
 	user-select: none;
 	align-self: flex-end;
+	/*object-position: center;*/
+	/*object-fit: contain;*/
 }
 
 #gameinfo_icon_preview div

@@ -6,6 +6,45 @@
 			"pass_event": false,
 			"pass_element": true,
 			"pass_params": ""
+		},
+		{
+			"selector": "#gameinfo_ctrl .lizcbox_hitbox",
+			"function": "gameinfo_save_back",
+			"pass_event": false,
+			"pass_element": false,
+			"pass_params": ""
+		},
+		{
+			"selector": "#gameinfo_ctrl .lizard_menu_entry",
+			"function": "gameinfo_save_back",
+			"pass_event": false,
+			"pass_element": false,
+			"pass_params": ""
+		}
+	],
+	"focusout": [
+		{
+			"selector": "#gminfo_gamename_input-, #gminfo_gametitle_input-, #gminfo_gameicon_input-, #gminfo_appid_input-",
+			"function": "gameinfo_save_back",
+			"pass_event": false,
+			"pass_element": false,
+			"pass_params": ""
+		}
+	],
+	"change": [
+		{
+			"selector": "#gminfo_gamename_input, #gminfo_gametitle_input, #gminfo_gameicon_input, #gminfo_appid_input",
+			"function": "gameinfo_save_back",
+			"pass_event": false,
+			"pass_element": false,
+			"pass_params": ""
+		},
+		{
+			"selector": "#gminfo_gameicon_input",
+			"function": "gminfo_icon_manager",
+			"pass_event": false,
+			"pass_element": false,
+			"pass_params": ""
 		}
 	]
 }

@@ -1,6 +1,7 @@
 
 
 # takes full config as an input
+# important todo: Mod Kill button does not work
 def dboard_launch_mod(cfg):
 	from ....utils.shared import app_command_send
 	import subprocess
@@ -135,7 +136,8 @@ def dboard_get_suggested_maps(pl):
 	# first - collect maps from the current maps folder, if any
 	if (cl_folder / 'maps').is_dir():
 		# I fucking swear if you start the holywar on oneliners vs readable shit - I'll fucking feed you to my home alien
-		collected_maps += [local_map.rstrip('.bsp') if local_map.endswith('.bsp') else '' for local_map in os.listdir(str(cl_folder / 'maps'))]
+		# collected_maps += [local_map.rstrip('.bsp') if local_map.endswith('.bsp') else '' for local_map in os.listdir(str(cl_folder / 'maps'))]
+		collected_maps += [local_map.rstrip('.bsp') for local_map in os.listdir(str(cl_folder / 'maps')) if local_map.endswith('.bsp')]
 		# for local_map in os.listdir(str(cl_folder / 'maps')):
 		# 	if local_map.endswith('.bsp'):
 		# 		collected_maps.append()
@@ -149,17 +151,23 @@ def dboard_get_suggested_maps(pl):
 			applicable_clients.append(cl)
 
 
-	# then - try to collect shit from linked rubbish
+	# then - try to collect shit from linked rubbish, if asked
 	# todo: is this slow ?
 	# the loop lenght would never even exceed 20 ...
 
 	# Cry about this, you fucking nerd
 	# feel so fucking smart?
 	# re-write this code and send me an "improved" version: megaadrenaline100@gmail.com
-	if len(applicable_clients) > 0:
+	if len(applicable_clients) > 0 and pl.get('suggest_linked') == True:
 		print(game_info.search_paths)
+		# go game_info is a gameinfo class object
+		# access search_paths k:v pairs which were parsed from the GameInfo.txt
+		# check every single one of them
 		for link_entry in game_info.search_paths:
 			# if link_entry['key'].lower() != 'gamebin' and any(ext in link_entry['value'].lower() for ext in applicable_clients):
+			
+			# since the checking pattern is like anything:anything + everywhere + doesnt matter
+			# try to avoind gamebin at all
 			if link_entry['key'].lower() != 'gamebin':
 				# see if any client is in the value
 				for acl in applicable_clients:

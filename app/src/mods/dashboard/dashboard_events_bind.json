@@ -36,9 +36,16 @@
 			"pass_event": false,
 			"pass_element": false,
 			"pass_params": ""
+		},
+		{
+			"selector": "#dboard_suggest_linked_maps_c",
+			"function": "dboard_call_applicable_maps",
+			"pass_event": false,
+			"pass_element": false,
+			"pass_params": ""
 		}
 	],
-	"focusout": [
+	"change": [
 		{
 			"selector": "#dboard_mod_add_opts_input, #dboard_start_from_map_inp input",
 			"function": "dboard_update_panel_vis",

@@ -2,19 +2,19 @@
 /*todo: also generate this automatically ?*/
 
 /* fonts */
-@import url('mods/main_app_core/fonts_link.css');
+@import url('mods/core/fonts_link.css');
 
 /* app core */
-@import url('mods/main_app_core/base_style.css');
+@import url('mods/core/base_style.css');
 
 /* menus */
-@import url('mods/main_app_core/simple_menus_style.css');
+@import url('mods/core/simple_menus_style.css');
 
 /* Checkboxes */
-@import url('mods/main_app_core/checkboxes_style.css');
+@import url('mods/core/checkboxes_style.css');
 
 /* UILists */
-@import url('mods/main_app_core/ui_lists_style.css');
+@import url('mods/core/ui_lists_style.css');
 
 /* Skyboxer */
 @import url('mods/skyboxer/skyboxer_style.css');

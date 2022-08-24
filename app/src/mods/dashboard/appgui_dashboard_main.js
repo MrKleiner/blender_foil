@@ -13,7 +13,6 @@ function dashboard_module_manager(pl)
 
 	switch (pl['mod_action']) {
 		case 'dboard_set_applicable_maps':
-			dboard_set_applicable_maps(pl['payload'])
 			break;
 		default:
 			console.log('The dashboard module has been called, but no corresponding action was found:', pl['mod_action'])
@@ -46,7 +45,7 @@ function dashboard_module_manager(pl)
 
 function dashboard_app_loader()
 {
-	if (window.foil_context.mod_context != undefined || window.foil_context.mod_context != null)
+	if (window.foil_context.full.project_index != undefined || window.foil_context.full.project_index != null)
 	{
 		base_module_loader('main_dashboard.html')
 		.then(function(resolved) {
@@ -60,7 +59,8 @@ function dashboard_app_loader()
 			.then(function(response) {
 				console.log(response.status, 'loaded test example UIList content placeholder for dashbaord maps UIList');
 				response.text().then(function(data) {
-					window.suggested_maps = JSON.parse(data)
+					// window.suggested_maps = JSON.parse(data)
+					window.sample_huge_array = JSON.parse(data)
 				});
 			});
 
@@ -192,7 +192,7 @@ function eval_launch_opts()
 
 function dboard_launch_mod()
 {
-	apc_send({
+	bltalk.send({
 		'action': 'dboard_launch_mod',
 		'payload': {
 			'engine': window.foil_context.full.engine_executable,
@@ -205,7 +205,7 @@ function dboard_launch_mod()
 
 function dboard_kill_mod()
 {
-	apc_send({
+	bltalk.send({
 		'action': 'dboard_kill_mod',
 		'payload': {
 			'engine': window.foil_context.full.engine_executable,
@@ -222,7 +222,7 @@ function dboard_kill_mod()
 // save quick config from control panel
 function foil_save_quick_config()
 {
-	apc_send({
+	bltalk.send({
 		'action': 'save_app_quick_config',
 		'payload': {
 			'project_index': window.foil_context.full.project_index,
@@ -234,23 +234,23 @@ function foil_save_quick_config()
 
 
 // ask Blender for applicable maps
-function dboard_call_applicable_maps()
+async function dboard_call_applicable_maps()
 {
+	console.log('called for applicable maps')
 	// suggested_maps
-	apc_send({
+	var maps = await bltalk.send({
 		'action': 'dboard_get_suggested_maps',
 		'payload': {
-			'gminfo_path': window.foil_context.full.gameinfo_path
+			'gminfo_path': window.foil_context.full.gameinfo_path,
+			'suggest_linked': lizcbox_stat('maps_from_linked_gminfo')
 		}
 	});
+
+	console.log('got applicable maps:', maps);
+	window.suggested_maps = maps;
+
 }
 
-// the response from applicable maps call goes here
-function dboard_set_applicable_maps(pl)
-{
-	console.log('got applicable maps:', pl);
-	window.suggested_maps = pl;
-}
 
 
 

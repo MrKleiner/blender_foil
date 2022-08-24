@@ -1,9 +1,25 @@
+
+
+// 
+// ============================================================
+// ------------------------------------------------------------
+//                      name: gameinfo
+// ------------------------------------------------------------
+// ============================================================
+// 
+
+
+
+
 function gameinfo_module_manager(pl)
 {
 
 	switch (pl['mod_action']) {
 		case 'gameinfo_set_info':
 			gameinfo_set_info(pl['payload'])
+			break;
+		case 'gminfo_icon_manager':
+			gminfo_icon_manager(true, pl['payload'])
 			break;
 		default:
 			console.log('The gameinfo module has been called, but no corresponding action was found');
@@ -62,7 +78,7 @@ function gameinfoman_app_loader()
 			'#gminfo_gametype_dropdown',
 			{
 				'menu_name': 'Game Type',
-				'default': 'Singleplayer_Only',
+				'default': 'Multiplayer_Only',
 				'menu_entries': [
 					{
 						'name': 'Singleplayer Only',
@@ -81,12 +97,14 @@ function gameinfoman_app_loader()
 		);
 
 		// read gameinfo of the mod and set settings
-		apc_send({
+		bltalk.send({
 			'action': 'gameinfoman_load_info',
 			'payload': {
 				'client_path': window.foil_context.full.client_folder_path
 			}
 		});
+
+
 
 	});
 }
@@ -99,15 +117,137 @@ function set_steam_appid_from_dropdown(dr_item)
 	document.querySelector('#gminfo_appid_input').value = dr_item.getAttribute('dropdown_set');
 }
 
+function evalst(st){
+	if (st.toString() == '1'){
+		return true
+	}
+	if (st.toString() == '0'){
+		return false
+	}
+	if (st == true){
+		return '1'
+	}
+	if (st == false){
+		return '0'
+	}
+	return null
+}
 
+
+// app context and fast config should be fully ready by this time
+// important todo: there has to be a def dict
 function gameinfo_set_info(inf)
 {
 	console.log(inf)
+	$('#gminfo_gamename_input').val(inf['game'])
+	$('#gameinfo_mod_minititle').text(inf['game'])
+	$('#gameinfo_mod_modfolderpath').val(window.foil_context.full.client_folder_path)
+	$('#gminfo_gametitle_input').val(inf['title'])
+	$('#gminfo_gameicon_input').val(inf['icon'])
+	$('#gminfo_appid_input').val(inf['SteamAppId'])
+
+	lizdropdowns.pool['gminfo_gametype_dropdown'].set_active(inf['type'])
+	lizdropdowns.pool['gminfo_appid_dropdown'].set_active($('#gminfo_appid_input').val())
+
+	// checkboxes
+	// todo: fucking make names symmetrical
+	lizcbox_stat('vr_support', evalst(inf['SupportsVR']))
+	lizcbox_stat('icon_autoconvert', window.foil_context.full.autoconvert_icon)
+	lizcbox_stat('dx8support', evalst(inf['SupportsDX8']))
+	lizcbox_stat('no_mp_model_select', evalst(inf['NoModels']))
+	lizcbox_stat('no_mp_crosshair_select', evalst(inf['NoCrosshair']))
+	lizcbox_stat('adv_crosshair', evalst(inf['AdvCrosshair']))
+	lizcbox_stat('has_portals', evalst(inf['HasPortals']))
+	lizcbox_stat('no_difficulty_selection', evalst(inf['NoDifficulty']))
+	lizcbox_stat('old_fleshlight', evalst(inf['use_legacy_flashlight']))
+
+	gminfo_icon_manager()
+}
+// fs.existsSync
+
+// basic info
+function gameinfo_save_back()
+{
+	// use_legacy_flashlight
+	
+	// update context with new game name
+	if ($('#gminfo_gamename_input').val().trim() == ''){
+		window.foil_context.full.full_game_name = 'Sample Text';
+	}else{
+		window.foil_context.full.full_game_name = $('#gminfo_gamename_input').val();
+	}
+	window.foil_context.full.autoconvert_icon = lizcbox_stat('icon_autoconvert');
+
+	bltalk.send({
+		'action': 'gameinfo_save_back',
+		'payload': {
+			'gminfo_path': window.foil_context.full.gameinfo_path,
+			'base_keys': {
+				'game': window.foil_context.full.full_game_name,
+				'title': $('#gminfo_gametitle_input').val(),
+				'icon': $('#gminfo_gameicon_input').val(),
+				'use_legacy_flashlight': evalst(lizcbox_stat('old_fleshlight')),
+				'NoCrosshair': evalst(lizcbox_stat('no_mp_crosshair_select')),
+				'SupportsVR': evalst(lizcbox_stat('vr_support')),
+				'SupportsDX8': evalst(lizcbox_stat('dx8support')),
+				'NoModels': evalst(lizcbox_stat('no_mp_model_select')),
+				'AdvCrosshair': evalst(lizcbox_stat('adv_crosshair')),
+				'HasPortals': evalst(lizcbox_stat('has_portals')),
+				'NoDifficulty': evalst(lizcbox_stat('no_difficulty_selection'))
+			},
+			'app_id': $('#gminfo_appid_input').val()
+		}
+	});
+
+	foil_save_context(false)
+	$('#gameinfo_mod_minititle').text(window.foil_context.full.full_game_name)
 }
 
 
 
+// pass client location and icon path input
 
+// todo: it's possible to check if file exists in js
+function gminfo_icon_manager(accept=false, pl={})
+{
+
+	// if not told to accept - request icon
+	if (accept == false)
+	{
+		$('#gminfo_gameicon_input').val($('#gminfo_gameicon_input').val().replaceAll('"', ''))
+		// console.log('do not accept, but send');
+		bltalk.send({
+			'action': 'gameinfoman_get_mod_icon',
+			'payload': {
+				'client_path': window.foil_context.full.client_folder_path,
+				'icon_path': $('#gminfo_gameicon_input').val().replaceAll('"', '')
+			}
+		});
+	}
+
+	// if asked to accept - set icon
+	if (accept == true && pl['conversion_success'] == true)
+	{
+		// console.log('accept shit');
+		console.log(pl);
+		fetch('data:image/png;base64,' + pl['img_base64'])
+		.then(function(response) {
+			console.log(response.status);
+			response.blob().then(function(data) {
+				var urlCreator = window.URL || window.webkitURL;
+				var imageUrl = urlCreator.createObjectURL(data);
+				$('#gameinfo_icon_preview img').attr('src', imageUrl)
+			});
+		});
+	}
+
+	if (pl['conversion_success'] == false)
+	{
+		console.log('Icon conversion failed')
+	}
+
+
+}
 
 
 

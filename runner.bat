@@ -1,0 +1,1 @@
+py "C:\Users\DrHax\AppData\Roaming\Blender Foundation\Blender\3.1\scripts\addons\blender_foil\fdef\funcgen.py"

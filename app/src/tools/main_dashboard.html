@@ -96,7 +96,7 @@
 				<div class="main_dashboard_util_icon">
 					<img draggable="false" src="assets/compilers_switch.svg">
 				</div>
-				<div class="main_dashboard_util_title">Compilers Switch</div>
+				<div class="main_dashboard_util_title">Map Compiling</div>
 			</div>
 
 			<div class="main_dashboard_util" dboardload="vehicle_garage">
@@ -125,6 +125,7 @@
 				<div class="main_dashboard_util_title">Blender connect</div>
 			</div>
 
+			<!-- https://www.youtube.com/watch?v=JtEkUmYecnk -->
 			<div class="main_dashboard_util" dboardload="actbusy_scripts">
 				<div class="main_dashboard_util_icon">
 					<img draggable="false" src="assets/pretend_busy.png">
@@ -223,9 +224,12 @@
 			</div>
 
 			<div class="dboard_mod_prmrow">
-				<div class="dboard_mod_prmrow_cbox">
+				<div class="dboard_mod_prmrow_cbox" id="dboard_suggest_linked_maps_c">
 					<div class="dboard_mod_prmrow_cbox_title">Suggest maps from linked</div>
 					<div lizcbox_id="maps_from_linked_gminfo" lizcbox_init="set" lizcbox_hashitbox class="dboard_mod_prmrow_cbox_mark"></div>
+					<liztooltip liztooltip_prms="top:1:5:1000">
+						If a linked client in the gameinfo search paths has any maps - show them here.
+					</liztooltip>
 				</div>
 			</div>
 

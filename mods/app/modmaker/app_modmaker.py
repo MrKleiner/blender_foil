@@ -34,7 +34,7 @@ def fetch_existing_engines(pl):
 	# applicable
 	# wtf
 	# fucking pre-include these stupid icons
-	# gmod is not moddable. Create addons instead
+	# gmod is not moddable. Create addons instead (not a joke. Genuinely: The only way to mod gmod is to create an addon)
 	applicable = {
 		# hl2, ep1 and ep2 use the same engine
 		'half-life 2': {
@@ -63,7 +63,7 @@ def fetch_existing_engines(pl):
 			'exe': 'hl2.exe',
 			'icton': 'hl2/resource/game.ico'
 		},
-		# Seriously, this is valve's habit: *release a "game"* --> *release a "game 2" which is literally "game 1" + "game 2"*
+		# Seriously, this is valve's habit: *release a "game"* --> *release a "game 2" which is literally "game 1" + "game 2"* --> *"game 1" is now in a very pathetic state of being basically dead*
 		'Alien Swarm Reactive Drop': {
 			'exe': 'reactivedrop.exe',
 			'icton': 'reactivedrop.ico'
@@ -72,6 +72,8 @@ def fetch_existing_engines(pl):
 			'exe': 'csgo.exe',
 			'icton': 'csgo/resource/game.ico'
 		},
+		# I'd really want to see that one madlad with the balls made of such an unbreakable steel to mod dod:source.
+		# mail me at megaadrenaline@gmail.com
 		'day of defeat source': {
 			'exe': 'hl2.exe',
 			'icton': 'dod/resource/game.ico'
@@ -215,6 +217,7 @@ def modmaker_load_engine_info(pl):
 		]
 		if tgt_dir.is_dir() and not gc in noscan:
 			# this chains ensures that an actual client is being tested
+			# set & set ensures that target dir contains at least one source-related content folder (true if two sets intersect at any point)
 			if set(os.listdir(tgt_dir)) & set(identifier):
 				# allowed_clients.append(gc)
 				clpl = {
@@ -225,7 +228,7 @@ def modmaker_load_engine_info(pl):
 					'client_icon': 'assets/cleint_isbase.svg',
 					'hasdll': True if (tgt_dir / 'bin' / 'client.dll').is_file() and (tgt_dir / 'bin' / 'server.dll').is_file() else False
 				}
-				# it's шиndows - a folder cannot contain duplicate names
+				# it's шиndows - a folder cannot contain duplicate names, don't worry about multiple gameinfos
 				if (tgt_dir / 'gameinfo.txt').is_file():
 
 					# read gameinfo
@@ -236,6 +239,8 @@ def modmaker_load_engine_info(pl):
 
 					# this will either return False or an absolute Path to the icon
 					# exception safe
+
+					# important todo: why BDSM when it's possible to simply convert any kind of input image to webp to display in gui ???
 					icon_order = (
 						(tgt_dir / (gminfo.game_icon + '.ico')) if gminfo.game_icon != '' and (tgt_dir / (gminfo.game_icon + '.ico')).is_file() else False
 						or
@@ -368,13 +373,11 @@ def modmaker_check_engine_bins(engi_exe):
 
 def modmaker_save_engine_info(pl):
 	# import numpy as np
-	import os
+	import os, shutil, os.path, json
 	# import math
 	from pathlib import Path
-	import shutil
-	import os.path
 	from os import path
-	import json
+
 
 	config_loc = Path(__file__).absolute().parent.parent.parent.parent / 'configs' / 'app' / 'engines' / 'engines_info.json'
 	with open(str(config_loc), 'r') as jsonfile:
@@ -388,6 +391,9 @@ def modmaker_save_engine_info(pl):
 
 	with open(str(config_loc), 'w') as jsonfile:
 		jsonfile.write(json.dumps(jfile, indent=4, sort_keys=False))
+
+	# resolve
+	return sys_id
 
 
 def modmaker_load_saved_engines(pl):

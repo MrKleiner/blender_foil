@@ -2,11 +2,19 @@ from pathlib import Path
 import json
 import os
 
+thisdir = Path(__file__).parent
+
+
 globl = """def appconnect_actions(cs):
     match cs['action']:
 CASESREPLACE
             
         case _:
+            # app_command_send({
+            #     'app_module': 'echo_status',
+            #     'mod_action': 'echo_status',
+            #     'payload': 'Unknown incoming case'
+            # })
             return 'wtf is even this'"""
 
 
@@ -15,13 +23,14 @@ standard_case = """
             app_command_send({
                 'app_module': 'MODREPLACE',
                 'mod_action': 'MODACTIONREPLACE',
+                'sys_action_id': cs['sys_action_id'],
                 'payload': PAYLOADREPLACE
             })
             return ''"""
 
 
 
-with open('funcdef.py', 'r') as txtfile:
+with open(str(thisdir / 'funcdef.py'), 'r') as txtfile:
     funcdef = txtfile.readlines()
 
 result_cases = ''
@@ -49,7 +58,7 @@ for connect_entry in loadjson:
     result_cases += standard_case.replace('CASEREPALCE', connect_entry['incoming_case']).replace('MODREPLACE', priority['js_module']).replace('MODACTIONREPLACE', priority['js_module_action']).replace('PAYLOADREPLACE', connect_entry['python_function'] + """(cs['payload'])""")
 
 
-with open((Path(__file__).parent.parent / 'blfoil_appconnect.py'), 'w') as txtfile:
+with open((thisdir.parent / 'blfoil_appconnect.py'), 'w') as txtfile:
     funcdef = txtfile.write(result_imports + '\n' + globl.replace('CASESREPLACE', result_cases))
 
 
@@ -71,13 +80,13 @@ event_predef_end = """});"""
 
 all_events = {}
 
-thispath = Path(__file__)
+# thispath = Path(__file__)
 
 # print(os.listdir(thispath.parent.parent 'app' / 'src' / 'mods'))
 
 # print('ded'.endswith('ed'))
 
-basepath = Path(thispath.parent.parent / 'app' / 'src' / 'mods')
+basepath = Path(thisdir.parent / 'app' / 'src' / 'mods')
 
 # print(os.listdir(basepath))
 
@@ -179,7 +188,7 @@ for etype in module_events:
 
 # print(allevents)
 
-with open(str(thispath.parent.parent / 'app' / 'src' / 'mods' / 'main_app_core' / 'appgui_main_core_event_listeners.js'), 'w') as writebinds:
+with open(str(thisdir.parent / 'app' / 'src' / 'mods' / 'main_app_core' / 'appgui_main_core_event_listeners.js'), 'w') as writebinds:
     writebinds.write(allevents)
 
 

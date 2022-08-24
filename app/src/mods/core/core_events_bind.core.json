@@ -1,0 +1,26 @@
+{
+	"click": [
+		{
+			"selector": "[lizmenu_action=\"load_newmodmaker\"]",
+			"function": "newmodmaker_loader",
+			"pass_event": false,
+			"pass_element": false,
+			"pass_params": ""
+		},
+		{
+			"selector": "[lizmenu_action=\"load_main_dashboard\"]",
+			"function": "dashboard_app_loader",
+			"pass_event": false,
+			"pass_element": false,
+			"pass_params": ""
+		},
+		{
+			"selector": "[apptoolbarctg=\"preferences\"] [lizmenu_action=\"exit_app\"]",
+			"function": "blfoil_exit_app",
+			"pass_event": false,
+			"pass_element": false,
+			"pass_params": ""
+		}
+	]
+
+}

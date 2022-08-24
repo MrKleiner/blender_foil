@@ -169,10 +169,15 @@ def blender_foil_guiappconnect():
                 conn.send(byt)
 
             except Exception as e:
-                print(e)
-                print('all good')
-                print(datacollect)
-                data_json = json.loads(datacollect)
+                try:
+                    print(e)
+                    print('all good')
+                    print(datacollect)
+                    data_json = json.loads(datacollect)
+                    
+                except Exception as e:
+                    print('Something very bad has happened')
+                    print(e)
                 appconnect_actions(data_json)
                 break
 
@@ -234,6 +239,8 @@ blfoil_check_pypackages()
 # important todo: Image magick can most likely output data into std
 
 # important todo: would it make any sense to the HDR skybox name habe no _hdr and LDR have _ldr ?
+
+# IMPORTANT TODO: easy baker with cool GUI + specificaly for source: bake these to this to this image and ...
 
 # important todo: Displacement filters!
 # custon ones are probably possible

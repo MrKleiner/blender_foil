@@ -1,0 +1,12 @@
+{
+	"mouseover": [
+		{
+			"selector": "[liztooltip]",
+			"function": "showliztooltip",
+			"pass_event": false,
+			"pass_element": true,
+			"pass_params": "",
+			"else": "showliztooltip"
+		}
+	]
+}

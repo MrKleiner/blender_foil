@@ -1,0 +1,169 @@
+/*
+========================================================================
+------------------------------------------------------------------------
+                                Menus
+------------------------------------------------------------------------
+========================================================================
+*/
+
+
+@-webkit-keyframes sat_roll {
+	0%
+	{
+		transform: translateY(-40px);
+		opacity: 0;
+	}
+
+	100%
+	{
+		transform: translateY(0);
+		opacity: 1;
+	}
+}
+
+
+.tg_head_logo_dropdown.open .dropdown-menu
+{
+	animation: sat-roll 0.25s;
+	animation-timing-function: ease-out/*cubic-bezier(.22,.46,.28,1)*/;
+}
+
+.lizard_menu
+{
+	display: flex;
+	flex-grow: 1;
+	height: 100%;
+	/*important todo: column ? row ? */
+	/*flex-direction: column;*/
+}
+
+.lizmenu_title
+{
+	display: flex;
+	height: 100%;
+	align-items: center;
+	justify-content: center;
+}
+
+.lizard_menu_entries, .lizard_dropdown_entries
+{
+	display: flex;
+	flex-direction: column;
+	position: absolute;
+	max-width: 400px;
+	min-width: 150px;
+	background: rgb(25, 25, 25);
+	color: white;
+	/*margin-left: -5px;*/
+	align-self: flex-start;
+	transition-duration: .0s;
+	/*transform: translateY(-10px);*/
+	border: 1px solid rgb(60, 60, 60);
+	padding: 1px;
+	box-shadow: 0px 0px 7px 0px rgba(0,0,0,0.7);
+	margin-top: 32px;
+	visibility: hidden;
+	opacity: 0;
+	z-index: 7500;
+}
+
+.lizard_menu:hover .lizard_menu_entries, [haslizmenu]:hover .lizard_menu_entries
+{
+	visibility: visible;
+	transition-duration: .2s;
+	/*transform: translateY(0px);*/
+	display: flex;
+	opacity: 1;
+}
+
+.lizard_dropdown_arrow_icon
+{
+	display: flex;
+	flex-direction: row;
+	height: 100%;
+	/*width: 100%;*/
+	flex-grow: 1;
+	justify-content: flex-end;
+}
+
+.lizard_dropdown_arrow_icon img
+{
+	height: 100%;
+	width: 12px;
+	object-fit: contain;
+	object-position: center;
+	margin-right: 5px;
+	opacity: 0.9;
+	user-select: none;
+}
+
+
+.lizard_menu_entry
+{
+	display: flex;
+	align-items: center;
+	height: 25px;
+	/*background: gray;*/
+	user-select: none;
+}
+
+.lizard_menu_entry:hover
+{
+	background: rgb(40, 40, 40);
+}
+
+.lizard_menu_entry:active
+{
+	background: rgb(34, 95, 157);
+}
+
+
+.lizard_menu_entry_icon
+{
+	width: 25px;
+	height: 100%;
+	/*background: rgba(255, 255, 255, 0.1);*/
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+
+.lizard_menu_entry_icon img
+{
+	width: 55%;
+	height: 55%;
+	/*object-fit: contain;*/
+	object-position: center;
+	z-index: 7300;
+}
+
+
+.lizard_menu_entry_text
+{
+	padding: 0px 6px 0px 5px;
+	font-size: 15px;
+}
+
+.lizard_menu_separator
+{
+	width: 80%;
+	align-self: center;
+	height: 1px;
+	border-top: 1px dashed rgb(70, 70, 70);
+	margin: 1px 0px 0px 0px;
+	/*background: rgb(60, 60, 60);*/
+}
+
+.lizdropdown_active .lizard_menu_dropdown
+{
+	background: #3a5986 !important;
+	border-color: #4772b3 !important;
+	outline-color: #4772b3 !important;
+}
+
+.lizdropdown_entries_shown
+{
+	opacity: 1 !important;
+	visibility: visible !important;
+}

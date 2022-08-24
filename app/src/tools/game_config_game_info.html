@@ -15,17 +15,29 @@
 
 		<div class="gameinfo_prmrow gameinfo_prmrow_textfield">
 			<div class="gameinfo_text_input_field_label">Game Name</div>
-			<div class="gaminfo_prmrow_input_wrapper"><input type="text" placeholder="3km long name"></div>
+			<div class="gaminfo_prmrow_input_wrapper"><input id="gminfo_gamename_input" type="text" placeholder="3km long name"></div>
 		</div>
 
 		<div class="gameinfo_prmrow gameinfo_prmrow_textfield">
 			<div class="gameinfo_text_input_field_label">Game Title</div>
-			<div class="gaminfo_prmrow_input_wrapper"><input type="text" placeholder="wat"></div>
+			<div class="gaminfo_prmrow_input_wrapper"><input id="gminfo_gametitle_input" type="text" placeholder="wat"></div>
 		</div>
 
 		<div class="gameinfo_prmrow gameinfo_prmrow_textfield">
 			<div class="gameinfo_text_input_field_label">Game Icon</div>
-			<div class="gaminfo_prmrow_input_wrapper"><input type="text" placeholder="rubbish icon"></div>
+			<div class="gaminfo_prmrow_input_wrapper"><input id="gminfo_gameicon_input" type="text" placeholder="rubbish icon"></div>
+		</div>
+
+
+		<div class="gameinfo_prmrow">
+			<div class="gameinfo_prmrow_cbox">
+				<div class="gameinfo_prmrow_cbox_title">Autoconvert</div>
+				<div lizcbox_id="icon_autoconvert" lizcbox_init="set" lizcbox_hashitbox class="gameinfo_prmrow_cbox_mark"></div>
+				<liztooltip liztooltip_prms="bottom:1:10:500">
+					Cpnvert the specified icon to an appropriate format (tga).<br>
+					This checkbox should always be checked, unless you know what you're doing.
+				</liztooltip>
+			</div>
 		</div>
 
 		<!-- this is honestly so fucking overengineered... -->
@@ -83,6 +95,13 @@
 			<div class="gameinfo_prmrow_cbox">
 				<div class="gameinfo_prmrow_cbox_title">Old Fleshlight</div>
 				<div lizcbox_id="old_fleshlight" lizcbox_init="unset" lizcbox_hashitbox class="gameinfo_prmrow_cbox_mark"></div>
+				<liztooltip liztooltip_prms="right:0:15:500">
+					This option toggles between hl2 and episodic flashlight behaviour when using Mapbase.<br>
+					<a style="color: rgb(200, 200, 200)">
+						hl2: flashlight drains suit power.<br>
+						episodic: flashlight has a separate power pool.
+					</a>
+				</liztooltip>
 			</div>
 		</div>
 

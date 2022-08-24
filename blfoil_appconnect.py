@@ -11,6 +11,7 @@ def appconnect_actions(cs):
             app_command_send({
                 'app_module': 'modmaker',
                 'mod_action': 'append_pre_installed',
+                'sys_action_id': cs['sys_action_id'],
                 'payload': fetch_existing_engines(cs['payload'])
             })
             return ''
@@ -18,6 +19,7 @@ def appconnect_actions(cs):
             app_command_send({
                 'app_module': 'modmaker',
                 'mod_action': 'set_engine_info',
+                'sys_action_id': cs['sys_action_id'],
                 'payload': modmaker_load_engine_info(cs['payload'])
             })
             return ''
@@ -25,6 +27,7 @@ def appconnect_actions(cs):
             app_command_send({
                 'app_module': 'echo_status',
                 'mod_action': 'echo_status',
+                'sys_action_id': cs['sys_action_id'],
                 'payload': modmaker_save_engine_info(cs['payload'])
             })
             return ''
@@ -32,6 +35,7 @@ def appconnect_actions(cs):
             app_command_send({
                 'app_module': 'modmaker',
                 'mod_action': 'accept_engines',
+                'sys_action_id': cs['sys_action_id'],
                 'payload': modmaker_load_saved_engines(cs['payload'])
             })
             return ''
@@ -39,6 +43,7 @@ def appconnect_actions(cs):
             app_command_send({
                 'app_module': 'echo_status',
                 'mod_action': 'echo_status',
+                'sys_action_id': cs['sys_action_id'],
                 'payload': modmaker_kill_engine(cs['payload'])
             })
             return ''
@@ -46,6 +51,7 @@ def appconnect_actions(cs):
             app_command_send({
                 'app_module': 'echo_status',
                 'mod_action': 'echo_status',
+                'sys_action_id': cs['sys_action_id'],
                 'payload': modmaker_spawn_new_client(cs['payload'])
             })
             return ''
@@ -53,6 +59,7 @@ def appconnect_actions(cs):
             app_command_send({
                 'app_module': 'dashboard',
                 'mod_action': 'dashboard_launched_mod_echo',
+                'sys_action_id': cs['sys_action_id'],
                 'payload': dboard_launch_mod(cs['payload'])
             })
             return ''
@@ -60,6 +67,7 @@ def appconnect_actions(cs):
             app_command_send({
                 'app_module': 'dashboard',
                 'mod_action': 'dashboard_killed_mod_echo',
+                'sys_action_id': cs['sys_action_id'],
                 'payload': dboard_kill_mod(cs['payload'])
             })
             return ''
@@ -67,6 +75,7 @@ def appconnect_actions(cs):
             app_command_send({
                 'app_module': 'echo_status',
                 'mod_action': 'echo_status',
+                'sys_action_id': cs['sys_action_id'],
                 'payload': save_last_app_context(cs['payload'])
             })
             return ''
@@ -74,6 +83,7 @@ def appconnect_actions(cs):
             app_command_send({
                 'app_module': 'set_context',
                 'mod_action': 'set_context',
+                'sys_action_id': cs['sys_action_id'],
                 'payload': load_last_app_context(cs['payload'])
             })
             return ''
@@ -81,6 +91,7 @@ def appconnect_actions(cs):
             app_command_send({
                 'app_module': 'echo_status',
                 'mod_action': 'echo_status',
+                'sys_action_id': cs['sys_action_id'],
                 'payload': save_app_quick_config(cs['payload'])
             })
             return ''
@@ -88,6 +99,7 @@ def appconnect_actions(cs):
             app_command_send({
                 'app_module': 'dashboard',
                 'mod_action': 'dboard_set_applicable_maps',
+                'sys_action_id': cs['sys_action_id'],
                 'payload': dboard_get_suggested_maps(cs['payload'])
             })
             return ''
@@ -95,9 +107,31 @@ def appconnect_actions(cs):
             app_command_send({
                 'app_module': 'gameinfo',
                 'mod_action': 'gameinfo_set_info',
+                'sys_action_id': cs['sys_action_id'],
                 'payload': gameinfoman_load_gminfo(cs['payload'])
+            })
+            return ''
+        case 'gameinfo_save_back':
+            app_command_send({
+                'app_module': 'echo_status',
+                'mod_action': 'echo_status',
+                'sys_action_id': cs['sys_action_id'],
+                'payload': gameinfo_save_back(cs['payload'])
+            })
+            return ''
+        case 'gameinfoman_get_mod_icon':
+            app_command_send({
+                'app_module': 'gameinfo',
+                'mod_action': 'gminfo_icon_manager',
+                'sys_action_id': cs['sys_action_id'],
+                'payload': gminfo_icon_vis_feedback(cs['payload'])
             })
             return ''
             
         case _:
+            # app_command_send({
+            #     'app_module': 'echo_status',
+            #     'mod_action': 'echo_status',
+            #     'payload': 'Unknown incoming case'
+            # })
             return 'wtf is even this'

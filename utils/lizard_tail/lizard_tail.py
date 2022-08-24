@@ -115,6 +115,25 @@ class lizard_tail:
 	def game_icon(self, newicon):
 		self.gameinfo_r.select('GameInfo > kv[keyname="icon"]')[0].gval.string = str(newicon)
 
+	# (key, value) tuple
+	def set_basekey(self, bk, additive=False):
+		older = self.gameinfo_r.select('GameInfo > kv[keyname="' + bk[0] + '"]')
+		if len(older) > 0:
+			older[0].decompose()
+
+		newer = self.gameinfo_r.new_tag('kv', keyname=str(bk[0]))
+		keyt = self.gameinfo_r.new_tag('gkey')
+		keyt.string = str(bk[0])
+		newer.append(keyt)
+		valt = self.gameinfo_r.new_tag('gval')
+		valt.string = str(bk[1])
+		newer.append(valt)
+
+		self.gameinfo_r.select('GameInfo')[0].append(newer)
+
+		return True
+
+
 
 	@property
 	def steam_id(self):

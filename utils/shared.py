@@ -179,6 +179,7 @@ async def appgui_updater(pl):
 
             else:
                 print('no data received')
+                # break
 
         print('closing')
         print('Complete response:', collect_data)
