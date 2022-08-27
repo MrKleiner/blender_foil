@@ -49,20 +49,8 @@ function dashboard_app_loader()
 	{
 		base_module_loader('main_dashboard.html')
 		.then(function(resolved) {
-			fetch('assets/sizetest.txt', {
-				'headers': {
-					'accept': '*/*',
-					'cache-control': 'no-cache',
-					'pragma': 'no-cache'
-				}
-			})
-			.then(function(response) {
-				console.log(response.status, 'loaded test example UIList content placeholder for dashbaord maps UIList');
-				response.text().then(function(data) {
-					// window.suggested_maps = JSON.parse(data)
-					window.sample_huge_array = JSON.parse(data)
-				});
-			});
+			window.sample_huge_array = JSON.parse(fs.readFileSync((new Path(__dirname)).join('assets', 'sizetest.txt').toString(), {encoding:'utf8', flag:'r'}))
+			log('dboard', 'loaded test example UIList content placeholder for dashbaord maps UIList');
 
 			// load the rest of the info
 			dashboard_set_ctrl_panel_from_context()
@@ -98,7 +86,7 @@ function dashboard_set_ctrl_panel_from_context()
 // and also context
 function dboard_update_panel_vis()
 {
-	console.log(eval_launch_opts());
+	log('dboard', 'Evaluated launch options: ', eval_launch_opts());
 	$('#dboard_mod_preview_lauchprms').text(eval_launch_opts()['string']);
 
 	// save context
@@ -236,7 +224,7 @@ function foil_save_quick_config()
 // ask Blender for applicable maps
 async function dboard_call_applicable_maps()
 {
-	console.log('called for applicable maps')
+	log('dboard', 'Called for applicable maps')
 	// suggested_maps
 	var maps = await bltalk.send({
 		'action': 'dboard_get_suggested_maps',

@@ -6,11 +6,29 @@
 ============================================================
 */
 
+// function getRowNum() {
+//     let e = new Error();
+//     e = e.stack.split("\n")[2].split(":");
+//     e.pop();
+//     return e.pop();
+// }
+// console.log(getRowNum())
+
 // jQuery
 window.$ = window.jQuery = require('./apis/jquery/3_6_0/jquery.min.js');
 
+// remap print
+// because we're gentlemen
+window.paper_print = print
+
+// important todo: also remap atob and btoa
+
 // Electron's pathlib
-const path = require('path');
+// const path = require('path');
+
+// Python-like pathlib
+// todo: this import doesnt seem right
+const Path = require('pathlib-js').default;
 
 // Electron File System Access
 const fs = require('fs');
@@ -55,42 +73,137 @@ window.blsocket_cache = {};
 window.blwait_timeout = 1000*30;
 
 // UDP await/resolve storage
+// important to not: There could be a number of simultaneuos transfers. Do not delete this dict randomly
 window.blresolve = {};
-
-// Smart base64 encode
-function u8btoa(st) {
-    return btoa(unescape(encodeURIComponent(st)));
-}
-// Smart base64 decode
-function u8atob(st) {
-    return decodeURIComponent(escape(atob(st)));
-}
 
 // quick base64 to json
 function mkj(bd){
 	return JSON.parse(u8atob(bd));
 }
 
-// bootleg logger
-function log(wha)
-{
-	console.log('js: ' + wha)
+// app root
+var got_root = new Path(__dirname)
+while (true) {
+    got_root = got_root.parent()
+    if (got_root.basename == 'blender_foil'){
+    	window.addon_root = got_root
+        break
+    }
 }
 
-// returns true if an array contains any element which is not present in another array
-function array_elem_check(what, inwhat) {
-    var magix = what.filter(f => !inwhat.includes(f));
-    return magix.length > 0
-}
 
-// takes raw base64 string and converts it to imageurl
-function b64toimg(b64)
+
+
+
+
+
+
+
+
+
+
+
+
+// ============================================================
+// ------------------------------------------------------------
+//                             Logger
+// ------------------------------------------------------------
+// ============================================================
+
+class fbi_logger
 {
-	var bytes = lizard.base64DecToArr(b64)
-	var blob = new Blob([bytes], {type: 'image/*'});
-	var imageUrl = (window.URL || window.webkitURL).createObjectURL(blob);
-	return imageUrl
+	// constructor(height, width) {
+	constructor() {
+		window.print = console.log.bind(window.console);
+		window.log = this.module_log
+		console.log('Initialized Fbi Logger');
+	};
+
+
+	//
+	// ...arguments
+	//
+
+	// This is an extremely rare occasion of when blender wants to print something into the js console
+	// and not in the debug console whatsoever
+	blender_echo_status(pl){
+		try {
+			// console.log('%c Blender says:', 'background: rgba(0, 0, 0, 0); color: #EB9C4E; font-weigth: bold;', echo['payload']);
+			console.log('%c Blender says:', 'background: rgba(0, 0, 0, 0); color: #AA551D; font-weight: bold;', pl['payload']);
+			// console.log(echo['payload']);
+		} catch (error) {
+
+		}
+	}
+
+	// module: module name, if found in predef styles - style correspondingly. Else - wrap into []
+	// log: an array of objects to log
+	module_log(md=null, lg=''){
+		// get pure list of stuff to actually log
+		var clear_log = [...arguments].slice(1)
+
+		var predef_styles = {
+			'skyboxer': {
+				'bg': 'rgba(0, 0, 0, 0.0)',
+				'fg': '#1F963B',
+				'text': '[Skyboxer]'
+			},
+			'server': {
+				'bg': 'rgba(0, 0, 0, 0.0)',
+				'fg': '#3852B2',
+				'text': '[Server]'
+			},
+			'sender': {
+				'bg': 'rgba(0, 0, 0, 0.0)',
+				'fg': '#C1186C',
+				'text': '[Sender]'
+			},
+			'modmaker': {
+				'bg': 'rgba(0, 0, 0, 0.0)',
+				'fg': '#6198CC',
+				'text': '[Modmaker]'
+			},
+			'gameinfo': {
+				'bg': 'rgba(0, 0, 0, 0.0)',
+				'fg': '#5F881E',
+				'text': '[GameInfo]'
+			},
+			'dboard': {
+				'bg': 'rgba(0, 0, 0, 0.0)',
+				'fg': '#5C1EB8',
+				'text': '[Dashboard]'
+			}
+		}
+
+		// make the module name
+		if (predef_styles.hasOwnProperty(md)){
+			var module_name = `%c${predef_styles[md]['text']}`;
+			var module_style = `background: ${predef_styles[md]['bg']}; color: ${predef_styles[md]['fg']}`;
+		}else{
+			var module_name = `[${md}]`;
+			var module_style = '';
+		}
+		
+		// absolute genius
+		// return [module_name, module_style, ...clear_log]
+		print(
+			module_name,
+			module_style,
+			...clear_log
+		)
+
+	}
+
 }
+window.fbi = new fbi_logger();
+
+
+
+
+
+
+
+
 
 
 
@@ -124,11 +237,11 @@ function app_reload_refresh(evee)
 }
 
 
-/*
-===================================================
-                    svg append
-===================================================
-*/
+
+// ===================================================
+//                     svg append
+// ===================================================
+
 
 // load specified svg as an element so that it's possible to re-colour it
 // important todo: this can be done synchronously with electron file manager
@@ -168,11 +281,11 @@ document.addEventListener('mousemove', event => {
 });
 
 
-/*
-===================================================
-                    Close/Exit app
-===================================================
-*/
+
+// ===================================================
+//                     Close/Exit app
+// ===================================================
+
 function blfoil_exit_app()
 {
 	window.close()
@@ -184,13 +297,12 @@ function blfoil_exit_app()
 
 
 
-/*
-============================================================
-------------------------------------------------------------
-                  APP server listener
-------------------------------------------------------------
-============================================================
-*/
+// ============================================================
+// ------------------------------------------------------------
+//                   APP server listener
+// ------------------------------------------------------------
+// ============================================================
+
 
 
 
@@ -210,7 +322,7 @@ $(document).ready(function(){
 	// The server listens to a socket for a client to make a connection request.
 	// Think of a socket as an end point.
 	server.listen(port, function() {
-	    console.info('Initialized Server listening for connection requests on socket localhost:', port);
+	    log('server', 'Initialized Server listening for connection requests on socket localhost:', port);
 
 	});
 
@@ -219,10 +331,10 @@ $(document).ready(function(){
 	// A new session has been created, everything inside is in the context of that session
 	server.on('connection', function(socket) {
 		// console.groupCollapsed('Server Connection');
-			console.log('Got connection to the following socket:', socket.remotePort.toString());
+			log('server', 'Got connection to the following socket:', socket.remotePort.toString());
 			// create cache storage
 			window['blsocket_cache']['cst_cache' + socket.remotePort.toString()] = '';
-		    console.log('Cache assigned to', window['blsocket_cache']['cst_cache' + socket.remotePort.toString()]);
+		    log('server', 'Cache assigned to', 'cst_cache' + socket.remotePort.toString());
 	    
 
 	    // Now that a TCP connection has been established, the server can send data to
@@ -235,7 +347,7 @@ $(document).ready(function(){
 	    // todo: define storage as let ?
 	    
 	    socket.on('data', function(chunk) {
-	        console.log('Data received from client:', {'len': chunk.length, 'data': chunk.toString()});
+	        log('server', 'Data received from client:', {'len': chunk.length, 'data': chunk.toString()});
 	        // window.cstorage += chunk.toString()
 	        // cst += chunk.toString()
 	        window['blsocket_cache']['cst_cache' + socket.remotePort.toString()] += chunk.toString()
@@ -254,7 +366,7 @@ $(document).ready(function(){
 
 	    	// have better ideas ?
 	    	// comment on github
-	    	console.log('Connection closed. Collected data:', {
+	    	log('server', 'Connection closed. Collected data:', {
 		    		'len': window['blsocket_cache']['cst_cache' + socket.remotePort.toString()].length,
 		    		'data': window['blsocket_cache']['cst_cache' + socket.remotePort.toString()]
 	    		}
@@ -288,7 +400,7 @@ $(document).ready(function(){
 					foil_set_context(input_d)
 					break;
 				case 'echo_status':
-					blender_echo_status(input_d)
+					fbi.blender_echo_status(input_d)
 					break;
 				case 'dashboard':
 					dashboard_module_manager(input_d)
@@ -350,13 +462,13 @@ $(document).ready(function(){
 
 
 
-/*
-============================================================
-------------------------------------------------------------
-                             Talker
-------------------------------------------------------------
-============================================================
-*/
+
+// ============================================================
+// ------------------------------------------------------------
+//                              Talker
+// ------------------------------------------------------------
+// ============================================================
+
 
 
 class blender_talker
@@ -399,41 +511,33 @@ class blender_talker
 		// read its content and THEN send data to that port
 		// important todo: simply try to pass location on app load ?
 		// important todo: fetch is only a temp workaround, use native file reader
-		fetch('C:\\Users\\DrHax\\AppData\\Roaming\\Blender Foundation\\Blender\\3.1\\scripts\\addons\\blender_foil\\bdsmbind.sex', {
-			'headers': {
-				'accept': '*/*',
-				'cache-control': 'no-cache',
-				'pragma': 'no-cache'
-			}
-		})
-		.then(function(response) {
-			// console.group('Sender Connection');
-			console.log('[Sender] Requested port on which Blender server is running. Fetch response status:', response.status, '(Has to be 200)');
-			response.text().then(function(data) {
-				window.gui_pot_connect = data.trim()
-				console.log('[Sender] Acquired (constant) port from fetch:', window.gui_pot_connect);
 
-				var client = new net.Socket();
-				client.connect(parseInt(window.gui_pot_connect), '127.0.0.1', function() {
-					console.log('[Sender] Connected to Blender server, port:', client.localPort);
-					// client.write('Hello, server! Love, Client.');
+		// get port
+		var port_bind = fs.readFileSync(window.addon_root.join('bdsmbind.sex').toString(), {encoding:'utf8', flag:'r'})
+		log('sender', 'Read file containing bound port:', port_bind)
+		// console.group('Sender Connection');
 
-					// set resolve id
-					topayload['sys_action_id'] = sys_id;
-					client.write(JSON.stringify(topayload));
-				});
+		window.gui_pot_connect = port_bind.trim()
+		log('sender', 'Acquired (constant) port from fetch:', window.gui_pot_connect);
 
-				client.on('data', function(data) {
-					console.log('[Sender] Receiving data during connection from port', client.localPort, ':' ,data.toString());
-					client.destroy()
-				});
+		var client = new net.Socket();
+		client.connect(parseInt(window.gui_pot_connect), '127.0.0.1', function() {
+			log('sender', 'Connected to Blender server, port:', client.localPort);
+			// client.write('Hello, server! Love, Client.');
 
-				client.on('close', function() {
-					console.log('[Sender] Closed connection with port', client.localPort);
-					// console.groupEnd('Sender Connection');
-				});
-				
-			});
+			// set resolve id
+			topayload['sys_action_id'] = sys_id;
+			client.write(JSON.stringify(topayload));
+		});
+
+		client.on('data', function(data) {
+			log('sender', 'Receiving data during connection from port', client.localPort, ':' ,data.toString());
+			client.destroy()
+		});
+
+		client.on('close', function() {
+			log('sender', 'Closed connection with port', client.localPort);
+			// console.groupEnd('Sender Connection');
 		});
 	}
 
@@ -448,7 +552,7 @@ class blender_talker
 		// This makes it possible to have await/.then just like with fetch
 		// basically blender talk is just like fetch now
 		var action_id = CryptoJS.SHA256(lizard.rndwave(512, 'flac')).toString();
-		console.log('[Sender] Generated random id', action_id)
+		log('sender', 'Generated random id', action_id)
 
 		// todo: wat
 		var remap_this = this;
@@ -507,20 +611,12 @@ window.bltalk = new blender_talker();
 
 
 
+// ============================================================
+// ------------------------------------------------------------
+//                 Module loader
+// ------------------------------------------------------------
+// ============================================================
 
-
-
-
-
-
-
-/*
-============================================================
-------------------------------------------------------------
-                Module loader
-------------------------------------------------------------
-============================================================
-*/
 
 function base_module_loader(mdl, force=true)
 {
@@ -539,7 +635,7 @@ function base_module_loader(mdl, force=true)
 		}else{
 			// $('#modules_cont').empty();
 			// todo: why use jquery ...
-			console.log('Trying to load module', realname.replace('.html', ''), 'from', 'tools/' + realname);
+			console.log(`%cTrying to load module ${realname.replace('.html', '')} from tools/${realname}`, 'background: black; color: white',);
 			$('#modules_cont').load('tools/' + realname, function() {
 				// checkboxes
 				lizcboxes_init();
@@ -570,25 +666,6 @@ function base_module_loader(mdl, force=true)
 
 
 
-/*
-============================================================
-------------------------------------------------------------
-                		Status echo
-------------------------------------------------------------
-============================================================
-*/
-
-
-function blender_echo_status(echo)
-{
-	try {
-		// console.log('%c Blender says:', 'background: rgba(0, 0, 0, 0); color: #EB9C4E; font-weigth: bold;', echo['payload']);
-		console.log('%c Blender says:', 'background: rgba(0, 0, 0, 0); color: #AA551D; font-weight: bold;', echo['payload']);
-		// console.log(echo['payload']);
-	} catch (error) {
-
-	}
-}
 
 
 
@@ -605,16 +682,12 @@ function blender_echo_status(echo)
 
 
 
+// ============================================================
+// ------------------------------------------------------------
+//                 		Context
+// ------------------------------------------------------------
+// ============================================================
 
-
-
-/*
-============================================================
-------------------------------------------------------------
-                		Context
-------------------------------------------------------------
-============================================================
-*/
 
 
 // This is only useful on startup (reload)
@@ -702,13 +775,18 @@ function foil_save_context(last=false)
 
 
 
-/*
-============================================================
-------------------------------------------------------------
-                Base inits, like topbar menus
-------------------------------------------------------------
-============================================================
-*/
+
+
+
+
+
+
+// ============================================================
+// ------------------------------------------------------------
+//                 Base inits, like topbar menus
+// ------------------------------------------------------------
+// ============================================================
+
 function main_app_init()
 {
 	//
@@ -822,18 +900,6 @@ function main_app_init()
 	foil_call_last_context()
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

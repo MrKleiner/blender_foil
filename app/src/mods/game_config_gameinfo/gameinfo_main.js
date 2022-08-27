@@ -140,7 +140,8 @@ async function gameinfo_set_info()
 			'client_path': window.foil_context.full.client_folder_path
 		}
 	});
-	console.log(inf)
+	log('gameinfo', 'Got gameinfo from blender:', inf)
+
 	$('#gminfo_gamename_input').val(inf['game'])
 	$('#gameinfo_mod_minititle').text(inf['game'])
 	$('#gameinfo_mod_modfolderpath').val(window.foil_context.full.client_folder_path)
@@ -223,8 +224,7 @@ async function gminfo_icon_manager(set=false, pl={})
 			'icon_path': $('#gminfo_gameicon_input').val()
 		}
 	});
-
-	console.log(get_icon)
+	log('gameinfo', 'Got icon from blender:', get_icon)
 
 	if (get_icon['conversion_success'] == false){
 		console.log('Icon conversion failed')
@@ -233,7 +233,7 @@ async function gminfo_icon_manager(set=false, pl={})
 
 	// base64 to image
 	// no fetch! yay! sync! yay!
-	$('#gameinfo_icon_preview img').attr('src', b64toimg(get_icon['img_base64']));
+	$('#gameinfo_icon_preview img').attr('src', lizard.b64toimg(get_icon['img_base64']));
 
 }
 

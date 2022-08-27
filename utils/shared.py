@@ -452,7 +452,7 @@ def download_mapbase(tmpfolder=None, beta=True):
 
 
 
-
+# Hammer++
 
 def blfoil_download_hpp(hppver='2013sp', tmpfolder=None):
 	import requests, random, zipfile, os
@@ -469,7 +469,7 @@ def blfoil_download_hpp(hppver='2013sp', tmpfolder=None):
 		2013mp
 		2013sp
 	"""
-# https://github.com/ficool2/HammerPlusPlus-Website/releases/download/8862/hammerplusplus_2013mp_build8862.zip
+
 	#
 	# get list of downloadables
 	#
@@ -570,4 +570,3 @@ def shared_drinker():
 
 
 # shared_drinker()
-

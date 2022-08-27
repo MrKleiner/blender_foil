@@ -46,6 +46,7 @@
   },
   "dependencies": {
     "electron-squirrel-startup": "^1.0.0",
+    "pathlib-js": "^1.4.2",
     "python-shell": "^3.0.0"
   },
   "devDependencies": {
