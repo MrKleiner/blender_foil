@@ -16,7 +16,8 @@ const createWindow = () => {
     width: 1280,
     height: 720,
     minWidth: 800,
-    minHeight: 440
+    minHeight: 440,
+    icon: 'E:\\!webdesign\\source_tricks\\source_tricks\\assets\\pink_panther.png'
   });
 
   // and load the index.html of the app.

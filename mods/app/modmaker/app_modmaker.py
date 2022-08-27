@@ -130,6 +130,12 @@ def fetch_existing_engines(pl):
 
 
 
+
+
+
+
+
+
 # MDMA
 def modmaker_load_engine_info(pl):
 	# import numpy as np
@@ -691,8 +697,6 @@ def modmaker_spawn_new_client(einf):
 	# Other/SDK
 	#
 	if einf['mapbase'] != True:
-
-
 		#
 		# set search paths for gameinfo
 		#

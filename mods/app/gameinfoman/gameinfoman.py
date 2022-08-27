@@ -65,7 +65,7 @@ def gminfo_icon_vis_feedback(pl):
 
 	# if icon file does not exist - dont do shit and cry about it
 	if not realpath.is_file():
-		return {'Python gminfo_icon_vis_feedback ERROR': 'Path to icon does not exist'}
+		return {'conversion_success': False}
 
 	magix = addon_root_dir / 'bins' / 'imgmagick' / 'magick.exe'
 

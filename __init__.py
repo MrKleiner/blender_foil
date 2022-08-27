@@ -1,6 +1,6 @@
 """
 The license for this rubbish is super simple:
-I'd like to see if there's ONE person on earth who would understand this junk code.
+I'd like to see if there's ONE person on earth who would understand this garbage code.
 Also, everything that is not mine is labeled as such.
 ATTENTION: Thank you for your attention.
 """
@@ -58,14 +58,9 @@ from math import radians
 from mathutils import Matrix
 """
 
-import socket
-import threading
-import bpy
+import socket, threading, bpy, ctypes, time, atexit, sys
 from bpy.app.handlers import persistent
-import ctypes
-import time
-import atexit
-import sys
+
 
 from .mods.vmf_export.vmf_exporter import *
 from .mods.skyboxer.skybox_maker import *
@@ -77,56 +72,6 @@ from .mods.app.modmaker.app_modmaker import *
 from .blfoil_appconnect import *
 from pathlib import Path
 
-"""
-def appconnect_actions(cs):
-    match cs['action']:
-        case 'modmaker_get_preinstalled_engines':
-            app_command_send({
-                'app_module': 'modmaker',
-                'mod_action': 'append_pre_installed',
-                'payload': fetch_existing_engines()
-            })
-            return ''
-
-        case 'modmaker_get_engine_info':
-            app_command_send({
-                'app_module': 'modmaker',
-                'mod_action': 'set_engine_info',
-                'payload': modmaker_load_engine_info(cs['engine_exe'])
-            })
-            return ''
-
-        case 'modmaker_save_engine_info':
-            modmaker_save_engine_info(cs)
-            return ''
-
-        case 'modmaker_load_saved_engines':
-            app_command_send({
-                'app_module': 'modmaker',
-                'mod_action': 'accept_engines',
-                'payload': modmaker_load_saved_engines()
-            })
-            return ''
-
-        case 'modmaker_check_engine_bins':
-            app_command_send({
-                'app_module': 'modmaker',
-                'mod_action': 'set_engine_info_bins',
-                'payload': modmaker_check_engine_bins(cs['engine_exe'])
-            })
-            return ''
-
-        case 'modmaker_delete_engine':
-            modmaker_kill_engine(cs['engine'])
-            return ''
-
-        case 'modmaker_do_spawn_mod':
-            modmaker_spawn_new_client(cs['payload'])
-            return ''
-
-        case _:
-            return 'wtf is even this'
-"""
 
 global engine_ref
 engine_ref = None
@@ -143,6 +88,7 @@ def blender_foil_guiappconnect():
     s.bind(('localhost', 0))  # Bind to the port
     print(s.getsockname()[1])
     s.listen(5)  # Now wait for client connection.
+    # important todo: handle multiple blender instances
     with open((Path(__file__).parent / 'bdsmbind.sex'), 'w') as txtfile:
         funcdef = txtfile.write(str(s.getsockname()[1]))
 
@@ -224,7 +170,7 @@ blfoil_check_pypackages()
 
 # important todo: vbsp/vvis switcher
 
-# important todo: skybox preview from MR. X
+# important todo: js skybox preview from MR. X
 
 # important todo: propdata maker and other scripts
 
@@ -238,9 +184,9 @@ blfoil_check_pypackages()
 
 # important todo: Image magick can most likely output data into std
 
-# important todo: would it make any sense to the HDR skybox name habe no _hdr and LDR have _ldr ?
+# important todo: would it make any sense for the HDR skybox name to have no _hdr and LDR have no _ldr ?
 
-# IMPORTANT TODO: easy baker with cool GUI + specificaly for source: bake these to this to this image and ...
+# IMPORTANT TODO: easy baker with cool GUI + specificaly for source: bake these to this, to this image and ...
 
 # important todo: Displacement filters!
 # custon ones are probably possible
@@ -353,7 +299,7 @@ def register():
     bpy.types.Scene.blfoil_etype_selector_list_index = IntProperty(name='Entity type selector index', default = 0)
 
 
-    # A small list of suggested dev materials
+    # A tiny list of suggested dev materials
     bpy.types.Scene.blfoil_common_brush_materials = CollectionProperty(type=blfoil_common_brush_materials)
     bpy.types.Scene.blfoil_common_brush_materials_index = IntProperty(name='Suggested materials index', default = 0)
 

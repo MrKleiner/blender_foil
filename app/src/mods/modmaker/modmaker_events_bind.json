@@ -41,14 +41,14 @@
 	"click": [
 		{
 			"selector": "#modmaker_fetch_preinstalled",
-			"function": "apc_send",
+			"function": "modmaker_load_engines",
 			"pass_event": false,
 			"pass_element": false,
-			"pass_params": "{'action': 'modmaker_get_preinstalled_engines'}"
+			"pass_params": "which='modmaker_get_preinstalled_engines'"
 		},
 		{
 			"selector": "#modmaker_engine_selector .simple_list_v1_pool_item",
-			"function": "modmaker_set_active_engine",
+			"function": "modmaker_load_engine_info",
 			"pass_event": false,
 			"pass_element": true,
 			"pass_params": ""

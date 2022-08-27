@@ -1,6 +1,5 @@
 from pathlib import Path
-import json
-import os
+import json, os, requests
 
 thisdir = Path(__file__).parent
 
@@ -188,8 +187,18 @@ for etype in module_events:
 
 # print(allevents)
 
-with open(str(thisdir.parent / 'app' / 'src' / 'mods' / 'main_app_core' / 'appgui_main_core_event_listeners.js'), 'w') as writebinds:
+with open(str(thisdir.parent / 'app' / 'src' / 'mods' / 'core' / 'core_event_listeners.js'), 'w') as writebinds:
     writebinds.write(allevents)
 
 
 
+# =================================================
+#              Download Latest Toolbox
+# =================================================
+
+
+get_lib = requests.get(url='https://raw.githubusercontent.com/MrKleiner/liz3_toybox_webtools/main/sex_toys/shared/toolbox.js')
+libtext = get_lib.text
+# write to target
+with open(str(thisdir.parent / 'app' / 'src' / 'mods' / 'core' / 'lizard_toybox.js'), 'w') as writetoy:
+    writetoy.write(libtext)

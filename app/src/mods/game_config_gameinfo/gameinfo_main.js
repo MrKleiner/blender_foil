@@ -16,10 +16,12 @@ function gameinfo_module_manager(pl)
 
 	switch (pl['mod_action']) {
 		case 'gameinfo_set_info':
-			gameinfo_set_info(pl['payload'])
+			// todo: this should exit but with different name
+			// gameinfo_set_info(pl['payload'])
 			break;
 		case 'gminfo_icon_manager':
-			gminfo_icon_manager(true, pl['payload'])
+			// todo: this should exit but with different name
+			// gminfo_icon_manager(true, pl['payload'])
 			break;
 		default:
 			console.log('The gameinfo module has been called, but no corresponding action was found');
@@ -97,13 +99,7 @@ function gameinfoman_app_loader()
 		);
 
 		// read gameinfo of the mod and set settings
-		bltalk.send({
-			'action': 'gameinfoman_load_info',
-			'payload': {
-				'client_path': window.foil_context.full.client_folder_path
-			}
-		});
-
+		gameinfo_set_info()
 
 
 	});
@@ -136,8 +132,14 @@ function evalst(st){
 
 // app context and fast config should be fully ready by this time
 // important todo: there has to be a def dict
-function gameinfo_set_info(inf)
+async function gameinfo_set_info()
 {
+	var inf = await bltalk.send({
+		'action': 'gameinfoman_load_info',
+		'payload': {
+			'client_path': window.foil_context.full.client_folder_path
+		}
+	});
 	console.log(inf)
 	$('#gminfo_gamename_input').val(inf['game'])
 	$('#gameinfo_mod_minititle').text(inf['game'])
@@ -208,44 +210,30 @@ function gameinfo_save_back()
 // pass client location and icon path input
 
 // todo: it's possible to check if file exists in js
-function gminfo_icon_manager(accept=false, pl={})
+async function gminfo_icon_manager(set=false, pl={})
 {
+	// remove quotation marks from the input
+	$('#gminfo_gameicon_input').val($('#gminfo_gameicon_input').val().replaceAll('"', ''))
 
-	// if not told to accept - request icon
-	if (accept == false)
-	{
-		$('#gminfo_gameicon_input').val($('#gminfo_gameicon_input').val().replaceAll('"', ''))
-		// console.log('do not accept, but send');
-		bltalk.send({
-			'action': 'gameinfoman_get_mod_icon',
-			'payload': {
-				'client_path': window.foil_context.full.client_folder_path,
-				'icon_path': $('#gminfo_gameicon_input').val().replaceAll('"', '')
-			}
-		});
-	}
+	// get the icon
+	var get_icon = await bltalk.send({
+		'action': 'gameinfoman_get_mod_icon',
+		'payload': {
+			'client_path': window.foil_context.full.client_folder_path,
+			'icon_path': $('#gminfo_gameicon_input').val()
+		}
+	});
 
-	// if asked to accept - set icon
-	if (accept == true && pl['conversion_success'] == true)
-	{
-		// console.log('accept shit');
-		console.log(pl);
-		fetch('data:image/png;base64,' + pl['img_base64'])
-		.then(function(response) {
-			console.log(response.status);
-			response.blob().then(function(data) {
-				var urlCreator = window.URL || window.webkitURL;
-				var imageUrl = urlCreator.createObjectURL(data);
-				$('#gameinfo_icon_preview img').attr('src', imageUrl)
-			});
-		});
-	}
+	console.log(get_icon)
 
-	if (pl['conversion_success'] == false)
-	{
+	if (get_icon['conversion_success'] == false){
 		console.log('Icon conversion failed')
+		return
 	}
 
+	// base64 to image
+	// no fetch! yay! sync! yay!
+	$('#gameinfo_icon_preview img').attr('src', b64toimg(get_icon['img_base64']));
 
 }
 

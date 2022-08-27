@@ -2,7 +2,7 @@ document.addEventListener('click', tr_event => {
 
 
 	// ==========================================
-	// 	main_app_core checkboxes_events_bind.core.json
+	// 	core checkboxes_events_bind.core.json
 	// ==========================================
 
 	if (event.target.closest('[lizcbox].lizcbox_container, .lizcbox_hitbox')) { lizcboxes_switch(event.target.closest('[lizcbox].lizcbox_container, .lizcbox_hitbox')) }
@@ -11,7 +11,7 @@ document.addEventListener('click', tr_event => {
 
 
 	// ==========================================
-	// 	main_app_core core_events_bind.core.json
+	// 	core core_events_bind.core.json
 	// ==========================================
 
 	if (event.target.closest('[lizmenu_action="load_newmodmaker"]')) { newmodmaker_loader() }
@@ -22,7 +22,7 @@ document.addEventListener('click', tr_event => {
 
 
 	// ==========================================
-	// 	main_app_core dropdowns_events_bind.core.json
+	// 	core dropdowns_events_bind.core.json
 	// ==========================================
 
 	if (event.target.closest('.lizard_dropdown_entries [dropdown_set]')) { lizdropdown_set_active(event.target.closest('.lizard_dropdown_entries [dropdown_set]')) }
@@ -60,8 +60,8 @@ document.addEventListener('click', tr_event => {
 	// 	modmaker modmaker
 	// ==========================================
 
-	if (event.target.closest('#modmaker_fetch_preinstalled')) { apc_send({'action': 'modmaker_get_preinstalled_engines'}) }
-	if (event.target.closest('#modmaker_engine_selector .simple_list_v1_pool_item')) { modmaker_set_active_engine(event.target.closest('#modmaker_engine_selector .simple_list_v1_pool_item')) }
+	if (event.target.closest('#modmaker_fetch_preinstalled')) { modmaker_load_engines(which='modmaker_get_preinstalled_engines') }
+	if (event.target.closest('#modmaker_engine_selector .simple_list_v1_pool_item')) { modmaker_load_engine_info(event.target.closest('#modmaker_engine_selector .simple_list_v1_pool_item')) }
 	if (event.target.closest('#new_engine_save_config')) { modmaker_save_engine_details() }
 	if (event.target.closest('#modmaker_add_new_engine')) { modmaker_new_engine() }
 	if (event.target.closest('#new_engine_del_config')) { modmaker_newengine_del_config() }
@@ -78,7 +78,7 @@ document.addEventListener('mouseover', tr_event => {
 
 
 	// ==========================================
-	// 	main_app_core tooltips_events_bind.core.json
+	// 	core tooltips_events_bind.core.json
 	// ==========================================
 
 	if (event.target.closest('[liztooltip]')) { showliztooltip(event.target.closest('[liztooltip]')) }else{ showliztooltip(event.target.closest('[liztooltip]')) }
@@ -91,7 +91,7 @@ document.addEventListener('keydown', tr_event => {
 
 
 	// ==========================================
-	// 	main_app_core ui_lists_events_bind.core.json
+	// 	core ui_lists_events_bind.core.json
 	// ==========================================
 
 	if (event.target.closest('.simple_uilist_text_input')) { uilist_scroller(tr_event, event.target.closest('.simple_uilist_text_input')) }
@@ -104,7 +104,7 @@ document.addEventListener('keyup', tr_event => {
 
 
 	// ==========================================
-	// 	main_app_core ui_lists_events_bind.core.json
+	// 	core ui_lists_events_bind.core.json
 	// ==========================================
 
 	if (event.target.closest('.simple_uilist_text_input')) { simple_ui_list_buildsuggest(tr_event, event.target.closest('.simple_uilist_text_input')) }
@@ -126,7 +126,7 @@ document.addEventListener('focusout', tr_event => {
 
 
 	// ==========================================
-	// 	main_app_core ui_lists_events_bind.core.json
+	// 	core ui_lists_events_bind.core.json
 	// ==========================================
 
 	if (event.target.closest('.simple_uilist_text_input')) { uilist_showhide(event.target.closest('.simple_uilist_text_input'), false) }
@@ -148,7 +148,7 @@ document.addEventListener('focusin', tr_event => {
 
 
 	// ==========================================
-	// 	main_app_core ui_lists_events_bind.core.json
+	// 	core ui_lists_events_bind.core.json
 	// ==========================================
 
 	if (event.target.closest('.simple_uilist_text_input')) { uilist_showhide(event.target.closest('.simple_uilist_text_input'), true) }

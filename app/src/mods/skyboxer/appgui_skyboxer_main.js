@@ -65,25 +65,9 @@ var side_status_def = {
 // side_d - string. Side, like "left"
 function skyboxer_sides_filler(side_img, side_d)
 {
-	fetch('data:image/png;base64,' + side_img)
-	.then(function(response) {
-		console.log('skybox side b64 to img conversion status (has to be 200)', response.status);
-		response.blob().then(function(data) {
-			// pgload(data, pgx, response.status)
-
-			// var boobs = new Blob([reader.result], {type: etgt.files[0].type });
-			var urlCreator = window.URL || window.webkitURL;
-			var imageUrl = urlCreator.createObjectURL(data);
-
-			$('#sky_' + side_def_dict[side_d] + ' .skybox_square').attr('src', imageUrl);
-			window['skyboxer_savedside_' + side_def_dict[side_d]] = imageUrl;
-		});
-	});
-
-
-	
-	// $('#sky_' + side_def_dict[side_d])[0].src = '';
-	// $('#sky_' + side_def_dict[side_d])[0].src = side_img + '?' + new Date().getTime();
+	var mk_side_img = b64toimg(side_img)
+	$('#sky_' + side_def_dict[side_d] + ' .skybox_square').attr('src', mk_side_img);
+	window['skyboxer_savedside_' + side_def_dict[side_d]] = mk_side_img;
 }
 
 // set status

@@ -39,7 +39,7 @@ function shell_end_c(err,code,signal)
 }
 */
 
-console.log(__dirname)
+// console.log(__dirname)
 
 // Unknown
 window.lizards_mouth = 'lizards_tongue';
@@ -83,7 +83,14 @@ function array_elem_check(what, inwhat) {
     return magix.length > 0
 }
 
-
+// takes raw base64 string and converts it to imageurl
+function b64toimg(b64)
+{
+	var bytes = lizard.base64DecToArr(b64)
+	var blob = new Blob([bytes], {type: 'image/*'});
+	var imageUrl = (window.URL || window.webkitURL).createObjectURL(blob);
+	return imageUrl
+}
 
 
 
@@ -107,10 +114,8 @@ document.addEventListener('keydown', kvt => {
     if (kvt.altKey && kvt.keyCode == 87 && window.current_app_module != 'main_dashboard'){
     	dashboard_app_loader()
     }
-
-
-
 });
+
 function app_reload_refresh(evee)
 {
 	if (  evee.ctrlKey  &&  evee.keyCode == 82  ){
@@ -126,6 +131,7 @@ function app_reload_refresh(evee)
 */
 
 // load specified svg as an element so that it's possible to re-colour it
+// important todo: this can be done synchronously with electron file manager
 function svgappender()
 {
 	// console.group('Svg Append');
@@ -297,8 +303,11 @@ $(document).ready(function(){
 
 			// flush the storage
 			// todo: do this before switch ?
-	        delete window.blsocket_cache
-	        window.blsocket_cache = {}
+			// important: there could be a number of ongoing connections
+			// only delete corresponding cache storage
+			// flush buffers later
+	        delete window.blsocket_cache['cst_cache' + socket.remotePort.toString()]
+	        // window.blsocket_cache = {}
 	        
 	    });
 
@@ -373,6 +382,8 @@ class blender_talker
 	*/
 
 	// this sends commands to Blender's python
+	// basically, .send is just a nice word and a wrapper
+	// + it's way easier to understand what's happening when it's split into functions
 	exec_send(sendpayload, sys_id='default')
 	{
 		// a payload has to always have a payload, even if it's empty
@@ -427,7 +438,9 @@ class blender_talker
 	}
 
 
-
+	// Why send and not get or talk ?
+	// 1 - Because Fuck You
+	// 2 - It actually makes sense: you're sending shit and it's your choice whether to await for the response or not
 	send(pl){
 		// generate resolve id reference
 		// All New Sexy Feature!
@@ -460,6 +473,12 @@ class blender_talker
 		} catch (error) {
 			console.log('Tried To Resolve non-existent id:', id)
 		}
+	}
+
+
+	// clear cache
+	clear_cache(){
+		window.blsocket_cache = {};
 	}
 
 
@@ -530,6 +549,9 @@ function base_module_loader(mdl, force=true)
 				svgappender();
 				// UILists init
 				init_simple_ui_lists();
+
+				// clear UDP cache
+				// bltalk.clear_cache();
 
 				window['current_app_module'] = realname.replace('.html', '');
 				console.log('Loaded Module', window['current_app_module'], 'from', 'tools/' + realname, 'Base inits done');
@@ -800,6 +822,7 @@ function main_app_init()
 	foil_call_last_context()
 
 }
+
 
 
 

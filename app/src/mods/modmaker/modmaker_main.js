@@ -2,28 +2,17 @@
 
 function modmaker_module_manager(pl)
 {
-
 	switch (pl['mod_action']) {
-		case 'append_pre_installed':
-			newmodmaker_accept_engines(pl['payload'])
-			break;
-		case 'accept_engines':
-			newmodmaker_accept_engines(pl['payload'])
-			break;
 		case 'set_engine_info':
-			modmaker_load_engine_info(pl['payload'])
-			break;
-		case 'set_engine_info_bins':
-			modmaker_accept_engine_binaries(pl['payload'])
+			// modmaker_load_engine_info(pl['payload'])
 			break;
 		case 'load_resulting_engine':
-			modmaker_load_mod(pl['payload'])
+			// modmaker_load_mod(pl['payload'])
 			break;
 		default:
 			console.log('The modmaker module has been called, but no corresponding action was found')
 			break;
 	}
-
 }
 
 
@@ -32,18 +21,23 @@ function newmodmaker_loader(mdl)
 {
 	base_module_loader('mod_maker.html')
 		.then(function(resolved) {
-			bltalk.send({
-				'action': 'modmaker_load_saved_engines'
-			});
+			modmaker_load_engines()
 		});
 }
 
 
-function newmodmaker_accept_engines(pl)
+
+// the which keyword is needed,
+// because there's a button to fetch already existing engines on first startup which is a different kind of operation
+async function modmaker_load_engines(which='modmaker_load_saved_engines')
 {
-	console.log(pl);
+	var saved_engines = await bltalk.send({
+		'action': which
+	});
+
+	console.log(saved_engines);
 	$('#modmaker_engine_selector_pool').empty();
-	for (var engi of pl){
+	for (var engi of saved_engines){
 		var engine_gui_payload = $('<div class="simple_list_v1_pool_item"></div>')
 
 		var pl_icon = engine_gui_payload.append('<div class="simple_list_v1_pool_item_icon"><img draggable="false" src="' + engi['icon'] + '"></div>');
@@ -77,9 +71,13 @@ function newmodmaker_accept_engines(pl)
 }
 
 
-function modmaker_accept_engine_binaries(pl)
+
+
+// This doesn't get any fresh data, but only treats existing one
+// takes an object containing 'ess_bins' and 'sdk_bins'
+function modmaker_check_engine_binaries(bins)
 {
-	// fuck
+	// order the dlls nicely based on importance
 	var order_dict_essbins = [
 		'engine.dll',
 		'datacache.dll',
@@ -108,14 +106,14 @@ function modmaker_accept_engine_binaries(pl)
 		'vpk.exe'
 	]
 
-	// essential bins
+	// essential (engine) bins
 	var itemlist = $('#modmaker_engine_details_essenitalbins .modmaker_engine_details_list_items');
 	itemlist.empty();
 	for (var esbin of order_dict_essbins)
 	{
 		var b_entry = $('<div class="modmaker_engine_details_list_item"></div>')
 		b_entry.append($('<div class="modmaker_engine_details_list_item_text"></div>').text(esbin));
-		if (pl['ess_bins'][esbin] == true){
+		if (bins['ess_bins'][esbin] == true){
 			b_entry.append('<div class="modmaker_engine_details_list_item_status"><img src="assets/checkmark.svg"></div>');
 		}else{
 			b_entry.append('<div class="modmaker_engine_details_list_item_status"><img src="assets/cross.svg"></div>');
@@ -130,7 +128,7 @@ function modmaker_accept_engine_binaries(pl)
 	{
 		var b_entry = $('<div class="modmaker_engine_details_list_item"></div>')
 		b_entry.append($('<div class="modmaker_engine_details_list_item_text"></div>').text(sdkbin));
-		if (pl['sdk_bins'][sdkbin][0] == true && pl['sdk_bins'][sdkbin][1] == true){
+		if (bins['sdk_bins'][sdkbin][0] == true && bins['sdk_bins'][sdkbin][1] == true){
 			b_entry.append('<div class="modmaker_engine_details_list_item_status"><img src="assets/checkmark.svg"></div>');
 		}else{
 			b_entry.append('<div class="modmaker_engine_details_list_item_status"><img src="assets/cross.svg"></div>');
@@ -140,34 +138,57 @@ function modmaker_accept_engine_binaries(pl)
 }
 
 
-// set active engine
-function modmaker_load_engine_info(pl)
+
+
+
+
+//
+// Load Engine Info
+//
+async function modmaker_load_engine_info(engine)
 {
+	// visual feedback, highlight selected engine in the pool
+	$('#modmaker_engine_selector .simple_list_v1_pool_item').removeClass('simple_list_v1_pool_item_const_active');
+	$(engine).addClass('simple_list_v1_pool_item_const_active');
 
-	console.log(pl);
-	// <div class="modmaker_engine_details_list_item">
-	// 	<div class="modmaker_engine_details_list_item_text">engine.dll</div>
-	// 	<div class="modmaker_engine_details_list_item_status"><img src="assets/checkmark.svg"></div>
-	// </div>
 
+	// get engine info
+	var eng_info = await bltalk.send({
+		'action': 'modmaker_get_engine_info',
+		'payload': {
+			'engine_exe': engine.getAttribute('engine_path')
+		}
+	});
+	console.log('Got engine info', eng_info);
+	// save active engine selection
+	window.modmaker_active_engine = {
+		'elem': engine,
+		'engpath': engine.getAttribute('engine_path')
+	}
+
+
+	// set <input> values
 
 	// engine exe
-	$('#modmaker_engine_details_exepath input').attr('value', pl['exe']).val(pl['exe']);
+	$('#modmaker_engine_details_exepath input').attr('value', eng_info['exe']).val(eng_info['exe']);
 	// engine name
-	$('#modmaker_engine_details_name input').attr('value', pl['engine_name']).val(pl['engine_name']);
+	$('#modmaker_engine_details_name input').attr('value', eng_info['engine_name']).val(eng_info['engine_name']);
 	// engine icon
-	$('#modmaker_engine_details_icon input').attr('value', pl['icon']).val(pl['icon']);
-	$('#modmaker_engine_details_icon .modmaker_engine_details_item_status img')[0].src = pl['icon']
+	$('#modmaker_engine_details_icon input').attr('value', eng_info['icon']).val(eng_info['icon']);
+	$('#modmaker_engine_details_icon .modmaker_engine_details_item_status img')[0].src = eng_info['icon']
 
-	modmaker_accept_engine_binaries(pl)
+	// check binaries
+	modmaker_check_engine_binaries(eng_info)
 
+	// empty the installed clients pool
 	$('#modmaker_client_selector_installed_pool').empty();
 
-	var dropdown_eligible = []
 
+	// Spawn Clients
+	var dropdown_eligible = []
 	window.modmaker_clients_list = []
 
-	for (var inc of pl['clients'])
+	for (var inc of eng_info['clients'])
 	{
 		var tgt_pool = $('#modmaker_client_selector_installed_pool');
 		// <div class="simple_list_v1_pool_item">
@@ -215,26 +236,9 @@ function modmaker_load_engine_info(pl)
 	// unlock engine details
 	$('#modmaker_client_selector, #modmaker_engine_details').removeAttr('style');
 
+	// check whether engine exe exists on HDD at the moment or no
 	modmaker_check_engine_exe_exists()
-/*
-	var dropdown_eligible = []
 
-	// create a dropdown of eligible clients with dlls
-	// todo this creation should happen on item appends
-	// update: Done
-	document.querySelectorAll('#modmaker_client_selector_installed_pool .simple_list_v1_pool_item[hasdll="true"]').forEach(function(userItem) {
-		console.log(userItem);
-
-		var dropdown_st = userItem.querySelector('.simple_list_v1_pool_item_descr').textContent
-
-		dropdown_eligible.push({
-			'name': dropdown_st,
-			'dropdown_set': dropdown_st
-		})
-
-	});
-
-*/
 	// applicable cl/sv .dll locations
 	create_lizdropdown(
 		'#modmaker_spawn_client_dll_dropdown',
@@ -270,11 +274,28 @@ function modmaker_load_engine_info(pl)
 			]
 		}
 	);
+}
+
+
+
+// Check whether engine exe exists as of now
+function modmaker_check_engine_exe_exists()
+{
+	if (fs.existsSync($('#modmaker_engine_details_exepath input').val())) {
+		$('#modmaker_engine_details_exepath .modmaker_engine_details_item_status img')[0].src = 'assets/checkmark.svg'
+		bltalk.send({
+			'action': 'modmaker_check_engine_bins',
+			'engine_exe': $('#modmaker_engine_details_exepath input').val()
+		})
+	} else {
+		$('#modmaker_engine_details_exepath .modmaker_engine_details_item_status img')[0].src = 'assets/cross.svg'
+	}
 
 }
 
 
 
+// save engine params
 async function modmaker_save_engine_details()
 {
 	if (fs.existsSync($('#modmaker_engine_details_exepath input').val())) {
@@ -297,19 +318,6 @@ async function modmaker_save_engine_details()
 }
 
 
-function modmaker_check_engine_exe_exists()
-{
-	if (fs.existsSync($('#modmaker_engine_details_exepath input').val())) {
-		$('#modmaker_engine_details_exepath .modmaker_engine_details_item_status img')[0].src = 'assets/checkmark.svg'
-		bltalk.send({
-			'action': 'modmaker_check_engine_bins',
-			'engine_exe': $('#modmaker_engine_details_exepath input').val()
-		})
-	} else {
-		$('#modmaker_engine_details_exepath .modmaker_engine_details_item_status img')[0].src = 'assets/cross.svg'
-	}
-
-}
 
 
 function modmaker_check_icon()
@@ -318,6 +326,7 @@ function modmaker_check_icon()
 }
 
 
+// spawn new engine
 function modmaker_new_engine()
 {
 	// engine exe
@@ -376,7 +385,7 @@ function modmaker_validate_required_options()
 //
 // yeet
 //
-function modmaker_spawn_mod(ismapbase)
+async function modmaker_spawn_mod(ismapbase)
 {
 
 	// if (ismapbase == true)
@@ -400,34 +409,17 @@ function modmaker_spawn_mod(ismapbase)
 			'link_binaries': document.querySelector('#modmaker_mknew_raw_linked_binaries_cbox [lizcbox]').lizchecked()
 		}
 
-		bltalk.send({
+		var mdinfo = await bltalk.send({
 			'action': 'modmaker_do_spawn_mod',
 			'payload': do_mod_payload
 		})
+
+		modmaker_load_mod(mdinfo)
 
 	// }
 
 }
 
-
-
-// and also load engine info
-function modmaker_set_active_engine(engine)
-{
-	bltalk.send({
-		'action': 'modmaker_get_engine_info',
-		'payload': {
-			'engine_exe': engine.getAttribute('engine_path')
-		}
-		
-	});
-	window.modmaker_active_engine = {
-		'elem': engine,
-		'engpath': engine.getAttribute('engine_path')
-	}
-	$('#modmaker_engine_selector .simple_list_v1_pool_item').removeClass('simple_list_v1_pool_item_const_active');
-	$(engine).addClass('simple_list_v1_pool_item_const_active');
-}
 
 
 // delete new engine
@@ -439,7 +431,6 @@ function modmaker_newengine_del_config()
 		'payload': {
 			'engine': window.modmaker_active_engine['elem'].getAttribute('engine_path')
 		}
-		
 	});
 	window.modmaker_active_engine['elem'].remove();
 	$('#modmaker_client_selector, #modmaker_engine_details').css('display', 'none');
