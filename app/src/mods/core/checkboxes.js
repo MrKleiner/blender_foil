@@ -1,112 +1,128 @@
-Element.prototype.lizchecked=function(status) {
-    // if(value===undefined) value=true;
-    // if(this.hasAttribute(attribute)) this.removeAttribute(attribute);
-    // else this.addAttribute(attribute,value);
-    if (!this.hasAttribute('lizcbox')){ return null }
-    if (status == undefined || status == null)
-    {
-	    if (this.getAttribute('lizcbox') == 'set'){
-	    	return true
-	    }else{
-	    	return false
-	    }
-	}else{
-		if (status == true){
-			this.setAttribute('lizcbox', 'set');
-			// return true
-		}
-		if (status == false){
-			this.setAttribute('lizcbox', 'unset');
-			// return false
-		}
-	}
-}
 
-// todo: this looks weird
-class lizcboxes_shortcuts
+
+
+
+
+
+
+
+class simple_lizard_checkboxes
 {
+	// constructor(height, width) {
 	constructor() {
-		// this.height = height;
-		// this.width = width;
-	}
-	// returns all cboxes on a page
-	get pool()
+		window.lizard_checkboxes = {};
+
+		/*
+		Element.prototype.lizchecked=function(status) {
+		    // if(value===undefined) value=true;
+		    // if(this.hasAttribute(attribute)) this.removeAttribute(attribute);
+		    // else this.addAttribute(attribute,value);
+		    if (!this.hasAttribute('lizcbox')){ return null }
+		    if (status == undefined || status == null)
+		    {
+			    if (this.getAttribute('lizcbox') == 'set'){
+			    	return true
+			    }else{
+			    	return false
+			    }
+			}else{
+				if (status == true){
+					this.setAttribute('lizcbox', 'set');
+					// return true
+				}
+				if (status == false){
+					this.setAttribute('lizcbox', 'unset');
+					// return false
+				}
+			}
+		}
+		*/
+
+		print('Initialized Simple Checkboxes');
+	};
+
+
+
+
+
+
+	// ============================================================
+	// ------------------------------------------------------------
+	//                    		Spawner
+	// ------------------------------------------------------------
+	// ============================================================
+	
+	// all-in one function
+	resync()
 	{
-		var pooled = {}
-		// console.log('get pool')
-		document.querySelectorAll('[lizcbox]').forEach(function(userItem) {
-			// pooled.push(userItem);
-			pooled[userItem.parentElement.getAttribute('lizcbox_id')] = userItem.lizchecked()
-		});
-		return pooled
-	}
-}
-
-window.lizcboxes = new lizcboxes_shortcuts()
-
-
-
-// init all cboxes
-function lizcboxes_init()
-{
-	console.groupCollapsed('Checkboxes Init');
-	document.querySelectorAll('[lizcbox_init]').forEach(function(userItem) {
-
-		console.log(userItem);
-
-		if (userItem.getAttribute('lizcbox_init') == 'set'){
-			// var htm_append = `
-			// 	<div lizcbox class="lizcbox_container">
-			// 		<img draggable="false" src="assets/checkmark.svg">
-			// 	</div>
-			// `
-			var htm_append = `
-				<div lizcbox="set" class="lizcbox_container">
-					<div class="lizcbox_mark"></div>
+		// spawn checkboxes
+		for (var cb of document.querySelectorAll('lzcbox')){
+			var mkbox = $(`
+				<div cbtitle>${cb.innerText.trim()}</div>
+				<div cmark_outer>
+					<div cmark_inner></div>
 				</div>
-			`;
-		}else{
-			var htm_append = `
-				<div lizcbox="unset" class="lizcbox_container">
-					<div class="lizcbox_mark"></div>
-				</div>
-			`;
+			`)
+
+			// set asked state
+			$(cb).attr('lzcbox_state', ($(cb).attr('lzcbox_init') == 'set') ? 'set' : 'unset')
+			// remove init attr
+			$(cb).removeAttr('lzcbox_init')
+			// mark as done
+			$(cb).attr('lzcbox_done', true)
+
+			// set html of the checkbox
+			$(cb).html(mkbox)
+
+			// add to the registry
+			window.lizard_checkboxes[$(cb).attr('lzcbox_id')] = {
+				'elem': $(cb)
+			}
 		}
-		// hitbox
-		if (userItem.hasAttribute('lizcbox_hashitbox')){
-			userItem.parentElement.classList.add('lizcbox_hitbox')
+
+		// redundancy check
+		for (var check in window.lizard_checkboxes){
+			if (!document.body.contains(window.lizard_checkboxes[check]['elem'][0])){
+				delete window.lizard_checkboxes[check]
+			}
 		}
-		userItem.innerHTML = htm_append;
-		userItem.removeAttribute('lizcbox_init');
-		userItem.removeAttribute('lizcbox_hashitbox');
-	});
-	console.groupEnd('Checkboxes Init');
-}
-
-// todo: safety measures ?
-function lizcboxes_switch(tgtbox, state)
-{
-	tbox = tgtbox.querySelector('[lizcbox].lizcbox_container') || tgtbox
-	// console.log('set status')
-	// todo: getAttribute
-	// will be faster
-	if ($(tbox).attr('lizcbox') == 'set'){
-		$(tbox).attr('lizcbox', 'unset');
-	}else{
-		$(tbox).attr('lizcbox', 'set');
 	}
-	
-}
 
 
-// takes lizcbox id and status as an input
-// if no stat specified - checkbox state returned
-function lizcbox_stat(sel, stat=null)
-{
-	
-	var ss = document.querySelector('[lizcbox_id="' + sel + '"]');
-	if (ss != null){
-		return ss.querySelector('[lizcbox]').lizchecked(stat)
+
+	get pool(){
+		var ch_list = {};
+		var remap_t = this;
+		for (var ch in window.lizard_dropdowns){
+			let ensure = ch
+			dn_list[ch] = {
+				'name': ensure,
+				'state': remap_t.state(ensure),
+				set: function(towhich){
+					remap_t.set_active(window.lizard_dropdowns[ensure]['elem'].find(`[dropdown_set="${towhich}"]`))
+        		}
+			}
+		}
+
+		return dn_list
 	}
-	
+
+
+	state(cbox=null){
+		if (cbox==null){return}
+		return $(cbox).closest('lzcbox').attr('lzcbox_state') || null
+	}
+
+
+
 }
+window.lzcbox = new simple_lizard_checkboxes();
+
+
+
+
+
+
+
+
+

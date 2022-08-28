@@ -213,6 +213,16 @@ window.fbi = new fbi_logger();
 
 
 
+
+
+
+
+
+
+
+
+
+
 // ===================================================
 //             reload app (f5 implementation)
 // ===================================================
@@ -290,6 +300,43 @@ function blfoil_exit_app()
 {
 	window.close()
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -637,22 +684,25 @@ function base_module_loader(mdl, force=true)
 			// todo: why use jquery ...
 			console.log(`%cTrying to load module ${realname.replace('.html', '')} from tools/${realname}`, 'background: black; color: white',);
 			$('#modules_cont').load('tools/' + realname, function() {
-				// checkboxes
-				lizcboxes_init();
 				// tooltips
 				init_liztooltips();
+				// important: checkboxes have to come AFTER tooltips
+				// resync checkboxes
+				lzcbox.resync();
 				// append svg to html tree
 				svgappender();
 				// UILists init
 				init_simple_ui_lists();
 
+				// resync dropdowns
 				lzdrops.red_check()
+
 
 				// clear UDP cache
 				// bltalk.clear_cache();
 
 				window['current_app_module'] = realname.replace('.html', '');
-				console.log('Loaded Module', window['current_app_module'], 'from', 'tools/' + realname, 'Base inits done');
+				print('Loaded Module', window['current_app_module'], 'from', 'tools/' + realname, 'Base inits done');
 				resolve(true);
 			});
 		}

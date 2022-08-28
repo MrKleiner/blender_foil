@@ -1,10 +1,28 @@
 
+lzcbox *
+{
+	user-select: none;
+}
 
+lzcbox
+{
+	display: flex;
+    flex-direction: row;
+    flex-grow: 0;
+    margin-top: 10px;
+    background: rgba(0, 0, 0, 0.1);
+    padding: 6px;
+    border-radius: 5px;
+    /* width: fit-content; */
+    user-select: none;
+}
 
+lzcbox [cbtitle]
+{
 
+}
 
-
-.lizcbox_container
+lzcbox [cmark_outer]
 {
 	display: flex;
 	flex-grow: 1;
@@ -18,17 +36,7 @@
 	/*outline: 1px solid rgb(30, 30, 30);*/
 }
 
-[lizcbox="set"].lizcbox_container
-{
-	background-color: rgb(56, 78, 96);
-}
-
-[lizcbox="unset"].lizcbox_container:hover, .lizcbox_hitbox:hover [lizcbox="unset"].lizcbox_container
-{
-	background-color: rgb(110, 110, 110);
-}
-
-.lizcbox_container .lizcbox_mark
+lzcbox [cmark_inner]
 {
 	display: flex;
 	width: 75%;
@@ -39,16 +47,29 @@
 	background-size: contain;
 }
 
-
-[lizcbox="set"] .lizcbox_mark
+lzcbox[lzcbox_state='set'] [cmark_inner]
 {
 	background-image: url('../../assets/checkmark.svg');
 }
 
-
-[lizcbox="unset"] .lizcbox_mark
+lzcbox[lzcbox_state='unset'] [cmark_inner]
 {
 	background-image: none;
+}
+
+lzcbox[lzcbox_state='set'] [cmark_outer]
+{
+	background-color: rgb(56, 78, 96);
+}
+
+lzcbox[lzcbox_state='unset'] [cmark_outer]
+{
+	background-color: rgb(56, 78, 96);
+}
+
+lzcbox[lzcbox_state='unset']:hover [cmark_outer], .lzcbox_hitbox:hover [lzcbox_state='unset'] [cmark_outer]
+{
+	background-color: rgb(110, 110, 110);
 }
 
 
