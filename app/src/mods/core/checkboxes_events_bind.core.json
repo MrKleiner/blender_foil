@@ -1,8 +1,8 @@
 {
 	"click": [
 		{
-			"selector": "[lizcbox].lizcbox_container, .lizcbox_hitbox",
-			"function": "lizcboxes_switch",
+			"selector": "lzcbox, .lizcbox_hitbox lzcbox",
+			"function": "lzcbox.set_state",
 			"pass_event": false,
 			"pass_element": true,
 			"pass_params": ""

@@ -708,16 +708,9 @@
 	/*align-items: center;*/
 }
 
-.modmaker_mknew_client_btn_cbox_cont
+.modmaker_mknew_client_btn_cbox
 {
-	display: flex;
-	flex-direction: row;
-	flex-grow: 0;
 	margin-top: 10px;
-	background: rgba(0, 0, 0, 0.1);
-	padding: 5px;
-	border-radius: 5px;
-	width: fit-content;
 }
 
 #modmaker_spawn_client_dll_dropdown, #modmaker_spawn_client_mpsp2013dlls
@@ -732,30 +725,6 @@
 
 	/*font-family: 'Open_Sans';*/
 	/*font-weight: 100;*/
-}
-
-
-
-
-
-.modmaker_mknew_client_btn_cbox_text
-{
-	display: flex;
-	color: white;
-	font-family: 'Open_Sans';
-	font-weight: 200;
-	font-size: 15px;
-	align-items: center;
-	justify-content: center;
-	user-select: none;
-}
-
-
-.modmaker_mknew_client_btn_cbox
-{
-	width: 20px;
-	height: 20px;
-	margin-left: 5px;
 }
 
 

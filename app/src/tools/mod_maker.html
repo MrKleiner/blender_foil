@@ -150,38 +150,41 @@
 
 					<div id="modmaker_spawn_client_dll_dropdown"></div>
 
-					<div id ="modmaker_mknew_raw_linked_binaries_cbox" class="modmaker_mknew_client_btn_cbox_cont">
-						<div class="modmaker_mknew_client_btn_cbox_text">Linked binaries</div>
-						<div lizcbox_init="unset" lizcbox_hashitbox class="modmaker_mknew_client_btn_cbox"></div>
-						<liztooltip liztooltip_prms="right:0:15:200">
-							Cleint/server .dll will be linked via gameinfo instead of copying.
-							<br>
-							This option will be ignored if you're using precompiled clients for SDk 2013.
-						</liztooltip>
+					<div class="modmaker_mknew_client_btn_cbox">
+						<lzcbox lzcbox_id="regular_linked_binaries" lzcbox_init="set">
+							Linked binaries
+							<liztooltip liztooltip_prms="right:0:15:200">
+								Cleint/server .dll will be linked via gameinfo instead of copying.
+								<br>
+								This option will be ignored if you're using precompiled clients for SDk 2013.
+							</liztooltip>
+						</lzcbox>
 					</div>
 
-					<div id="modmaker_new_nonmapbase_dopbr" class="modmaker_mknew_client_btn_cbox_cont">
-						<div class="modmaker_mknew_client_btn_cbox_text">Attempt PBR</div>
-						<div lizcbox_init="set" lizcbox_hashitbox class="modmaker_mknew_client_btn_cbox"></div>
-						<liztooltip liztooltip_prms="right:0:15:200">
-							Mount PBR .dll and shaders. The result cannot be predicted, because client could be modified.
-						</liztooltip>
+					<div class="modmaker_mknew_client_btn_cbox">
+						<lzcbox lzcbox_id="regular_try_pbr" lzcbox_init="set">
+							Attempt PBR
+							<liztooltip liztooltip_prms="right:0:15:200">
+								Mount PBR .dll and shaders. The result cannot be predicted, because client could be modified.
+							</liztooltip>
+						</lzcbox>
 					</div>
 
-					<div id="modmaker_new_nonmapbase_link_selected" class="modmaker_mknew_client_btn_cbox_cont">
-						<div class="modmaker_mknew_client_btn_cbox_text">Link selected content</div>
-						<div lizcbox_init="set" lizcbox_hashitbox class="modmaker_mknew_client_btn_cbox"></div>
-						<liztooltip liztooltip_prms="right:0:15:200">
-							Link content from selected clients via gameinfo.
-							<br>
-							<a style="color: #B54944">
-								Platform should always be selected.
-								<br><br>
-								This should only be unchecked if you're absolutely sure you know what you're doing.
-							</a>
-							<br>
-							In addition, if you're basing your mod off SDK 2013 - ep2, episodic and hl2 should also be selected.
-						</liztooltip>
+					<div class="modmaker_mknew_client_btn_cbox">
+						<lzcbox lzcbox_id="regular_link_selected" lzcbox_init="set">
+							Link selected content
+							<liztooltip liztooltip_prms="right:0:15:200">
+								Link content from selected clients via gameinfo.
+								<br>
+								<a style="color: #B54944">
+									Platform should always be selected.
+									<br><br>
+									This should only be unchecked if you're absolutely sure you know what you're doing.
+								</a>
+								<br>
+								In addition, if you're basing your mod off SDK 2013 - ep2, episodic and hl2 should also be selected.
+							</liztooltip>
+						</lzcbox>
 					</div>
 
 					<div id="modmaker_spawn_client_mpsp2013dlls"></div>
@@ -203,20 +206,22 @@
 						</liztooltip>
 					</lzbtn>
 
-					<div id="modmaker_new_mapbase_dopbr" class="modmaker_mknew_client_btn_cbox_cont">
-						<div class="modmaker_mknew_client_btn_cbox_text">PBR</div>
-						<div lizcbox_init="set" lizcbox_hashitbox class="modmaker_mknew_client_btn_cbox"></div>
-						<liztooltip liztooltip_prms="right:0:15:500">
-							Include PBR shader.
-						</liztooltip>
+					<div class="modmaker_mknew_client_btn_cbox">
+						<lzcbox lzcbox_id="mapbase_is_pbr" lzcbox_init="set">
+							PBR
+							<liztooltip liztooltip_prms="right:0:15:500">
+								Include PBR shader.
+							</liztooltip>
+						</lzcbox>
 					</div>
 
-					<div id="modmaker_new_mapbase_link_selected" class="modmaker_mknew_client_btn_cbox_cont">
-						<div class="modmaker_mknew_client_btn_cbox_text">Link selected content</div>
-						<div lizcbox_init="set" lizcbox_hashitbox class="modmaker_mknew_client_btn_cbox"></div>
-						<liztooltip liztooltip_prms="right:0:15:500">
-							Link content from selected clients via gameinfo.
-						</liztooltip>
+					<div class="modmaker_mknew_client_btn_cbox">
+						<lzcbox lzcbox_id="mapbase_link_selected" lzcbox_init="set">
+							Link selected content
+							<liztooltip liztooltip_prms="right:0:15:500">
+								Link content from selected clients via gameinfo.
+							</liztooltip>
+						</lzcbox>
 					</div>
 
 				</div>

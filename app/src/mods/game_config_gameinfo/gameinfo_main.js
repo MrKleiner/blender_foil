@@ -136,6 +136,7 @@ function evalst(st){
 // important todo: there has to be a def dict
 async function gameinfo_set_info()
 {
+	// evaluate gameinfo through python and receive a json
 	var inf = await bltalk.send({
 		'action': 'gameinfoman_load_info',
 		'payload': {
@@ -144,6 +145,7 @@ async function gameinfo_set_info()
 	});
 	log('gameinfo', 'Got gameinfo from blender:', inf)
 
+	// set text inputs values
 	$('#gminfo_gamename_input').val(inf['game'])
 	$('#gameinfo_mod_minititle').text(inf['game'])
 	$('#gameinfo_mod_modfolderpath').val(window.foil_context.full.client_folder_path)
@@ -151,20 +153,28 @@ async function gameinfo_set_info()
 	$('#gminfo_gameicon_input').val(inf['icon'])
 	$('#gminfo_appid_input').val(inf['SteamAppId'])
 
+	// set dropdowns
 	lzdrops.pool['game_type'].set(inf['type'])
 	lzdrops.pool['app_id'].set($('#gminfo_appid_input').val())
 
-	// checkboxes
+	// set checkboxes
 	// todo: fucking make names symmetrical
-	lizcbox_stat('vr_support', evalst(inf['SupportsVR']))
-	lizcbox_stat('icon_autoconvert', window.foil_context.full.autoconvert_icon)
-	lizcbox_stat('dx8support', evalst(inf['SupportsDX8']))
-	lizcbox_stat('no_mp_model_select', evalst(inf['NoModels']))
-	lizcbox_stat('no_mp_crosshair_select', evalst(inf['NoCrosshair']))
-	lizcbox_stat('adv_crosshair', evalst(inf['AdvCrosshair']))
-	lizcbox_stat('has_portals', evalst(inf['HasPortals']))
-	lizcbox_stat('no_difficulty_selection', evalst(inf['NoDifficulty']))
-	lizcbox_stat('old_fleshlight', evalst(inf['use_legacy_flashlight']))
+	// this var actually saves performance (by a few milliseconds)
+	var cb = lzcbox.pool;
+	var map_pool = {
+		'vr_support': 				'SupportsVR',
+		'icon_autoconvert': 		window.foil_context.full.autoconvert_icon,
+		'dx8support': 				'SupportsDX8',
+		'no_mp_model_select': 		'NoModels',
+		'no_mp_crosshair_select': 	'NoCrosshair',
+		'adv_crosshair': 			'AdvCrosshair',
+		'has_portals': 				'HasPortals',
+		'no_difficulty_selection': 	'NoDifficulty',
+		'old_fleshlight': 			'use_legacy_flashlight'
+	}
+	for (var setbox in map_pool){
+		cb[setbox].set(evalst(map_pool[setbox]))
+	}
 
 	gminfo_icon_manager()
 }
@@ -173,16 +183,16 @@ async function gameinfo_set_info()
 // basic info
 function gameinfo_save_back()
 {
-	// use_legacy_flashlight
-	
+
+	var cbs = lzcbox.pool;
 	// update context with new game name
 	if ($('#gminfo_gamename_input').val().trim() == ''){
-		window.foil_context.full.full_game_name = 'Sample Text';
+		window.foil_context.full.full_game_name = 'Illuminati confirmed';
 	}else{
 		window.foil_context.full.full_game_name = $('#gminfo_gamename_input').val();
 	}
-	window.foil_context.full.autoconvert_icon = lizcbox_stat('icon_autoconvert');
-
+	window.foil_context.full.autoconvert_icon = cbs['icon_autoconvert'].state;
+	
 	bltalk.send({
 		'action': 'gameinfo_save_back',
 		'payload': {
@@ -191,14 +201,14 @@ function gameinfo_save_back()
 				'game': window.foil_context.full.full_game_name,
 				'title': $('#gminfo_gametitle_input').val(),
 				'icon': $('#gminfo_gameicon_input').val(),
-				'use_legacy_flashlight': evalst(lizcbox_stat('old_fleshlight')),
-				'NoCrosshair': evalst(lizcbox_stat('no_mp_crosshair_select')),
-				'SupportsVR': evalst(lizcbox_stat('vr_support')),
-				'SupportsDX8': evalst(lizcbox_stat('dx8support')),
-				'NoModels': evalst(lizcbox_stat('no_mp_model_select')),
-				'AdvCrosshair': evalst(lizcbox_stat('adv_crosshair')),
-				'HasPortals': evalst(lizcbox_stat('has_portals')),
-				'NoDifficulty': evalst(lizcbox_stat('no_difficulty_selection'))
+				'use_legacy_flashlight': evalst(cbs['old_fleshlight'].state),
+				'NoCrosshair': evalst(cbs['no_mp_crosshair_select'].state),
+				'SupportsVR': evalst(cbs['vr_support'].state),
+				'SupportsDX8': evalst(cbs['dx8support'].state),
+				'NoModels': evalst(cbs['no_mp_model_select'].state),
+				'AdvCrosshair': evalst(cbs['adv_crosshair'].state),
+				'HasPortals': evalst(cbs['has_portals'].state),
+				'NoDifficulty': evalst(cbs['no_difficulty_selection'].state)
 			},
 			'app_id': $('#gminfo_appid_input').val()
 		}

@@ -8,7 +8,7 @@
 			"pass_params": ""
 		},
 		{
-			"selector": "#gameinfo_ctrl .lizcbox_hitbox",
+			"selector": "#gameinfo_ctrl .lizcbox_hitbox, #gameinfo_ctrl lzcbox",
 			"function": "gameinfo_save_back",
 			"pass_event": false,
 			"pass_element": false,

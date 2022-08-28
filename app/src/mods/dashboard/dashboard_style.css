@@ -203,24 +203,10 @@
 }
 
 
-.dboard_mod_prmrow_cbox_mark
-{
-	width: 17px;
-	height: 17px;
-	margin-left: 5px;
-}
 
 .dboard_mod_prmrow_cbox
 {
-	display: flex;
-    flex-direction: row;
-    flex-grow: 0;
     margin-top: 10px;
-    background: rgba(0, 0, 0, 0.1);
-    padding: 6px;
-    border-radius: 5px;
-    /*width: fit-content;*/
-    user-select: none;
 }
 
 

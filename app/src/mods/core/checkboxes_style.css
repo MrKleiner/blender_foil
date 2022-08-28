@@ -1,4 +1,8 @@
 
+
+
+/*Regular*/
+
 lzcbox *
 {
 	user-select: none;
@@ -6,15 +10,20 @@ lzcbox *
 
 lzcbox
 {
-	display: flex;
+    display: flex;
     flex-direction: row;
     flex-grow: 0;
-    margin-top: 10px;
+    /*margin-top: 10px;*/
     background: rgba(0, 0, 0, 0.1);
     padding: 6px;
     border-radius: 5px;
-    /* width: fit-content; */
+    width: fit-content; 
     user-select: none;
+    color: white;
+    font-family: 'Open Sans';
+    font-weight: 400;
+    font-size: 16px;
+    align-items: center;
 }
 
 lzcbox [cbtitle]
@@ -24,29 +33,36 @@ lzcbox [cbtitle]
 
 lzcbox [cmark_outer]
 {
-	display: flex;
-	flex-grow: 1;
-	align-items: center;
-	justify-content: center;
-	width: 100%;
-	height: 100%;
-	background-color: rgb(80, 80, 80);
-	border-radius: 15%;
-	outline: 1px solid rgb(45, 45, 45);
-	/*outline: 1px solid rgb(30, 30, 30);*/
+    width: 17px;
+    height: 17px;
+    margin-left: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /*background-color: rgb(80, 80, 80);*/
+    border-radius: 15%;
+    outline: 1px solid rgb(45, 45, 45);
+    aspect-ratio: 1/1;
+    /* outline: 1px solid rgb(30, 30, 30);*/
 }
+
+
 
 lzcbox [cmark_inner]
 {
 	display: flex;
-	width: 75%;
-	height: 75%;
-	/*background: blue;*/
-	background-repeat: no-repeat;
-	background-position: center;
-	background-size: contain;
+    width: 75%;
+    height: 75%;
+    /* background: blue; */
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
 }
 
+
+
+
+/*checkmark*/
 lzcbox[lzcbox_state='set'] [cmark_inner]
 {
 	background-image: url('../../assets/checkmark.svg');
@@ -57,6 +73,11 @@ lzcbox[lzcbox_state='unset'] [cmark_inner]
 	background-image: none;
 }
 
+
+
+
+
+/*bg color*/
 lzcbox[lzcbox_state='set'] [cmark_outer]
 {
 	background-color: rgb(56, 78, 96);
@@ -64,7 +85,7 @@ lzcbox[lzcbox_state='set'] [cmark_outer]
 
 lzcbox[lzcbox_state='unset'] [cmark_outer]
 {
-	background-color: rgb(56, 78, 96);
+	background-color: rgb(80, 80, 80);
 }
 
 lzcbox[lzcbox_state='unset']:hover [cmark_outer], .lzcbox_hitbox:hover [lzcbox_state='unset'] [cmark_outer]
@@ -78,3 +99,18 @@ lzcbox[lzcbox_state='unset']:hover [cmark_outer], .lzcbox_hitbox:hover [lzcbox_s
 
 
 
+/*Pure checkbox*/
+lzcbox[raw] [cbtitle]
+{
+	display: none;
+}
+lzcbox[raw]
+{
+	padding: 0px;
+	background: none;
+	border-radius: 0px;
+}
+lzcbox[raw] [cmark_outer]
+{
+	margin-left: 0px;
+}

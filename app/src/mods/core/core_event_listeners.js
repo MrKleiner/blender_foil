@@ -5,7 +5,7 @@ document.addEventListener('click', tr_event => {
 	// 	core checkboxes_events_bind.core.json
 	// ==========================================
 
-	if (event.target.closest('[lizcbox].lizcbox_container, .lizcbox_hitbox')) { lizcboxes_switch(event.target.closest('[lizcbox].lizcbox_container, .lizcbox_hitbox')) }
+	if (event.target.closest('lzcbox, .lizcbox_hitbox lzcbox')) { lzcbox.set_state(event.target.closest('lzcbox, .lizcbox_hitbox lzcbox')) }
 
 
 
@@ -37,7 +37,7 @@ document.addEventListener('click', tr_event => {
 
 	if (event.target.closest('[dashboard_action="load_skyboxer"]')) { skyboxer_module_loader() }
 	if (event.target.closest('.main_dashboard_util[dboardload]')) { dashboard_tool_loader(event.target.closest('.main_dashboard_util[dboardload]')) }
-	if (event.target.closest('#main_dashboard_right_ctrl .lizcbox_hitbox')) { dboard_update_panel_vis() }
+	if (event.target.closest('#main_dashboard_right_ctrl lzcbox, #main_dashboard_right_ctrl .lzcbox_hitbox')) { dboard_update_panel_vis() }
 	if (event.target.closest('#dboard_mod_launchgame')) { dboard_launch_mod() }
 	if (event.target.closest('#dboard_mod_killgame')) { dboard_kill_mod() }
 	if (event.target.closest('#dboard_suggest_linked_maps_c')) { dboard_call_applicable_maps() }
@@ -50,7 +50,7 @@ document.addEventListener('click', tr_event => {
 	// ==========================================
 
 	if (event.target.closest('#gminfo_appid_dropdown [dropdown_set]')) { set_steam_appid_from_dropdown(event.target.closest('#gminfo_appid_dropdown [dropdown_set]')) }
-	if (event.target.closest('#gameinfo_ctrl .lizcbox_hitbox')) { gameinfo_save_back() }
+	if (event.target.closest('#gameinfo_ctrl .lizcbox_hitbox, #gameinfo_ctrl lzcbox')) { gameinfo_save_back() }
 	if (event.target.closest('#gameinfo_ctrl .lz_menu_entries')) { gameinfo_save_back() }
 
 

@@ -586,7 +586,7 @@ def blfoil_suggested_mats_builder():
     print('blfoil Rebuild suggested mats list')
     # if available - do shit and break out of the loop when done
     if bpy.context != None:
-        # YAAAY, it appears that once it's added and saved - it stays there !
+        # YAAAY, it appears that this list is being saved together with the blend file!
         # check if every scene has classnames and if the amount is the same
         for allsc in bpy.data.scenes:
             # if this scene doesn't has the same amount of ents - resync. Otherwise - pass

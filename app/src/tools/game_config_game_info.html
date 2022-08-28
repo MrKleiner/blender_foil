@@ -30,14 +30,13 @@
 
 
 		<div class="gameinfo_prmrow">
-			<div class="gameinfo_prmrow_cbox">
-				<div class="gameinfo_prmrow_cbox_title">Autoconvert</div>
-				<div lizcbox_id="icon_autoconvert" lizcbox_init="set" lizcbox_hashitbox class="gameinfo_prmrow_cbox_mark"></div>
+			<lzcbox lzcbox_id="icon_autoconvert" lzcbox_init="set" class="dboard_mod_prmrow_cbox">
+				Autoconvert
 				<liztooltip liztooltip_prms="bottom:1:10:500">
 					Cpnvert the specified icon to an appropriate format (tga).<br>
 					This checkbox should always be checked, unless you know what you're doing.
 				</liztooltip>
-			</div>
+			</lzcbox>
 		</div>
 
 		<!-- this is honestly so fucking overengineered... -->
@@ -83,18 +82,15 @@
 
 
 		<!-- Checkboxes  -->
-		<!-- important todo: make such checkmark blocks a standard and simply append entire blocks at once -->
 		<div class="gameinfo_prmrow">
-			<div class="gameinfo_prmrow_cbox">
-				<div class="gameinfo_prmrow_cbox_title">VR Support</div>
-				<div lizcbox_id="vr_support" lizcbox_init="unset" lizcbox_hashitbox class="gameinfo_prmrow_cbox_mark"></div>
-			</div>
+			<lzcbox lzcbox_id="vr_support" lzcbox_init="unset" class="dboard_mod_prmrow_cbox">
+				VR Support
+			</lzcbox>
 		</div>
 
 		<div class="gameinfo_prmrow">
-			<div class="gameinfo_prmrow_cbox">
-				<div class="gameinfo_prmrow_cbox_title">Old Fleshlight</div>
-				<div lizcbox_id="old_fleshlight" lizcbox_init="unset" lizcbox_hashitbox class="gameinfo_prmrow_cbox_mark"></div>
+			<lzcbox lzcbox_id="old_fleshlight" lzcbox_init="unset" class="dboard_mod_prmrow_cbox">
+				Old Fleshlight
 				<liztooltip liztooltip_prms="right:0:15:500">
 					This option toggles between hl2 and episodic flashlight behaviour when using Mapbase.<br>
 					<a style="color: rgb(200, 200, 200)">
@@ -102,58 +98,59 @@
 						episodic: flashlight has a separate power pool.
 					</a>
 				</liztooltip>
-			</div>
+			</lzcbox>
 		</div>
 
 		<div class="gameinfo_prmrow">
-			<div class="gameinfo_prmrow_cbox">
-				<div class="gameinfo_prmrow_cbox_title">DX8 Support</div>
-				<div lizcbox_id="dx8support" lizcbox_init="unset" lizcbox_hashitbox class="gameinfo_prmrow_cbox_mark"></div>
+			<lzcbox lzcbox_id="dx8support" lzcbox_init="unset" class="dboard_mod_prmrow_cbox">
+				DX8 Support
 				<liztooltip liztooltip_prms="bottom:1:10:500">
 					Only because it'd be stupid not to include this checkbox. 
 				</liztooltip>
-			</div>
+			</lzcbox>
 		</div>
 
 		<div class="gameinfo_prmrow">
-			<div class="gameinfo_prmrow_cbox">
-				<div class="gameinfo_prmrow_cbox_title">No MP model selection menus</div>
-				<div lizcbox_id="no_mp_model_select" lizcbox_init="set" lizcbox_hashitbox class="gameinfo_prmrow_cbox_mark"></div>
+			<lzcbox lzcbox_id="no_mp_model_select" lzcbox_init="unset" class="dboard_mod_prmrow_cbox">
+				No MP model selection menus
 				<liztooltip liztooltip_prms="bottom:1:10:500">
 					Hides the multiplayer model selection menu. 
 				</liztooltip>
-			</div>
+			</lzcbox>
 		</div>
 
 		<div class="gameinfo_prmrow">
-			<div class="gameinfo_prmrow_cbox">
-				<div class="gameinfo_prmrow_cbox_title">No MP crosshair selection menu</div>
-				<div lizcbox_id="no_mp_crosshair_select" lizcbox_init="set" lizcbox_hashitbox class="gameinfo_prmrow_cbox_mark"></div>
+			<lzcbox lzcbox_id="no_mp_crosshair_select" lzcbox_init="unset" class="dboard_mod_prmrow_cbox">
+				No MP crosshair selection menu
 				<liztooltip liztooltip_prms="bottom:1:10:500">
 					Hides the multiplayer crosshair selection menu. 
 				</liztooltip>
-			</div>
+			</lzcbox>
 		</div>
 
 		<div class="gameinfo_prmrow">
-			<div class="gameinfo_prmrow_cbox">
-				<div class="gameinfo_prmrow_cbox_title">Adv crosshair options</div>
-				<div lizcbox_id="adv_crosshair" lizcbox_init="unset" lizcbox_hashitbox class="gameinfo_prmrow_cbox_mark"></div>
-			</div>
+			<lzcbox lzcbox_id="adv_crosshair" lzcbox_init="unset" class="dboard_mod_prmrow_cbox">
+				Adv crosshair options
+				<liztooltip liztooltip_prms="bottom:1:10:500">
+					Advanced users only (yet another abandoned rubbish feature, 
+					because nobody except masochist source modders want to fuck with this) 
+				</liztooltip>
+			</lzcbox>
 		</div>
 
 		<div class="gameinfo_prmrow">
-			<div class="gameinfo_prmrow_cbox">
-				<div class="gameinfo_prmrow_cbox_title">Has Portals</div>
-				<div lizcbox_id="has_portals" lizcbox_init="unset" lizcbox_hashitbox class="gameinfo_prmrow_cbox_mark"></div>
-			</div>
+			<lzcbox lzcbox_id="has_portals" lzcbox_init="unset" class="dboard_mod_prmrow_cbox">
+				Has Portals
+				<liztooltip liztooltip_prms="bottom:1:10:500">
+					Differentiates hl2 and Portal
+				</liztooltip>
+			</lzcbox>
 		</div>
 
 		<div class="gameinfo_prmrow">
-			<div class="gameinfo_prmrow_cbox">
-				<div class="gameinfo_prmrow_cbox_title">Hide difficulty selection tab</div>
-				<div lizcbox_id="no_difficulty_selection" lizcbox_init="unset" lizcbox_hashitbox class="gameinfo_prmrow_cbox_mark"></div>
-			</div>
+			<lzcbox lzcbox_id="no_difficulty_selection" lzcbox_init="unset" class="dboard_mod_prmrow_cbox">
+				Hide difficulty selection tab
+			</lzcbox>
 		</div>
 
 

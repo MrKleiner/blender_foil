@@ -72,6 +72,9 @@ window.blsocket_cache = {};
 // by default - 30 seconds timeout
 window.blwait_timeout = 1000*30;
 
+// various sys tools
+window.foil = {}
+
 // UDP await/resolve storage
 // important to not: There could be a number of simultaneuos transfers. Do not delete this dict randomly
 window.blresolve = {};
@@ -682,7 +685,7 @@ function base_module_loader(mdl, force=true)
 		}else{
 			// $('#modules_cont').empty();
 			// todo: why use jquery ...
-			console.log(`%cTrying to load module ${realname.replace('.html', '')} from tools/${realname}`, 'background: black; color: white',);
+			print(`%cTrying to load module ${realname.replace('.html', '')} from tools/${realname}`, 'background: black; color: white',);
 			$('#modules_cont').load('tools/' + realname, function() {
 				// tooltips
 				init_liztooltips();
@@ -739,6 +742,30 @@ function base_module_loader(mdl, force=true)
 //                 		Context
 // ------------------------------------------------------------
 // ============================================================
+
+
+
+
+class foil_context_super_manager
+{
+
+	constructor() {
+		print('Initialized Context Manager');
+	};
+
+	set(){
+
+	}
+}
+window.foil.context = new foil_context_super_manager();
+
+
+
+
+
+
+
+
 
 
 

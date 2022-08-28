@@ -15,7 +15,7 @@
 			"pass_params": ""
 		},
 		{
-			"selector": "#main_dashboard_right_ctrl .lizcbox_hitbox",
+			"selector": "#main_dashboard_right_ctrl lzcbox, #main_dashboard_right_ctrl .lzcbox_hitbox",
 			"function": "dboard_update_panel_vis",
 			"pass_event": false,
 			"pass_element": false,

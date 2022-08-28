@@ -124,20 +124,21 @@ def dboard_get_suggested_maps(pl):
 	from ....utils.lizard_tail.lizard_tail import lizard_tail
 
 	gameinfo_path = Path(pl['gminfo_path'])
+	# root of the client folder
 	cl_folder = gameinfo_path.parent
 
+	# evaluate game info
 	with open(str(gameinfo_path), 'r') as gm:
 		game_info = lizard_tail(gm.read())
 
-	# search_paths
 
 	collected_maps = []
 
 	# first - collect maps from the current maps folder, if any
 	if (cl_folder / 'maps').is_dir():
-		# I fucking swear if you start the holywar on oneliners vs readable shit - I'll fucking feed you to my home alien
+		# I fucking swear if you start the holywar on oneliners vs readable shit - I'll fucking feed you to my home xenomorph
 		# collected_maps += [local_map.rstrip('.bsp') if local_map.endswith('.bsp') else '' for local_map in os.listdir(str(cl_folder / 'maps'))]
-		collected_maps += [local_map.rstrip('.bsp') for local_map in os.listdir(str(cl_folder / 'maps')) if local_map.endswith('.bsp')]
+		collected_maps += [str(local_map.relative_to(cl_folder / 'maps').as_posix()).rstrip('.bsp') for local_map in (cl_folder / 'maps').rglob('*') if (local_map.suffix.lower() == '.bsp')]
 		# for local_map in os.listdir(str(cl_folder / 'maps')):
 		# 	if local_map.endswith('.bsp'):
 		# 		collected_maps.append()

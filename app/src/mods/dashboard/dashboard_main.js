@@ -15,7 +15,7 @@ function dashboard_module_manager(pl)
 		case 'dboard_set_applicable_maps':
 			break;
 		default:
-			console.log('The dashboard module has been called, but no corresponding action was found:', pl['mod_action'])
+			print('The dashboard module has been called, but no corresponding action was found:', pl['mod_action'])
 			break;
 	}
 
@@ -60,7 +60,6 @@ function dashboard_app_loader()
 
 		});
 	}
-
 }
 
 // set control panel shit from existing context
@@ -72,12 +71,13 @@ function dashboard_set_ctrl_panel_from_context()
 	$('#dboard_mod_modfolderpath').text(mcontext.client_folder_path);
 	$('#dboard_mod_add_opts_input').text(mcontext.dboard_mod_add_opts_input)
 	// checkboxes
-	lizcbox_stat('fullscreen', mcontext.fullscreen)
-	lizcbox_stat('intro_vid', mcontext.intro_vid)
-	lizcbox_stat('loadtools', mcontext.loadtools)
-	lizcbox_stat('maps_from_linked_gminfo', mcontext.maps_from_linked_gminfo)
-	lizcbox_stat('start_from_map', mcontext.start_from_map)
-	lizcbox_stat('use_add_options', mcontext.add_start_opts)
+	var cb_pool = lzcbox.pool
+	cb_pool['fullscreen'].set(mcontext.fullscreen)
+	cb_pool['intro_vid'].set(mcontext.intro_vid)
+	cb_pool['loadtools'].set(mcontext.loadtools)
+	cb_pool['maps_from_linked_gminfo'].set(mcontext.maps_from_linked_gminfo)
+	cb_pool['start_from_map'].set(mcontext.start_from_map)
+	cb_pool['use_add_options'].set(mcontext.add_start_opts)
 	$('#dboard_mod_preview_lauchprms').text(eval_launch_opts()['string'])
 	$('#dboard_start_from_map_inp input').val(mcontext.starting_map);
 }
@@ -91,14 +91,15 @@ function dboard_update_panel_vis()
 
 	// save context
 	var mcontext = window.foil_context.full;
-	mcontext.fullscreen = lizcbox_stat('fullscreen')
-	mcontext.intro_vid = lizcbox_stat('intro_vid')
-	mcontext.loadtools = lizcbox_stat('loadtools')
-	mcontext.maps_from_linked_gminfo = lizcbox_stat('maps_from_linked_gminfo')
-	mcontext.start_from_map = lizcbox_stat('start_from_map')
-	mcontext.add_start_opts = lizcbox_stat('use_add_options')
+	var cb_pool = lzcbox.pool;
+	mcontext.fullscreen = cb_pool['fullscreen'].state
+	mcontext.intro_vid = cb_pool['intro_vid'].state
+	mcontext.loadtools = cb_pool['loadtools'].state
+	mcontext.maps_from_linked_gminfo = cb_pool['maps_from_linked_gminfo'].state
+	mcontext.start_from_map = cb_pool['start_from_map'].state
+	mcontext.add_start_opts = cb_pool['use_add_options'].state
 	mcontext.starting_map = $('#dboard_start_from_map_inp input').val().trim();
-
+	// print(mcontext)
 	// also save quick config
 	foil_save_quick_config()
 
@@ -125,7 +126,7 @@ function dashboard_tool_loader(tool='none')
 			gameinfoman_app_loader()
 			break;
 		default:
-			console.log('Dashboard tried loading unknown module');
+			print('Dashboard tried loading unknown module');
 			break;
 	}
 }
@@ -139,14 +140,23 @@ function eval_launch_opts()
 	var ev = {};
 	var single_string = '';
 	var separated = {};
-	var cbpool = lizcboxes.pool;
-	if (!cbpool['fullscreen']) { separated['windowed'] = [] }
-	if (cbpool['loadtools']) { separated['tools'] = [] }
-	if (!cbpool['intro_vid']) { separated['novid'] = [] }
-	// if (cbpool['start_from_map'] && $('#dboard_start_from_map_inp').find('input').val().trim() != '') { separated['map'] = [$('#dboard_start_from_map_inp').find('input').val().trim()] }
-	if (cbpool['start_from_map'] && $('#dboard_start_from_map_inp').find('input').val().trim() != '') { ev['map'] = $('#dboard_start_from_map_inp').find('input').val().trim().split('/').at(-1) }
+	var cbpool = lzcbox.pool;
+
+	// append parameters
+	// todo: bro wtf we got rid of if statements, but it's still messy
+	cbpool['fullscreen'].state ? (separated['windowed'] = []) : null
+	cbpool['loadtools'].state ? (separated['tools'] = []) : null
+	cbpool['intro_vid'].state ? (separated['novid'] = []) : null
+
+
+	// if asked to start from a map AND the map name input is not empty - add map aprameter to the dictionary
+	if (cbpool['start_from_map'].state && $('#dboard_start_from_map_inp input').val().trim() != ''){
+		// todo why split ?
+		// ev['map'] = $('#dboard_start_from_map_inp input').val().trim().split('/').at(-1)
+		ev['map'] = $('#dboard_start_from_map_inp input').val().trim()
+	}
 	var parsed_opts = {};
-	if (cbpool['use_add_options'] && $('#dboard_mod_add_opts_input').val().trim() != '') {
+	if (cbpool['use_add_options'].state && $('#dboard_mod_add_opts_input').val().trim() != '') {
 		var prepare_opts = $('#dboard_mod_add_opts_input').val().split(' ');
 		var lastprm = '';
 		for (var po in prepare_opts){
@@ -159,6 +169,7 @@ function eval_launch_opts()
 		}
 	}
 
+	// delete duplicates ?
 	ev['full'] = Object.assign({}, separated, parsed_opts);
 	ev['base'] = separated;
 	ev['add'] = parsed_opts;
@@ -230,11 +241,11 @@ async function dboard_call_applicable_maps()
 		'action': 'dboard_get_suggested_maps',
 		'payload': {
 			'gminfo_path': window.foil_context.full.gameinfo_path,
-			'suggest_linked': lizcbox_stat('maps_from_linked_gminfo')
+			'suggest_linked': lzcbox.pool['maps_from_linked_gminfo'].state
 		}
 	});
 
-	console.log('got applicable maps:', maps);
+	print('got applicable maps:', maps);
 	window.suggested_maps = maps;
 
 }
