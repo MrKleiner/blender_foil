@@ -37,8 +37,9 @@ function gameinfoman_app_loader()
 	.then(function(resolved) {
 
 		// steam appid drowdown
-		create_lizdropdown(
+		lzdrops.spawn(
 			'#gminfo_appid_dropdown',
+			'app_id',
 			{
 				'menu_name': 'Steam App ID',
 				'menu_entries': [
@@ -76,8 +77,9 @@ function gameinfoman_app_loader()
 
 
 		// gametype dropdown
-		create_lizdropdown(
+		lzdrops.spawn(
 			'#gminfo_gametype_dropdown',
+			'game_type',
 			{
 				'menu_name': 'Game Type',
 				'default': 'Multiplayer_Only',
@@ -149,8 +151,8 @@ async function gameinfo_set_info()
 	$('#gminfo_gameicon_input').val(inf['icon'])
 	$('#gminfo_appid_input').val(inf['SteamAppId'])
 
-	lizdropdowns.pool['gminfo_gametype_dropdown'].set_active(inf['type'])
-	lizdropdowns.pool['gminfo_appid_dropdown'].set_active($('#gminfo_appid_input').val())
+	lzdrops.pool['game_type'].set(inf['type'])
+	lzdrops.pool['app_id'].set($('#gminfo_appid_input').val())
 
 	// checkboxes
 	// todo: fucking make names symmetrical

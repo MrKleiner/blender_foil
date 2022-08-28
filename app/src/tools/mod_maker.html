@@ -70,8 +70,8 @@
 
 
 			<!-- <div class="app_regular_btn_01" id="new_engine_hpp_installer_btn">Install hammer++</div> -->
-			<div class="app_regular_btn_01" id="new_engine_save_config">Save</div>
-			<div class="app_regular_btn_02" id="new_engine_del_config">Unlink</div>
+			<lzbtn big id="new_engine_save_config">Save</lzbtn>
+			<lzbtn big deny id="new_engine_del_config">Unlink</lzbtn>
 
 
 
@@ -119,7 +119,7 @@
 
 
 				<div class="modmaker_mknew_client_btn_column">
-					<div class="modmaker_mknew_client_btn app_regular_btn_01 app_regular_btn_blocked" id="modmaker_new_client_from_tplate">
+					<lzbtn big class="btn_locked modmaker_mknew_client_btn" id="modmaker_new_client_from_tplate">
 						New
 						<liztooltip liztooltip_prms="top:1:10:100">
 							<div style="display: flex; flex-direction: column;">
@@ -146,7 +146,7 @@
 								</span>
 							</div>
 						</liztooltip>
-					</div>
+					</lzbtn>
 
 					<div id="modmaker_spawn_client_dll_dropdown"></div>
 
@@ -190,7 +190,7 @@
 
 
 				<div class="modmaker_mknew_client_btn_row">
-					<div class="modmaker_mknew_client_btn app_regular_btn_01 app_regular_btn_blocked" id="modmaker_new_client_newblank">
+					<lzbtn big class="btn_locked modmaker_mknew_client_btn app_regular_btn_01 app_regular_btn_blocked" id="modmaker_new_client_newblank">
 						New Mapbase
 						<liztooltip liztooltip_prms="right:0:15:200">
 							You can try using mapbase with any engine, because why not. It has client/server .dll included 
@@ -201,7 +201,7 @@
 							This option will never break anything simply because of the way it works. 
 							Meaning that you can always try, see if it works and just forget about it if it doesn't.
 						</liztooltip>
-					</div>
+					</lzbtn>
 
 					<div id="modmaker_new_mapbase_dopbr" class="modmaker_mknew_client_btn_cbox_cont">
 						<div class="modmaker_mknew_client_btn_cbox_text">PBR</div>

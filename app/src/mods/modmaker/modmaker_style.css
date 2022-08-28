@@ -490,21 +490,7 @@
 
 .modmaker_engine_details_item_input
 {
-	all: unset;
-	display: flex;
-	flex-grow: 1;
-	color: white;
-	justify-content: center;
-	font-family: 'Open_Sans';
-	font-weight: 100;
-	font-size: 15px;
-	user-select: none;
 	margin-left: 10px;
-	min-width: 50px;
-
-	padding: 2px 2px 2px 5px;
-	background: rgba(0, 0, 0, 0.3);
-	border-radius: 5px;
 }
 
 
@@ -654,21 +640,7 @@
 
 #modmaker_new_client_game_name input, #modmaker_new_client_cl_name input
 {
-	all: unset;
-	display: flex;
-	flex-grow: 1;
-	color: white;
-	justify-content: center;
-	font-family: 'Open_Sans';
-	font-weight: 100;
-	font-size: 15px;
-	user-select: none;
 	margin-left: 10px;
-	min-width: 50px;
-
-	padding: 2px 2px 2px 5px;
-	background: rgba(0, 0, 0, 0.3);
-	border-radius: 5px;
 }
 
 #modmaker_new_client_game_name_text, #modmaker_new_client_cl_name_text
@@ -725,6 +697,7 @@
 	display: flex;
 	flex-direction: row;
 	margin-top: 20px;
+	margin-bottom: 200px;
 }
 
 
@@ -753,36 +726,17 @@
 	width: 80%;
 	margin-top: 15px;
 	height: 25px;
-	background: rgba(0, 0, 0, 0.25);
-	border-radius: 5px;
-	outline: 1px solid rgba(255, 255, 255, 0.1);
+	/*background: rgba(0, 0, 0, 0.25);*/
+	/*border-radius: 5px;*/
+	/*outline: 1px solid rgba(255, 255, 255, 0.1);*/
 
-	font-family: 'Open_Sans';
-	font-weight: 100;
-}
-
-#modmaker_spawn_client_dll_dropdown .lizard_dropdown_bottom_title, #modmaker_spawn_client_mpsp2013dlls .lizard_dropdown_bottom_title
-{
-	color: rgba(255, 255, 255, 0.5)
-}
-
-#modmaker_spawn_client_dll_dropdown .lizmenu_title, #modmaker_spawn_client_mpsp2013dlls .lizmenu_title
-{
-	color: white;
-	font-family: 'Open_Sans';
-	font-weight: 200;
-	font-size: 15px;
-	align-self: flex-start;
-	/*justify-content: center;*/
-	user-select: none;
-	padding-left: 10px;
+	/*font-family: 'Open_Sans';*/
+	/*font-weight: 100;*/
 }
 
 
-#modmaker_spawn_client_dll_dropdown:hover, #modmaker_spawn_client_mpsp2013dlls:hover
-{
-	background: rgba(0, 0, 0, 0.1);
-}
+
+
 
 .modmaker_mknew_client_btn_cbox_text
 {

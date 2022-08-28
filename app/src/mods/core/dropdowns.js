@@ -1,259 +1,334 @@
-/*
-============================================================
-------------------------------------------------------------
-                   Simple dropdowns START
-------------------------------------------------------------
-============================================================
-*/
 
-function create_lizdropdown(slct, itemsd)
+// important todo: There is a number of approaches for nice wrappers
+// one of them is like pepega structure
+// another one is like jquery
+// and so on...
+// the only disadvatage of classes is that they have to be spawned first
+// important todo: what are the disadvantages of using classes like this ?
+
+// important todo: YES, this is very cool and it works, BUT
+// it's a literal labirynth...
+// for instance, there's no standard of where the active item is written down...
+// shit's all around the place and every function does its job differently
+class simple_lizard_dropdowns
 {
-	//
-	// Populate menu
-	//
+	// constructor(height, width) {
+	constructor() {
+		window.lizard_dropdowns = {};
 
-	var domenu = $(slct);
-
-	domenu.empty();
-
-	var gwidth = document.querySelector(slct).clientWidth;
-
-	var menu_plate = $(`
-		<div draggable="false" class="lizard_menu lizard_menu_dropdown">
-			<div class="lizmenu_title"><span style="color: #BC4141">None</span></div>
-			<div class="lizard_dropdown_arrow_icon">
-				<img src="assets/arrow_down.svg">
-			</div>
-			<div style="width: ` + gwidth.toString() + `px" class="lizard_dropdown_entries">
-			</div>
-		</div>
-	`);
-
-	for (var lzitem of itemsd['menu_entries'])
-	{
-		// .hasOwnProperty('name')
-		if (lzitem['type'] != 'separator')
-		{
-			var entry_plate = $(`
-				<div class="lizard_menu_entry">
-					<div class="lizard_menu_entry_text">FATAL_ERROR</div>
-				</div>
-			`);
-
-			// set icon
-			// entry_plate.find('.lizard_menu_entry_icon img')[0].src = lzitem['icon'];
-			// set entry text
-			entry_plate.find('.lizard_menu_entry_text').text(lzitem['name']);
-			// set item action
-			entry_plate.attr('dropdown_set', lzitem['dropdown_set']);
-			// svg condition
-			// if (lzitem['svg'] != true){entry_plate.find('.lizard_menu_entry_icon img').css('object-fit', 'contain')}
-
-		}else{
-			// dropdowns don't need a separator
-			// var entry_plate = $(`<div class="lizard_menu_separator"></div>`);
-		}
-
-		// append to entries pool
-		menu_plate.find('.lizard_dropdown_entries').append(entry_plate);
-	}
-
-	// set menu title
-	// which is basically an entry with separator
-	// menu_plate.find('.lizmenu_title').text(itemsd['menu_name']);
-
-	menu_plate.find('.lizard_dropdown_entries').append(`<div class="lizard_menu_separator"></div>`);
-	menu_plate.find('.lizard_dropdown_entries').append(`
-		<div style="pointer-events: none" class="lizard_menu_entry">
-			<div class="lizard_dropdown_bottom_title lizard_menu_entry_text">` + itemsd['menu_name'] + `</div>
-		</div>
-	`);
-
-
-	// append menu to target
-	domenu.append(menu_plate)
-
-	// select appended menu
-	// todo: .append returns selector?
-	var newmenu = domenu.find('.lizard_menu');
-	// Make parent a hitbox too
-	// todo: make this optional
-	domenu.attr('haslizdropdown', true);
-	// select menu items
-	var newmenu_items = domenu.find('.lizard_dropdown_entries');
-
-
-	// set default, if any
-	// todo: this is pretty retarded
-	if (itemsd['default'] != undefined){
-		if (newmenu[0].querySelector('[dropdown_set="' + itemsd['default'] + '"]') != null){
-			lizdropdown_set_active(newmenu[0].querySelector('[dropdown_set="' + itemsd['default'] + '"]'))
-		}
-	}
-
-	//
-	// set menu margins
-	//
-
-	// first - margin-top
-	// margin top is: height of the resulting lizmenu + padding-top of the parent container
-
-	// get padding of the parent container, if any
-	var padding_top = parseInt(window.getComputedStyle(newmenu[0], null).getPropertyValue('padding-top').replace('px', ''));
-	var margin_top = newmenu[0].offsetHeight
-	if (!isNaN(padding_top)){
-		margin_top += padding_top
-	}
-
-	// second - margin-left
-	var padding_left = parseInt(window.getComputedStyle(newmenu.parent()[0], null).getPropertyValue('padding-left').replace('px', ''));
-	var margin_left = 0
-	if (!isNaN(padding_left)){
-		margin_left += padding_left * -1
-	}
-
-	// set style
-	newmenu_items.css('margin-left', margin_left.toString() + 'px')
-	newmenu_items.css('margin-top', (margin_top + 5).toString() + 'px')
-
-}
-
-Element.prototype.lizdropdown=function(set_to) {
-    // if(value===undefined) value=true;
-    // if(this.hasAttribute(attribute)) this.removeAttribute(attribute);
-    // else this.addAttribute(attribute,value);
-    // todo: poor logic. use ||
-    // var tgt_menu_s = this.closest('.haslizdropdown') || this.closest('.lizard_menu')
-	if (this.closest('[haslizdropdown]') != null){
-		var tgt_menu_s = this.querySelector('.lizard_menu')
-	}
-	if (this.closest('.lizard_menu') != null){
-		var tgt_menu_s = this.closest('.lizard_menu')
-	}
-
-    if (set_to == undefined){
-	    if (tgt_menu_s != null){
-	    	return tgt_menu_s.getAttribute('liz_active_item')
-	    }else{
-	    	return null
-	    }
-    }
-
-};
-
-
-function lizdropdown_set_active(toitem)
-{
-	var dropdownroot = toitem.closest('.lizard_menu');
-	// set title
-	// dropdownroot.querySelector('.lizmenu_title').innerText = toitem.getAttribute('dropdown_set');
-	// console.log(toitem.querySelector('.lizard_menu_entry_text').textContent);
-	dropdownroot.querySelector('.lizmenu_title').innerText = toitem.querySelector('.lizard_menu_entry_text').textContent;
-	dropdownroot.querySelector('.lizard_dropdown_entries').style.visibility = 'hidden';
-	dropdownroot.setAttribute('liz_active_item', toitem.getAttribute('dropdown_set'))
-}
-
-
-// important todo: wtf
-function dropdown_showhide(anydrop)
-{
-
-	if (anydrop != null) {
-		// should toggle
 		/*
-		if (dropdown_open.querySelector('.lizard_dropdown_entries').style.visibility == 'visible'){
-			dropdown_open.querySelector('.lizard_dropdown_entries').style.visibility = 'hidden';
-			dropdown_open.querySelector('.lizard_dropdown_entries').classList.add('lizdropdown_active');
-		}else{
-			dropdown_open.querySelector('.lizard_dropdown_entries').style.visibility = 'visible';
-		}
-		dropdown_open.querySelector('.lizard_dropdown_entries').style.opacity = 1;
+		Element.prototype.lizdropdown=function(set_to) {
+		    // if(value===undefined) value=true;
+		    // if(this.hasAttribute(attribute)) this.removeAttribute(attribute);
+		    // else this.addAttribute(attribute,value);
+		    // todo: poor logic. use ||
+		    // var tgt_menu_s = this.closest('.haslizdropdown') || this.closest('.lizard_menu')
+			if (this.closest('[haslizdropdown]') != null){
+				var tgt_menu_s = this.querySelector('.lizard_menu')
+			}
+			if (this.closest('.lizard_menu') != null){
+				var tgt_menu_s = this.closest('.lizard_menu')
+			}
+
+		    if (set_to == undefined){
+			    if (tgt_menu_s != null){
+			    	return tgt_menu_s.getAttribute('lz_active_item')
+			    }else{
+			    	return null
+			    }
+		    }
+
+		};
 		*/
 
-		anydrop.querySelector('.lizard_dropdown_entries').classList.toggle('lizdropdown_entries_shown');
-		anydrop.classList.toggle('lizdropdown_active');
-		// dropdown_open.querySelector('.lizard_menu').classList.toggle('lizdropdown_active');
-
-		document.querySelectorAll('[haslizdropdown]').forEach(function(userItem) {
-			if (userItem != anydrop){
-				userItem.querySelectorAll('.lizard_dropdown_entries, .lizard_menu, [haslizdropdown]').forEach(function(sel) {
-					sel.classList.remove('lizdropdown_entries_shown');
-					sel.classList.remove('lizdropdown_active');
-				});
-				userItem.classList.remove('lizdropdown_entries_shown');
-				userItem.classList.remove('lizdropdown_active');
-			}
-		});
-
-	} else {
-    	// todo: jquery is actually slow as fuck
-    	$('.lizard_dropdown_entries, .lizard_menu, [haslizdropdown]')
-    	.removeClass('lizdropdown_entries_shown')
-    	.removeClass('lizdropdown_active');
-	}
-
-}
+		print('Initialized Simple Dropdowns');
+	};
 
 
-// takes [haslizdropdown] dropdown element
-class lzdropdown
-{
-	constructor(dr_id) {
-		// this.height = height;
-		// this.width = width;
-		this.dref = dr_id
-		this.drname = dr_id.getAttribute('id');
-	}
-	// returns all cboxes on a page
-	get name()
+
+
+
+
+	// ============================================================
+	// ------------------------------------------------------------
+	//                    		Spawner
+	// ------------------------------------------------------------
+	// ============================================================
+	spawn(slct, idname, itemsd, parent_hitbox)
 	{
-		return this.drname
+		// cant have duplicate names
+		// if (idname in window.lizard_dropdowns || idname == undefined){return}
+		if (idname == undefined){return}
+
+		// init
+		var dn_container = $(slct);
+		// clear target container
+		dn_container.empty();
+
+		// var gwidth = document.querySelector(slct).clientWidth;
+
+		// empty template for the dropdown
+		var menu_plate = $(`
+			<lzdropdown lzdropname="" draggable="false" class="lzdropdpown">
+				<div class="lz_dn_title"><span style="color: #BC4141">None</span></div>
+				<div class="dn_arrow_icon">
+					<img src="assets/arrow_down.svg">
+				</div>
+				<div class="lz_menu_entries foil_hidden">
+				</div>
+			</lzdropdown>
+		`);
+
+
+		// store reference
+		window.lizard_dropdowns[idname] = {
+			'elem': menu_plate,
+			// 'selected': itemsd['default'] ? itemsd['default'] : null,
+			'items': itemsd['menu_entries']
+		}
+
+		//
+		// Populate menu
+		//
+		this.update(idname)
+
+
+		// set menu title
+		// which is basically an entry with separator
+		var dn_entries_pool = menu_plate.find('.lz_menu_entries');
+		dn_entries_pool.append(`<div class="lz_menu_separator"></div>`);
+		dn_entries_pool.append(`
+			<div class="lz_menu_entry lz_dn_bottom_title">
+				<div class="lz_menu_entry_text">${itemsd['menu_name']}</div>
+			</div>
+		`);
+
+		// nothing should be draggable
+		menu_plate.find('*').attr('draggable', false);
+
+		// append menu to the target
+		dn_container.append(menu_plate)
+
+		// select appended menu
+		// todo: .append returns selector?
+		// var newmenu = dn_container.find('.lizard_menu');
+
+		// Make parent a hitbox too if asked
+		if (parent_hitbox == true){
+			dn_container.attr('haslizdropdown', true);
+		}
+		
+		// select menu items
+		// var newmenu_items = dn_entries_pool;
+
+
+		// set default, if any
+		// todo: this is pretty retarded
+		if (itemsd['default'] != undefined){
+			this.set_active(menu_plate.find(`[dropdown_set="${itemsd['default']}"]`))
+		}
+
+		//
+		// set menu margins
+		//
+
+		// first - margin-top
+		// margin top is: height of the resulting lizmenu + padding-top of the parent container
+
+		// get padding of the parent container, if any
+		// var padding_top = parseInt(window.getComputedStyle(menu_plate[0], null).getPropertyValue('padding-top').replace('px', ''));
+		// var margin_top = menu_plate[0].offsetHeight
+		// if (!isNaN(padding_top)){
+		// 	margin_top += padding_top
+		// }
+
+		// second - margin-left
+		var padding_left = parseInt(window.getComputedStyle(menu_plate.parent()[0], null).getPropertyValue('padding-left').replace('px', ''));
+		var margin_left = 0
+		if (!isNaN(padding_left)){
+			margin_left += padding_left * -1
+		}
+
+		// set style
+		dn_entries_pool.css('margin-left', margin_left.toString() + 'px');
+		// dn_entries_pool.css('margin-top', (margin_top + 5).toString() + 'px')
+		// dn_entries_pool.css('margin-top', '5px');
 	}
 
-	set_active(entry)
-	{
-		// see if there's a valid entry
-		for (var entr of this.dref.querySelectorAll('.lizard_menu_entry'))
-		{
-			if (entr.getAttribute('dropdown_set') == null){
-				continue
-			}
-			if (entr.getAttribute('dropdown_set').toLowerCase() == entry.toLowerCase())
-			{
-				var mn = this.dref.querySelector('.lizard_menu_dropdown');
-				var mnt = this.dref.querySelector('.lizmenu_title');
-				mn.setAttribute('liz_active_item', entry)
-				mnt.innerText = entr.textContent.trim()
+
+
+
+
+
+	//
+	// re-append all the entries from the window object to the visual dropdown
+	//
+
+	// if with is specified, then update the dropdown with the given array
+	// else - simply pull from the window object
+	update(dn_name=null, upd_with=null, additive=false){
+		var dn_ent = window.lizard_dropdowns[dn_name]
+		if (dn_ent == undefined){return}
+
+		var this_items = window.lizard_dropdowns[dn_name]['items']
+
+		// update with, if asked to
+		if (upd_with != null && upd_with != undefined){
+			// if additive - add stuff and dont delete previous
+			if (additive == true){
+				this_items = this_items.concat(upd_with);
+			}else{
+				this_items = upd_with;
 			}
 		}
 
+		var entry_pool = dn_ent['elem'].find('.lz_menu_entries');
+		// clear entry container
+		entry_pool.empty()
+
+		// spawn entries one by one
+		for (var lzitem of dn_ent['items'])
+		{
+			// .hasOwnProperty('name')
+			if (lzitem['type'] != 'separator')
+			{
+				var entry_tplate = $(`
+					<div dropdown_set="${lzitem['dropdown_set']}" class="lz_menu_entry">
+						<div class="lz_menu_entry_text">${lzitem['name']}</div>
+					</div>
+				`);
+
+				// todo: allow icons
+				// set icon
+				// entry_tplate.find('.lizard_menu_entry_icon img')[0].src = lzitem['icon'];
+
+				// svg condition
+				// if (lzitem['svg'] != true){entry_tplate.find('.lizard_menu_entry_icon img').css('object-fit', 'contain')}
+			}
+
+			// append to entries pool
+			entry_pool.append(entry_tplate);
+		}
 	}
-}
 
 
 
+	get pool(){
+		var dn_list = {};
+		var remap_t = this;
+		for (var dn in window.lizard_dropdowns){
+			// all thanks to let...
+			// todo: so, how does this work exactly ?????
+			let ensure = dn
+			dn_list[dn] = {
+				'name': ensure,
+				'active': remap_t.get_active(ensure),
+				set: function(towhich){
+					remap_t.set_active(window.lizard_dropdowns[ensure]['elem'].find(`[dropdown_set="${towhich}"]`))
+        		},
+        		update: function(with_w=null){
+					remap_t.update(ensure, with_w)
+        		},
+        		add: function(add_what=null){
+					remap_t.update(ensure, add_what, true)
+        		}
+			}
+		}
 
-// todo: this looks weird
-class lizdropdowns_shortcuts
-{
-	constructor() {
-		// this.height = height;
-		// this.width = width;
+		return dn_list
 	}
-	// returns all cboxes on a page
-	get pool()
+
+
+	// set_active(dn_name=null, active_what=null){
+	// 	var thisdn = window.lizard_dropdowns[dn_name]
+	// 	if (dn_name == null || active_what == null || thisdn == undefined){return}
+
+
+	// }
+
+
+
+	//
+	// force flush storage
+	//
+	full_flush(){
+		window.lizard_dropdowns = {};
+	}
+
+
+
+
+
+	//
+	// force flush storage
+	//
+	red_check(){
+		// not "of", because
+		// Normal variables in JavaScript can't be deleted using the delete operator.
+		// In strict mode, an attempt to delete a variable will throw an error and is not allowed.
+		for (var dn in window.lizard_dropdowns){
+			print(window.lizard_dropdowns, dn)
+			if (!document.body.contains(window.lizard_dropdowns[dn]['elem'][0])){
+
+				delete window.lizard_dropdowns[dn]
+			}
+		}
+	}
+
+
+
+
+
+
+	//
+	// Set active item of the dropdown
+	//
+
+	// sadly, jQuery is neccessary to handle non-existing elements situations
+	set_active(toitem)
 	{
-		var pooled = {}
-		document.querySelectorAll('[haslizdropdown]').forEach(function(userItem) {
-			// pooled.push(userItem);
-			// pooled[userItem.getAttribute('id')] = userItem.lizdropdown()
-			pooled[userItem.getAttribute('id')] = new lzdropdown(userItem)
-		});
-		return pooled
+		var dropdownroot = $(toitem).closest('lzdropdown');
+		// set title
+		// dropdownroot.querySelector('.lizmenu_title').innerText = toitem.getAttribute('dropdown_set');
+		// console.log(toitem.querySelector('.lizard_menu_entry_text').textContent);
+		dropdownroot.find('.lz_dn_title').text($(toitem).find('.lz_menu_entry_text').text());
+		// $('.lz_menu_entries').addClass('foil_hidden');
+		dropdownroot.attr('lz_active_item', $(toitem).attr('dropdown_set'))
 	}
-}
 
-window.lizdropdowns = new lizdropdowns_shortcuts()
+	// get active value
+	get_active(dn)
+	{
+		var this_dn = window.lizard_dropdowns[dn]
+		if (this_dn == undefined){return null};
+		return (this_dn['elem'].attr('lz_active_item') ? this_dn['elem'].attr('lz_active_item') : null)
+	}
+
+
+	// important todo: wtf
+	// important todo: still too much BDSM
+	showhide(anydrop=$('<img>'))
+	{
+		var drop = $(anydrop)
+
+		if (!drop.find('.lz_menu_entries').hasClass('foil_hidden')){
+			$('lzdropdown .lz_menu_entries').addClass('foil_hidden');
+		}else{
+			$('lzdropdown .lz_menu_entries').addClass('foil_hidden');
+			drop.find('.lz_menu_entries').toggleClass('foil_hidden');
+		}
+	}
+
+
+
+
+}
+window.lzdrops = new simple_lizard_dropdowns();
+
+
+
+
+
 
 
 

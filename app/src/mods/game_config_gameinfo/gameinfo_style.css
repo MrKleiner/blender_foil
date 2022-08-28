@@ -36,31 +36,17 @@
 
 .gameinfo_prmrow_textfield input
 {
-	display: flex;
-	flex-grow: 1;
-	all: unset;
-	background: rgba(0, 0, 0, 0.45);
-	color: white;
-	font-family: 'Roboto';
-	font-weight: 200;
+
 	height: 24px;
 	width: 93%;
-	border-radius: 4px;
-	padding: 2px 0px 2px 10px;
+	padding-left: 10px;
 }
+
 .gameinfo_prmrow_textfield_short input
 {
-	display: flex;
-	flex-grow: 1;
-	all: unset;
-	background: rgba(0, 0, 0, 0.45);
-	color: white;
-	font-family: 'Roboto';
-	font-weight: 200;
-	height: 24px;
+
 	width: 90px;
-	border-radius: 4px;
-	padding: 2px 0px 2px 10px;
+	padding-left: 10px;
 }
 
 .gaminfo_prmrow_input_wrapper

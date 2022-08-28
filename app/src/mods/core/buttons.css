@@ -1,0 +1,91 @@
+
+
+
+
+lzbtn.btn_locked
+{
+	pointer-events: none !important;
+	color: #AE3731 !important;
+}
+
+
+
+
+
+lzbtn, lzbtn *
+{
+	user-select: none;
+}
+
+lzbtn
+{
+	font-family: 'Open_Sans';
+	font-weight: 200;
+}
+
+
+lzbtn[big]
+{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+    background: #292929;
+    border: 1px solid #484848;
+    border-radius: 11px;
+    color: white;
+}
+
+lzbtn[small]
+{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+    background: #292929;
+    border: 1px solid #484848;
+    border-radius: 1px;
+    color: white;
+}
+
+lzbtn[big]:hover, lzbtn[small]:hover
+{
+	background: rgb(50, 50, 50);
+}
+
+lzbtn[big]:active, lzbtn[small]:active
+{
+	background: #3a5986;
+    border-color: #4772b3;
+    outline-color: #4772b3;
+}
+
+
+
+
+lzbtn[deny]:hover
+{
+	border-color: #643E3E;
+	outline-color: #643E3E;
+}
+
+lzbtn[deny]:active
+{
+	background: #662C2C;
+	border-color: #F6496A;
+	outline-color: #F6496A;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -240,8 +240,9 @@ async function modmaker_load_engine_info(engine)
 	modmaker_check_engine_exe_exists()
 
 	// applicable cl/sv .dll locations
-	create_lizdropdown(
+	lzdrops.spawn(
 		'#modmaker_spawn_client_dll_dropdown',
+		'client_dlls',
 		{
 			'menu_name': 'Select .dll location',
 			'menu_entries': dropdown_eligible
@@ -250,8 +251,9 @@ async function modmaker_load_engine_info(engine)
 
 	// SDK 2013 SP dlls, SDK 2013 MP dlls
 	
-	create_lizdropdown(
+	lzdrops.spawn(
 		'#modmaker_spawn_client_mpsp2013dlls',
+		'2013_dlls',
 		{
 			'menu_name': 'Default SDK binaries',
 			'menu_entries': [
@@ -350,6 +352,7 @@ function modmaker_new_engine()
 
 function modmaker_validate_required_options()
 {
+	return
 	// important todo: game name cannot be empty (for now)
 	// while it actually can (like ASW)
 	var def_dll_dropdown = document.querySelector('#modmaker_spawn_client_mpsp2013dlls');
@@ -364,7 +367,7 @@ function modmaker_validate_required_options()
 		// client name should not be present in the clients list
 		!window.modmaker_clients_list.includes(clname.value),
 		// name can only contain certain characters
-		!array_elem_check(clname.value.toLowerCase().trim().split(''), 'qwertyuiopasdfghjklzxcvbnm_-1234567890'.split(''))
+		!lizard.array_is_same(clname.value.toLowerCase().trim().split(''), 'qwertyuiopasdfghjklzxcvbnm_-1234567890'.split(''))
 	]
 	// if all conditions are met
 	// important todo: visual feedback on what's wrong

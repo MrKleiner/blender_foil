@@ -25,8 +25,8 @@ document.addEventListener('click', tr_event => {
 	// 	core dropdowns_events_bind.core.json
 	// ==========================================
 
-	if (event.target.closest('.lizard_dropdown_entries [dropdown_set]')) { lizdropdown_set_active(event.target.closest('.lizard_dropdown_entries [dropdown_set]')) }
-	if (event.target.closest('[haslizdropdown]')) { dropdown_showhide(event.target.closest('[haslizdropdown]')) }else{ dropdown_showhide(event.target.closest('[haslizdropdown]')) }
+	if (event.target.closest('lzdropdown .lz_menu_entries [dropdown_set]')) { lzdrops.set_active(event.target.closest('lzdropdown .lz_menu_entries [dropdown_set]')) }
+	if (event.target.closest('[haslizdropdown], lzdropdown')) { lzdrops.showhide(event.target.closest('[haslizdropdown], lzdropdown')) }else{ lzdrops.showhide(event.target.closest('[haslizdropdown], lzdropdown')) }
 
 
 
@@ -51,7 +51,7 @@ document.addEventListener('click', tr_event => {
 
 	if (event.target.closest('#gminfo_appid_dropdown [dropdown_set]')) { set_steam_appid_from_dropdown(event.target.closest('#gminfo_appid_dropdown [dropdown_set]')) }
 	if (event.target.closest('#gameinfo_ctrl .lizcbox_hitbox')) { gameinfo_save_back() }
-	if (event.target.closest('#gameinfo_ctrl .lizard_menu_entry')) { gameinfo_save_back() }
+	if (event.target.closest('#gameinfo_ctrl .lz_menu_entries')) { gameinfo_save_back() }
 
 
 

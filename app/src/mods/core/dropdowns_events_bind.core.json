@@ -1,19 +1,19 @@
 {
 	"click": [
 		{
-			"selector": ".lizard_dropdown_entries [dropdown_set]",
-			"function": "lizdropdown_set_active",
+			"selector": "lzdropdown .lz_menu_entries [dropdown_set]",
+			"function": "lzdrops.set_active",
 			"pass_event": false,
 			"pass_element": true,
 			"pass_params": ""
 		},
 		{
-			"selector": "[haslizdropdown]",
-			"function": "dropdown_showhide",
+			"selector": "[haslizdropdown], lzdropdown",
+			"function": "lzdrops.showhide",
 			"pass_event": false,
 			"pass_element": true,
 			"pass_params": "",
-			"else": "dropdown_showhide"
+			"else": "lzdrops.showhide"
 		}
 	]
 }
