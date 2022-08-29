@@ -17,6 +17,9 @@ function skyboxer_module_manager(pl)
 		case 'set_sky_name':
 			skybox_set_sky_name(pl)
 			break;
+		case 'finished':
+			skybox_finished(pl)
+			break;
 		default:
 			console.log('The module has been called, but no corresponding action was found')
 			break;
@@ -106,3 +109,32 @@ function skybox_set_sky_name(skname)
 	window['skyboxer_sky_name'] = skname['skyname'];
 }
 
+
+function skybox_finished(pl)
+{
+	try{
+		window.skyboxer_pov.destroy()
+	}catch(error){}
+
+	window.skyboxer_pov = pannellum.viewer('skyboxer_preview_pov', {
+		'type': 'cubemap',
+		'cubeMap': [
+			window['skyboxer_savedside_povfront'],
+			window['skyboxer_savedside_povleft'],
+			window['skyboxer_savedside_povback'],
+			window['skyboxer_savedside_povright'],
+			window['skyboxer_savedside_povup'],
+			window['skyboxer_savedside_povdown']
+		],
+		'autoLoad': true,
+		'showFullscreenCtrl': false,
+		'showControls': false
+	});
+
+}
+
+
+function skyboxer_get_skies_list()
+{
+
+}

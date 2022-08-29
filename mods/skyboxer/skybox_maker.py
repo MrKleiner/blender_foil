@@ -402,49 +402,70 @@ def blfoil_skybox_maker(tgt_scene):
 
 
 		# Use magick to convert tga to png (there's always a tga)
-		# important todo: magick can output to stdout. Don't litter with temp files and send bytes right away
+		# magick can output to stdout. Don't litter with temp files and send bytes right away
 		# one advantage of temp files is that they can be accessed...
 		(addon_root_dir / 'tot' / 'skyboxer').mkdir(parents=True, exist_ok=True)
 		magix_prms = [
+			# exe
 			str(magix),
+			# input tga location
 			str(dest_folder / (sk_settings.sky_name + '_tga_src') / (sk_settings.sky_name + side + '.tga')),
-			# str(addon_root_dir / 'app' / 'src' / 'tot' / (sk_settings.sky_name + side + '.png'))
-			# important todo: So, what's the best place to write temp shit to ?
-			str(addon_root_dir / 'tot' / 'skyboxer' / (sk_settings.sky_name + side + '.png'))
-		]
-		# exec magick
-		subprocess.call(magix_prms)
-		# read resulting png to base64
-		with open(str(magix_prms[2]), 'rb') as b6i:
-			img_b64 = base64.b64encode(b6i.read()).decode('utf-8', errors='ignore')
 
-		#
+			# webp parameters
+			'-quality', '0',
+			'-define', 'webp:lossless=true',
+			'-define', 'webp:partition-limit=0',
+			'-define', 'webp:thread-level=1',
+
+			# output bytes
+			str('webp:')
+
+			# (old method)
+			# str(addon_root_dir / 'tot' / 'skyboxer' / (sk_settings.sky_name + side + '.png'))
+		]
+
+		# exec magick and receive bytes from it
+		magix_bytes = subprocess.run(magix_prms, capture_output=True)
+
+
+		# --------------------------------------------
 		# also send flipped version for embedded viewer
-		#
-		magix_prms_emb = [
+		# --------------------------------------------
+
+		# todo: it's stupid that simply flipping an image takes so much effort
+		magix_prms_pov = [
 			str(magix),
-			str(magix_prms[2]),
+			str(magix_prms[1]),
 			'-flip'
-			# (('-rotate', '90') if side in 'up dn' else '-flip'),
-			# str('png:')
 		]
+		# not so good logic, but it's literally the only way
 		if side in 'up dn':
-			magix_prms_emb.append('-rotate')
-			magix_prms_emb.append('90' if side == 'up' else '-90')
-		else:
-			# magix_prms_emb.append('-flip')
-			pass
+			magix_prms_pov.append('-rotate')
+			magix_prms_pov.append('90' if side == 'up' else '-90')
 
-		magix_prms_emb.append('png:')
-		pr = subprocess.run(magix_prms_emb, capture_output=True)
+		magix_prms_pov += [
+			# webp parameters
+			'-quality', '0',
+			'-define', 'webp:lossless=true',
+			'-define', 'webp:partition-limit=0',
+			'-define', 'webp:thread-level=1',
+			str('webp:')
+		]
+		print(magix_prms_pov)
 
-		# Send image to app
+		pov = subprocess.run(magix_prms_pov, capture_output=True)
+		# --------------------------------------------
+		# also send flipped version for embedded viewer
+		# --------------------------------------------
+
+
+		# Send images to the app
 		app_command_send({
 			'app_module': 'skyboxer',
 			'mod_action': 'add_skybox_side',
 			'side': side,
-			'image': img_b64,
-			'pov_img': base64.b64encode(pr.stdout).decode()
+			'image': base64.b64encode(magix_bytes.stdout).decode(),
+			'pov_img': base64.b64encode(pov.stdout).decode()
 		})
 		# send update that blender is green
 		app_command_send({
@@ -700,6 +721,11 @@ class OBJECT_OT_blfoil_full_skybox_export(Operator, AddObjectHelper):
 				'app_module': 'skyboxer',
 				'mod_action': 'upd_work_status',
 				'status': 'Finished. No errors'
+			})
+			# send finished signal
+			app_command_send({
+				'app_module': 'skyboxer',
+				'mod_action': 'finished'
 			})
 
 		except Exception as e:
