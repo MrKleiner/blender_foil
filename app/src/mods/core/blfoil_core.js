@@ -447,7 +447,7 @@ $(document).ready(function(){
 					gameinfo_module_manager(input_d)
 					break;
 				case 'set_context':
-					foil_set_context(input_d)
+					// foil_set_context(input_d)
 					break;
 				case 'echo_status':
 					fbi.blender_echo_status(input_d)
@@ -750,104 +750,99 @@ class foil_context_super_manager
 {
 
 	constructor() {
+		window.foil.app_context = {};
 		print('Initialized Context Manager');
 	};
 
-	set(){
-
-	}
-}
-window.foil.context = new foil_context_super_manager();
-
-
-
-
-
-
-
-
-
-
-
-// This is only useful on startup (reload)
-function foil_call_last_context()
-{
-	console.log('Asked Blender to give last used context');
-	bltalk.send({
-		'action': 'load_last_app_context',
-		'payload': {
-			'last_used': true
+	// set OR get parameter
+	prm(key=null, value=undefined, dosave=true){
+		// if value is undefined, then it means that we're only getting a parameter
+		if (value == undefined){
+			return window.foil.app_context[key]
 		}
-	});
-}
+		// if defined - set and maybe save
+		window.foil.app_context[key] = value;
+		if (dosave == true){
+			this.save()
+		}
+	}
 
-// this kinda belongs to the dashboard module, but really, it'd better be here
-// expects a quick config payload and will set context from it
-// when the context is being overwritten - the dashboard module always has to be loaded
-function foil_set_context(ct)
-{
-	console.log('Startup last context response from Blender:', ct['payload']);
-	var things = ct['payload'];
+	// readonly shite
+	get read(){
+		// todo: there are better ways of duplicating shit
+		var dupli = {}
+		for (var k in window.foil.app_context){
+			dupli[k] = window.foil.app_context[k]
+		}
+		return dupli
+	}
 
-	if (things != false){
-		// set index
-		// window.foil_context['mod_context'] = things['project_index'];
-		// set useless meta name
-		// window.foil_context['mod_meta_name'] = things['project_name'];
-		// dump everything because why not
-		window.foil_context['full'] = things;
+	// save to disk
+	async save(){
+		// var bl_response = await bltalk.send({
+		// 	'action': 'save_last_app_context',
+		// 	'payload': window.foil.app_context
+		// });
+		var bl_response = await bltalk.send({
+			'action': 'save_app_quick_config',
+			'payload': {
+				'project_index': window.foil.app_context.project_index,
+				'quick_config': window.foil.app_context
+			}
+		});
+		// because why not
+		return bl_response
+	}
 
-		console.log('App context set:', {'Index Id': things['project_index'], 'Project Name': things['project_name']})
-
+	// switch projects
+	async project_switch(pr_index=null){
+		if (pr_index==null){return}
+		// only switch on success
+		var new_context = await this.load_index(pr_index)
+		if (new_context['status'] == 'fail'){return}
+		// do switch
+		// set context
+		window.foil.app_context = new_context
+		// empty the container
+		$('#modules_cont').empty()
+		// and then simply load the dashboard app...
 		dashboard_app_loader()
 	}
 
-}
-
-
-// save full context of the last opened project
-function foil_save_last_context(ct)
-{
-	bltalk.send({
-		'action': 'save_last_app_context',
-		'payload': ct
-	});
-}
-
-
-// save all contexts
-// todo: safety measures
-function foil_save_context(last=false)
-{
-	// save last
-	if (last == true)
-	{
-		bltalk.send({
-			'action': 'save_last_app_context',
-			'payload': window.foil_context.full
+	// get context of a certain index
+	async load_index(idx){
+		var got_context = await bltalk.send({
+			'action': 'load_context_by_index',
+			'payload': {
+				'project_index': idx
+			}
 		});
+		return got_context
 	}
 
-	// save fast config
-	// additive, will add to quick config
-	bltalk.send({
-		'action': 'save_app_quick_config',
-		'payload': {
-			'project_index': window.foil_context.full.project_index,
-			'quick_config': window.foil_context.full
-		}
-	});
+	// Get last used context
+	async last_used(){
+		var got_context = await bltalk.send({
+			'action': 'load_context_by_index',
+			'payload': {
+				'project_index': idx
+			}
+		});
+		return got_context
+	}
+
+	// Load last used context (in terms of actually loading it into the app)
+	async load_last(){
+		// important todo: manage all of this with native fs module
+		var got_last_id = await bltalk.send({
+			'action': 'load_last_app_context'
+		});
+		this.project_switch(got_last_id['project_index'])
+	}
+
+
 }
-
-
-
-
-
-
-
-
-
-
+window.foil.context = new foil_context_super_manager();
 
 
 
@@ -917,21 +912,6 @@ function main_app_init()
 					'action': 'load_main_dashboard',
 					'icon': 'assets/dashboard_icon.svg'
 				},
-/*				{
-					'name': 'Skyboxer',
-					'action': 'load_skyboxer_app',
-					'icon': 'assets/world_sky_icon.svg'
-				},
-				{
-					'name': 'Sound Manager',
-					'action': 'load_sound_manager_app',
-					'icon': 'assets/speaker_icon.svg'
-				},
-				{
-					'name': 'Soundscape Manager',
-					'action': 'load_sound_manager_app',
-					'icon': 'assets/soundscape_icon.svg'
-				},*/
 				{
 					'type': 'separator'
 				},
@@ -976,7 +956,7 @@ function main_app_init()
 	//
 	// Set context
 	//
-	foil_call_last_context()
+	window.foil.context.load_last()
 
 }
 

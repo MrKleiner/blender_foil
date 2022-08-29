@@ -102,12 +102,3 @@ def gminfo_icon_vis_feedback(pl):
 
 
 
-
-
-
-
-
-
-
-
-

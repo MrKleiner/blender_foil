@@ -51,6 +51,8 @@
 	},
 
 
+
+
 	# =========================================
 	# 			   DASHBOARD MODULE
 	# =========================================
@@ -98,6 +100,15 @@
 		"js_module": "dashboard",
 		"js_module_action": "dboard_set_applicable_maps"
 	},
+	# load context by index
+	{
+		"incoming_case": "load_context_by_index",
+		"python_function": "load_context_by_index",
+		"js_module": "",
+		"js_module_action": ""
+	},
+
+
 
 
 

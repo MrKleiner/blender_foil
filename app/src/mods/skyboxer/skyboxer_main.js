@@ -3,7 +3,7 @@ function skyboxer_module_manager(pl)
 
 	switch (pl['mod_action']) {
 		case 'add_skybox_side':
-			skyboxer_sides_filler(pl['image'], pl['side'])
+			skyboxer_sides_filler(pl['image'], pl['side'], pl['pov_img'])
 			break;
 		case 'upd_side_status':
 			skyboxer_status_updater(pl['side'], pl['what'], pl['status'])
@@ -63,11 +63,13 @@ var side_status_def = {
 // takes two params:
 // side_img - image binary
 // side_d - string. Side, like "left"
-function skyboxer_sides_filler(side_img, side_d)
+function skyboxer_sides_filler(side_img, side_d, pov)
 {
-	var mk_side_img = b64toimg(side_img)
+	var mk_side_img = lizard.b64toimg(side_img)
+	var mk_side_img_pov = lizard.b64toimg(pov)
 	$('#sky_' + side_def_dict[side_d] + ' .skybox_square').attr('src', mk_side_img);
 	window['skyboxer_savedside_' + side_def_dict[side_d]] = mk_side_img;
+	window['skyboxer_savedside_pov' + side_def_dict[side_d]] = mk_side_img_pov;
 }
 
 // set status

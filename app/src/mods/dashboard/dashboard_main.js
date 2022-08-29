@@ -45,8 +45,8 @@ function dashboard_module_manager(pl)
 
 function dashboard_app_loader()
 {
-	if (window.foil_context.full.project_index != undefined || window.foil_context.full.project_index != null)
-	{
+	// if (window.foil_context.full.project_index != undefined || window.foil_context.full.project_index != null)
+	// {
 		base_module_loader('main_dashboard.html')
 		.then(function(resolved) {
 			window.sample_huge_array = JSON.parse(fs.readFileSync((new Path(__dirname)).join('assets', 'sizetest.txt').toString(), {encoding:'utf8', flag:'r'}))
@@ -59,14 +59,14 @@ function dashboard_app_loader()
 			dboard_call_applicable_maps()
 
 		});
-	}
+	// }
 }
 
 // set control panel shit from existing context
 // context should never lie
 function dashboard_set_ctrl_panel_from_context()
 {
-	var mcontext = window.foil_context.full;
+	var mcontext = foil.context.read;
 	$('#dboard_mod_minititle').text(mcontext.full_game_name);
 	$('#dboard_mod_modfolderpath').text(mcontext.client_folder_path);
 	$('#dboard_mod_add_opts_input').text(mcontext.dboard_mod_add_opts_input)
@@ -90,7 +90,7 @@ function dboard_update_panel_vis()
 	$('#dboard_mod_preview_lauchprms').text(eval_launch_opts()['string']);
 
 	// save context
-	var mcontext = window.foil_context.full;
+	var mcontext = foil.context.read;
 	var cb_pool = lzcbox.pool;
 	mcontext.fullscreen = cb_pool['fullscreen'].state
 	mcontext.intro_vid = cb_pool['intro_vid'].state
@@ -101,7 +101,7 @@ function dboard_update_panel_vis()
 	mcontext.starting_map = $('#dboard_start_from_map_inp input').val().trim();
 	// print(mcontext)
 	// also save quick config
-	foil_save_quick_config()
+	foil.context.save()
 
 }
 
@@ -194,10 +194,10 @@ function dboard_launch_mod()
 	bltalk.send({
 		'action': 'dboard_launch_mod',
 		'payload': {
-			'engine': window.foil_context.full.engine_executable,
+			'engine': foil.context.prm('engine_executable'),
 			'params': eval_launch_opts()['string'].split(' '),
 			'map': eval_launch_opts()['map'],
-			'client_name': window.foil_context.full.client_folder_path
+			'client_name': foil.context.read.client_folder_path
 		}
 	});
 }
@@ -207,9 +207,9 @@ function dboard_kill_mod()
 	bltalk.send({
 		'action': 'dboard_kill_mod',
 		'payload': {
-			'engine': window.foil_context.full.engine_executable,
+			'engine': foil.context.prm('engine_executable'),
 			'params': eval_launch_opts()['string'].split(' '),
-			'client_name': window.foil_context.full.client_folder_path
+			'client_name': foil.context.prm('client_folder_path')
 		}
 	});
 }
@@ -217,18 +217,6 @@ function dboard_kill_mod()
 
 
 
-
-// save quick config from control panel
-function foil_save_quick_config()
-{
-	bltalk.send({
-		'action': 'save_app_quick_config',
-		'payload': {
-			'project_index': window.foil_context.full.project_index,
-			'quick_config': window.foil_context.full
-		}
-	});
-}
 
 
 
@@ -240,7 +228,7 @@ async function dboard_call_applicable_maps()
 	var maps = await bltalk.send({
 		'action': 'dboard_get_suggested_maps',
 		'payload': {
-			'gminfo_path': window.foil_context.full.gameinfo_path,
+			'gminfo_path': foil.context.read.gameinfo_path,
 			'suggest_linked': lzcbox.pool['maps_from_linked_gminfo'].state
 		}
 	});

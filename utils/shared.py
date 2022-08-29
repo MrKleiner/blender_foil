@@ -43,9 +43,20 @@ def getfilemd5(filepath):
 
 
 
+#
+# get root folder of the addon
+#
 
-
-
+# literally only used once, but who cares
+# takes __file__ as an input
+def where_addon_root(fl):
+	from pathlib import Path
+	addon_root = Path(fl)
+	for pr in addon_root.parents:
+		if (pr / 'bdsmbind.sex').is_file():
+			return pr
+			break
+	return addon_root.parent
 
 
 

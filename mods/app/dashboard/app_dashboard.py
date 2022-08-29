@@ -54,67 +54,6 @@ def dboard_kill_mod(pl):
 
 
 
-def save_last_app_context(pl):
-	import json
-	from pathlib import Path
-	addon_rootdir = Path(__file__).absolute().parent.parent.parent.parent
-	with open(str(addon_rootdir / 'configs' / 'app' / 'global' / 'last_context.json'), 'w') as lastcont:
-		# todo: does it really has to be human readable ?
-		lastcont.write(json.dumps(pl, indent=4, sort_keys=True))
-	return {'Saved global last context': pl}
-
-
-# loads quick config
-def load_last_app_context(pl):
-	import json
-	from pathlib import Path
-	from ....utils.shared import app_command_send
-	addon_rootdir = Path(__file__).absolute().parent.parent.parent.parent
-	print('Blender got asked to give away fast config')
-	if pl.get('last_used') == True:
-		print('Fast config has to be based from last used context')
-		with open(str(addon_rootdir / 'configs' / 'app' / 'global' / 'last_context.json'), 'r') as prindex:
-			lastcont = json.loads(prindex.read())['project_index']
-	else:
-		print('Fast config has to be based from requested index')
-		lastcont = pl['project_index']
-
-	if (addon_rootdir / 'configs' / 'app' / 'projects' / str(lastcont) / 'fast_config.json').is_file():
-		with open(str(addon_rootdir / 'configs' / 'app' / 'projects' / str(lastcont) / 'fast_config.json'), 'r') as lastcont:
-			# app_command_send({
-			# 	'app_module': 'set_context',
-			# 	'mod_action': 'set_context',
-			# 	'payload': json.loads(lastcont)
-			# })
-			print('Returning fast config')
-			return json.loads(lastcont.read())
-	else:
-		print('Fast config under specified index does not exist')
-		return {'load_last_app_context': 'Fast config under specified index does not exist'}
-
-
-
-# takes index context and quick config as an input
-# is additive
-def save_app_quick_config(pl):
-	import json
-	from pathlib import Path
-	addon_rootdir = Path(__file__).absolute().parent.parent.parent.parent
-	jpath = (addon_rootdir / 'configs' / 'app' / 'projects' / str(pl['project_index']) / 'fast_config.json')
-
-	addition = {}
-
-	if jpath.is_file():
-		with open(str(jpath), 'r') as quickconf:
-			addition = json.loads(quickconf.read())
-
-	for ad in pl['quick_config']:
-		addition[ad] = pl['quick_config'][ad]
-
-	with open(str(jpath), 'w') as quickconf:
-		quickconf.write(json.dumps(addition, indent=4, sort_keys=True))
-	return {'Saved Project Quick Config': addition}
-
 
 
 # takes path to gameinfo to read from
@@ -203,3 +142,100 @@ def dboard_get_suggested_maps(pl):
 
 
 
+
+
+
+
+
+
+
+
+# ==========================================
+#               Context Manager
+# ==========================================
+
+# for now it's here, in the Dashboard module, because it's pretty much a dashboard task...
+
+def save_last_app_context(pl):
+	import json
+	from pathlib import Path
+	from ....utils.shared import where_addon_root
+
+	addon_rootdir = where_addon_root(__file__)
+	with open(str(addon_rootdir / 'configs' / 'app' / 'global' / 'last_context.json'), 'w') as lastcont:
+		# todo: does it really has to be human readable ?
+		lastcont.write(json.dumps(pl, indent=4, sort_keys=True))
+	return {'Saved global last context': pl}
+
+
+
+
+# takes index context and quick config as an input
+# is additive
+def save_app_quick_config(pl):
+	import json
+	from pathlib import Path
+	from ....utils.shared import where_addon_root
+
+
+	addon_rootdir = where_addon_root(__file__)
+	jpath = (addon_rootdir / 'configs' / 'app' / 'projects' / str(pl['project_index']) / 'fast_config.json')
+
+	addition = {}
+
+	if jpath.is_file():
+		with open(str(jpath), 'r') as quickconf:
+			addition = json.loads(quickconf.read())
+
+	for ad in pl['quick_config']:
+		addition[ad] = pl['quick_config'][ad]
+
+	with open(str(jpath), 'w') as quickconf:
+		quickconf.write(json.dumps(addition, indent=4, sort_keys=True))
+	return {'Saved Project Quick Config': addition}
+
+
+
+
+
+# loadquick context by project index
+def load_context_by_index(pl):
+	import json
+	from pathlib import Path
+	from ....utils.shared import app_command_send, where_addon_root
+	addon_rootdir = where_addon_root(__file__)
+	print('Blender got asked to load context from id', pl['project_index'])
+
+	pr_index = pl['project_index']
+
+	if (addon_rootdir / 'configs' / 'app' / 'projects' / str(pr_index) / 'fast_config.json').is_file():
+		with open(str(addon_rootdir / 'configs' / 'app' / 'projects' / str(pr_index) / 'fast_config.json'), 'r') as lastcont:
+			print('Returning fast config')
+			return json.loads(lastcont.read())
+	else:
+		print('Fast config under specified index', pr_index, 'does not exist')
+		stats = {
+			'status': 'fail',
+			'reason': 'Fast config under specified index does not exist',
+			'details': str(addon_rootdir / 'configs' / 'app' / 'projects' / str(pr_index) / 'fast_config.json')
+		}
+		return stats
+
+
+
+# loads quick config
+def load_last_app_context(pl):
+	import json
+	from pathlib import Path
+	from ....utils.shared import where_addon_root
+
+
+	addon_rootdir = where_addon_root(__file__)
+
+	print('Blender got asked to give last used fast config')
+
+	# read file containing last used project index
+	with open(str(addon_rootdir / 'configs' / 'app' / 'global' / 'last_context.json'), 'r') as prindex:
+		lastcont = json.loads(prindex.read())['project_index']
+
+	return load_context_by_index({'project_index': lastcont})

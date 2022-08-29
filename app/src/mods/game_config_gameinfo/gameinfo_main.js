@@ -140,7 +140,7 @@ async function gameinfo_set_info()
 	var inf = await bltalk.send({
 		'action': 'gameinfoman_load_info',
 		'payload': {
-			'client_path': window.foil_context.full.client_folder_path
+			'client_path': foil.context.read.client_folder_path
 		}
 	});
 	log('gameinfo', 'Got gameinfo from blender:', inf)
@@ -148,7 +148,7 @@ async function gameinfo_set_info()
 	// set text inputs values
 	$('#gminfo_gamename_input').val(inf['game'])
 	$('#gameinfo_mod_minititle').text(inf['game'])
-	$('#gameinfo_mod_modfolderpath').val(window.foil_context.full.client_folder_path)
+	$('#gameinfo_mod_modfolderpath').val(foil.context.read.client_folder_path)
 	$('#gminfo_gametitle_input').val(inf['title'])
 	$('#gminfo_gameicon_input').val(inf['icon'])
 	$('#gminfo_appid_input').val(inf['SteamAppId'])
@@ -163,7 +163,6 @@ async function gameinfo_set_info()
 	var cb = lzcbox.pool;
 	var map_pool = {
 		'vr_support': 				'SupportsVR',
-		'icon_autoconvert': 		window.foil_context.full.autoconvert_icon,
 		'dx8support': 				'SupportsDX8',
 		'no_mp_model_select': 		'NoModels',
 		'no_mp_crosshair_select': 	'NoCrosshair',
@@ -172,8 +171,10 @@ async function gameinfo_set_info()
 		'no_difficulty_selection': 	'NoDifficulty',
 		'old_fleshlight': 			'use_legacy_flashlight'
 	}
+	cb['icon_autoconvert'].set(foil.context.read.autoconvert_icon)
+
 	for (var setbox in map_pool){
-		cb[setbox].set(evalst(map_pool[setbox]))
+		cb[setbox].set(evalst(inf[map_pool[setbox]]))
 	}
 
 	gminfo_icon_manager()
@@ -187,18 +188,19 @@ function gameinfo_save_back()
 	var cbs = lzcbox.pool;
 	// update context with new game name
 	if ($('#gminfo_gamename_input').val().trim() == ''){
-		window.foil_context.full.full_game_name = 'Illuminati confirmed';
+		foil.context.prm('full_game_name', 'Illuminati confirmed', false);
 	}else{
-		window.foil_context.full.full_game_name = $('#gminfo_gamename_input').val();
+		foil.context.prm('full_game_name', $('#gminfo_gamename_input').val(), false);
 	}
-	window.foil_context.full.autoconvert_icon = cbs['icon_autoconvert'].state;
+	foil.context.prm('autoconvert_icon', cbs['icon_autoconvert'].state, false);
+
 	
 	bltalk.send({
 		'action': 'gameinfo_save_back',
 		'payload': {
-			'gminfo_path': window.foil_context.full.gameinfo_path,
+			'gminfo_path': foil.context.read.gameinfo_path,
 			'base_keys': {
-				'game': window.foil_context.full.full_game_name,
+				'game': foil.context.read.full_game_name,
 				'title': $('#gminfo_gametitle_input').val(),
 				'icon': $('#gminfo_gameicon_input').val(),
 				'use_legacy_flashlight': evalst(cbs['old_fleshlight'].state),
@@ -214,8 +216,8 @@ function gameinfo_save_back()
 		}
 	});
 
-	foil_save_context(false)
-	$('#gameinfo_mod_minititle').text(window.foil_context.full.full_game_name)
+	foil.context.save()
+	$('#gameinfo_mod_minititle').text(foil.context.read.full_game_name)
 }
 
 
@@ -232,14 +234,14 @@ async function gminfo_icon_manager(set=false, pl={})
 	var get_icon = await bltalk.send({
 		'action': 'gameinfoman_get_mod_icon',
 		'payload': {
-			'client_path': window.foil_context.full.client_folder_path,
+			'client_path': foil.context.read.client_folder_path,
 			'icon_path': $('#gminfo_gameicon_input').val()
 		}
 	});
 	log('gameinfo', 'Got icon from blender:', get_icon)
 
 	if (get_icon['conversion_success'] == false){
-		console.log('Icon conversion failed')
+		print('Icon conversion failed')
 		return
 	}
 
