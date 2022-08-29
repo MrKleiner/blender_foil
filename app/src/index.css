@@ -4,6 +4,9 @@
 /* fonts */
 @import url('mods/core/fonts_link.css');
 
+/* Panorama/cubemap viewer */
+@import url('apis/panellum/pannellum.css');
+
 /* app core */
 @import url('mods/core/base_style.css');
 
