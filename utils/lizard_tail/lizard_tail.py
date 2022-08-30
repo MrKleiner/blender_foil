@@ -277,4 +277,4 @@ def multImetrs():
 	with open('gameinfo.txt', 'w') as txtfile:
 		txtfile.write(fuck_you.tofile())
 
-multImetrs()
+# multImetrs()

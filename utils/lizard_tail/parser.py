@@ -84,7 +84,7 @@ def gameinfoparser(mlines):
 		kv_str = kvt.string.strip()
 		# print(kv_str)
 		kv_format = splitbyfirstchar(kv_str.replace('\t', ' '), ' ')
-		print(kv_format)
+		# print(kv_format)
 		kvt.string = ''
 		keytag = lizard.new_tag('gkey')
 		if kv_format[0].count('"') > 1:
