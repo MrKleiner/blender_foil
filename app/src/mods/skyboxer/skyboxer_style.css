@@ -11,7 +11,10 @@
 	justify-content: center;
 	padding-left: 100px;
 }
-
+.zatychka
+{
+	margin-top: 200px;
+}
 
 
 #skyboxer_squares
@@ -20,6 +23,17 @@
 	/*width: 100%;*/
 	flex-direction: row;
 	/*justify-content: center;*/
+}
+#skyboxes_loaded_bitmaps
+{
+	display: flex;
+	flex-direction: column;
+}
+
+.zatychka
+{
+	display: flex;
+	flex-direction: row;
 }
 
 
@@ -47,14 +61,14 @@
 	user-select: none;
 }
 
-#skybox_sq_row_1, #skybox_sq_row_3
+#skybox_sq_row_1, #skybox_sq_row_3, .skybox_sq_row_1, .skybox_sq_row_3
 {
 	display: flex;
 	width: 100%;
 	justify-content: flex-end;
 }
 
-#skybox_sq_row_2
+#skybox_sq_row_2, .skybox_sq_row_2
 {
 	display: flex;
 	flex-direction: row;
@@ -66,16 +80,23 @@
 	/*flex-direction: row-reverse;*/
 }
 
-#sky_front, #sky_left, #sky_back
+#sky_front, #sky_left, #sky_back, .sky_front, .sky_left, .sky_back
 {
 	flex-direction: column;
 }
+.sky_front, .sky_left, .sky_back
+{
+	display: flex;
+}
 
-#sky_up, #sky_right, #sky_down
+#sky_up, #sky_right, #sky_down, .sky_up, .sky_right, .sky_down
 {
 	flex-direction: row-reverse;
 }
-
+.sky_up, .sky_right, .sky_down
+{
+	display: flex;
+}
 
 
 /*

@@ -192,8 +192,8 @@ def blfoil_skybox_maker(tgt_scene):
 	# todo: some stuff is missing
 	tgt_scene['blfoil_skyboxer_settings_save'] = {
 		# Dimensions
-		'res_x': tgt_scene.render.resolution_x,
-		'res_y': tgt_scene.render.resolution_y,
+		'res_x': 	tgt_scene.render.resolution_x,
+		'res_y': 	tgt_scene.render.resolution_y,
 		'res_perc': tgt_scene.render.resolution_percentage,
 		
 		'aspectx': tgt_scene.render.pixel_aspect_x,
@@ -202,28 +202,28 @@ def blfoil_skybox_maker(tgt_scene):
 		'render_region': tgt_scene.render.use_border,
 
 		# Colour management
-		'display_device': tgt_scene.display_settings.display_device,
-		'view_transform': tgt_scene.view_settings.view_transform,
-		'look': tgt_scene.view_settings.look,
-		'exposure': tgt_scene.view_settings.exposure,
-		'gamma': tgt_scene.view_settings.gamma,
+		'display_device': 	tgt_scene.display_settings.display_device,
+		'view_transform': 	tgt_scene.view_settings.view_transform,
+		'look': 			tgt_scene.view_settings.look,
+		'exposure': 		tgt_scene.view_settings.exposure,
+		'gamma': 			tgt_scene.view_settings.gamma,
 
 		
 		# Output mode
-		'render_filepath': tgt_scene.render.filepath,
-		'use_file_extension': tgt_scene.render.use_file_extension,
-		'use_render_cache': tgt_scene.render.use_render_cache,
-		'file_format': tgt_scene.render.image_settings.file_format,
-		'color_mode': tgt_scene.render.image_settings.color_mode,
-		'use_overwrite': tgt_scene.render.use_overwrite,
-		'use_placeholder': tgt_scene.render.use_placeholder,
-		'img_color_depth': tgt_scene.render.image_settings.color_depth,
-		'exr_codec': tgt_scene.render.image_settings.exr_codec,
-		'use_zbuffer': tgt_scene.render.image_settings.use_zbuffer,
-		'use_preview': tgt_scene.render.image_settings.use_preview,
-		'use_compositing': tgt_scene.render.use_compositing,
-		'use_sequencer': tgt_scene.render.use_sequencer,
-		'dither_intensity': tgt_scene.render.dither_intensity,
+		'render_filepath': 		tgt_scene.render.filepath,
+		'use_file_extension': 	tgt_scene.render.use_file_extension,
+		'use_render_cache': 	tgt_scene.render.use_render_cache,
+		'file_format': 			tgt_scene.render.image_settings.file_format,
+		'color_mode': 			tgt_scene.render.image_settings.color_mode,
+		'use_overwrite': 		tgt_scene.render.use_overwrite,
+		'use_placeholder': 		tgt_scene.render.use_placeholder,
+		'img_color_depth': 		tgt_scene.render.image_settings.color_depth,
+		'exr_codec': 			tgt_scene.render.image_settings.exr_codec,
+		'use_zbuffer': 			tgt_scene.render.image_settings.use_zbuffer,
+		'use_preview': 			tgt_scene.render.image_settings.use_preview,
+		'use_compositing': 		tgt_scene.render.use_compositing,
+		'use_sequencer': 		tgt_scene.render.use_sequencer,
+		'dither_intensity': 	tgt_scene.render.dither_intensity,
 		
 		'camera': tgt_scene.camera
 	}

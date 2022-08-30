@@ -138,6 +138,33 @@
 		"python_function": "gminfo_icon_vis_feedback",
 		"js_module": "gameinfo",
 		"js_module_action": "gminfo_icon_manager"
+	},
+
+
+
+
+
+
+	# =========================================
+	# 		SKYBOXER MODULE :: skyboxer
+	# =========================================
+
+	{
+		"add_imports": [
+			"from .mods.skyboxer.skybox_loader import *"
+		]
+	},
+	{
+		"incoming_case": "skyboxer_get_all_skyboxes",
+		"python_function": "find_skyboxes",
+		"js_module": "",
+		"js_module_action": ""
+	},
+	{
+		"incoming_case": "skyboxer_get_sky_as_bitmap",
+		"python_function": "load_sky_bitmap",
+		"js_module": "",
+		"js_module_action": ""
 	}
 
 ]

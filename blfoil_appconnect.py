@@ -3,6 +3,7 @@ from .mods.app.modmaker.app_modmaker import *
 from .blfoil_appconnect import *
 from .mods.app.dashboard.app_dashboard import *
 from .mods.app.gameinfoman.gameinfoman import *
+from .mods.skyboxer.skybox_loader import *
 
 def appconnect_actions(cs):
     match cs['action']:
@@ -103,6 +104,14 @@ def appconnect_actions(cs):
                 'payload': dboard_get_suggested_maps(cs['payload'])
             })
             return ''
+        case 'load_context_by_index':
+            app_command_send({
+                'app_module': '',
+                'mod_action': '',
+                'sys_action_id': cs['sys_action_id'],
+                'payload': load_context_by_index(cs['payload'])
+            })
+            return ''
         case 'gameinfoman_load_info':
             app_command_send({
                 'app_module': 'gameinfo',
@@ -125,6 +134,22 @@ def appconnect_actions(cs):
                 'mod_action': 'gminfo_icon_manager',
                 'sys_action_id': cs['sys_action_id'],
                 'payload': gminfo_icon_vis_feedback(cs['payload'])
+            })
+            return ''
+        case 'skyboxer_get_all_skyboxes':
+            app_command_send({
+                'app_module': '',
+                'mod_action': '',
+                'sys_action_id': cs['sys_action_id'],
+                'payload': find_skyboxes(cs['payload'])
+            })
+            return ''
+        case 'skyboxer_get_sky_as_bitmap':
+            app_command_send({
+                'app_module': '',
+                'mod_action': '',
+                'sys_action_id': cs['sys_action_id'],
+                'payload': load_sky_bitmap(cs['payload'])
             })
             return ''
             

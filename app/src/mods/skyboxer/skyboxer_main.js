@@ -134,7 +134,73 @@ function skybox_finished(pl)
 }
 
 
-function skyboxer_get_skies_list()
+async function skyboxer_get_skies_list()
 {
+	var inf = await bltalk.send({
+		'action': 'skyboxer_get_all_skyboxes',
+		'payload': {
+			'gameinfo': foil.context.read.gameinfo_path
+		}
+	});
+	print(inf)
+
+	// load skies one by one
+	for (var ldsky of inf){
+		var sex = await bltalk.send({
+			'action': 'skyboxer_get_sky_as_bitmap',
+			'payload': {
+				'skyinfo': ldsky
+			}
+		});
+
+		$('#skyboxes_loaded_bitmaps').append(`
+			<div class="zatychka">
+			<div class="skyboxer_squares_inner">
+
+				<!-- Row 1: Up -->
+				<div class="skybox_sq_row_1" class="skybox_sq_row">
+					<div class="sky_up" class="skybox_side_container">
+						<img draggable="false" src="${lizard.b64toimg(sex['up_ldr'])}" class="skybox_square"></img>
+					</div>
+				</div>
+
+				<!-- Row 2: Front Left Back Right -->
+				<!-- todo: populate info squares on load. basically, create all of this on load... -->
+				<div class="skybox_sq_row_2" class="skybox_sq_row">
+
+					<div class="sky_front" class="skybox_side_container">
+						<img draggable="false" src="${lizard.b64toimg(sex['ft_ldr'])}" class="skybox_square"></img>
+					</div>
+
+					<div class="sky_left" class="skybox_side_container">
+						<img draggable="false" src="${lizard.b64toimg(sex['lf_ldr'])}" class="skybox_square"></img>
+					</div>
+
+					<div class="sky_back" class="skybox_side_container">
+						<img draggable="false" src="${lizard.b64toimg(sex['bk_ldr'])}" class="skybox_square"></img>
+					</div>
+
+					<div class="sky_right" class="skybox_side_container">
+						<img draggable="false" src="${lizard.b64toimg(sex['rt_ldr'])}" class="skybox_square"></img>
+					</div>
+
+				</div>
+
+
+				<!-- Row 3: Down -->
+				<div class="skybox_sq_row_3" class="skybox_sq_row">
+					<div class="sky_down" class="skybox_side_container">
+						<img draggable="false" src="${lizard.b64toimg(sex['dn_ldr'] || '')}" class="skybox_square"></img>
+					</div>
+				</div>
+
+
+			</div>
+			</div>
+		`)
+
+
+	}
+
 
 }
