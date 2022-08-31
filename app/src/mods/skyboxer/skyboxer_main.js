@@ -136,6 +136,7 @@ function skybox_finished(pl)
 
 async function skyboxer_get_skies_list()
 {
+	console.time('all skies')
 	var inf = await bltalk.send({
 		'action': 'skyboxer_get_all_skyboxes',
 		'payload': {
@@ -202,5 +203,46 @@ async function skyboxer_get_skies_list()
 
 	}
 
+	console.timeEnd('all skies')
+
+
+}
+
+
+function SUPER_IMPORTANT()
+{
+	var fi = "E:\\Gamess\\steamapps\\common\\Half-Life 2\\ep2\\sound\\banjo\\banjo_loop_03a_44100.wav"
+	console.time('fuck')
+	const WaveFile = require('wavefile').WaveFile;
+
+	var sex = new WaveFile(fs.readFileSync(fi));
+	wvinfo = sex.listCuePoints()[0]
+	console.log(wvinfo)
+	$('#modules_cont').empty()
+	$('#modules_cont').append(`
+	    <div id="wtfwhy" style="width: 600px; height: 200px; background: black;"></div>
+	`)
+	var wavesurfer = WaveSurfer.create({
+	    container: '#wtfwhy',
+	    waveColor: 'violet',
+	    progressColor: 'purple',
+	    plugins: [
+	        WaveSurfer.regions.create({})
+	    ]
+	});
+
+	wavesurfer.load(fi);
+
+	wavesurfer.on('ready', function () {
+	    wavesurfer.addRegion({
+	        start: wvinfo.position / 1000,
+	        end: wavesurfer.getDuration(),
+	        loop: true,
+	        drag: false,
+	        resize: false
+	    })
+	    wavesurfer.play();
+	    console.timeEnd('fuck')
+	});
 
 }

@@ -53,10 +53,11 @@
 {
 	width: 200px;
 	height: 200px;
-	background: url('../../assets/sq_tmp.png');
-	background-size: contain;
+	background: url('../../assets/sq_tmp.png'), url('../../assets/hex_pattern.png');
+	background-size: contain, 1px;
 	object-fit: contain;
 	object-position: bottom;
+	background-repeat: repeat no-repeat;
 	transform: scaleY(-1);
 	user-select: none;
 }

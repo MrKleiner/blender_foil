@@ -161,7 +161,7 @@
 		"js_module_action": ""
 	},
 	{
-		"incoming_case": "skyboxer_get_sky_as_bitmap",
+		"incoming_case": "sdkyboxer_get_sky_as_bitmap",
 		"python_function": "load_sky_bitmap",
 		"js_module": "",
 		"js_module_action": ""

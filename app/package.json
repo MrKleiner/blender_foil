@@ -47,7 +47,8 @@
   "dependencies": {
     "electron-squirrel-startup": "^1.0.0",
     "pathlib-js": "^1.4.2",
-    "python-shell": "^3.0.0"
+    "python-shell": "^3.0.0",
+    "wavefile": "^11.0.0"
   },
   "devDependencies": {
     "@electron-forge/cli": "^6.0.0-beta.61",

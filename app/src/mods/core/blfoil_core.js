@@ -456,7 +456,7 @@ $(document).ready(function(){
 					dashboard_module_manager(input_d)
 					break;
 				default:
-					console.log('The transmission from another world has ended, but requested action is unknown:', input_d['app_module']);
+					log('server', 'The transmission from another world has ended, but requested action is unknown:', input_d['app_module']);
 					break;
 			}
 

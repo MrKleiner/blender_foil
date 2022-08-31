@@ -165,7 +165,15 @@ def find_skyboxes(gminfopath):
 
 		# get list of all the files in vpk
 		vpkexe_output = subprocess.run(vpk_exe_prms, capture_output=True)
-		flist = [Path(file.strip()) for file in vpkexe_output.stdout.decode().split('\n')]
+		# flist = [Path(file.strip()) for file in vpkexe_output.stdout.decode().split('\n') if not 'models/' in file and not 'sounds/' in file and not '.vmt' in file]
+		
+		# important todo: make an extremely rude assumption that all skyboxes are stored in the skybox folder
+		flist = [Path(file.strip()) for file in vpkexe_output.stdout.decode().split('\n') if 'skybox/' in file]
+		app_command_send({
+			'app_module': 'echo_status',
+			'mod_action': '',
+			'payload': len(flist)
+		})
 
 		csides = [
 			'ft',
@@ -194,7 +202,7 @@ def find_skyboxes(gminfopath):
 			' ldr'
 		]
 
-		registry = []
+		registry = [None]
 
 		# some skies may not have the bottom
 		for sky in flist:
@@ -203,23 +211,11 @@ def find_skyboxes(gminfopath):
 				clear_name = sky.name.replace('bk.vtf', '')
 				# print('processing', clear_name)
 				folder = sky.parent
-				regname = (sky.name
-					.rstrip('bk.vtf')
-
-					.rstrip('hdrbk.vtf')
-
-					.rstrip('hdr-bk.vtf')
-
-					.rstrip('hdr_bk.vtf')
-
-					.rstrip('hdr bk.vtf')
-				)
-
 
 				# if this skybox is in the registry - continue
-				if (folder / regname) in registry:
-					continue
-				registry.append(folder / regname)
+				# if (folder / clear_name) in registry:
+				# 	continue
+
 
 				# check if all sides are actually there no matter the HDR whatsoever
 				eligible = True
@@ -277,13 +273,21 @@ def find_skyboxes(gminfopath):
 
 					has_hdr = True if hdrhits >= 5 else False
 					# if not all sides are present - write down skybox as LDR only and proceed to the next skybox
+					hd_path = (folder / (clear_name + str(ldr_ns))).as_posix() if has_hdr == True else None
+					ld_path = (folder / clear_name).as_posix()
+					
+					if ld_path in registry or (hd_path in registry and None in registry):
+						continue
+
 					found_skyboxes.append({
-						'hdr': (folder / (clear_name + str(ldr_ns))).as_posix() if has_hdr == True else None,
-						'ldr': (folder / clear_name).as_posix(),
+						'hdr': hd_path,
+						'ldr': ld_path,
 						'vpk': True,
 						'vpk_path': str(vpk)
 					})
-					# print((folder / (clear_name + str(ldr_ns))).as_posix(), (folder / clear_name).as_posix())
+					registry.append(ld_path)
+					registry.append(hd_path)
+
 					continue
 
 
@@ -304,13 +308,22 @@ def find_skyboxes(gminfopath):
 								ldr_fallback_hits += 1
 					has_ldr_fallback = True if ldr_fallback_hits >= 5 else False
 
+					hd_path = (folder / clear_name).as_posix()
+					ld_path = (folder / (clear_name.strip(hdr_ns).strip(ldr_ns))).as_posix() if has_ldr_fallback == True else None
+					
+					if ld_path in registry or (hd_path in registry and None in registry):
+						continue
+
 					# we found an HDR skybox with LDR fallback
 					found_skyboxes.append({
-						'hdr': (folder / clear_name).as_posix(),
-						'ldr': (folder / (clear_name.strip(hdr_ns).strip(ldr_ns))).as_posix() if has_ldr_fallback == True else None,
+						'hdr': hd_path,
+						'ldr': ld_path,
 						'vpk': True,
 						'vpk_path': str(vpk)
 					})
+					registry.append(ld_path)
+					registry.append(hd_path)
+					continue
 
 
 
@@ -320,7 +333,7 @@ def find_skyboxes(gminfopath):
 
 
 	# folders have priority over vpks
-	registry = []
+	registry = [None]
 	# then - lookup folders
 	for matfolder in lookup_paths['content_folders']['materials']:
 		matfolder = Path(matfolder)
@@ -330,23 +343,12 @@ def find_skyboxes(gminfopath):
 				clear_name = rawsky.name.replace('bk.vtf', '')
 				# print('processing', clear_name)
 				folder = rawsky.parent
-				regname = (rawsky.name
-					.rstrip('bk.vtf')
-
-					.rstrip('hdrbk.vtf')
-
-					.rstrip('hdr-bk.vtf')
-
-					.rstrip('hdr_bk.vtf')
-
-					.rstrip('hdr bk.vtf')
-				)
 
 
 				# if this skybox is in the registry - continue
-				if (folder / regname) in registry:
+				if (folder / clear_name) in registry:
 					continue
-				registry.append(folder / regname)
+				registry.append(folder / clear_name)
 
 				# check if all sides are actually there no matter the HDR whatsoever
 				eligible = True
@@ -404,13 +406,21 @@ def find_skyboxes(gminfopath):
 
 					has_hdr = True if hdrhits >= 5 else False
 					# if not all sides are present - write down skybox as LDR only and proceed to the next skybox
+
+					hd_path = (folder / (clear_name + str(ldr_ns))).as_posix() if has_hdr == True else None
+					ld_path = (folder / clear_name).as_posix()
+					
+					if ld_path in registry or (hd_path in registry and None in registry):
+						continue
+
 					found_skyboxes.append({
-						'hdr': (folder / (clear_name + str(ldr_ns))).as_posix() if has_hdr == True else None,
-						'ldr': (folder / clear_name).as_posix(),
+						'hdr': hd_path,
+						'ldr': ld_path,
 						'vpk': False,
 						'vpk_path': str(vpk)
 					})
-					# print((folder / (clear_name + str(ldr_ns))).as_posix(), (folder / clear_name).as_posix())
+					registry.append(ld_path)
+					registry.append(hd_path)
 					continue
 
 
@@ -431,12 +441,21 @@ def find_skyboxes(gminfopath):
 								ldr_fallback_hits += 1
 					has_ldr_fallback = True if ldr_fallback_hits >= 5 else False
 
+					hd_path = (folder / clear_name).as_posix()
+					ld_path = (folder / (clear_name.strip(hdr_ns).strip(ldr_ns))).as_posix() if has_ldr_fallback == True else None
+					
+					if ld_path in registry or (hd_path in registry and None in registry):
+						continue
+
 					# we found an HDR skybox with LDR fallback
 					found_skyboxes.append({
-						'hdr': (folder / clear_name).as_posix(),
-						'ldr': (folder / (clear_name.strip(hdr_ns).strip(ldr_ns))).as_posix() if has_ldr_fallback == True else None,
+						'hdr': hd_path,
+						'ldr': ld_path,
 						'vpk': False
 					})
+					registry.append(ld_path)
+					registry.append(hd_path)
+					continue
 
 
 	print('Found all skyboxes')
@@ -456,6 +475,7 @@ def load_sky_bitmap(skyinfo):
 	addon_root_dir = where_addon_root(__file__)
 
 	magix = addon_root_dir / 'bins' / 'imgmagick' / 'magick.exe'
+	ffmpeg = addon_root_dir / 'bins' / 'ffmpeg' / 'bin' / 'ffmpeg.exe'
 
 	# todo: this is ungly
 	skyinfo = skyinfo['skyinfo']
@@ -473,8 +493,8 @@ def load_sky_bitmap(skyinfo):
 	]
 
 	hl_dict = [
-		'hdr',
-		'ldr'
+		'ldr',
+		'hdr'
 	]
 
 	result_sky = {}
@@ -540,6 +560,9 @@ def load_sky_bitmap(skyinfo):
 				# only proceed if hdr/ldr exists
 				if skyinfo[hdld] == None:
 					continue
+
+				# important todo: Do NOT convert both HDR and LDR for previews
+
 				# construct the path to vtf
 				tgt_vtf = (ext_dir / Path(skyinfo[hdld] + svtf + '.vtf'))
 				# only proceed further if this vtf exists
@@ -565,11 +588,158 @@ def load_sky_bitmap(skyinfo):
 						str('webp:')
 					]
 
-					towebp = subprocess.run(magix_prms, capture_output=True)
+					# ffmpeg is 10 times faster
+					ffmpeg_prms = [
+						# mpeg
+						str(ffmpeg),
+						# input
+						'-i', str(tgt_vtf.with_suffix('.tga')),
+
+						# resize
+						# '-hwaccel', 'cuda',
+						# '-hwaccel_output_format', 'cuda',
+						# '--enable-nvenc',
+						# '--enable-ffnvcodec',
+						# '-h', 'encoder=h264_nvenc',
+						
+						# does nothing
+						# (it works, but it's only for videos)
+						'-vcodec', 'h264_nvenc',
+						
+						# change size
+						# this will upscale sometimes
+						# '-vf', 'scale=500:-1',
+
+						# while this is smart
+						# this is quite a hires preview
+						# '-vf', 'scale=w=min(iw\\,500):h=-2',
+						# this one is smaller
+						'-vf', 'scale=w=min(iw\\,300):h=-2, vflip',
+
+						# format
+						'-c:v', 'webp',
+						# ffmpeg encoding type
+						'-f', 'image2pipe',
+						# lossless
+						# quite a heavy load
+						# '-lossless', '0',
+						# make it take even less space
+						'-lossless', '0',
+						# lossless compression
+						# (now is lossy)
+						'-compression_level', '0',
+						# '-compression_level', '0',
+						'-qscale', '50',
+						# output to stdout
+						'pipe:'
+					]
+
+					towebp = subprocess.run(ffmpeg_prms, capture_output=True)
 
 					print('tga file exists')
 					# if file exists - read its contents into buffer
 					result_sky[svtf + '_' + hdld] = base64.b64encode(towebp.stdout).decode()
+
+
+
+
+
+	#
+	# Continue with files
+	#
+	if skyinfo['vpk'] == False:
+
+		#
+		# convert sides to tga with vtfcmd and store in memory as base64
+		#
+		for svtf in skysides:
+			# try both HDR and LDR for a side
+			for hdld in hl_dict:
+				# only proceed if hdr/ldr exists
+				if skyinfo[hdld] == None:
+					continue
+				# construct the path to vtf
+				tgt_vtf = (ext_dir / Path(skyinfo[hdld] + svtf + '.vtf'))
+				# only proceed further if this vtf exists
+				if not tgt_vtf.is_file():
+					result_sky[svtf + '_' + hdld] = None
+					continue
+				print('vtf file exists')
+				vtfcmd_prms[-1] = str(tgt_vtf)
+				vtf_conv_echo = subprocess.run(vtfcmd_prms, capture_output=True)
+
+				# conversion done. Check success by checking the file existence
+				if tgt_vtf.with_suffix('.tga').is_file():
+					# convert shite with magick
+					magix_prms = [
+						str(magix),
+						str(tgt_vtf.with_suffix('.tga')),
+
+						# webp parameters
+						'-quality', '0',
+						'-define', 'webp:lossless=true',
+						'-define', 'webp:partition-limit=0',
+						'-define', 'webp:thread-level=1',
+						str('webp:')
+					]
+
+					# ffmpeg is 10 times faster
+					ffmpeg_prms = [
+						# mpeg
+						str(ffmpeg),
+						# input
+						'-i', str(tgt_vtf.with_suffix('.tga')),
+
+						# resize
+						# '-hwaccel', 'cuda',
+						# '-hwaccel_output_format', 'cuda',
+						# '--enable-nvenc',
+						# '--enable-ffnvcodec',
+						# '-h', 'encoder=h264_nvenc',
+						
+						# does nothing
+						# (it works, but it's only for videos)
+						'-vcodec', 'h264_nvenc',
+						
+						# change size
+						# this will upscale sometimes
+						# '-vf', 'scale=500:-1',
+
+						# while this is smart
+						# this is quite a hires preview
+						# '-vf', 'scale=w=min(iw\\,500):h=-2',
+						# this one is smaller
+						'-vf', 'scale=w=min(iw\\,300):h=-2, vflip',
+
+						# format
+						'-c:v', 'webp',
+						# ffmpeg encoding type
+						'-f', 'image2pipe',
+						# lossless
+						# quite a heavy load
+						# '-lossless', '0',
+						# make it take even less space
+						'-lossless', '0',
+						# lossless compression
+						# (now is lossy)
+						'-compression_level', '6',
+						# '-compression_level', '0',
+						'-qscale', '50',
+						# output to stdout
+						'pipe:'
+					]
+
+					towebp = subprocess.run(ffmpeg_prms, capture_output=True)
+
+					print('non-vpk tga file exists')
+					# if file exists - read its contents into buffer
+					result_sky[svtf + '_' + hdld] = base64.b64encode(towebp.stdout).decode()
+
+
+
+
+
+
 
 	return result_sky
 
