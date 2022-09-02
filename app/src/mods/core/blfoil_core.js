@@ -486,7 +486,8 @@ $(document).ready(function(){
 	// TESTING
 	// newmodmaker_loader()
 	// dashboard_app_loader()
-	// gameinfoman_app_loader()
+	
+
 
 	
 });
@@ -837,7 +838,7 @@ class foil_context_super_manager
 		var got_last_id = await bltalk.send({
 			'action': 'load_last_app_context'
 		});
-		this.project_switch(got_last_id['project_index'])
+		await this.project_switch(got_last_id['project_index'])
 	}
 
 
@@ -957,6 +958,11 @@ function main_app_init()
 	// Set context
 	//
 	window.foil.context.load_last()
+	.then(function(resolved) {
+		// TESTING
+		// AFTER THE CONTEXT WAS SET
+		gameinfoman_app_loader()
+	});
 
 }
 

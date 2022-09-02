@@ -145,20 +145,21 @@ class lizard_tail:
 
 
 	# important todo: this was done by a principle "as fast as posibble because lazyness"
-
 	@property
 	def search_paths(self):
 		# todo: generator ?
 		spaths = []
 		for sp in self.gameinfo_r.select('GameInfo > FileSystem > SearchPaths > kv'):
-			path_payload = {}
-			path_payload['key'] = sp.gkey.string
-			path_payload['value'] = sp.gval.string
-			spaths.append(path_payload)
+			spaths.append({
+				'key': sp.gkey.string,
+				'value': sp.gval.string
+			})
 		return spaths
 
 
-
+	#
+	# OVERWRITES existing paths with the provided array
+	#
 	@search_paths.setter
 	def search_paths(self, pairs):
 		"""

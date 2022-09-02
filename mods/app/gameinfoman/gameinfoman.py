@@ -15,6 +15,7 @@ def gameinfoman_load_gminfo(pl):
 
 	main_keys = cl_gameinfo.base_keys
 	main_keys['SteamAppId'] = cl_gameinfo.steam_id
+	main_keys['content_mount'] = cl_gameinfo.search_paths
 
 	return main_keys
 

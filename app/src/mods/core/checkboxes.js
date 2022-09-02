@@ -12,31 +12,25 @@ class simple_lizard_checkboxes
 	constructor() {
 		window.lizard_checkboxes = {};
 
-		/*
-		Element.prototype.lizchecked=function(status) {
-		    // if(value===undefined) value=true;
-		    // if(this.hasAttribute(attribute)) this.removeAttribute(attribute);
-		    // else this.addAttribute(attribute,value);
-		    if (!this.hasAttribute('lizcbox')){ return null }
-		    if (status == undefined || status == null)
-		    {
-			    if (this.getAttribute('lizcbox') == 'set'){
-			    	return true
-			    }else{
-			    	return false
-			    }
-			}else{
-				if (status == true){
-					this.setAttribute('lizcbox', 'set');
-					// return true
-				}
-				if (status == false){
-					this.setAttribute('lizcbox', 'unset');
-					// return false
+		Element.prototype.lzbox=function() {
+			if (this.closest('lzcbox') != null){
+				for (var find in window.lizard_checkboxes){
+					if (window.lizard_checkboxes[find]['elem'][0] == this){
+						return {
+							'name': find,
+							'state': window.lzcbox.state(window.lizard_checkboxes[find]['elem']),
+							set: function(towhich=''){
+								remap_t.set_state(ensure, towhich)
+			        		},
+							toggle: function(){
+								remap_t.set_state(ensure, null)
+			        		}
+						}
+					}
 				}
 			}
 		}
-		*/
+
 
 		print('Initialized Simple Checkboxes');
 	};

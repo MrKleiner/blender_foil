@@ -4,7 +4,7 @@
 #game_config_gameinfo_app
 {
 	display: flex;
-	flex-direction: row;
+	flex-direction: column;
 	width: 100%;
 }
 
@@ -176,5 +176,100 @@
 
 
 
+
+/*
+====================================================
+					 Content Mount
+====================================================
+*/
+#gameinfo_content_mount
+{
+	display: flex;
+	flex-direction: column;
+	margin-left: 20px;
+	margin-right: 20px;
+	margin-top: 30px;
+}
+
+
+#gameinfo_content_mount_pool
+{
+	display: flex;
+	flex-direction: column;
+}
+
+.cmount_pool_entry
+{
+	margin-top: 5px;
+	display: flex;
+	flex-direction: row;
+	color: white;
+	font-family: 'blender';
+	font-size: 15px;
+	background: rgba(0, 0, 0, 0.2);
+	padding: 5px 0px 5px 0px;
+	/*outline: 1px solid rgba(255, 255, 255, 0.1);*/
+}
+
+
+.cmount_pool_entry input
+{
+	font-family: 'Open_Sans';
+	/*font-size: 13px;*/
+	margin-left: 10px;
+}
+
+.cmount_pool_entry lzcbox [cmark_outer]
+{
+	width: 19px;
+	height: 19px;
+	border-radius: 2px;
+}
+
+.cmount_pool_entry lzcbox
+{
+	margin-left: 5px;
+}
+
+
+.cmount_pool_entry keys
+{
+	display: flex;
+	flex-direction: row;
+}
+
+.cmount_pool_entry basepath
+{
+	display: flex;
+}
+
+.cmount_pool_entry lzdropdown
+{
+	width: 100px;
+	margin-left: 10px;
+}
+
+
+
+
+
+#mountpool_keys_descr
+{
+	user-select: none;
+	display: flex;
+	flex-direction: column;
+	color: white;
+	writing-mode: tb-rl;
+    text-orientation: sideways;
+    transform: rotate(180deg);
+}
+
+#mountpool_keys_descr keydescr
+{
+	font-family: 'blender';
+	font-size: 13px;
+	width: 19px;
+	margin-right: 5px;
+}
 
 

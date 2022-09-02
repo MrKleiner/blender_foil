@@ -144,7 +144,7 @@ def appconnect_actions(cs):
                 'payload': find_skyboxes(cs['payload'])
             })
             return ''
-        case 'skyboxer_get_sky_as_bitmap':
+        case 'sdkyboxer_get_sky_as_bitmap':
             app_command_send({
                 'app_module': '',
                 'mod_action': '',

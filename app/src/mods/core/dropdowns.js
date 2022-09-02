@@ -56,6 +56,21 @@ class simple_lizard_dropdowns
 	// ============================================================
 	spawn(slct, idname, itemsd, parent_hitbox)
 	{
+		// itemsd = 
+		// {
+		// 	'menu_name': 'Steam App ID',
+		// 	'menu_entries': [
+		// 		{
+		// 			'name': 'Half-Life 2',
+		// 			'dropdown_set': '220'
+		// 		},
+		// 		{
+		// 			'name': 'Half-Life 2: Episode One',
+		// 			'dropdown_set': '380'
+		// 		}
+		// 	]
+		// }
+
 		// cant have duplicate names
 		// if (idname in window.lizard_dropdowns || idname == undefined){return}
 		if (idname == undefined){return}
@@ -287,7 +302,9 @@ class simple_lizard_dropdowns
 	// sadly, jQuery is neccessary to handle non-existing elements situations
 	set_active(toitem)
 	{
+
 		var dropdownroot = $(toitem).closest('lzdropdown');
+		// print('set_active', toitem[0], dropdownroot[0])
 		// set title
 		// dropdownroot.querySelector('.lizmenu_title').innerText = toitem.getAttribute('dropdown_set');
 		// console.log(toitem.querySelector('.lizard_menu_entry_text').textContent);
