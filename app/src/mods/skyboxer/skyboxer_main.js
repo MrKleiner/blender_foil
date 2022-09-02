@@ -211,6 +211,13 @@ async function skyboxer_get_skies_list()
 
 function SUPER_IMPORTANT()
 {
+	// https://github.com/katspaugh/wavesurfer.js
+	// https://wavesurfer-js.org/
+	// https://wavesurfer-js.org/api/class/src/wavesurfer.js~WaveSurfer.html
+	// https://wavesurfer-js.org/plugins/regions.html
+	// https://github.com/rochars/wavefile#read-wave-files
+
+
 	var fi = "E:\\Gamess\\steamapps\\common\\Half-Life 2\\ep2\\sound\\banjo\\banjo_loop_03a_44100.wav"
 	console.time('fuck')
 	const WaveFile = require('wavefile').WaveFile;

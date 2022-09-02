@@ -18,20 +18,29 @@ def eval_m5(st):
 # takes path to the file as an input
 # is stepped. Can process huge files
 # returns md5 string
-def getfilemd5(filepath):
+def getfilemd5(filepath=None, meth='md5', kb_read=150_000):
 	import hashlib
+	if filepath == None:
+		return False
+
 	file = str(filepath) # Location of the file (can be set a different way)
-	
+
 	# The size of each read from the file
-	# BLOCK_SIZE = 65535
-	# 23 million
-	# BLOCK_SIZE = 23000000
-	# 167 million
-	BLOCK_SIZE = 167856784
+
+	# 1024**2 = 1mb
+	# BLOCK_SIZE = (1024**2)
+
+	# 1024 = 1kb
+	# default = 150k = 150mb
+	BLOCK_SIZE = 1024*kb_read
 	
 	# Create the hash object, can use something other than `.sha256()` if you wish
-	# file_hash = hashlib.md5()
 	file_hash = hashlib.md5()
+	if meth == 'sha256':
+		file_hash = hashlib.sha256()
+	if meth == 'sha512':
+		file_hash = hashlib.sha512()
+
 	with open(file, 'rb') as f: # Open the file to read it's bytes
 		fb = f.read(BLOCK_SIZE) # Read from the file. Take in the amount declared above
 		while len(fb) > 0: # While there is still data being read from the file
@@ -231,11 +240,9 @@ def app_command_send(payload):
 # ==========================================
 
 def blfoil_file_cleanup(flushtemp=False, dmark='blfoil_cleanup_todelete'):
-	import shutil
-	import os
+	import bpy, shutil, os
 	from pathlib import Path
-	import bpy
-	
+
 	addon_root_dir = Path(__file__).absolute().parent.parent
 	# delete all images
 	for cleanup in bpy.data.images:
@@ -280,6 +287,11 @@ def blfoil_file_cleanup(flushtemp=False, dmark='blfoil_cleanup_todelete'):
 with open('downloaded.zip', 'wb') as txtfile:
 	txtfile.write(data)
 """
+
+
+# ---------
+# Mapbase
+# ---------
 
 # important todo: this function is unfinished
 # set beta to True to make it download beta version
@@ -462,8 +474,9 @@ def download_mapbase(tmpfolder=None, beta=True):
 
 
 
-
+# ---------
 # Hammer++
+# ---------
 
 def blfoil_download_hpp(hppver='2013sp', tmpfolder=None):
 	import requests, random, zipfile, os
@@ -568,15 +581,85 @@ def blfoil_download_hpp(hppver='2013sp', tmpfolder=None):
 
 
 
+# ==========================================
+#              Integrity
+# ==========================================
+
+
+# create an integrity stamp
+def mk_integrity_dump():
+	from pathlib import Path
+	import json, shutil, hashlib
+	addon_root_dir = where_addon_root(__file__)
+
+
+	# integrity_list = [str(file.relative_to(addon_root_dir / 'bins')) for file in (addon_root_dir / 'bins').rglob('*')]
+	integrity_list = {}
+	for file in (addon_root_dir / 'bins').rglob('*'):
+		if file.is_dir():
+			hex_sum = False
+		if file.is_file():
+			hex_sum = hashlib.sha256(file.read_bytes()).hexdigest()
+
+		integrity_list[str(file.relative_to(addon_root_dir / 'bins'))] = hex_sum
+
+
+	(addon_root_dir / 'bin_integrity.pootis').write_text(json.dumps(integrity_list, indent=4, sort_keys=True))
+	return integrity_list
 
 
 
-# print(blfoil_download_hpp(hppver='2013sp'))
+
+
+# check the integrity of binaries
+# for now only deletes extra files
+def bin_integrity_check():
+	from pathlib import Path
+	import json, shutil
+	addon_root_dir = where_addon_root(__file__)
+	bins = addon_root_dir / 'bins'
+
+
+	integrity_list = json.loads((addon_root_dir / 'bin_integrity.pootis').read_text())
+	present_list = [file.relative_to(bins) for file in (addon_root_dir / 'bins').rglob('*')]
+
+	# compare present files against the dict
+	for fl in present_list:
+		# get abs path
+		fullpath = (bins / fl)
+
+		# if file is not inside integrity list - delete it
+		if not str(fl) in integrity_list:
+			try:
+				# if it's a folder - try removing the whole tree
+				if fullpath.is_dir():
+					shutil.rmtree(str(fullpath))
+
+				# if it's a file - try removing the file
+				if fullpath.is_file():
+					fullpath.unlink()
+			except:
+				continue
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 def shared_drinker():
-	print(download_mapbase())
+	# print(mk_integrity_dump())
+	# bin_integrity_check()
+
+	pass
 
 
 
