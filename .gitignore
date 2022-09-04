@@ -9,3 +9,4 @@ configs/app/engines/engines_info.json
 bins/mapbase
 bdsmbind.sex
 configs
+app/out
