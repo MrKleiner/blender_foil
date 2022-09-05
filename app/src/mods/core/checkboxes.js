@@ -26,6 +26,7 @@ class simple_lizard_checkboxes
 								remap_t.set_state(ensure, null)
 			        		}
 						}
+						break
 					}
 				}
 			}
@@ -50,7 +51,7 @@ class simple_lizard_checkboxes
 	resync()
 	{
 		// spawn checkboxes
-		for (var cb of document.querySelectorAll('lzcbox')){
+		for (var cb of document.querySelectorAll('lzcbox:not([lzcbox_done])')){
 			var mkbox = $(`
 				<div cbtitle>${cb.innerText.trim()}</div>
 				<div cmark_outer>
@@ -110,7 +111,17 @@ class simple_lizard_checkboxes
 			'set': true,
 			'unset': false
 		}
-		return map_state[$(cbox).closest('lzcbox').attr('lzcbox_state')] || map_state[window.lizard_checkboxes[cbox]['elem'].attr('lzcbox_state')]
+		var by_elem = map_state[$(cbox).closest('lzcbox').attr('lzcbox_state')]
+		var by_pool = null
+		if (window.lizard_checkboxes[cbox] != undefined){
+			var by_pool = map_state[$(window.lizard_checkboxes[cbox]['elem']).attr('lzcbox_state')]
+		}
+		if (by_elem != undefined){
+			return by_elem
+		}
+		if (by_pool != undefined){
+			return by_pool
+		}
 	}
 
 	// null = toggle

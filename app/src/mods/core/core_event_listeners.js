@@ -52,6 +52,8 @@ document.addEventListener('click', tr_event => {
 	if (event.target.closest('#gminfo_appid_dropdown [dropdown_set]')) { set_steam_appid_from_dropdown(event.target.closest('#gminfo_appid_dropdown [dropdown_set]')) }
 	if (event.target.closest('#gameinfo_ctrl .lizcbox_hitbox, #gameinfo_ctrl lzcbox')) { gameinfo_save_back() }
 	if (event.target.closest('#gameinfo_ctrl .lz_menu_entries')) { gameinfo_save_back() }
+	if (event.target.closest('.cmount_pool_entry lzcbox, .cmount_pool_entry lzdropdown [dropdown_set]')) { gm_mount_save_back() }
+	if (event.target.closest('#gameinfo_content_mount lzbtn[btname="add_mount_pool_item"]')) { gm_add_mount_entry() }
 
 
 
@@ -82,6 +84,15 @@ document.addEventListener('mouseover', tr_event => {
 	// ==========================================
 
 	if (event.target.closest('[liztooltip]')) { showliztooltip(event.target.closest('[liztooltip]')) }else{ showliztooltip(event.target.closest('[liztooltip]')) }
+
+
+
+
+	// ==========================================
+	// 	game_config_gameinfo gameinfo
+	// ==========================================
+
+	if (event.target.closest('.cmount_pool_entry keys lzcbox')) { hlight_mount_keytype(event.target.closest('.cmount_pool_entry keys lzcbox')) }
 
 
 });
@@ -175,6 +186,7 @@ document.addEventListener('change', tr_event => {
 
 	if (event.target.closest('#gminfo_gamename_input, #gminfo_gametitle_input, #gminfo_gameicon_input, #gminfo_appid_input')) { gameinfo_save_back() }
 	if (event.target.closest('#gminfo_gameicon_input')) { gminfo_icon_manager() }
+	if (event.target.closest('.cmount_pool_entry input')) { gm_mount_save_back() }
 
 
 

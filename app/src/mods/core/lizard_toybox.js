@@ -30,11 +30,39 @@ class iguana
 			return (pad + this).slice(-pad.length);
 		}
 
-		Number.prototype.zfill = function(amt=1, char='0') {
-			var pad_char = typeof char !== 'undefined' ? char : '0';
-			var pad = new Array(1 + amt).join(pad_char);
-			return (pad + this).slice(-pad.length);
+		String.prototype.rstrip = function(chars='') {
+			var start = 0;
+			var end = this.length - 1;
+			while (chars.indexOf(this[end]) >= 0) {
+			end -= 1;
+			}
+			return this.substr(0, end + 1);
 		}
+
+		String.prototype.lstrip = function(chars='') {
+			var start = 0;
+			while (chars.indexOf(x[start]) >= 0) {
+			start += 1;
+			}
+			var end = x.length - 1;
+			return x.substr(start);
+		}
+
+		String.prototype.strip = function(chars='') {
+			var start = 0;
+			while (chars.indexOf(this[start]) >= 0) {
+			start += 1;
+			}
+			var end = this.length - 1;
+			while (chars.indexOf(this[end]) >= 0) {
+			end -= 1;
+			}
+			return this.substr(start, end - start + 1);
+		}
+
+		// Number.prototype.zfill = function(amt=1, char='0') {
+		// 	return num < 10 ? '0' + num : num;
+		// }
 
 
 		// python things
@@ -327,7 +355,7 @@ class iguana
 	*/
 
 
-	rndwave(len=8, method='def', addchars='') {
+	rndwave(len=8, method='def', addchars='', crypto=true) {
 		var result = '';
 
 		var addon_chars = addchars.toString().replaceAll(' ', '');
@@ -352,10 +380,17 @@ class iguana
 		}
 		
 		var charactersLength = characters.length;
+        if (crypto == true){
+            var cryptonums = window.crypto.getRandomValues(new Uint32Array(len + 1))
+        }
 		for ( var i = 0; i < len; i++ ) {
-		  result += characters.charAt(Math.floor(Math.random() * charactersLength));
-	   }
-	   return result;
+            if (crypto == true){
+                result += characters.charAt(cryptonums[i] % charactersLength);
+            }else{
+                result += characters.charAt(Math.floor(Math.random() * charactersLength));
+            }
+		}
+		return result;
 	}
 
 

@@ -177,7 +177,7 @@ async function gameinfo_set_info()
 		cb[setbox].set(evalst(inf[map_pool[setbox]]))
 	}
 
-	gminfo_icon_manager()
+	await gminfo_icon_manager()
 
 	// lastly, show content mounts
 	display_content_mounts(inf)

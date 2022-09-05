@@ -139,6 +139,13 @@
 		"js_module": "gameinfo",
 		"js_module_action": "gminfo_icon_manager"
 	},
+	# save mount paths
+	{
+		"incoming_case": "gameinfo_save_back_mounts",
+		"python_function": "gameinfo_save_back_mounts",
+		"js_module": "",
+		"js_module_action": ""
+	},
 
 
 

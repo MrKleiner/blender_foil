@@ -36,6 +36,9 @@ const fs = require('fs');
 // Electron UDP Module
 const net = require('net');
 
+// Electron API
+const { BrowserWindow } = require('electron')
+
 //
 // Obsolete Python Shell
 //
@@ -247,7 +250,11 @@ function app_reload_refresh(evee)
 	if (  evee.ctrlKey  &&  evee.keyCode == 82  ){
 		location.reload()
 	}
+	if (evee.keyCode == 123){
+		location.reload()
+	}
 }
+
 
 
 

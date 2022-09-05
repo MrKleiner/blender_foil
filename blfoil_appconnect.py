@@ -136,6 +136,14 @@ def appconnect_actions(cs):
                 'payload': gminfo_icon_vis_feedback(cs['payload'])
             })
             return ''
+        case 'gameinfo_save_back_mounts':
+            app_command_send({
+                'app_module': '',
+                'mod_action': '',
+                'sys_action_id': cs['sys_action_id'],
+                'payload': gameinfo_save_back_mounts(cs['payload'])
+            })
+            return ''
         case 'skyboxer_get_all_skyboxes':
             app_command_send({
                 'app_module': '',

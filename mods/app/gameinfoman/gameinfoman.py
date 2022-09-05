@@ -43,6 +43,23 @@ def gameinfo_save_back(pl):
 	return 'saved gmi'
 
 
+def gameinfo_save_back_mounts(pl):
+	from ....utils.lizard_tail.lizard_tail import lizard_tail
+	from pathlib import Path
+	import json
+
+	gpath = Path(pl['gminfo_path'])
+
+	# eval gameinfo
+	cl_gameinfo = lizard_tail(gpath.read_text())
+
+	cl_gameinfo.search_paths = pl['search_paths']
+
+	gpath.write_text(cl_gameinfo.tofile())
+
+	return 'saved gmi mount'
+
+
 # important todo: important shit like magix has to be as a module or smth
 # like a class or something
 # for easier calls

@@ -16,30 +16,12 @@ class simple_lizard_dropdowns
 	constructor() {
 		window.lizard_dropdowns = {};
 
-		/*
-		Element.prototype.lizdropdown=function(set_to) {
-		    // if(value===undefined) value=true;
-		    // if(this.hasAttribute(attribute)) this.removeAttribute(attribute);
-		    // else this.addAttribute(attribute,value);
-		    // todo: poor logic. use ||
-		    // var tgt_menu_s = this.closest('.haslizdropdown') || this.closest('.lizard_menu')
-			if (this.closest('[haslizdropdown]') != null){
-				var tgt_menu_s = this.querySelector('.lizard_menu')
-			}
-			if (this.closest('.lizard_menu') != null){
-				var tgt_menu_s = this.closest('.lizard_menu')
-			}
 
-		    if (set_to == undefined){
-			    if (tgt_menu_s != null){
-			    	return tgt_menu_s.getAttribute('lz_active_item')
-			    }else{
-			    	return null
-			    }
-		    }
+		// Element.prototype.lzdrop=function(set_to) {
 
-		};
-		*/
+
+		// };
+
 
 		print('Initialized Simple Dropdowns');
 	};
@@ -84,7 +66,7 @@ class simple_lizard_dropdowns
 
 		// empty template for the dropdown
 		var menu_plate = $(`
-			<lzdropdown lzdropname="" draggable="false" class="lzdropdpown">
+			<lzdropdown lzdropname="${idname}" draggable="false" class="lzdropdpown">
 				<div class="lz_dn_title"><span style="color: #BC4141">None</span></div>
 				<div class="dn_arrow_icon">
 					<img src="assets/arrow_down.svg">
