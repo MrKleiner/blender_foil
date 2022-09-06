@@ -53,6 +53,7 @@ document.addEventListener('click', tr_event => {
 	if (event.target.closest('#gameinfo_ctrl .lizcbox_hitbox, #gameinfo_ctrl lzcbox, #gameinfo_ctrl .lz_menu_entries')) { fsys.gameinfo.main.save_back() }
 	if (event.target.closest('.cmount_pool_entry lzcbox, .cmount_pool_entry lzdropdown [dropdown_set]')) { fsys.gameinfo.mounts.save_back() }
 	if (event.target.closest('#gameinfo_content_mount lzbtn[btname="add_mount_pool_item"]')) { fsys.gameinfo.mounts.add_mount_entry() }
+	if (event.target.closest('.mount_ctrl_btns kill')) { fsys.gameinfo.mounts.kill_mount_entry(tr_event) }
 
 
 
@@ -91,6 +92,7 @@ document.addEventListener('mouseover', tr_event => {
 	// 	game_config_gameinfo gameinfo
 	// ==========================================
 
+	if (event.target.closest('.cmount_pool_entry keys lzcbox')) { fsys.gameinfo.mounts.hlight_mount_keytype(event.target.closest('.cmount_pool_entry keys lzcbox')) }
 	if (event.target.closest('.cmount_pool_entry [moverhit]')) { fsys.gameinfo.mounts.visualize_move_tgt(event.target.closest('.cmount_pool_entry [moverhit]')) }
 
 
@@ -200,7 +202,7 @@ document.addEventListener('mousedown', tr_event => {
 	// 	game_config_gameinfo gameinfo
 	// ==========================================
 
-	if (event.target.closest('.cmount_pool_entry .mount_ctrl_btns [mv_up]')) { fsys.gameinfo.mounts.start_mount_drag(event.target.closest('.cmount_pool_entry .mount_ctrl_btns [mv_up]')) }
+	if (event.target.closest('.cmount_pool_entry .mount_ctrl_btns dragger')) { fsys.gameinfo.mounts.start_mount_drag(event.target.closest('.cmount_pool_entry .mount_ctrl_btns dragger')) }
 
 
 });

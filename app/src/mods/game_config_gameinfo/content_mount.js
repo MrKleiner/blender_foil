@@ -29,8 +29,12 @@ foil.sys.gameinfo.mounts.show_mounts = function(mounts)
 				<basepath></basepath>
 				<input type="text" value="${entry['value'].replace(/(?<=\|)(.*?)(?=\|)/, '').replaceAll('|', '')}">
 				<div class="mount_ctrl_btns">
-					<div mv_up></div>
-					<div del></div>
+					<dragger></dragger>
+					<kill>
+						<liztooltip liztooltip_prms="top:1:10:200">
+							Hold alt and click on this icon to delete a mount entry.
+						</liztooltip>
+					</kill>
 				</div>
 			</div>
 		`)
@@ -70,6 +74,8 @@ foil.sys.gameinfo.mounts.show_mounts = function(mounts)
 
 	// resync checkboxes
 	lzcbox.resync()
+	// resync tooltips
+	init_liztooltips()
 }
 
 
@@ -153,9 +159,12 @@ fsys.gameinfo.mounts.add_mount_entry = function()
 			<basepath></basepath>
 			<input type="text" value="custom/*">
 			<div class="mount_ctrl_btns">
-				<div mv_up></div>
-				<div mv_dn></div>
-				<div del></div>
+				<dragger></dragger>
+				<kill>
+					<liztooltip liztooltip_prms="top:1:10:200">
+						Hold alt and click on this icon to delete a mount entry.
+					</liztooltip>
+				</kill>
 			</div>
 		</div>
 	`)
@@ -186,6 +195,8 @@ fsys.gameinfo.mounts.add_mount_entry = function()
 
 	// resync checkboxes
 	lzcbox.resync()
+	// resync tooltips
+	init_liztooltips()
 }
 
 
@@ -243,44 +254,26 @@ fsys.gameinfo.mounts.apply_mount_move = function(evee)
 	print(pool_entry, mv_hitbox)
 
 
-	/*
-	// if mouseup not on triggers - revert shit back and SKIP moving
-	if (pool_entry != null && mv_hitbox != null){
-		// if top then insert before
-		if (mv_hitbox.tagName.toLowerCase() == 'mvtop'){
-			pool_entry.before(mv_target);
-		}
 
-		// if bottom then insert after
-		if (mv_hitbox.tagName.toLowerCase() == 'mvbot'){
-			pool_entry.after(mv_target);
+	var last_hover = document.querySelector('.cmount_pool_entry[vis_mv_top], .cmount_pool_entry[vis_mv_bottom]')
+	print('Last hover:', last_hover)
+
+	if (last_hover != null){
+
+		print('Last hover vistop:', last_hover.hasAttribute('vis_mv_top'))
+		print('Last hover visbot:', last_hover.hasAttribute('vis_mv_bottom'))
+
+
+		// if the first child of the pool has hover top attrbute - append it to the beginning of the pool
+		if (last_hover.hasAttribute('vis_mv_top')){
+			last_hover.before(mv_target)
+		}
+		// if the last element of the pool has hover bottom attribute - append it to the bottom of the pool
+		if (last_hover.hasAttribute('vis_mv_bottom')){
+			last_hover.after(mv_target)
 		}
 	}
-	*/
 
-
-	// try appending to the last hovered element
-	// important todo: ALWAYS append to last hover...
-	// if (pool_entry == null){
-		var last_hover = document.querySelector('.cmount_pool_entry[vis_mv_top], .cmount_pool_entry[vis_mv_bottom]')
-		print('Last hover:', last_hover)
-
-		if (last_hover != null){
-
-			print('Last hover vistop:', last_hover.hasAttribute('vis_mv_top'))
-			print('Last hover visbot:', last_hover.hasAttribute('vis_mv_bottom'))
-
-
-			// if the first child of the pool has hover top attrbute - append it to the beginning of the pool
-			if (last_hover.hasAttribute('vis_mv_top')){
-				last_hover.before(mv_target)
-			}
-			// if the last element of the pool has hover bottom attribute - append it to the bottom of the pool
-			if (last_hover.hasAttribute('vis_mv_bottom')){
-				last_hover.after(mv_target)
-			}
-		}
-	// }
 
 	// remove styling from moving target
 	mv_target.removeAttribute('move_tgt');
@@ -332,3 +325,12 @@ fsys.gameinfo.mounts.visualize_move_tgt = function(etgt)
 }
 
 
+fsys.gameinfo.mounts.kill_mount_entry = function(evee)
+{
+	if (evee.altKey){
+		evee.target.closest('.cmount_pool_entry').remove();
+	}
+	window.getSelection().removeAllRanges()
+	// save back
+	fsys.gameinfo.mounts.save_back()
+}

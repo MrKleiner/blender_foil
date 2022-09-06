@@ -27,6 +27,13 @@
 			"pass_event": false,
 			"pass_element": false,
 			"pass_params": ""
+		},
+		{
+			"selector": ".mount_ctrl_btns kill",
+			"function": "fsys.gameinfo.mounts.kill_mount_entry",
+			"pass_event": true,
+			"pass_element": false,
+			"pass_params": ""
 		}
 	],
 	"change": [
@@ -62,9 +69,7 @@
 			"pass_event": false,
 			"pass_element": true,
 			"pass_params": ""
-		}
-	],
-	"mouseover": [
+		},
 		{
 			"selector": ".cmount_pool_entry [moverhit]",
 			"function": "fsys.gameinfo.mounts.visualize_move_tgt",
@@ -78,7 +83,7 @@
 
 	"mousedown": [
 		{
-			"selector": ".cmount_pool_entry .mount_ctrl_btns [mv_up]",
+			"selector": ".cmount_pool_entry .mount_ctrl_btns dragger",
 			"function": "fsys.gameinfo.mounts.start_mount_drag",
 			"pass_event": false,
 			"pass_element": true,
