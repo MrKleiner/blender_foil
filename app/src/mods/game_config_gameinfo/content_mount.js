@@ -294,7 +294,7 @@ fsys.gameinfo.mounts.apply_mount_move = function(evee)
 	$('.cmount_pool_entry').removeAttr('vis_mv_bottom');
 
 	// finally, resave mounts back
-	fsys.gameinfo.mount.save_back()
+	fsys.gameinfo.mounts.save_back()
 }
 
 
