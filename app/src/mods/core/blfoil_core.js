@@ -764,6 +764,7 @@ class foil_context_super_manager
 	};
 
 	// set OR get parameter
+	// both sync and async
 	prm(key=null, value=undefined, dosave=true){
 		// if value is undefined, then it means that we're only getting a parameter
 		if (value == undefined){
@@ -772,7 +773,33 @@ class foil_context_super_manager
 		// if defined - set and maybe save
 		window.foil.app_context[key] = value;
 		if (dosave == true){
-			this.save()
+			var remap_this = this
+			return new Promise(function(resolve, reject){
+				remap_this.save()
+				.then(function(response) {
+					resolve(response)
+				});
+			});
+		}
+	}
+
+
+	// set many parameters
+	// both sync and async
+	prms(dict={}, dosave=true){
+
+		for (var kv in dict){
+			window.foil.app_context[kv] = dict[kv]
+		}
+
+		if (dosave == true){
+			var remap_this = this
+			return new Promise(function(resolve, reject){
+				remap_this.save()
+				.then(function(response) {
+					resolve(response)
+				});
+			});
 		}
 	}
 

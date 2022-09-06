@@ -200,6 +200,7 @@
 
 .cmount_pool_entry
 {
+	position: relative;
 	margin-top: 5px;
 	display: flex;
 	align-items: center;
@@ -315,12 +316,87 @@
 
 .mount_ctrl_btns [mv_up]{
 	filter: brightness(0.5);
-	background-image: url(../../assets/arrow_down.svg);
+	background-image: url(../../assets/move_arrows.png);
 	transform: rotate(180deg);
 }
 
-.mount_ctrl_btns [mv_dn]{
-	filter: brightness(0.5);
-	background-image: url(../../assets/arrow_down.svg);
-	transform: rotate(0deg);
+
+
+
+/* 
+	-------------------------
+	      moving shit
+	-------------------------
+*/
+
+.cmount_pool_entry mvtop, .cmount_pool_entry mvbot
+{
+	visibility: hidden;
+	width: 100%;
+	height: 50%;
+	position: absolute;
+	z-index: 75535;
 }
+.cmount_pool_entry mvtop
+{
+	top: 0px;
+	align-self: flex-start;
+	background: none;
+}
+.cmount_pool_entry mvbot
+{
+	align-self: flex-end;
+	bottom: 0px;
+	background: none;
+}
+
+
+/*visualize drop destination*/
+.cmount_pool_entry[vis_mv_top]
+{
+	border-top: 3px solid #5AE47E;
+}
+
+.cmount_pool_entry[vis_mv_bottom]
+{
+	border-bottom: 3px solid #5AE47E;
+}
+
+
+
+
+#gameinfo_content_mount_pool_items [invis_placeholder]
+{
+	display: flex;
+	opacity: 0;
+	background: none;
+}
+
+/*show hitboxes*/
+#gameinfo_content_mount_pool_items[moving] [moverhit]
+{
+	visibility: visible;
+}
+
+/*make stuff unselectable*/
+#gameinfo_content_mount_pool_items[moving] *:not([moverhit], #gameinfo_content_mount_pool_items > .cmount_pool_entry)
+{
+	user-select: none !important;
+	pointer-events: none !important;
+}
+
+#gameinfo_content_mount_pool_items[moving] [move_tgt]
+{
+	position: fixed;
+	z-index: 85536;
+	background: black;
+	outline: 2px solid #417790;
+	pointer-events: none !important;
+}
+
+#gameinfo_content_mount_pool_items[moving] [move_tgt] [moverhit]
+{
+	visibility: hidden !important;
+}
+
+

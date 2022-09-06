@@ -14,8 +14,8 @@ document.addEventListener('click', tr_event => {
 	// 	core core_events_bind.core.json
 	// ==========================================
 
-	if (event.target.closest('[lizmenu_action="load_newmodmaker"]')) { newmodmaker_loader() }
-	if (event.target.closest('[lizmenu_action="load_main_dashboard"]')) { dashboard_app_loader() }
+	if (event.target.closest('[lizmenu_action="load_newmodmaker"]')) { fsys.modmaker.app_loader() }
+	if (event.target.closest('[lizmenu_action="load_main_dashboard"]')) { fsys.dashboard.app_loader() }
 	if (event.target.closest('[apptoolbarctg="preferences"] [lizmenu_action="exit_app"]')) { blfoil_exit_app() }
 
 
@@ -36,7 +36,7 @@ document.addEventListener('click', tr_event => {
 	// ==========================================
 
 	if (event.target.closest('[dashboard_action="load_skyboxer"]')) { fsys.skyboxer.app_loader() }
-	if (event.target.closest('.main_dashboard_util[dboardload]')) { fsys.dashboard.load_tool(event.target.closest('.main_dashboard_util[dboardload]')) }
+	if (event.target.closest('.main_dashboard_util[dboardload]')) { fsys.dashboard.main.load_tool(event.target.closest('.main_dashboard_util[dboardload]')) }
 	if (event.target.closest('#main_dashboard_right_ctrl lzcbox, #main_dashboard_right_ctrl .lzcbox_hitbox')) { fsys.dashboard.main.save() }
 	if (event.target.closest('#dboard_mod_launchgame')) { fsys.dashboard.main.launch_mod() }
 	if (event.target.closest('#dboard_mod_killgame')) { fsys.dashboard.main.kill_mod() }
@@ -91,7 +91,7 @@ document.addEventListener('mouseover', tr_event => {
 	// 	game_config_gameinfo gameinfo
 	// ==========================================
 
-	if (event.target.closest('.cmount_pool_entry keys lzcbox')) { fsys.gameinfo.mounts.hlight_mount_keytype(event.target.closest('.cmount_pool_entry keys lzcbox')) }
+	if (event.target.closest('.cmount_pool_entry [moverhit]')) { fsys.gameinfo.mounts.visualize_move_tgt(event.target.closest('.cmount_pool_entry [moverhit]')) }
 
 
 });
@@ -188,6 +188,45 @@ document.addEventListener('change', tr_event => {
 	if (event.target.closest('#modmaker_engine_details_exepath input')) { fsys.modmaker.main.check_enigne_exe() }
 	if (event.target.closest('#modmaker_engine_details_icon input')) { fsys.modmaker.main.check_icon() }
 	if (event.target.closest('#modmaker_new_client_cl_name input, #modmaker_new_client_game_name input')) { fsys.modmaker.main.validate_modspawn_options() }
+
+
+});
+
+
+document.addEventListener('mousedown', tr_event => {
+
+
+	// ==========================================
+	// 	game_config_gameinfo gameinfo
+	// ==========================================
+
+	if (event.target.closest('.cmount_pool_entry .mount_ctrl_btns [mv_up]')) { fsys.gameinfo.mounts.start_mount_drag(event.target.closest('.cmount_pool_entry .mount_ctrl_btns [mv_up]')) }
+
+
+});
+
+
+document.addEventListener('mouseup', tr_event => {
+
+
+	// ==========================================
+	// 	game_config_gameinfo gameinfo
+	// ==========================================
+
+	if (event.target.closest('body[tmp_special]')) { fsys.gameinfo.mounts.apply_mount_move(tr_event) }
+
+
+});
+
+
+document.addEventListener('mousemove', tr_event => {
+
+
+	// ==========================================
+	// 	game_config_gameinfo gameinfo
+	// ==========================================
+
+	if (event.target.closest('body[tmp_special]')) { fsys.gameinfo.mounts.propagate_entry_move() }
 
 
 });

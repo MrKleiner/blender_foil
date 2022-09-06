@@ -1,9 +1,5 @@
 
-// important todo: There is a number of approaches for nice wrappers
-// one of them is like pepega structure
-// another one is like jquery
-// and so on...
-// the only disadvatage of classes is that they have to be spawned first
+
 // important todo: what are the disadvantages of using classes like this ?
 
 // important todo: YES, this is very cool and it works, BUT
@@ -264,7 +260,7 @@ class simple_lizard_dropdowns
 		// Normal variables in JavaScript can't be deleted using the delete operator.
 		// In strict mode, an attempt to delete a variable will throw an error and is not allowed.
 		for (var dn in window.lizard_dropdowns){
-			print(window.lizard_dropdowns, dn)
+			// print(window.lizard_dropdowns, dn)
 			if (!document.body.contains(window.lizard_dropdowns[dn]['elem'][0])){
 
 				delete window.lizard_dropdowns[dn]

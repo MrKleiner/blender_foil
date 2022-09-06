@@ -9,7 +9,7 @@
 		},
 		{
 			"selector": ".main_dashboard_util[dboardload]",
-			"function": "fsys.dashboard.load_tool",
+			"function": "fsys.dashboard.main.load_tool",
 			"pass_event": false,
 			"pass_element": true,
 			"pass_params": ""

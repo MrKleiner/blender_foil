@@ -13,7 +13,7 @@ bl_info = {
     'blender': (3, 1, 0),
     'location': '3D Viewport > N menu. Image/UV Editor > N menu',
     'description': 'Aluminium Foil. A set of tools for work with SooS Engeene',
-    'warning': 'Fuck 3Dmax. RIP Softimage XSI, you will not be forgotten',
+    'warning': 'Fuck 3Dmax. RIP Softimage XSI, you will not be forgotten. Praise Maya',
     'doc_url': '',
     'category': '3D View',
 }

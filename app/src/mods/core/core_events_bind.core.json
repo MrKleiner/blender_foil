@@ -2,14 +2,14 @@
 	"click": [
 		{
 			"selector": "[lizmenu_action=\"load_newmodmaker\"]",
-			"function": "newmodmaker_loader",
+			"function": "fsys.modmaker.app_loader",
 			"pass_event": false,
 			"pass_element": false,
 			"pass_params": ""
 		},
 		{
 			"selector": "[lizmenu_action=\"load_main_dashboard\"]",
-			"function": "dashboard_app_loader",
+			"function": "fsys.dashboard.app_loader",
 			"pass_event": false,
 			"pass_element": false,
 			"pass_params": ""

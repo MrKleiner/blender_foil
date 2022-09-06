@@ -90,19 +90,18 @@ fsys.dashboard.main.save = function()
 	$('#dboard_mod_preview_lauchprms').text(fsys.dashboard.main.eval_launch_opts()['string']);
 
 	// save context
-	var mcontext = foil.context.read;
 	var cb_pool = lzcbox.pool;
-	mcontext.fullscreen = cb_pool['fullscreen'].state
-	mcontext.intro_vid = cb_pool['intro_vid'].state
-	mcontext.loadtools = cb_pool['loadtools'].state
-	mcontext.maps_from_linked_gminfo = cb_pool['maps_from_linked_gminfo'].state
-	mcontext.start_from_map = cb_pool['start_from_map'].state
-	mcontext.add_start_opts = cb_pool['use_add_options'].state
-	mcontext.starting_map = $('#dboard_start_from_map_inp input').val().trim();
-	// print(mcontext)
-	// also save quick config
-	foil.context.save()
+	foil.context.prms({
+		'fullscreen': 				cb_pool['fullscreen'].state,
+		'intro_vid': 				cb_pool['intro_vid'].state,
+		'loadtools': 				cb_pool['loadtools'].state,
+		'maps_from_linked_gminfo': 	cb_pool['maps_from_linked_gminfo'].state,
+		'start_from_map': 			cb_pool['start_from_map'].state,
+		'add_start_opts': 			cb_pool['use_add_options'].state,
+		'starting_map': 			$('#dboard_start_from_map_inp input').val().trim()
+	})
 
+	// print(mcontext)
 }
 
 
@@ -121,10 +120,10 @@ fsys.dashboard.main.load_tool = function(tool='none')
 
 	switch (sw) {
 		case 'skyboxer':
-			skyboxer_module_loader()
+			fsys.skyboxer.app_loader()
 			break;
 		case 'gameinfo':
-			gameinfoman_app_loader()
+			fsys.gameinfo.app_loader()
 			break;
 		default:
 			print('Dashboard tried loading unknown module');
@@ -145,7 +144,7 @@ fsys.dashboard.main.eval_launch_opts = function()
 
 	// append parameters
 	// todo: bro wtf we got rid of if statements, but it's still messy
-	cbpool['fullscreen'].state ? (separated['windowed'] = []) : null
+	cbpool['fullscreen'].state ? null : (separated['windowed'] = [])
 	cbpool['loadtools'].state ? (separated['tools'] = []) : null
 	cbpool['intro_vid'].state ? (separated['novid'] = []) : null
 

@@ -52,12 +52,54 @@
 			"pass_params": ""
 		}
 	],
+
+
+
 	"mouseover": [
 		{
 			"selector": ".cmount_pool_entry keys lzcbox",
 			"function": "fsys.gameinfo.mounts.hlight_mount_keytype",
 			"pass_event": false,
 			"pass_element": true,
+			"pass_params": ""
+		}
+	],
+	"mouseover": [
+		{
+			"selector": ".cmount_pool_entry [moverhit]",
+			"function": "fsys.gameinfo.mounts.visualize_move_tgt",
+			"pass_event": false,
+			"pass_element": true,
+			"pass_params": ""
+		}
+	],
+
+
+
+	"mousedown": [
+		{
+			"selector": ".cmount_pool_entry .mount_ctrl_btns [mv_up]",
+			"function": "fsys.gameinfo.mounts.start_mount_drag",
+			"pass_event": false,
+			"pass_element": true,
+			"pass_params": ""
+		}
+	],
+	"mouseup": [
+		{
+			"selector": "body[tmp_special]",
+			"function": "fsys.gameinfo.mounts.apply_mount_move",
+			"pass_event": true,
+			"pass_element": false,
+			"pass_params": ""
+		}
+	],
+	"mousemove": [
+		{
+			"selector": "body[tmp_special]",
+			"function": "fsys.gameinfo.mounts.propagate_entry_move",
+			"pass_event": false,
+			"pass_element": false,
 			"pass_params": ""
 		}
 	]
