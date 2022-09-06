@@ -193,6 +193,9 @@ fsys.gameinfo.mounts.add_mount_entry = function()
 
 fsys.gameinfo.mounts.start_mount_drag = function(etgt)
 {
+	// kill any selection. It breaks everything...
+	window.getSelection().removeAllRanges()
+
 	var entry =  etgt.closest('.cmount_pool_entry');
 	var compstyle = getComputedStyle(entry);
 	var mounts = fsys.gameinfo.mounts;
@@ -260,7 +263,14 @@ fsys.gameinfo.mounts.apply_mount_move = function(evee)
 	// important todo: ALWAYS append to last hover...
 	// if (pool_entry == null){
 		var last_hover = document.querySelector('.cmount_pool_entry[vis_mv_top], .cmount_pool_entry[vis_mv_bottom]')
+		print('Last hover:', last_hover)
+
 		if (last_hover != null){
+
+			print('Last hover vistop:', last_hover.hasAttribute('vis_mv_top'))
+			print('Last hover visbot:', last_hover.hasAttribute('vis_mv_bottom'))
+
+
 			// if the first child of the pool has hover top attrbute - append it to the beginning of the pool
 			if (last_hover.hasAttribute('vis_mv_top')){
 				last_hover.before(mv_target)
