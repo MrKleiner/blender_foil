@@ -148,6 +148,8 @@ fsys.gameinfo.mounts.add_mount_entry = function()
 	// todo: this preset HTML is doubled...
 	var mk_entry = $(`
 		<div class="cmount_pool_entry">
+			<mvtop moverhit></mvtop>
+			<mvbot moverhit></mvbot>
 			<keys>
 				<lzcbox raw meaning="Game" 					lzcbox_id="${CryptoJS.SHA256(lizard.rndwave(512, 'flac')).toString()}" lzcbox_init="unset">game</lzcbox>
 				<lzcbox raw meaning="Mod" 					lzcbox_id="${CryptoJS.SHA256(lizard.rndwave(512, 'flac')).toString()}" lzcbox_init="set">mod</lzcbox>
