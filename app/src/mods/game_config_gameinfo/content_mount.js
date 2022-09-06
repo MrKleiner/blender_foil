@@ -240,6 +240,7 @@ fsys.gameinfo.mounts.apply_mount_move = function(evee)
 	print(pool_entry, mv_hitbox)
 
 
+	/*
 	// if mouseup not on triggers - revert shit back and SKIP moving
 	if (pool_entry != null && mv_hitbox != null){
 		// if top then insert before
@@ -252,23 +253,24 @@ fsys.gameinfo.mounts.apply_mount_move = function(evee)
 			pool_entry.after(mv_target);
 		}
 	}
+	*/
 
 
 	// try appending to the last hovered element
 	// important todo: ALWAYS append to last hover...
-	if (pool_entry == null){
-		var last_hover = document.querySelector('.cmount_pool_entry[vis_mv_top], .cmount_pool_entry[vis_mv_bot]')
+	// if (pool_entry == null){
+		var last_hover = document.querySelector('.cmount_pool_entry[vis_mv_top], .cmount_pool_entry[vis_mv_bottom]')
 		if (last_hover != null){
 			// if the first child of the pool has hover top attrbute - append it to the beginning of the pool
 			if (last_hover.hasAttribute('vis_mv_top')){
 				last_hover.before(mv_target)
 			}
 			// if the last element of the pool has hover bottom attribute - append it to the bottom of the pool
-			if (last_hover.hasAttribute('vis_mv_bot')){
+			if (last_hover.hasAttribute('vis_mv_bottom')){
 				last_hover.after(mv_target)
 			}
 		}
-	}
+	// }
 
 	// remove styling from moving target
 	mv_target.removeAttribute('move_tgt');
@@ -288,8 +290,11 @@ fsys.gameinfo.mounts.apply_mount_move = function(evee)
 	$('[invis_placeholder]').remove();
 
 	// remove visualizers
-	$('.cmount_pool_entry').removeAttr('vis_mv_top')
-	$('.cmount_pool_entry').removeAttr('vis_mv_bottom')
+	$('.cmount_pool_entry').removeAttr('vis_mv_top');
+	$('.cmount_pool_entry').removeAttr('vis_mv_bottom');
+
+	// finally, resave mounts back
+	fsys.gameinfo.mount.save_back()
 }
 
 

@@ -389,7 +389,7 @@
 {
 	position: fixed;
 	z-index: 85536;
-	background: black;
+	background: #1A2634;
 	outline: 2px solid #417790;
 	pointer-events: none !important;
 }
