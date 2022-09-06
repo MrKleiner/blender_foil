@@ -242,7 +242,7 @@ document.addEventListener('keydown', kvt => {
     app_reload_refresh(kvt)
     // todo: this really is a core feature...
     if (kvt.altKey && kvt.keyCode == 87 && window.current_app_module != 'main_dashboard'){
-    	dashboard_app_loader()
+    	fsys.dashboard.app_loader()
     }
 });
 
@@ -443,16 +443,16 @@ $(document).ready(function(){
 	    	// important todo: this has to be a separate function
 			switch (input_d['app_module']) {
 				case 'skyboxer':
-					skyboxer_module_manager(input_d)
+					fsys.skyboxer.manager(input_d)
 					break;
 				case 'load_skyboxer_app':
-					skyboxer_module_loader()
+					fsys.skyboxer.app_loader()
 					break;
 				case 'modmaker':
-					modmaker_module_manager(input_d)
+					fsys.modmaker.manager(input_d)
 					break;
 				case 'gameinfo':
-					gameinfo_module_manager(input_d)
+					fsys.gameinfo.manager(input_d)
 					break;
 				case 'set_context':
 					// foil_set_context(input_d)
@@ -461,7 +461,7 @@ $(document).ready(function(){
 					fbi.blender_echo_status(input_d)
 					break;
 				case 'dashboard':
-					dashboard_module_manager(input_d)
+					fsys.dashboard.manager(input_d)
 					break;
 				default:
 					log('server', 'The transmission from another world has ended, but requested action is unknown:', input_d['app_module']);
@@ -815,7 +815,7 @@ class foil_context_super_manager
 		// empty the container
 		$('#modules_cont').empty()
 		// and then simply load the dashboard app...
-		dashboard_app_loader()
+		fsys.dashboard.app_loader()
 	}
 
 	// get context of a certain index
@@ -969,7 +969,7 @@ function main_app_init()
 	.then(function(resolved) {
 		// TESTING
 		// AFTER THE CONTEXT WAS SET
-		gameinfoman_app_loader()
+		fsys.gameinfo.app_loader()
 	});
 
 }

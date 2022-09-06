@@ -1,4 +1,5 @@
 foil.sys.skyboxer = {};
+foil.sys.skyboxer.main = {};
 
 
 

@@ -1,4 +1,5 @@
 foil.sys.dashboard = {};
+fsys.dashboard.main = {};
 
 // =====================================================================
 // ---------------------------------------------------------------------
@@ -78,7 +79,7 @@ fsys.dashboard.main.absorb_context = function()
 	cb_pool['maps_from_linked_gminfo'].set(mcontext.maps_from_linked_gminfo)
 	cb_pool['start_from_map'].set(mcontext.start_from_map)
 	cb_pool['use_add_options'].set(mcontext.add_start_opts)
-	$('#dboard_mod_preview_lauchprms').text(eval_launch_opts()['string'])
+	$('#dboard_mod_preview_lauchprms').text(fsys.dashboard.main.eval_launch_opts()['string'])
 	$('#dboard_start_from_map_inp input').val(mcontext.starting_map);
 }
 
@@ -250,3 +251,4 @@ fsys.dashboard.main.list_maps = async function()
 
 
 
+print('reached dashboard file end')

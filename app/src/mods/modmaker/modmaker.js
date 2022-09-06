@@ -1,4 +1,5 @@
 foil.sys.modmaker = {}
+foil.sys.modmaker.main = {}
 
 fsys.modmaker.manager = function(pl)
 {

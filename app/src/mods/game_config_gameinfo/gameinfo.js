@@ -8,6 +8,8 @@
 // ============================================================
 
 foil.sys.gameinfo = {}
+foil.sys.gameinfo.main = {}
+foil.sys.gameinfo.mounts = {}
 
 
 
