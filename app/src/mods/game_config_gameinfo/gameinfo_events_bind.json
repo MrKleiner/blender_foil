@@ -2,44 +2,28 @@
 	"click": [
 		{
 			"selector": "#gminfo_appid_dropdown [dropdown_set]",
-			"function": "set_steam_appid_from_dropdown",
+			"function": "fsys.gameinfo.main.steam_id_from_dropdown",
 			"pass_event": false,
 			"pass_element": true,
 			"pass_params": ""
 		},
 		{
-			"selector": "#gameinfo_ctrl .lizcbox_hitbox, #gameinfo_ctrl lzcbox",
-			"function": "gameinfo_save_back",
-			"pass_event": false,
-			"pass_element": false,
-			"pass_params": ""
-		},
-		{
-			"selector": "#gameinfo_ctrl .lz_menu_entries",
-			"function": "gameinfo_save_back",
+			"selector": "#gameinfo_ctrl .lizcbox_hitbox, #gameinfo_ctrl lzcbox, #gameinfo_ctrl .lz_menu_entries",
+			"function": "fsys.gameinfo.main.save_back",
 			"pass_event": false,
 			"pass_element": false,
 			"pass_params": ""
 		},
 		{
 			"selector": ".cmount_pool_entry lzcbox, .cmount_pool_entry lzdropdown [dropdown_set]",
-			"function": "gm_mount_save_back",
+			"function": "fsys.gameinfo.mounts.save_back",
 			"pass_event": false,
 			"pass_element": false,
 			"pass_params": ""
 		},
 		{
 			"selector": "#gameinfo_content_mount lzbtn[btname=\"add_mount_pool_item\"]",
-			"function": "gm_add_mount_entry",
-			"pass_event": false,
-			"pass_element": false,
-			"pass_params": ""
-		}
-	],
-	"focusout": [
-		{
-			"selector": "#gminfo_gamename_input-, #gminfo_gametitle_input-, #gminfo_gameicon_input-, #gminfo_appid_input-",
-			"function": "gameinfo_save_back",
+			"function": "fsys.gameinfo.mounts.add_mount_entry",
 			"pass_event": false,
 			"pass_element": false,
 			"pass_params": ""
@@ -48,21 +32,21 @@
 	"change": [
 		{
 			"selector": "#gminfo_gamename_input, #gminfo_gametitle_input, #gminfo_gameicon_input, #gminfo_appid_input",
-			"function": "gameinfo_save_back",
+			"function": "fsys.gameinfo.main.save_back",
 			"pass_event": false,
 			"pass_element": false,
 			"pass_params": ""
 		},
 		{
 			"selector": "#gminfo_gameicon_input",
-			"function": "gminfo_icon_manager",
+			"function": "fsys.gameinfo.main.load_icon",
 			"pass_event": false,
 			"pass_element": false,
 			"pass_params": ""
 		},
 		{
 			"selector": ".cmount_pool_entry input",
-			"function": "gm_mount_save_back",
+			"function": "fsys.gameinfo.mounts.save_back",
 			"pass_event": false,
 			"pass_element": false,
 			"pass_params": ""
@@ -71,7 +55,7 @@
 	"mouseover": [
 		{
 			"selector": ".cmount_pool_entry keys lzcbox",
-			"function": "hlight_mount_keytype",
+			"function": "fsys.gameinfo.mounts.hlight_mount_keytype",
 			"pass_event": false,
 			"pass_element": true,
 			"pass_params": ""

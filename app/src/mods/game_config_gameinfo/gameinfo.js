@@ -1,19 +1,18 @@
 
 
-// 
+
 // ============================================================
 // ------------------------------------------------------------
 //                      name: gameinfo
 // ------------------------------------------------------------
 // ============================================================
-// 
+
+foil.sys.gameinfo = {}
 
 
 
-
-function gameinfo_module_manager(pl)
+fsys.gameinfo.manager = function(pl)
 {
-
 	switch (pl['mod_action']) {
 		case 'gameinfo_set_info':
 			// todo: this should exit but with different name
@@ -27,11 +26,10 @@ function gameinfo_module_manager(pl)
 			console.log('The gameinfo module has been called, but no corresponding action was found');
 			break;
 	}
-
 }
 
 
-function gameinfoman_app_loader()
+fsys.gameinfo.app_loader = function()
 {
 	base_module_loader('game_config_game_info.html')
 	.then(function(resolved) {
@@ -101,7 +99,7 @@ function gameinfoman_app_loader()
 		);
 
 		// read gameinfo of the mod and set settings
-		gameinfo_set_info()
+		fsys.gameinfo.main.load_info()
 
 
 	});
@@ -110,7 +108,7 @@ function gameinfoman_app_loader()
 
 
 // takes an element with dropdown_set attribute (menu entry element)
-function set_steam_appid_from_dropdown(dr_item)
+fsys.gameinfo.main.steam_id_from_dropdown = function(dr_item)
 {
 	document.querySelector('#gminfo_appid_input').value = dr_item.getAttribute('dropdown_set');
 }
@@ -132,9 +130,10 @@ function evalst(st){
 }
 
 
+// load info from context
 // app context and fast config should be fully ready by this time
 // important todo: there has to be a def dict
-async function gameinfo_set_info()
+fsys.gameinfo.main.load_info = async function()
 {
 	// evaluate gameinfo through python and receive a json
 	var inf = await bltalk.send({
@@ -177,15 +176,15 @@ async function gameinfo_set_info()
 		cb[setbox].set(evalst(inf[map_pool[setbox]]))
 	}
 
-	await gminfo_icon_manager()
+	await fsys.gameinfo.main.load_icon()
 
 	// lastly, show content mounts
-	display_content_mounts(inf)
+	fsys.gameinfo.mounts.show_mounts(inf)
 }
 // fs.existsSync
 
 // basic info
-function gameinfo_save_back()
+fsys.gameinfo.main.save_back = function()
 {
 
 	var cbs = lzcbox.pool;
@@ -228,7 +227,7 @@ function gameinfo_save_back()
 // pass client location and icon path input
 
 // todo: it's possible to check if file exists in js
-async function gminfo_icon_manager(set=false, pl={})
+fsys.gameinfo.main.load_icon = async function()
 {
 	// remove quotation marks from the input
 	$('#gminfo_gameicon_input').val($('#gminfo_gameicon_input').val().replaceAll('"', ''))

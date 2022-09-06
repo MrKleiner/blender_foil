@@ -36,8 +36,6 @@ const fs = require('fs');
 // Electron UDP Module
 const net = require('net');
 
-// Electron API
-const { BrowserWindow } = require('electron')
 
 //
 // Obsolete Python Shell
@@ -65,8 +63,13 @@ function shell_end_c(err,code,signal)
 // Unknown
 window.lizards_mouth = 'lizards_tongue';
 
-// Current APP context
-window.foil_context = {};
+// The entirety of the foil system
+window.foil = {};
+
+// All the functions
+window.foil.sys = {};
+// shortcut...
+window.fsys = window.foil.sys
 
 // UDP cache
 window.blsocket_cache = {};
@@ -75,8 +78,6 @@ window.blsocket_cache = {};
 // by default - 30 seconds timeout
 window.blwait_timeout = 1000*30;
 
-// various sys tools
-window.foil = {}
 
 // UDP await/resolve storage
 // important to not: There could be a number of simultaneuos transfers. Do not delete this dict randomly
@@ -977,3 +978,4 @@ function main_app_init()
 
 
 
+print('blfoil core, reached end')

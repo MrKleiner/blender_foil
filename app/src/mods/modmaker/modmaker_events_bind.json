@@ -2,7 +2,7 @@
 	"keyup": [
 		{
 			"selector": "#modmaker_new_client_cl_name input, #modmaker_new_client_game_name input",
-			"function": "modmaker_validate_required_options",
+			"function": "fsys.modmaker.main.validate_modspawn_options",
 			"pass_event": false,
 			"pass_element": false,
 			"pass_params": ""
@@ -15,21 +15,21 @@
 	"change": [
 		{
 			"selector": "#modmaker_engine_details_exepath input",
-			"function": "modmaker_check_engine_exe_exists",
+			"function": "fsys.modmaker.main.check_enigne_exe",
 			"pass_event": false,
 			"pass_element": false,
 			"pass_params": ""
 		},
 		{
 			"selector": "#modmaker_engine_details_icon input",
-			"function": "modmaker_check_icon",
+			"function": "fsys.modmaker.main.check_icon",
 			"pass_event": false,
 			"pass_element": false,
 			"pass_params": ""
 		},
 		{
 			"selector": "#modmaker_new_client_cl_name input, #modmaker_new_client_game_name input",
-			"function": "modmaker_validate_required_options",
+			"function": "fsys.modmaker.main.validate_modspawn_options",
 			"pass_event": false,
 			"pass_element": false,
 			"pass_params": ""
@@ -38,66 +38,69 @@
 
 
 
+
+
+
 	"click": [
 		{
 			"selector": "#modmaker_fetch_preinstalled",
-			"function": "modmaker_load_engines",
+			"function": "fsys.modmaker.main.load_engines",
 			"pass_event": false,
 			"pass_element": false,
 			"pass_params": "which='modmaker_get_preinstalled_engines'"
 		},
 		{
 			"selector": "#modmaker_engine_selector .simple_list_v1_pool_item",
-			"function": "modmaker_load_engine_info",
+			"function": "fsys.modmaker.main.load_eninge_info",
 			"pass_event": false,
 			"pass_element": true,
 			"pass_params": ""
 		},
 		{
 			"selector": "#new_engine_save_config",
-			"function": "modmaker_save_engine_details",
+			"function": "fsys.modmaker.main.save_engine_info",
 			"pass_event": false,
 			"pass_element": false,
 			"pass_params": ""
 		},
 		{
 			"selector": "#modmaker_add_new_engine",
-			"function": "modmaker_new_engine",
+			"function": "fsys.modmaker.main.spawn_engine",
 			"pass_event": false,
 			"pass_element": false,
 			"pass_params": ""
 		},
 		{
 			"selector": "#new_engine_del_config",
-			"function": "modmaker_newengine_del_config",
+			"function": "fsys.modmaker.main.del_engine",
 			"pass_event": false,
 			"pass_element": false,
 			"pass_params": ""
 		},
 		{
 			"selector": "#modmaker_client_selector_installed_pool .simple_list_v1_pool_item",
-			"function": "modmaker_set_active_client",
+			"function": "fsys.modmaker.main.set_active_client",
 			"pass_event": false,
 			"pass_element": true,
 			"pass_params": ""
 		},
 		{
 			"selector": "#modmaker_spawn_client_mpsp2013dlls, #modmaker_spawn_client_dll_dropdown",
-			"function": "modmaker_validate_required_options",
+			"function": "fsys.modmaker.main.validate_modspawn_options",
 			"pass_event": false,
 			"pass_element": false,
 			"pass_params": ""
 		},
 		{
 			"selector": "#modmaker_new_client_from_tplate",
-			"function": "modmaker_spawn_mod",
+			"function": "fsys.modmaker.main.spawn_mod",
 			"pass_event": false,
 			"pass_element": false,
 			"pass_params": "false"
 		},
 		{
 			"selector": "#modmaker_new_client_newblank",
-			"function": "modmaker_spawn_mod",
+			"function": "fsys.modmaker.main.spawn_mod",
 			"pass_event": false,
 			"pass_element": false,
 			"pass_params": "true"

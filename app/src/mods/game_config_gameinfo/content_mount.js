@@ -1,6 +1,7 @@
 
 
-function display_content_mounts(mounts)
+// takes mounts array as an input
+foil.sys.gameinfo.mounts.show_mounts = function(mounts)
 {
 	log('gameinfo', mounts)
 	pool = $('#gameinfo_content_mount_pool_items')
@@ -9,6 +10,7 @@ function display_content_mounts(mounts)
 	for (var entry of mounts['content_mount']){
 		// init checkboxes
 		var cbstate = entry['key'].split('+')
+		// python-like strip every element in an array (strip trailing +s)
 		var cbstate = cbstate.map(st => st.trim().toLowerCase());
 		print('game' in cbstate)
 
@@ -72,8 +74,8 @@ function display_content_mounts(mounts)
 
 
 
-
-async function gm_mount_save_back()
+// save mounts back to gameinfo.txt
+fsys.gameinfo.mounts.save_back = async function()
 {
 	// console.time('Saved Mounts')
 	var paths = [];
@@ -111,7 +113,7 @@ async function gm_mount_save_back()
 
 // do this with pure js to save a few milliseconds...
 // hover has to be responsible afterall...
-function hlight_mount_keytype(cb)
+fsys.gameinfo.mounts.hlight_mount_keytype = function(cb)
 {
 	// print(cb.closest('lzcbox'))
 	if (cb.closest('lzcbox') == null){
@@ -127,8 +129,8 @@ function hlight_mount_keytype(cb)
 	document.querySelector(`#mountpool_keys_descr keydescr[echo="${cb.getAttribute('meaning')}"]`).classList.add('keydescr_hlight')
 }
 
-
-function gm_add_mount_entry()
+// spawn a mount entry
+fsys.gameinfo.mounts.add_mount_entry = function()
 {
 	pool = $('#gameinfo_content_mount_pool_items')
 	// todo: this preset HTML is doubled...
@@ -179,19 +181,6 @@ function gm_add_mount_entry()
 	// resync checkboxes
 	lzcbox.resync()
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

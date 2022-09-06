@@ -1,6 +1,6 @@
+foil.sys.modmaker = {}
 
-
-function modmaker_module_manager(pl)
+fsys.modmaker.manager = function(pl)
 {
 	switch (pl['mod_action']) {
 		case 'set_engine_info':
@@ -17,11 +17,11 @@ function modmaker_module_manager(pl)
 
 
 // important todo: return Promise, promise.resolve() for post-load actions
-function newmodmaker_loader(mdl)
+fsys.modmaker.app_loader = function(mdl)
 {
 	base_module_loader('mod_maker.html')
 		.then(function(resolved) {
-			modmaker_load_engines()
+			fsys.modmaker.main.load_engines()
 		});
 }
 
@@ -29,7 +29,7 @@ function newmodmaker_loader(mdl)
 
 // the which keyword is needed,
 // because there's a button to fetch already existing engines on first startup which is a different kind of operation
-async function modmaker_load_engines(which='modmaker_load_saved_engines')
+fsys.modmaker.main.load_engines = async function(which='modmaker_load_saved_engines')
 {
 	var saved_engines = await bltalk.send({
 		'action': which
@@ -75,7 +75,7 @@ async function modmaker_load_engines(which='modmaker_load_saved_engines')
 
 // This doesn't get any fresh data, but only treats existing one
 // takes an object containing 'ess_bins' and 'sdk_bins'
-function modmaker_check_engine_binaries(bins)
+fsys.modmaker.main.check_engine_bins = function(bins)
 {
 	// order the dlls nicely based on importance
 	var order_dict_essbins = [
@@ -145,7 +145,7 @@ function modmaker_check_engine_binaries(bins)
 //
 // Load Engine Info
 //
-async function modmaker_load_engine_info(engine)
+fsys.modmaker.main.load_eninge_info = async function(engine)
 {
 	// visual feedback, highlight selected engine in the pool
 	$('#modmaker_engine_selector .simple_list_v1_pool_item').removeClass('simple_list_v1_pool_item_const_active');
@@ -178,7 +178,7 @@ async function modmaker_load_engine_info(engine)
 	$('#modmaker_engine_details_icon .modmaker_engine_details_item_status img')[0].src = eng_info['icon']
 
 	// check binaries
-	modmaker_check_engine_binaries(eng_info)
+	fsys.modmaker.main.check_engine_bins(eng_info)
 
 	// empty the installed clients pool
 	$('#modmaker_client_selector_installed_pool').empty();
@@ -237,7 +237,7 @@ async function modmaker_load_engine_info(engine)
 	$('#modmaker_client_selector, #modmaker_engine_details').removeAttr('style');
 
 	// check whether engine exe exists on HDD at the moment or no
-	modmaker_check_engine_exe_exists()
+	fsys.modmaker.main.check_enigne_exe()
 
 	// applicable cl/sv .dll locations
 	lzdrops.spawn(
@@ -281,7 +281,7 @@ async function modmaker_load_engine_info(engine)
 
 
 // Check whether engine exe exists as of now
-function modmaker_check_engine_exe_exists()
+fsys.modmaker.main.check_enigne_exe = function()
 {
 	if (fs.existsSync($('#modmaker_engine_details_exepath input').val())) {
 		$('#modmaker_engine_details_exepath .modmaker_engine_details_item_status img')[0].src = 'assets/checkmark.svg'
@@ -292,13 +292,12 @@ function modmaker_check_engine_exe_exists()
 	} else {
 		$('#modmaker_engine_details_exepath .modmaker_engine_details_item_status img')[0].src = 'assets/cross.svg'
 	}
-
 }
 
 
 
 // save engine params
-async function modmaker_save_engine_details()
+fsys.modmaker.main.save_engine_info = async function()
 {
 	if (fs.existsSync($('#modmaker_engine_details_exepath input').val())) {
 		console.log('Saving Engine Details...'); console.time('Saved Engine Details')
@@ -321,15 +320,16 @@ async function modmaker_save_engine_details()
 
 
 
-
-function modmaker_check_icon()
+// the details panel has an icon in front of the engine path
+// this checks whether it exists and tries to load it
+fsys.modmaker.main.check_icon = function()
 {
 	$('#modmaker_engine_details_icon .modmaker_engine_details_item_status img')[0].src = $('#modmaker_engine_details_icon input').val()
 }
 
 
 // spawn new engine
-function modmaker_new_engine()
+fsys.modmaker.main.spawn_engine = function()
 {
 	// engine exe
 	$('#modmaker_engine_details_exepath input').attr('value', '').val('');
@@ -350,7 +350,7 @@ function modmaker_new_engine()
 
 
 
-function modmaker_validate_required_options()
+fsys.modmaker.main.validate_modspawn_options = function()
 {
 	return
 	// important todo: game name cannot be empty (for now)
@@ -388,7 +388,7 @@ function modmaker_validate_required_options()
 //
 // yeet
 //
-async function modmaker_spawn_mod(ismapbase)
+fsys.modmaker.main.spawn_mod = async function(ismapbase)
 {
 
 	// if (ismapbase == true)
@@ -417,7 +417,7 @@ async function modmaker_spawn_mod(ismapbase)
 			'payload': do_mod_payload
 		})
 
-		modmaker_load_mod(mdinfo)
+		fsys.modmaker.main.load_mod(mdinfo)
 
 	// }
 
@@ -426,7 +426,7 @@ async function modmaker_spawn_mod(ismapbase)
 
 
 // delete new engine
-function modmaker_newengine_del_config()
+fsys.modmaker.main.del_engine = function()
 {
 	// todo: kinda unreliable
 	bltalk.send({
@@ -440,7 +440,7 @@ function modmaker_newengine_del_config()
 }
 
 
-function modmaker_set_active_client(cl)
+fsys.modmaker.main.set_active_client = function(cl)
 {
 	// $(set_active_client).addClass('simple_list_v1_pool_item_const_active');
 	cl.toggleAttribute('selected_client');
@@ -451,7 +451,7 @@ function modmaker_set_active_client(cl)
 // takes mod info as an input
 // actually, index is more like an id...
 // todo: should mod loader be a part of modmaker ?
-function modmaker_load_mod(md_info)
+fsys.modmaker.main.load_mod = function(md_info)
 {
 	// set index
 	// window.foil_context['mod_context'] = md_info['project_index'];
@@ -460,7 +460,7 @@ function modmaker_load_mod(md_info)
 	// dump everything because why not
 	window.foil_context['full'] = md_info;
 
-	dashboard_app_loader()
+	fsys.dashboard.app_loader()
 	// save context
 	// foil_save_context(window.foil_context.full)
 	foil_save_context(true)

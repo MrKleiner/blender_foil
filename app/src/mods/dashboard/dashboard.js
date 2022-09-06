@@ -1,4 +1,4 @@
-
+foil.sys.dashboard = {};
 
 // =====================================================================
 // ---------------------------------------------------------------------
@@ -8,7 +8,7 @@
 
 
 
-function dashboard_module_manager(pl)
+foil.sys.dashboard.manager = function(pl)
 {
 
 	switch (pl['mod_action']) {
@@ -43,7 +43,7 @@ function dashboard_module_manager(pl)
 // surfaceproperties manager
 
 
-function dashboard_app_loader()
+fsys.dashboard.app_loader = function()
 {
 	// if (window.foil_context.full.project_index != undefined || window.foil_context.full.project_index != null)
 	// {
@@ -53,10 +53,10 @@ function dashboard_app_loader()
 			log('dboard', 'loaded test example UIList content placeholder for dashbaord maps UIList');
 
 			// load the rest of the info
-			dashboard_set_ctrl_panel_from_context()
+			fsys.dashboard.main.absorb_context()
 
 			// get applicable maps
-			dboard_call_applicable_maps()
+			fsys.dashboard.main.list_maps()
 
 		});
 	// }
@@ -64,7 +64,7 @@ function dashboard_app_loader()
 
 // set control panel shit from existing context
 // context should never lie
-function dashboard_set_ctrl_panel_from_context()
+fsys.dashboard.main.absorb_context = function()
 {
 	var mcontext = foil.context.read;
 	$('#dboard_mod_minititle').text(mcontext.full_game_name);
@@ -82,12 +82,11 @@ function dashboard_set_ctrl_panel_from_context()
 	$('#dboard_start_from_map_inp input').val(mcontext.starting_map);
 }
 
-// update the control panel when something has changed, like checkbox or smth
-// and also context
-function dboard_update_panel_vis()
+// collect data from control panel and save it to context
+fsys.dashboard.main.save = function()
 {
-	log('dboard', 'Evaluated launch options: ', eval_launch_opts());
-	$('#dboard_mod_preview_lauchprms').text(eval_launch_opts()['string']);
+	log('dboard', 'Evaluated launch options: ', fsys.dashboard.main.eval_launch_opts());
+	$('#dboard_mod_preview_lauchprms').text(fsys.dashboard.main.eval_launch_opts()['string']);
 
 	// save context
 	var mcontext = foil.context.read;
@@ -106,8 +105,9 @@ function dboard_update_panel_vis()
 }
 
 
+// load a tool from the list from the left
 // takes either an element or a string
-function dashboard_tool_loader(tool='none')
+fsys.dashboard.main.load_tool = function(tool='none')
 {
 	// downside of auto-system: tool.getAttribute('dboardload') 
 	// :(
@@ -135,7 +135,7 @@ function dashboard_tool_loader(tool='none')
 
 
 // evaluates launch options and returns a cool object
-function eval_launch_opts()
+fsys.dashboard.main.eval_launch_opts = function()
 {
 	var ev = {};
 	var single_string = '';
@@ -189,7 +189,8 @@ function eval_launch_opts()
 }
 
 
-function dboard_launch_mod()
+// launch the game
+fsys.dashboard.main.launch_mod = function()
 {
 	bltalk.send({
 		'action': 'dboard_launch_mod',
@@ -202,7 +203,8 @@ function dboard_launch_mod()
 	});
 }
 
-function dboard_kill_mod()
+// kill the game
+fsys.dashboard.main.kill_mod = function()
 {
 	bltalk.send({
 		'action': 'dboard_kill_mod',
@@ -221,7 +223,7 @@ function dboard_kill_mod()
 
 
 // ask Blender for applicable maps
-async function dboard_call_applicable_maps()
+fsys.dashboard.main.list_maps = async function()
 {
 	log('dboard', 'Called for applicable maps')
 	// suggested_maps

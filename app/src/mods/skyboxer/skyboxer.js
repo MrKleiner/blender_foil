@@ -1,24 +1,32 @@
-function skyboxer_module_manager(pl)
+foil.sys.skyboxer = {};
+
+
+
+
+
+
+fsys.skyboxer.manager = function(pl)
 {
+	var skyboxer = fsys.skyboxer.main
 
 	switch (pl['mod_action']) {
 		case 'add_skybox_side':
-			skyboxer_sides_filler(pl['image'], pl['side'], pl['pov_img'])
+			skyboxer.sides_filler(pl['image'], pl['side'], pl['pov_img'])
 			break;
 		case 'upd_side_status':
-			skyboxer_status_updater(pl['side'], pl['what'], pl['status'])
+			skyboxer.update_status(pl['side'], pl['what'], pl['status'])
 			break;
 		case 'reset':
-			skyboxer_scene_reset()
+			skyboxer.reset_scene()
 			break;
 		case 'upd_work_status':
-			skyboxer_update_wstatus(pl)
+			skyboxer.update_status(pl)
 			break;
 		case 'set_sky_name':
-			skybox_set_sky_name(pl)
+			skyboxer.header_text(pl)
 			break;
 		case 'finished':
-			skybox_finished(pl)
+			skyboxer.sky_finished(pl)
 			break;
 		default:
 			console.log('The module has been called, but no corresponding action was found')
@@ -28,17 +36,21 @@ function skyboxer_module_manager(pl)
 }
 
 var	side_def_dict = {
-        'bk': 'back',
-        'dn': 'down',
-        'ft': 'front',
-        'lf': 'left',
-        'rt': 'right',
-        'up': 'up'
-    }
-
+	'bk': 'back',
+	'dn': 'down',
+	'ft': 'front',
+	'lf': 'left',
+	'rt': 'right',
+	'up': 'up'
+}
+var side_status_def = {
+	'blender': '.blender_icon .icon_indicator_circle',
+	'pfm': '.pfm_icon .icon_indicator_circle',
+	'vtf': '.vtf_icon .icon_indicator_circle',
+}
 
 // double loading causes issues which ould be easily avoided by NOT performing double loads
-function skyboxer_module_loader()
+fsys.skyboxer.app_loader = function()
 {
 	base_module_loader('skyboxer', false)
 	.then(function(resolved) {
@@ -57,16 +69,12 @@ function skyboxer_module_loader()
 
 
 
-var side_status_def = {
-	'blender': '.blender_icon .icon_indicator_circle',
-	'pfm': '.pfm_icon .icon_indicator_circle',
-	'vtf': '.vtf_icon .icon_indicator_circle',
-}
+
 
 // takes two params:
 // side_img - image binary
 // side_d - string. Side, like "left"
-function skyboxer_sides_filler(side_img, side_d, pov)
+fsys.skyboxer.main.sides_filler = function(side_img, side_d, pov)
 {
 	var mk_side_img = lizard.b64toimg(side_img)
 	var mk_side_img_pov = lizard.b64toimg(pov)
@@ -76,7 +84,7 @@ function skyboxer_sides_filler(side_img, side_d, pov)
 }
 
 // set status
-function skyboxer_status_updater(wside, elem, status)
+fsys.skyboxer.main.update_status = function(wside, elem, status)
 {
 	var decide_status = 'lime'
 	if (status == false){
@@ -85,7 +93,8 @@ function skyboxer_status_updater(wside, elem, status)
 	$('#sky_' + side_def_dict[wside]).find(side_status_def[elem]).css('background', decide_status);
 }
 
-function skyboxer_scene_reset()
+// resets scene and wipes sides cache
+fsys.skyboxer.main.reset_scene = function()
 {
 	console.log('reset skyboxer scene');
 	// painful do see it gone, but this has to be done
@@ -97,20 +106,22 @@ function skyboxer_scene_reset()
 	$('.skybox_side_container .skybox_square').attr('src', 'assets/cross_square.png');
 }
 
-
-function skyboxer_update_wstatus(stat)
+// updates status with given text
+fsys.skyboxer.main.update_status = function(stat)
 {
 	$('#sky_compile_status').text(stat['status']);
 }
 
-function skybox_set_sky_name(skname)
+// there's a big header on top...
+// this takes given text and puts it into that header
+fsys.skyboxer.main.header_text = function(skname)
 {
 	$('#sky_name').text(skname['skyname']);
 	window['skyboxer_sky_name'] = skname['skyname'];
 }
 
-
-function skybox_finished(pl)
+// trigger this when all the regular and POV sides were loaded
+fsys.skyboxer.main.sky_finished = function(pl)
 {
 	try{
 		window.skyboxer_pov.destroy()
@@ -134,7 +145,7 @@ function skybox_finished(pl)
 }
 
 
-async function skyboxer_get_skies_list()
+fsys.skyboxer.main.list_skies = async function()
 {
 	console.time('all skies')
 	var inf = await bltalk.send({
@@ -209,7 +220,7 @@ async function skyboxer_get_skies_list()
 }
 
 
-function SUPER_IMPORTANT()
+function SUPER_IMPORTANT_SHITE()
 {
 	// https://github.com/katspaugh/wavesurfer.js
 	// https://wavesurfer-js.org/

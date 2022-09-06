@@ -2,21 +2,21 @@
 	"click": [
 		{
 			"selector": "[dashboard_action=\"load_skyboxer\"]",
-			"function": "skyboxer_module_loader",
+			"function": "fsys.skyboxer.app_loader",
 			"pass_event": false,
 			"pass_element": false,
 			"pass_params": ""
 		},
 		{
 			"selector": ".main_dashboard_util[dboardload]",
-			"function": "dashboard_tool_loader",
+			"function": "fsys.dashboard.load_tool",
 			"pass_event": false,
 			"pass_element": true,
 			"pass_params": ""
 		},
 		{
 			"selector": "#main_dashboard_right_ctrl lzcbox, #main_dashboard_right_ctrl .lzcbox_hitbox",
-			"function": "dboard_update_panel_vis",
+			"function": "fsys.dashboard.main.save",
 			"pass_event": false,
 			"pass_element": false,
 			"pass_params": ""
@@ -25,21 +25,21 @@
 
 		{
 			"selector": "#dboard_mod_launchgame",
-			"function": "dboard_launch_mod",
+			"function": "fsys.dashboard.main.launch_mod",
 			"pass_event": false,
 			"pass_element": false,
 			"pass_params": ""
 		},
 		{
 			"selector": "#dboard_mod_killgame",
-			"function": "dboard_kill_mod",
+			"function": "fsys.dashboard.main.kill_mod",
 			"pass_event": false,
 			"pass_element": false,
 			"pass_params": ""
 		},
 		{
 			"selector": "#dboard_suggest_linked_maps_c",
-			"function": "dboard_call_applicable_maps",
+			"function": "fsys.dashboard.main.list_maps",
 			"pass_event": false,
 			"pass_element": false,
 			"pass_params": ""
@@ -48,7 +48,7 @@
 	"change": [
 		{
 			"selector": "#dboard_mod_add_opts_input, #dboard_start_from_map_inp input",
-			"function": "dboard_update_panel_vis",
+			"function": "fsys.dashboard.main.save",
 			"pass_event": false,
 			"pass_element": false,
 			"pass_params": ""
