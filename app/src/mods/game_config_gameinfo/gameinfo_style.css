@@ -209,10 +209,38 @@
 	font-family: 'blender';
 	font-size: 15px;
 	background: rgba(0, 0, 0, 0.2);
+	outline: 2px solid #41779000;
 	/*padding: 5px 0px 5px 0px;*/
 	/*outline: 1px solid rgba(255, 255, 255, 0.1);*/
 }
 
+.cmount_pool_entry input
+{
+	background: #121213;
+}
+
+.cmount_pool_entry lzdropdown
+{
+	background: #131314;
+}
+
+
+
+#gameinfo_content_mount_pool_items .cmount_pool_entry:not(#gameinfo_content_mount_pool_items[moving] .cmount_pool_entry):hover
+{
+	/*background: rgba(40, 40, 40, 0.9);*/
+	background: rgb(51, 51, 51, 0.85);
+}
+
+#gameinfo_content_mount_pool_items .cmount_pool_entry:not(#gameinfo_content_mount_pool_items[moving] .cmount_pool_entry):hover::before
+{
+	content: '';
+	position: absolute;
+	width: 4px;
+	background: rgba(255, 255, 255, 0.3);
+	height: 100%;
+	left: -4px;
+}
 
 .cmount_pool_entry input
 {
@@ -410,9 +438,53 @@
 	pointer-events: none !important;
 }
 
+#gameinfo_content_mount_pool_items[moving] [move_tgt] input
+{
+	background: rgba(0, 0, 0, 0.3);
+}
+
+#gameinfo_content_mount_pool_items[moving] [move_tgt] lzdropdown
+{
+	background: rgba(0, 0, 0, 0.25);
+}
+
+#gameinfo_content_mount_pool_items[moving] [move_tgt] dragger
+{
+	filter: brightness(1);
+}
+
 #gameinfo_content_mount_pool_items[moving] [move_tgt] [moverhit]
 {
 	visibility: hidden !important;
 }
+
+
+
+/*highlight*/
+#gameinfo_content_mount_pool_items .mount_hlight
+{
+	background: #1A2634;
+	outline: 2px solid #417790ff;
+	/*outline: 2px solid #5DAFD5ff;*/
+}
+
+#gameinfo_content_mount_pool_items .mount_nohlight
+{
+	transition: .5s;
+	background: rgba(0, 0, 0, 0.2);
+	outline: 2px solid #41779000;
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 

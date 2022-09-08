@@ -91,14 +91,27 @@ function mkj(bd){
 // app root
 var got_root = new Path(__dirname)
 while (true) {
-    got_root = got_root.parent()
     if (got_root.basename == 'blender_foil'){
-    	window.addon_root = got_root
+    	window.addon_root = got_root;
         break
     }
+
+    var aprt = got_root.join('roothook.lizard')
+    if (aprt.isFileSync()){
+    	window.app_root = aprt;
+    }
+    got_root = got_root.parent()
 }
 
+window.mein_sleep = {}
+async function jsleep(amt=500, ref='a') {
 
+	return new Promise(function(resolve, reject){
+	    window.mein_sleep[ref] = setTimeout(function () {
+			resolve(true)
+	    }, amt);
+	});
+}
 
 
 
@@ -289,6 +302,17 @@ function svgappender()
 	});
 	console.log('Svg Appender No Errors');
 	
+}
+
+
+function svgappender_sync()
+{
+	document.querySelectorAll('appendsvg').forEach(function(userItem) {
+		var svgpath = window.app_root.join(userItem.getAttribute('svgsrc'))
+		if (!fs.existsSync(svgpath)){return}
+		$(userItem).replaceWith(fs.readFileSync(svgpath).toString(), {encoding:'utf8', flag:'r'});
+	});
+	console.log('Svg Appender No Errors');
 }
 
 
@@ -885,6 +909,40 @@ window.foil.context = new foil_context_super_manager();
 
 
 
+window.foil.ux = {};
+
+// true = keypress
+// false = change
+window.foil.ux.inputs = function(evee=null, etgt=null, sw=false)
+{
+	// remove quotes
+	if (etgt.hasAttribute('nobracks') && sw == false){
+		print('nobracks')
+		etgt.value = etgt.value.replaceAll('"', '');
+	}
+
+	// unfocuson keypress
+	if (etgt.hasAttribute('ux') && sw == true){
+		if (evee.keyCode == 13 || evee.keyCode == 27){
+			print('blur')
+			etgt.blur();
+		}
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -996,7 +1054,7 @@ function main_app_init()
 	.then(function(resolved) {
 		// TESTING
 		// AFTER THE CONTEXT WAS SET
-		fsys.gameinfo.app_loader()
+		// fsys.gameinfo.app_loader()
 	});
 
 }

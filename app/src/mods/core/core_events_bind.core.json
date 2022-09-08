@@ -21,6 +21,26 @@
 			"pass_element": false,
 			"pass_params": ""
 		}
+	],
+
+	"change": [
+		{
+			"selector": "input",
+			"function": "window.foil.ux.inputs",
+			"pass_event": true,
+			"pass_element": true,
+			"pass_params": "false"
+		}
+	],
+
+	"keypress": [
+		{
+			"selector": "input",
+			"function": "window.foil.ux.inputs",
+			"pass_event": true,
+			"pass_element": true,
+			"pass_params": "true"
+		}
 	]
 
 }

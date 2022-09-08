@@ -27,7 +27,7 @@ foil.sys.gameinfo.mounts.show_mounts = function(mounts)
 					<lzcbox raw meaning="default_write_path" 	lzcbox_id="${CryptoJS.SHA256(lizard.rndwave(512, 'flac')).toString()}" lzcbox_init="${cbstate.includes('default_write_path') 	? 'set' : 'unset'}">Default_Write_Path</lzcbox>
 				</keys>
 				<basepath></basepath>
-				<input type="text" value="${entry['value'].replace(/(?<=\|)(.*?)(?=\|)/, '').replaceAll('|', '')}">
+				<input nobracks ux type="text" value="${entry['value'].replace(/(?<=\|)(.*?)(?=\|)/, '').replaceAll('|', '')}">
 				<div class="mount_ctrl_btns">
 					<dragger></dragger>
 					<kill>
@@ -159,7 +159,7 @@ fsys.gameinfo.mounts.add_mount_entry = function()
 				<lzcbox raw meaning="default_write_path" 	lzcbox_id="${CryptoJS.SHA256(lizard.rndwave(512, 'flac')).toString()}" lzcbox_init="unset">Default_Write_Path</lzcbox>
 			</keys>
 			<basepath></basepath>
-			<input type="text" value="custom/*">
+			<input nobracks ux type="text" value="custom/*">
 			<div class="mount_ctrl_btns">
 				<dragger></dragger>
 				<kill>
@@ -212,6 +212,10 @@ fsys.gameinfo.mounts.start_mount_drag = function(etgt)
 	var entry =  etgt.closest('.cmount_pool_entry');
 	var compstyle = getComputedStyle(entry);
 	var mounts = fsys.gameinfo.mounts;
+
+	// remove any shine effects
+	entry.classList.remove('mount_hlight');
+	entry.classList.remove('mount_nohlight');
 
 	// important todo: body[special] is a very bad way of achieving this
 	document.body.setAttribute('tmp_special', true);
@@ -287,6 +291,9 @@ fsys.gameinfo.mounts.apply_mount_move = function(evee)
 	// remove stored width
 	mv_target.style.width = null
 
+	// shine it
+	mounts.shine_mount(mounts.moving_item)
+
 	// unregister the item from moving elements
 	fsys.gameinfo.mounts.moving_item = null;
 	document.body.removeAttribute('tmp_special')
@@ -297,6 +304,8 @@ fsys.gameinfo.mounts.apply_mount_move = function(evee)
 	// remove visualizers
 	$('.cmount_pool_entry').removeAttr('vis_mv_top');
 	$('.cmount_pool_entry').removeAttr('vis_mv_bottom');
+
+
 
 	// finally, resave mounts back
 	fsys.gameinfo.mounts.save_back()
@@ -336,3 +345,26 @@ fsys.gameinfo.mounts.kill_mount_entry = function(evee)
 	// save back
 	fsys.gameinfo.mounts.save_back()
 }
+
+
+fsys.gameinfo.mounts.shine_mount = function(tgt)
+{
+	let shite = tgt;
+	shite.classList.remove('mount_hlight');
+	shite.classList.remove('mount_nohlight');
+	shite.classList.add('mount_hlight');
+	jsleep(200)
+	.then(function(response) {
+		shite.classList.add('mount_nohlight');
+		jsleep(600)
+		.then(function(response) {
+			// $('#gameinfo_content_mount_pool_items .cmount_pool_entry:not(#gameinfo_content_mount_pool_items[moving] .cmount_pool_entry)')
+
+			// .removeClass('mount_hlight mount_nohlight')
+			shite.classList.remove('mount_hlight');
+			shite.classList.remove('mount_nohlight');
+		});
+	});
+}
+
+

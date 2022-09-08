@@ -116,6 +116,7 @@ fsys.gameinfo.main.steam_id_from_dropdown = function(dr_item)
 }
 
 function evalst(st){
+	if (st == undefined || st == null){return false}
 	if (st.toString() == '1'){
 		return true
 	}
@@ -175,7 +176,7 @@ fsys.gameinfo.main.load_info = async function()
 	cb['icon_autoconvert'].set(foil.context.read.autoconvert_icon)
 
 	for (var setbox in map_pool){
-		cb[setbox].set(evalst(inf[map_pool[setbox]]))
+		cb[setbox].set(evalst(inf[map_pool[setbox]] || '0'))
 	}
 
 	await fsys.gameinfo.main.load_icon()
